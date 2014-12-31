@@ -267,7 +267,7 @@ BXDesktopSystem.ParseNotificationHtml = function(html) {
     'title': title[2].replace(/<[^>]+>/g, ''),
     'text': text[2].replace(/<[^>]+>/g, '')
   }
-}
+};
 
 BXDesktopSystem.ExecuteCommand = function(command, params) {
   switch (command) {
@@ -509,99 +509,101 @@ function decode_utf8(text) {
 
 function implementMe(name, args) {
   console.error('Implement me: ' + buildFunctionCall(name, args));
-};
+}
 
 /*---------- Helpers ---------*/
 
 /*---------- Disk API ---------*/
-var BXFileStorage = BXFileStorage || {};
+var BXFileStorage = undefined; // Disable disk at all
 
-BXFileStorage.StopBDisk = function StopBDisk() {
-    return null;
-};
-
-BXFileStorage.StartBDisk = function StartBDisk(mode) {
-    return null;
-};
-
-BXFileStorage.GetStatus = function GetStatus() {
-    return null;
-};
-
-BXFileStorage.OpenFolder = function OpenFolder() {
-    return null;
-};
-
-BXFileStorage.OpenFileFolder = function OpenFileFolder(path) {
-    return null;
-};
-
-BXFileStorage.SetTargetFolder = function SetTargetFolder(path) {
-    return null;
-};
-
-BXFileStorage.SetDefaultTargetFolder = function SetDefaultTargetFolder(callback) {
-    return null;
-};
-
-BXFileStorage.GetTargetFolder = function GetTargetFolder() {
-    return null;
-};
-
-BXFileStorage.SelectTargetFolder = function SelectTargetFolder(callback) {
-    return null;
-};
-
-BXFileStorage.Attach = function Attach(disk_token) {
-    return null;
-};
-
-BXFileStorage.Detach = function Detach() {
-    return null;
-};
-
-BXFileStorage.FileExist = function FileExist(path, funcCallback) {
-    return null;
-};
-
-BXFileStorage.FolderExist = function FolderExist(path, funcCallback) {
-    return null;
-};
-
-BXFileStorage.FileOpen = function FileOpen(path, funcCallback) {
-    return null;
-};
-
-BXFileStorage.ObjectOpen = function ObjectOpen(path, funcCallback) {
-    return null;
-};
-
-BXFileStorage.EditFile = function EditFile(downloadLink, uploadLink,filename) {
-    return null;
-};
-
-BXFileStorage.ViewFile = function ViewFile(downloadLink, filename) {
-    return null;
-};
-
-BXFileStorage.Refresh = function Refresh(funcCallback) {
-    return null;
-};
-
-BXFileStorage.GetStorageSize = function GetStorageSize(funcCallback) {
-    return null;
-};
-
-BXFileStorage.GetSyncFilesInfo = function GetSyncFilesInfo() {
-    return null;
-};
-
-BXFileStorage.GetLogLastOperations = function GetLogLastOperations() {
-    return null;
-};
-
-BXFileStorage.GetObjectDataById = function GetObjectDataById(id) {
-    return null;
-};
+//var BXFileStorage = BXFileStorage || {};
+//
+//BXFileStorage.StopBDisk = function StopBDisk() {
+//    return null;
+//};
+//
+//BXFileStorage.StartBDisk = function StartBDisk(mode) {
+//    return null;
+//};
+//
+//BXFileStorage.GetStatus = function GetStatus() {
+//    return null;
+//};
+//
+//BXFileStorage.OpenFolder = function OpenFolder() {
+//    return null;
+//};
+//
+//BXFileStorage.OpenFileFolder = function OpenFileFolder(path) {
+//    return null;
+//};
+//
+//BXFileStorage.SetTargetFolder = function SetTargetFolder(path) {
+//    return null;
+//};
+//
+//BXFileStorage.SetDefaultTargetFolder = function SetDefaultTargetFolder(callback) {
+//    return null;
+//};
+//
+//BXFileStorage.GetTargetFolder = function GetTargetFolder() {
+//    return null;
+//};
+//
+//BXFileStorage.SelectTargetFolder = function SelectTargetFolder(callback) {
+//    return null;
+//};
+//
+//BXFileStorage.Attach = function Attach(disk_token) {
+//    return null;
+//};
+//
+//BXFileStorage.Detach = function Detach() {
+//    return null;
+//};
+//
+//BXFileStorage.FileExist = function FileExist(path, funcCallback) {
+//    return null;
+//};
+//
+//BXFileStorage.FolderExist = function FolderExist(path, funcCallback) {
+//    return null;
+//};
+//
+//BXFileStorage.FileOpen = function FileOpen(path, funcCallback) {
+//    return null;
+//};
+//
+//BXFileStorage.ObjectOpen = function ObjectOpen(path, funcCallback) {
+//    return null;
+//};
+//
+//BXFileStorage.EditFile = function EditFile(downloadLink, uploadLink,filename) {
+//    return null;
+//};
+//
+//BXFileStorage.ViewFile = function ViewFile(downloadLink, filename) {
+//    return null;
+//};
+//
+//BXFileStorage.Refresh = function Refresh(funcCallback) {
+//    return null;
+//};
+//
+//BXFileStorage.GetStorageSize = function GetStorageSize(funcCallback) {
+//    return null;
+//};
+//
+//BXFileStorage.GetSyncFilesInfo = function GetSyncFilesInfo() {
+//    return null;
+//};
+//
+//BXFileStorage.GetLogLastOperations = function GetLogLastOperations() {
+//    return null;
+//};
+//
+//BXFileStorage.GetObjectDataById = function GetObjectDataById(id) {
+//    return null;
+//};
 
 /*---------- Disk API ---------*/
