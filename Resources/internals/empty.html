@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>&nbsp;</title>
+</head>
+<body>
+<script>
+	(function (window) {
+	  function getHashValue(key) {
+        return location.hash.match(new RegExp(key+'=([^&]*)'))[1];
+      }
+
+	  if (!window.opener || !window.opener.app)
+		return;
+
+	  var callback = window.opener.app.getWindowCallback(getHashValue('id'));
+	   if (!callback)
+		return;
+
+	  callback(BXDesktopWindow);
+      appWindow.show();
+	})(window);
+</script>
+</body>
+</html>
