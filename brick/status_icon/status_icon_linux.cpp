@@ -48,7 +48,6 @@ StatusIcon::Init() {
 void
 StatusIcon::SetIcon(Icon icon) {
   current_icon_ = icon;
-  LOG(WARNING) << "Set icon:" <<GetIconPath(icon).c_str();
   gtk_status_icon_set_from_file(icon_handler_, GetIconPath(icon).c_str());
 }
 
