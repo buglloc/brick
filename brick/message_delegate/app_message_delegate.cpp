@@ -1,4 +1,3 @@
-#include "third-party/httpclient/httpclient.h"
 #include <include/base/cef_bind.h>
 #include "brick/helper.h"
 #include "brick/notification.h"
@@ -80,13 +79,7 @@ AppMessageDelegate::OnProcessMessageReceived(
         response_args->SetBool(2, false);
       }
       else {
-        CefCookie cookie;
-        CefString(&cookie.name).FromASCII("PHPSESSID");
-        CefString(&cookie.value) = ParseAuthSessid(r.body);
-        cookie.secure = true;
-        cookie.httponly = true;
-
-        CefPostTask(TID_IO, base::Bind(&SetCookie, CefCookieManager::GetGlobalManager(), account->GetBaseUrl(), cookie));
+        SetCookies(CefCookieManager::GetGlobalManager(), account->GetBaseUrl(), r.cookies);
         response_args->SetBool(2, true);
       }
     }
@@ -261,8 +254,21 @@ AppMessageDelegate::CreateProcessMessageDelegates(ClientHandler::ProcessMessageD
 
 
 void
-AppMessageDelegate::SetCookie(CefRefPtr<CefCookieManager> manager, const CefString &url, CefCookie cookie) {
-  manager->SetCookie(url, cookie);
+AppMessageDelegate::SetCookies(CefRefPtr<CefCookieManager> manager, const CefString &url, HttpClient::cookie_map cookies) {
+  if (!CefCurrentlyOn(TID_IO)) {
+    // Execute on the IO thread.
+    CefPostTask(TID_IO, base::Bind(&AppMessageDelegate::SetCookies, manager, url, cookies));
+    return;
+  }
+
+  for (HttpClient::cookie_map::iterator value=cookies.begin(); value != cookies.end(); ++value) {
+    CefCookie cookie;
+    CefString(&cookie.name) = value->first;
+    CefString(&cookie.value) = value->second;
+    cookie.secure = true;
+    cookie.httponly = true;
+    manager->SetCookie(url, cookie);
+  }
 }
 
 

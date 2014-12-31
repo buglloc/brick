@@ -16,14 +16,16 @@ class HttpClient
     /**
      * public data definitions
      */
-    typedef std::map<std::string, std::string> headermap;
+    typedef std::map<std::string, std::string> header_map;
+    typedef std::map<std::string, std::string> cookie_map;
 
     /** response struct for queries */
     typedef struct
     {
       int code;
       std::string body;
-      headermap headers;
+      header_map headers;
+      cookie_map cookies;
     } response;
     /** struct used for uploading data */
     typedef struct
@@ -48,7 +50,11 @@ class HttpClient
     // HTTP DELETE
     static response Del(const std::string &url);
 
+    static std::string Urldecode(const std::string& str, bool plusAsSpace = false);
+    static std::string Urlencode(const std::string& str, bool plusAsSpace = false);
+
   private:
+    static void ParseCookie(response *resp, const std::string &header);
     // writedata callback function
     static size_t WriteCallback(void *ptr, size_t size, size_t nmemb,
        void *userdata);

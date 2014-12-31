@@ -4,6 +4,10 @@
 #include <iostream>
 
 
+namespace {
+    const char kCookieHeaderName[] = "Set-Cookie";
+} // namespace
+
 /** initialize user agent string */
 const char* HttpClient::user_agent = HTTP_CLIENT_USER_AGENT;
 /** initialize authentication variable */
@@ -347,8 +351,8 @@ HttpClient::HeaderCallback(void *data,
   HttpClient::response* r;
   r = reinterpret_cast<HttpClient::response*>(userdata);
   std::string header(reinterpret_cast<char*>(data), size*nmemb);
-  size_t seperator = header.find_first_of(":");
-  if ( std::string::npos == seperator ) {
+  size_t separator = header.find_first_of(":");
+  if (separator == std::string::npos) {
     //roll with non seperated headers...
     trim(header);
     if ( 0 == header.length() ){
@@ -356,11 +360,15 @@ HttpClient::HeaderCallback(void *data,
     }
     r->headers[header] = "present";
   } else {
-    std::string key = header.substr(0, seperator);
+    std::string key = header.substr(0, separator);
     trim(key);
-    std::string value = header.substr(seperator + 1);
-    trim (value);
+    std::string value = header.substr(separator + 1);
+    trim(value);
     r->headers[key] = value;
+    if (key == kCookieHeaderName) {
+      ParseCookie(r, value);
+    }
+
   }
 
   return (size * nmemb);
@@ -395,4 +403,97 @@ HttpClient::ReadCallback(void *data,
   u->data += copy_size;
   /** return copied size */
   return copy_size;
+}
+
+void
+HttpClient::ParseCookie(response *resp, const std::string &header) {
+  size_t separator = header.find_first_of("=");
+  size_t end_value = header.find_first_of(";");
+  if (separator == std::string::npos) {
+    return;
+  }
+
+  std::string key = header.substr(0, separator);
+  std::string value;
+  if (end_value != std::string::npos) {
+    value = Urldecode(header.substr(separator + 1, end_value - separator - 1));
+  } else {
+    value = Urldecode(header.substr(separator + 1));
+  }
+
+  resp->cookies[key] = value;
+}
+
+std::string
+HttpClient::Urldecode(const std::string& str, bool plusAsSpace) {
+  std::string result;
+  std::string::const_iterator it  = str.begin();
+  std::string::const_iterator end = str.end();
+  while (it != end)
+  {
+    char c = *it++;
+    // spaces may be encoded as plus signs
+    if (plusAsSpace && c == '+') {
+      c = ' ';
+    }
+    else if (c == '%')
+    {
+      // ToDo: throw exception on error
+      if (it == end)
+        return NULL; // no hex digit following percent sign
+      char hi = *it++;
+      if (it == end)
+        return NULL; // two hex digits must follow percent sign
+      char lo = *it++;
+      if (hi >= '0' && hi <= '9')
+        c = hi - '0';
+      else if (hi >= 'A' && hi <= 'F')
+        c = hi - 'A' + 10;
+      else if (hi >= 'a' && hi <= 'f')
+        c = hi - 'a' + 10;
+      else
+        return NULL; // not a hex digit
+      c *= 16;
+      if (lo >= '0' && lo <= '9')
+        c += lo - '0';
+      else if (lo >= 'A' && lo <= 'F')
+        c += lo - 'A' + 10;
+      else if (lo >= 'a' && lo <= 'f')
+        c += lo - 'a' + 10;
+      else
+        return NULL; // not a hex digit
+    }
+
+    result += c;
+  }
+
+  return result;
+}
+
+std::string
+HttpClient::Urlencode(const std::string& str, bool plusAsSpace) {
+  static char hex[] = "0123456789abcdef";
+  std::string result;
+  for (std::string::const_iterator it = str.begin(); it != str.end(); ++it)
+  {
+    char c = *it;
+    if ((c >= 'a' && c <= 'z') ||
+       (c >= 'A' && c <= 'Z') ||
+       (c >= '0' && c <= '9') ||
+       c == '-' || c == '_' ||
+       c == '.' || c == '~')
+    {
+      result += c;
+    }
+    else if (c <= 0x20 || c >= 0x7F)
+    {
+      result += '%';
+      result += hex[(c >> 4)] & 15;
+      result += hex[(c & 15)] & 15;
+    }
+    else
+      result += c;
+  }
+
+  return result;
 }

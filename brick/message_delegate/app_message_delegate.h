@@ -2,6 +2,7 @@
 #define BRICK_APP_MESSAGE_DELEGATE_H_
 
 #include "brick/cef_handler.h"
+#include "third-party/httpclient/httpclient.h"
 
 class AppMessageDelegate : public ClientHandler::ProcessMessageDelegate {
   public:
@@ -18,7 +19,7 @@ class AppMessageDelegate : public ClientHandler::ProcessMessageDelegate {
     static void CreateProcessMessageDelegates(ClientHandler::ProcessMessageDelegateSet& delegates);
 
     // Custom methods
-    static void SetCookie(CefRefPtr<CefCookieManager> manager, const CefString &url, CefCookie cookie);
+    static void SetCookies(CefRefPtr<CefCookieManager> manager, const CefString &url, HttpClient::cookie_map cookies);
     static CefString ParseAuthSessid(std::string body);
 
   IMPLEMENT_REFCOUNTING(ProcessMessageDelegate);
