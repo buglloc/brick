@@ -11,7 +11,7 @@ BrickApp::GetBrowserSettings(AppSettings app_settings) {
 CefSettings
 BrickApp::GetCefSettings(AppSettings app_settings) {
   CefSettings settings;
-  CefString(&settings.product_version) = APP_VERSION;
+  CefString(&settings.product_version) = CEF_PRODUCT_VERSION;
 
   if (!app_settings.cache_path.empty())
     CefString(&settings.cache_path) = app_settings.cache_path;

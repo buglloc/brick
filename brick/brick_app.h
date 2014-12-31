@@ -4,6 +4,7 @@
 
 #define VERSION "0.1.1.29" // IM API version in last part!
 #define APP_VERSION "Robin-Brick/" VERSION
+#define CEF_PRODUCT_VERSION APP_VERSION " Chrome/39"
 #define APP_NAME "Brick"
 #define APP_COMMON_NAME "brick"
 
