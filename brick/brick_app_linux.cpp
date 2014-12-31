@@ -62,8 +62,7 @@ InitAccountManager(std::string config) {
 
   bool parsingSuccessful = reader.parse(config, root);
   if (!parsingSuccessful) {
-    LOG(ERROR) << "Failed to parse configuration: \n"
-                << config << "\n"
+    LOG(ERROR) << "Failed to parse configuration\n"
                 << reader.getFormattedErrorMessages();
 
     return NULL;
