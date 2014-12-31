@@ -19,7 +19,8 @@ class AppMessageDelegate : public ClientHandler::ProcessMessageDelegate {
     static void CreateProcessMessageDelegates(ClientHandler::ProcessMessageDelegateSet& delegates);
 
     // Custom methods
-    static void SetCookies(CefRefPtr<CefCookieManager> manager, const CefString &url, HttpClient::cookie_map cookies);
+    static void SetCookies(CefRefPtr<CefCookieManager> manager, const CefString &url,
+                          HttpClient::cookie_map cookies, bool is_secure);
     static CefString ParseAuthSessid(std::string body);
 
   IMPLEMENT_REFCOUNTING(ProcessMessageDelegate);

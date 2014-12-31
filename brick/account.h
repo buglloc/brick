@@ -14,6 +14,7 @@ class Account {
     std::string GetPassword();
     std::string GetBaseUrl();
     bool IsDefault();
+    bool IsSecure();
     bool CheckBaseUrl(std::string url);
 
 
@@ -22,6 +23,7 @@ class Account {
     std::string password_;
     std::string base_url_;
     bool default_;
+    bool secure_;
 };
 
 

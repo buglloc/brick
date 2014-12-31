@@ -79,7 +79,7 @@ AppMessageDelegate::OnProcessMessageReceived(
         response_args->SetBool(2, false);
       }
       else {
-        SetCookies(CefCookieManager::GetGlobalManager(), account->GetBaseUrl(), r.cookies);
+        SetCookies(CefCookieManager::GetGlobalManager(), account->GetBaseUrl(), r.cookies, account->IsSecure());
         response_args->SetBool(2, true);
       }
     }
@@ -254,10 +254,13 @@ AppMessageDelegate::CreateProcessMessageDelegates(ClientHandler::ProcessMessageD
 
 
 void
-AppMessageDelegate::SetCookies(CefRefPtr<CefCookieManager> manager, const CefString &url, HttpClient::cookie_map cookies) {
+AppMessageDelegate::SetCookies(CefRefPtr<CefCookieManager> manager,
+                              const CefString &url,
+                              HttpClient::cookie_map cookies,
+                              bool is_secure) {
   if (!CefCurrentlyOn(TID_IO)) {
     // Execute on the IO thread.
-    CefPostTask(TID_IO, base::Bind(&AppMessageDelegate::SetCookies, manager, url, cookies));
+    CefPostTask(TID_IO, base::Bind(&AppMessageDelegate::SetCookies, manager, url, cookies, is_secure));
     return;
   }
 
@@ -265,7 +268,7 @@ AppMessageDelegate::SetCookies(CefRefPtr<CefCookieManager> manager, const CefStr
     CefCookie cookie;
     CefString(&cookie.name) = value->first;
     CefString(&cookie.value) = value->second;
-    cookie.secure = true;
+    cookie.secure = is_secure;
     cookie.httponly = true;
     manager->SetCookie(url, cookie);
   }

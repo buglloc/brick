@@ -5,6 +5,7 @@ Account::Account(std::string login, std::string password, std::string base_url, 
   password_ = password;
   base_url_ = base_url;
   default_ = is_default;
+  secure_ = base_url.find("https://") == 0;
 }
 
 Account::~Account() {
@@ -13,6 +14,11 @@ Account::~Account() {
 bool
 Account::IsDefault() {
   return default_;
+}
+
+bool
+Account::IsSecure() {
+  return secure_;
 }
 
 std::string
