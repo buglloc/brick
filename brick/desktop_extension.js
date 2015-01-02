@@ -83,6 +83,18 @@ var app = {
 
     app.setWindowCallback(windowId, callback);
     return windowHandle;
+  },
+  getOption: function(name, defaultValue) {
+    var value = localStorage.getItem(name);
+    if (value != null) {
+      return value;
+    } else {
+      return defaultValue;
+    }
+  },
+  setOption: function(name, value) {
+    localStorage.setItem(name, value);
+    return true;
   }
 };
 /*---------- App extension ---------*/
@@ -290,11 +302,11 @@ BXDesktopSystem.ExecuteCommand = function(command, params) {
 };
 
 BXDesktopSystem.QuerySettings = function(name, def) {
-  implementMe('BXDesktopSystem.QuerySettings', arguments);
+  return app.getOption(name, def);
 };
 
 BXDesktopSystem.StoreSettings = function(name, value) {
-  implementMe('BXDesktopSystem.StoreSettings', arguments);
+  return app.setOption(name, value);
 };
 
 BXDesktopSystem.LogInfo = function LogInfo(value) {
