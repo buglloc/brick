@@ -67,6 +67,7 @@ set(BRICK_WINDOWS_SRCS_LINUX
 set(BRICK_JSON_SRCS
   ../third-party/json/json.h
   ../third-party/json/json-forwards.h
+  ../third-party/json/jsoncpp.cpp
   )
 
 set(BRICK_RESOURCE_FILES
@@ -155,7 +156,6 @@ COPY_FILES("${CEF_TARGET}" "${CEF_RESOURCE_FILES}" "${CEF_RESOURCE_DIR}" "${CEF_
 
 target_link_libraries(${CEF_TARGET} ${LIBNOTIFY_LIBRARIES})
 target_link_libraries(${CEF_TARGET} ${CURL_LIBRARIES})
-target_link_libraries(${CEF_TARGET} "${PROJECT_SOURCE_DIR}/libs/libjsoncpp.a")
 
 # Set SUID permissions on the chrome-sandbox target.
 SET_LINUX_SUID_PERMISSIONS("${CEF_TARGET}" "${CEF_TARGET_OUT_DIR}/chrome-sandbox")
