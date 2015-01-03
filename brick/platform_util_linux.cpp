@@ -54,7 +54,7 @@ namespace {
         }
         command[command_size] = NULL;
 
-        // ToDo: Put environment like Google chrome^
+        // ToDo: Put environment like Google chrome
         //      options.allow_new_privs = true;
 //      // xdg-open can fall back on mailcap which eventually might plumb through
 //      // to a command that needs a terminal.  Set the environment variable telling
