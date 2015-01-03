@@ -92,6 +92,9 @@ bool ClientApp::OnBeforeNavigation(CefRefPtr<CefBrowser> browser,
    NavigationType navigation_type,
    bool is_redirect) {
 
+  if (is_redirect)
+    return true; // Disable redirects at all
+
   RenderDelegateSet::iterator it = render_delegates_.begin();
   for (; it != render_delegates_.end(); ++it) {
     if ((*it)->OnBeforeNavigation(this, browser, frame, request,
