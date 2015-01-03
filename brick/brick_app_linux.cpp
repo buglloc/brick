@@ -3,7 +3,6 @@
 #include <include/cef_app.h>
 #include <unistd.h>
 #include <gdk/gdkx.h>
-#include <pwd.h>
 
 #include "brick_app.h"
 #include "third-party/json/json.h"
@@ -54,33 +53,6 @@ TerminationSignalHandler(int signatl) {
   CefQuitMessageLoop();
 }
 
-static CefRefPtr<AccountManager>
-InitAccountManager(std::string config) {
-  Json::Value root;   // will contains the root value after parsing.
-  Json::Reader reader;
-  CefRefPtr<AccountManager> account_manager(new AccountManager);
-
-  bool parsingSuccessful = reader.parse(config, root);
-  if (!parsingSuccessful) {
-    LOG(ERROR) << "Failed to parse configuration\n"
-                << reader.getFormattedErrorMessages();
-
-    return NULL;
-  }
-
-  const Json::Value accounts = root["accounts"];
-  for(unsigned int i=0; i < accounts.size(); ++i) {
-    account_manager->AddAccount(new Account(
-       accounts[i].get("login", "").asString(),
-       accounts[i].get("password", "").asString(),
-       accounts[i].get("uri", "").asString(),
-       accounts[i].get("default", false).asBool()
-    ));
-  }
-
-  return account_manager;
-}
-
 int main(int argc, char* argv[]) {
   CefMainArgs main_args(argc, argv);
   CefRefPtr<ClientApp> app(new ClientApp);
@@ -93,7 +65,7 @@ int main(int argc, char* argv[]) {
   GetWorkingDir(szWorkingDir);
   std::string plain_config = BrickApp::GetConfig();
   AppSettings app_settings = AppSettings::InitByJson(plain_config);
-  CefRefPtr<AccountManager> account_manager = InitAccountManager(plain_config);
+  CefRefPtr<AccountManager> account_manager = AccountManager::CreateInstance(plain_config);
   if (account_manager == NULL)
     return 0;
 
@@ -136,10 +108,11 @@ int main(int argc, char* argv[]) {
   window_util::InitWindow(xwindow);
   window_util::InitHooks();
 
+  std::string startup_url = account_manager->GetCurrentAccount()->GetBaseUrl() + "internals/pages/portal-loader#login=yes";
   // Create browser
   CefBrowserHost::CreateBrowserSync(
      window_info, g_handler.get(),
-     account_manager->GetCurrentAccount()->GetBaseUrl(), BrickApp::GetBrowserSettings(app_settings), NULL);
+     startup_url, BrickApp::GetBrowserSettings(app_settings), NULL);
 
   // Install a signal handler so we clean up after ourselves.
   signal(SIGINT, TerminationSignalHandler);

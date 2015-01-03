@@ -3,7 +3,6 @@
 #pragma once
 
 #include <include/cef_base.h>
-#include <bits/stl_bvector.h>
 #include "account.h"
 
 class AccountManager {
@@ -15,6 +14,7 @@ class AccountManager {
     void AddAccount(Account* account);
     Account* GetCurrentAccount();
 
+    static CefRefPtr<AccountManager> CreateInstance(std::string config);
   protected:
 //    account_vector account_list_;
     Account* current_account_;
