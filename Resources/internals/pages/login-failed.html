@@ -18,7 +18,7 @@
         $(document).ready((function (window, app) {
           app.setIndicator('offline');
             $('#reconnect').click(function() {
-                app.navigate('current_portal');
+                app.loadPortal();
             });
         }).bind(null, window, app));
     </script>

@@ -23,20 +23,32 @@ var app = {
 
     return result;
   },
-  login: function() {
+  login: function(onSuccess, onFailure) {
     native function AppExLogin();
 
+    onSuccess = onSuccess || (function() {
+      window.location.reload();
+    });
+
+    onFailure = onFailure || (function() {
+      window.location.href = '/desktop_app/internals/pages/login-failed';
+    });
+
     AppExLogin(function(response, success) {
-        if (success)
-          window.location.reload();
-        else
-          window.location.href = '/desktop_app/internals/pages/login-failed';
+        if (success) {
+          onSuccess();
+        } else {
+          onFailure();
+        }
     }.bind(this));
   },
   navigate: function(url) {
     native function AppExNavigate();
 
     AppExNavigate(null, url);
+  },
+  loadPortal: function() {
+    app.navigate('current_portal');
   },
   browse: function(url) {
     native function AppExBrowse();
@@ -47,6 +59,9 @@ var app = {
     native function AppExChangeTooltip();
 
     AppExChangeTooltip(null, text);
+  },
+  loader: function() {
+    window.location.href = '/desktop_app/internals/pages/portal-loader';
   },
   setIndicator: function(type) {
     native function AppExSetIndicator();
@@ -314,7 +329,7 @@ BXDesktopSystem.LogInfo = function LogInfo(value) {
 };
 
 BXDesktopSystem.Log = function(file, text) {
-  implementMe('BXDesktopSystem.Log', arguments);
+  console.log(file + ': ' + text);
 };
 
 BXDesktopSystem.videoLog = function(value) {
