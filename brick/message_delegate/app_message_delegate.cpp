@@ -75,6 +75,7 @@ AppMessageDelegate::OnProcessMessageReceived(
       );
 
       if (r.code != 200) {
+        LOG(WARNING) << "Auth failed: " << r.body;
         error = ERR_ACCESS_DENIED;
         response_args->SetBool(2, false);
       }
