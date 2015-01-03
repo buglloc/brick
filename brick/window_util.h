@@ -12,6 +12,8 @@ namespace window_util {
   void FixSize(CefWindowHandle handle, int width, int height);
   void SetTitle(CefWindowHandle handle, std::string title);
 
+  void CenterPosition(CefWindowHandle handle);
+
   void Hide(CefWindowHandle handle);
   void Show(CefWindowHandle handle);
 

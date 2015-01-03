@@ -10,7 +10,7 @@ AccountManager::~AccountManager() {
 
 void
 AccountManager::AddAccount(Account* account) {
-//  account_list_[account_list_.size()] = account;
+//  account_list_.push_back(account);
   if (account->IsDefault()) {
     current_account_ = account;
   }

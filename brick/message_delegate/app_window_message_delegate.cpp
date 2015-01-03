@@ -11,6 +11,7 @@ namespace {
     const char kMessageFixName[]                 = "FixSize";
     const char kMessageHideName[]                = "Hide";
     const char kMessageShowName[]                = "Show";
+    const char kMessageCenterName[]                = "Center";
     const char kMessageOpenDeveloperToolsName[]  = "OpenDeveloperTools";
 
 
@@ -129,6 +130,9 @@ AppWindowMessageDelegate::OnProcessMessageReceived(
 
   } else if (message_name == kMessageShowName) {
     window_util::Show(window);
+
+  } else if (message_name == kMessageCenterName) {
+    window_util::CenterPosition(window);
 
   } else if (message_name == kMessageOpenDeveloperToolsName) {
     ClientHandler::GetInstance()->ShowDevTools(browser, CefPoint());

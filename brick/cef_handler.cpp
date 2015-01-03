@@ -23,6 +23,7 @@ namespace {
     ClientHandler *g_instance = NULL;
     const char kInterceptionPath[] = "/desktop_app/internals/";
     std::string kScriptLoader = "appWindow.loadScript('#URL#');";
+    std::string kUnknownInternalContent = "Failed to load resource";
 
 } // namespace
 
@@ -136,7 +137,7 @@ ClientHandler::OnLoadError(CefRefPtr<CefBrowser> browser,
 
   LOG(INFO) << "Failed to load URL:" << error_explain.str();
 
-  frame->LoadURL(GetAccountManager()->GetCurrentAccount()->GetBaseUrl() + "internals/offline.html");
+  frame->LoadURL(GetAccountManager()->GetCurrentAccount()->GetBaseUrl() + "internals/pages/offline");
 }
 
 void
@@ -301,6 +302,8 @@ ClientHandler::GetResourceHandler(
   // Handle URLs in interception path
   std::string file_name, mime_type;
   if (helper::ParseUrl(url, &file_name, &mime_type)) {
+    // Remove interception path
+    file_name = file_name.substr(strlen(kInterceptionPath) - 1);
     // Load the resource from file.
     CefRefPtr<CefStreamReader> stream =
        GetBinaryResourceReader(file_name.c_str());
@@ -308,7 +311,14 @@ ClientHandler::GetResourceHandler(
       return new CefStreamResourceHandler(mime_type, stream);
   }
 
-  return NULL;
+  // Never let the internal links to the external world
+  CefRefPtr<CefStreamReader> stream =
+     CefStreamReader::CreateForData(
+        static_cast<void*>(const_cast<char*>(kUnknownInternalContent.c_str())),
+        kUnknownInternalContent.size()
+     );
+  ASSERT(stream.get());
+  return new CefStreamResourceHandler("text/plain", stream);
 }
 
 bool

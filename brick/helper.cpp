@@ -150,14 +150,15 @@ namespace helper {
       if (file.size() < 2)
         return false;
 
-      // Basedir && remove the leading slash.
-      file = file.substr(file.find_last_of("/") + 1, file.length());
-
       // Verify that the file name is valid.
+      if (file.find("..") != std::string::npos)
+        return false;
+
       for(size_t i = 0; i < file.size(); ++i) {
         const char c = file[i];
-        if (!isalpha(c) && !isdigit(c) && c != '_' && c != '.')
+        if (!isalpha(c) && !isdigit(c) && c != '_' && c != '-' && c != '.' && c != '/') {
           return false;
+        }
       }
 
       // Determine the mime type based on the file extension, if any.
@@ -168,6 +169,14 @@ namespace helper {
           *mime_type = "text/html";
         else if (ext == "png")
           *mime_type = "image/png";
+        else if (ext == "jpg")
+          *mime_type = "image/jpeg";
+        else if (ext == "gif")
+          *mime_type = "image/gif";
+        else if (ext == "js")
+          *mime_type = "text/javascript";
+        else if (ext == "css")
+          *mime_type = "text/css";
         else
           return false;
       } else {

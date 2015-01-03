@@ -160,6 +160,28 @@ namespace window_util {
     }
 
     void
+    CenterPosition(CefWindowHandle handle) {
+      ::Display *display = cef_get_xdisplay();
+      DCHECK(display);
+
+      XSizeHints *size_hints = XAllocSizeHints();
+      if (!size_hints) {
+        LOG(ERROR) << "CenterPosition: Can't allocate memory for XAllocSizeHints";
+        return;
+      }
+
+      size_hints->flags = PWinGravity;
+      size_hints->win_gravity = CenterGravity;
+
+      XSetWMNormalHints(
+         display,
+         handle,
+         size_hints
+      );
+      XFree(size_hints);
+    }
+
+    void
     SetTitle(CefWindowHandle handle, std::string title) {
       std::string titleStr(title);
 

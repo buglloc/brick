@@ -28,9 +28,9 @@ var app = {
 
     AppExLogin(function(response, success) {
         if (success)
-            window.location.reload();
+          window.location.reload();
         else
-            this.navigate('/desktop_app/internals/login_failed.html');
+          window.location.href = '/desktop_app/internals/pages/login-failed';
     }.bind(this));
   },
   navigate: function(url) {
@@ -76,7 +76,7 @@ var app = {
   openWindow: function(name, callback) {
     var windowId = 'window' + Math.random();
     var windowHandle = window.open(
-        '/desktop_app/internals/empty?#name=' + name + '&id=' + windowId,
+        '/desktop_app/internals/pages/empty?#name=' + name + '&id=' + windowId,
         name,
         'width=300,height=300,resizable=no'
     );

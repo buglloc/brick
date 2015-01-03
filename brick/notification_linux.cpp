@@ -1,6 +1,7 @@
 #include <unistd.h>
 #include <string>
 #include <libnotify/notify.h>
+#include <include/base/cef_logging.h>
 
 #include "notification.h"
 
@@ -37,7 +38,7 @@ Notification::Notify(const std::string title, std::string body, int delay) {
   notify_notification_set_urgency(notification, NOTIFY_URGENCY_NORMAL);
 
   if (!notify_notification_show (notification, NULL)) {
-    fprintf (stderr, "failed to send notification\n");
+    LOG(WARNING) << "Failed to send notification";
   }
 }
 
@@ -46,7 +47,9 @@ Notification::Hide() {
   if (notification == NULL)
     return;
 
-  notify_notification_close(notification, NULL);
+  if (!notify_notification_close(notification, NULL))
+    LOG(WARNING) << "Failed to close notification";
+
   g_object_unref (G_OBJECT(notification));
   notification = NULL;
 }

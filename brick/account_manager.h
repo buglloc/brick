@@ -3,6 +3,7 @@
 #pragma once
 
 #include <include/cef_base.h>
+#include <bits/stl_bvector.h>
 #include "account.h"
 
 class AccountManager {
@@ -10,12 +11,12 @@ class AccountManager {
     AccountManager();
     ~AccountManager();
 
-//    typedef std::map<Account> AccountMap;
+//    typedef std::vector<Account *> account_vector;
     void AddAccount(Account* account);
     Account* GetCurrentAccount();
 
   protected:
-//    AccountMap account_list_;
+//    account_vector account_list_;
     Account* current_account_;
 
   // Include the default reference counting implementation.
