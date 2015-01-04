@@ -249,7 +249,6 @@ MainWindow::GetState() {
   } else {
     return WINDOW_STATE_NORMAL;
   }
-  return WINDOW_STATE_NORMAL;
 }
 
 void
