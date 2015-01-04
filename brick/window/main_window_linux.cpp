@@ -5,112 +5,114 @@
 #include "include/base/cef_scoped_ptr.h"
 #include "brick/cef_handler.h"
 
-void
-destroy_handler(GtkWidget *widget, gpointer data, MainWindow *self) {
-  // Quitting CEF is handled in ClientHandler::OnBeforeClose().
-}
+namespace {
 
-gboolean
-delete_event_handler(GtkWidget *widget, GdkEvent *event, GtkWindow *window, MainWindow *self) {
-  gtk_widget_hide(widget);
-  return true;
-}
+    void
+    destroy_handler(GtkWidget *widget, gpointer data, MainWindow *self) {
+      // Quitting CEF is handled in ClientHandler::OnBeforeClose().
+    }
 
-void
-size_allocated_handler(GtkWidget *widget, GtkAllocation *allocation, void *data) {
-  ClientHandler* handler = ClientHandler::GetInstance();
+    gboolean
+    delete_event_handler(GtkWidget *widget, GdkEvent *event, GtkWindow *window, MainWindow *self) {
+      gtk_widget_hide(widget);
+      return true;
+    }
 
-  if (!handler)
-    return;
+    void
+    size_allocated_handler(GtkWidget *widget, GtkAllocation *allocation, void *data) {
+      ClientHandler *handler = ClientHandler::GetInstance();
 
-  CefRefPtr<CefBrowser> browser = handler->GetBrowser();
-  if (!browser || browser->GetHost()->IsWindowRenderingDisabled())
-    return;
+      if (!handler)
+        return;
 
-  // Size the browser window to match the GTK widget.
-  ::Display* xdisplay = cef_get_xdisplay();
-  ::Window xwindow = browser->GetHost()->GetWindowHandle();
-  XWindowChanges changes = {0};
-  changes.width = allocation->width;
-  changes.height = allocation->height;
-  XConfigureWindow(xdisplay, xwindow, CWHeight | CWWidth, &changes);
-}
+      CefRefPtr<CefBrowser> browser = handler->GetBrowser();
+      if (!browser || browser->GetHost()->IsWindowRenderingDisabled())
+        return;
 
-gboolean
-focus_in_handler(GtkWidget *widget, GdkEventFocus *event, MainWindow *window) {
-  if(!event->in)
-    return false;
+      // Size the browser window to match the GTK widget.
+      ::Display *xdisplay = cef_get_xdisplay();
+      ::Window xwindow = browser->GetHost()->GetWindowHandle();
+      XWindowChanges changes = {0};
+      changes.width = allocation->width;
+      changes.height = allocation->height;
+      XConfigureWindow(xdisplay, xwindow, CWHeight | CWWidth, &changes);
+    }
 
-  return window->SetFocus(true);
-}
+    gboolean
+    focus_in_handler(GtkWidget *widget, GdkEventFocus *event, MainWindow *window) {
+      if (!event->in)
+        return false;
 
-gboolean
-focus_out_handler(GtkWidget *widget, GdkEventFocus *event, MainWindow *window) {
-  if(event->in)
-    return false;
+      return window->SetFocus(true);
+    }
 
-  return window->SetFocus(false);
-}
+    gboolean
+    focus_out_handler(GtkWidget *widget, GdkEventFocus *event, MainWindow *window) {
+      if (event->in)
+        return false;
+
+      return window->SetFocus(false);
+    }
 
 
-gboolean
-state_handler(GtkWidget *widget, GdkEventWindowState *event, gpointer user_data) {
-  ClientHandler* handler = ClientHandler::GetInstance();
+    gboolean
+    state_handler(GtkWidget *widget, GdkEventWindowState *event, gpointer user_data) {
+      ClientHandler *handler = ClientHandler::GetInstance();
 
-  if (!handler)
-    return true;
+      if (!handler)
+        return true;
 
-  if (!(event->changed_mask & GDK_WINDOW_STATE_ICONIFIED))
-    return true;
+      if (!(event->changed_mask & GDK_WINDOW_STATE_ICONIFIED))
+        return true;
 
-  CefRefPtr<CefBrowser> browser = handler->GetBrowser();
-  if (!browser)
-    return true;
+      CefRefPtr<CefBrowser> browser = handler->GetBrowser();
+      if (!browser)
+        return true;
 
-  const bool iconified = (event->new_window_state & GDK_WINDOW_STATE_ICONIFIED);
-  // Forward the state change event to the browser window.
-  ::Display* xdisplay = cef_get_xdisplay();
-  ::Window xwindow = browser->GetHost()->GetWindowHandle();
+      const bool iconified = (event->new_window_state & GDK_WINDOW_STATE_ICONIFIED);
+      // Forward the state change event to the browser window.
+      ::Display *xdisplay = cef_get_xdisplay();
+      ::Window xwindow = browser->GetHost()->GetWindowHandle();
 
-  // Retrieve the atoms required by the below XChangeProperty call.
-  const char* kAtoms[] = {
-     "_NET_WM_STATE",
-     "ATOM",
-     "_NET_WM_STATE_HIDDEN"
-  };
-  Atom atoms[3];
-  int result = XInternAtoms(xdisplay, const_cast<char**>(kAtoms), 3, false,
-     atoms);
-  if (!result)
-    NOTREACHED();
+      // Retrieve the atoms required by the below XChangeProperty call.
+      const char *kAtoms[] = {
+         "_NET_WM_STATE",
+         "ATOM",
+         "_NET_WM_STATE_HIDDEN"
+      };
+      Atom atoms[3];
+      int result = XInternAtoms(xdisplay, const_cast<char **>(kAtoms), 3, false,
+         atoms);
+      if (!result)
+        NOTREACHED();
 
-  if (iconified) {
-    // Set the hidden property state value.
-    scoped_ptr<Atom[]> data(new Atom[1]);
-    data[0] = atoms[2];
+      if (iconified) {
+        // Set the hidden property state value.
+        scoped_ptr<Atom[]> data(new Atom[1]);
+        data[0] = atoms[2];
 
-    XChangeProperty(xdisplay,
-       xwindow,
-       atoms[0],  // name
-       atoms[1],  // type
-       32,  // size in bits of items in 'value'
-       PropModeReplace,
-       reinterpret_cast<const unsigned char*>(data.get()),
-       1);  // num items
-  } else {
-    // Set an empty array of property state values.
-    XChangeProperty(xdisplay,
-       xwindow,
-       atoms[0],  // name
-       atoms[1],  // type
-       32,  // size in bits of items in 'value'
-       PropModeReplace,
-       NULL,
-       0);  // num items
-  }
+        XChangeProperty(xdisplay,
+           xwindow,
+           atoms[0],  // name
+           atoms[1],  // type
+           32,  // size in bits of items in 'value'
+           PropModeReplace,
+           reinterpret_cast<const unsigned char *>(data.get()),
+           1);  // num items
+      } else {
+        // Set an empty array of property state values.
+        XChangeProperty(xdisplay,
+           xwindow,
+           atoms[0],  // name
+           atoms[1],  // type
+           32,  // size in bits of items in 'value'
+           PropModeReplace,
+           NULL,
+           0);  // num items
+      }
 
-  return true;
-}
+      return true;
+    }
 
 // Only in new version of CEF
 //gboolean
@@ -132,6 +134,8 @@ state_handler(GtkWidget *widget, GdkEventWindowState *event, gpointer user_data)
 //
 //  return FALSE;  // Don't stop this message.
 //}
+
+} // namespace
 
 void
 MainWindow::Init() {
@@ -245,6 +249,7 @@ MainWindow::GetState() {
   } else {
     return WINDOW_STATE_NORMAL;
   }
+  return WINDOW_STATE_NORMAL;
 }
 
 void
