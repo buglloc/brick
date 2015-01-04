@@ -21,9 +21,15 @@ namespace {
   }
 
     void
+    menu_about(GtkMenuItem *item, StatusIcon *self) {
+      self->OnMenuAbout();
+    }
+
+    void
     menu_quit(GtkMenuItem *item, StatusIcon *self) {
       self->OnMenuQuit();
     }
+
 } // namespace
 
 
@@ -35,6 +41,10 @@ StatusIcon::Init() {
 
   // Create menu
   menu = gtk_menu_new();
+  gtk_menu_append(GTK_MENU(menu), gtk_separator_menu_item_new());
+  GtkWidget * about_item = gtk_menu_item_new_with_label ("About");
+  g_signal_connect(G_OBJECT(about_item), "activate", G_CALLBACK(menu_about), NULL);
+  gtk_menu_append(GTK_MENU(menu), about_item);
   GtkWidget * quit_item = gtk_menu_item_new_with_label ("Quit");
   g_signal_connect(G_OBJECT(quit_item), "activate", G_CALLBACK(menu_quit), NULL);
   gtk_menu_append(GTK_MENU(menu), quit_item);

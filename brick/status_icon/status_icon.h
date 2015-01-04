@@ -29,6 +29,7 @@ class StatusIcon {
     bool OnPopup() {return false;};
     bool OnMenuQuit();
     bool OnMenuPortalOpen();
+    bool OnMenuAbout();
 
   protected:
     std::string GetIconPath(Icon icon);

@@ -1,5 +1,6 @@
 #include <include/cef_app.h>
 #include "../cef_handler.h"
+#include "../window/about_window.h"
 
 namespace {
 
@@ -59,5 +60,12 @@ StatusIcon::OnMenuQuit() {
 
 bool
 StatusIcon::OnMenuPortalOpen() {
+  return true;
+}
+
+bool
+StatusIcon::OnMenuAbout() {
+  AboutWindow::Instance()->Show();
+
   return true;
 }

@@ -60,9 +60,12 @@ set(BRICK_STATUS_ICON_SRCS_LINUX
 set(BRICK_WINDOWS_SRCS
   window/main_window.cpp
   window/main_window.h
+  window/about_window.cpp
+  window/about_window.h
   )
 set(BRICK_WINDOWS_SRCS_LINUX
   window/main_window_linux.cpp
+  window/about_window_linux.cpp
   )
 set(BRICK_JSON_SRCS
   ../third-party/json/json.h
@@ -137,6 +140,7 @@ endif()
 
 
 FIND_LINUX_LIBRARIES("gmodule-2.0 gtk+-2.0 gthread-2.0")
+
 
 # Executable target.
 add_executable(${CEF_TARGET} ${BRICK_SRCS} ${BRICK_DESKTOP_EXT_EMBED_OBJ_FILES})
