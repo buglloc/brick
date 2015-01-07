@@ -188,6 +188,28 @@ ClientHandler::CloseAllBrowsers(bool force_close) {
 }
 
 void
+ClientHandler::CloseAllPopups(bool force_close) {
+  if (!CefCurrentlyOn(TID_UI)) {
+    // Execute on the UI thread.
+    CefPostTask(TID_UI,
+       base::Bind(&ClientHandler::CloseAllBrowsers, this, force_close));
+    return;
+  }
+
+  if (browser_list_.empty())
+    return;
+
+  BrowserList::const_iterator it = browser_list_.begin();
+  for (; it != browser_list_.end(); ++it) {
+    if (!(*it)->IsPopup())
+      continue;
+
+    (*it)->GetHost()->CloseBrowser(force_close);
+  }
+
+}
+
+void
 ClientHandler::OnBeforeContextMenu(
    CefRefPtr<CefBrowser> browser,
    CefRefPtr<CefFrame> frame,

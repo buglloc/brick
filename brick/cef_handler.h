@@ -165,6 +165,8 @@ public:
 
   // Request that all existing browser windows close.
   void CloseAllBrowsers(bool force_close);
+  // Request that all existing popup windows close.
+  void CloseAllPopups(bool force_close);
 
   bool IsClosing() const {
     return is_closing_;
