@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <!-- interface-requires gtk+ 3.0 -->
+  <!-- interface-naming-policy toplevel-contextual -->
+  <object class="GtkAboutDialog" id="about_dialog">
+    <property name="can_focus">False</property>
+    <property name="type_hint">normal</property>
+    <property name="program_name">Brick</property>
+    <property name="comments" translatable="yes">Simple Bitrix messenger client</property>
+    <property name="website">https://github.com/buglloc/brick</property>
+    <property name="website_label" translatable="yes">https://github.com/buglloc/brick</property>
+    <property name="authors">Buglloc &lt;buglloc@yandex.ru&gt;
+    </property>
+    <property name="logo_icon_name">brick</property>
+    <signal name="close" handler="close_event_handler" swapped="no"/>
+    <child internal-child="vbox">
+      <object class="GtkVBox" id="dialog-vbox1">
+        <property name="can_focus">False</property>
+        <child internal-child="action_area">
+          <object class="GtkHButtonBox" id="dialog-action_area1">
+            <property name="can_focus">False</property>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
