@@ -55,7 +55,6 @@ namespace {
 
 } // namespace
 
-
 void
 AboutWindow::Init() {
   GtkBuilder *builder = gtk_builder_new ();

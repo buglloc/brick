@@ -152,7 +152,7 @@ MainWindow::Init() {
   // Only in new version of CEF
 //  g_signal_connect(G_OBJECT(window_handler_), "configure-event", G_CALLBACK(window_configure_callback), NULL);
 
-  GtkWidget* vbox = gtk_vbox_new(FALSE, 0);
+  GtkWidget* vbox = gtk_vbox_new(false, 0);
   gtk_container_add(GTK_CONTAINER(window_handler_), vbox);
 }
 
