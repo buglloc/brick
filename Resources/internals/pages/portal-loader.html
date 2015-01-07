@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <link href="../assets/css/bootstrap.css" rel="stylesheet">
+    <link href="../assets/css/default-page.css" rel="stylesheet">
+    <script src="../assets/js/jquery.js"></script>
+    <script src="../assets/js/bootstrap.js"></script>
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="center-block" style="width:66px;">
+        <img src="../assets/img/waiter.gif" />
+      </div>
+    </div>
+    <script>
+      (function (app, $) {
+        function getHashValue(key) {
+            return location.hash.match(new RegExp(key+'=([^&]*)'))[1];
+        }
+     
+        $(document).ready((function (app) {
+          app.setIndicator('offline');
+          if (getHashValue('login') == 'yes') {
+            app.login(function() {
+              app.loadPortal();
+            });
+          } else {
+            app.loadPortal();
+          }
+        }).bind(null, app));
+      })(app, $);
+    </script>
+  </body>
+</html>
