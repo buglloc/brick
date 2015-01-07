@@ -1,6 +1,8 @@
 #include <include/cef_app.h>
+
 #include "../cef_handler.h"
 #include "../window/about_window.h"
+#include "../window/accounts_window.h"
 
 namespace {
 
@@ -66,6 +68,30 @@ StatusIcon::OnMenuPortalOpen() {
 bool
 StatusIcon::OnMenuAbout() {
   AboutWindow::Instance()->Show();
+  return true;
+}
+
+bool
+StatusIcon::OnMenuManageAccount() {
+  AccountsWindow::Instance()->Show();
+ return true;
+}
+
+bool
+StatusIcon::OnMenuChangeAccount(int id) {
+  ClientHandler *client_handler = ClientHandler::GetInstance();
+  AccountManager *account_manager = client_handler->GetAccountManager();
+  if (account_manager->GetCurrentAccount()->GetId() == id)
+    return true; // Selected current account
+
+  // ToDo: move this logic to ClientHandler? Sure!
+  SetIcon(Icon::OFFLINE);
+  client_handler->CloseAllPopups(true);
+  // ToDo: delete host/domain cookies here!!!
+  client_handler->GetAccountManager()->SwitchAccount(id);
+  client_handler->GetBrowser()->GetMainFrame()->LoadURL(
+     account_manager->GetCurrentAccount()->GetBaseUrl() + "internals/pages/portal-loader#login=yes"
+  );
 
   return true;
 }

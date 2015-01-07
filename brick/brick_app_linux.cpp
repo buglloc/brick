@@ -38,11 +38,13 @@ namespace {
     }
 }
 
+// static
 const char*
 BrickApp::GetConfigHome() {
   return g_get_user_config_dir();
 }
 
+// static
 const char*
 BrickApp::GetCacheHome() {
   return g_get_user_cache_dir();
@@ -65,7 +67,12 @@ int main(int argc, char* argv[]) {
   GetWorkingDir(szWorkingDir);
   std::string plain_config = BrickApp::GetConfig();
   AppSettings app_settings = AppSettings::InitByJson(plain_config);
-  CefRefPtr<AccountManager> account_manager = AccountManager::CreateInstance(plain_config);
+  CefRefPtr<AccountManager> account_manager(new AccountManager);
+  // ToDo: Fix this bulhit!
+  account_manager->Init(
+     std::string(BrickApp::GetConfigHome()) + "/" + APP_COMMON_NAME + "/accounts.json"
+  );
+
   if (account_manager == NULL)
     return 0;
 

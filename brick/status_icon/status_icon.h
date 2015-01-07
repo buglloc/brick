@@ -30,6 +30,8 @@ class StatusIcon {
     bool OnMenuQuit();
     bool OnMenuPortalOpen();
     bool OnMenuAbout();
+    bool OnMenuManageAccount();
+    bool OnMenuChangeAccount(int id);
 
   protected:
     std::string GetIconPath(Icon icon);
