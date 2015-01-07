@@ -15,6 +15,7 @@ class Account {
     std::string GetPassword();
     std::string GetBaseUrl();
     std::string GetLabel();
+    void SetDefault(bool is_default);
     bool IsDefault();
     bool IsSecure();
     bool CheckBaseUrl(std::string url);

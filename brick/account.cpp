@@ -18,6 +18,11 @@ Account::IsDefault() {
   return default_;
 }
 
+void
+Account::SetDefault(bool is_default) {
+  default_ = is_default;
+}
+
 bool
 Account::IsSecure() {
   return secure_;

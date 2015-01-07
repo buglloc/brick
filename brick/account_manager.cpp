@@ -38,8 +38,10 @@ bool
 AccountManager::SwitchAccount(int id) {
   if (accounts_.count(id) == 0)
     return false;
-
+  current_account_->SetDefault(false);
   current_account_ = accounts_[id];
+  current_account_->SetDefault(true);
+  Commit();
   return true;
 }
 
