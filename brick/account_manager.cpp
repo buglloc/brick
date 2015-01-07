@@ -2,7 +2,9 @@
 #include "include/base/cef_logging.h"
 
 #include <third-party/json/json.h>
+#include <sys/stat.h>
 #include "account_manager.h"
+#include "platform_util.h"
 
 AccountManager::AccountManager()
    : current_account_(NULL),
@@ -48,7 +50,6 @@ AccountManager::SwitchAccount(int id) {
 
 bool
 AccountManager::Commit() {
-  std::ofstream ofs(config_path_);
   Json::Value json(Json::objectValue);
   Json::Value json_accounts(Json::arrayValue);
 
@@ -63,7 +64,9 @@ AccountManager::Commit() {
     json_accounts.append(json_account);
   }
   json["accounts"] = json_accounts;
+  std::ofstream ofs(config_path_);
   ofs << json;
+  chmod(config_path_.c_str(), S_IRUSR|S_IWUSR);
   return true;
 }
 
