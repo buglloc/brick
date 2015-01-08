@@ -18,6 +18,12 @@ namespace {
     const char kMessageShowNotificationName[] = "ShowNotification";
 
     const char kCurrentPortalId[] = "current_portal";
+
+    const char kIndicatorOnlineName[]         = "online";
+    const char kIndicatorOfflineName[]        = "offline";
+    const char kIndicatorFlashName[]          = "flash";
+    const char kIndicatorFlashImportantName[] = "flash_important";
+
 } // namespace
 
 AppMessageDelegate::AppMessageDelegate()
@@ -160,13 +166,13 @@ AppMessageDelegate::OnProcessMessageReceived(
     if (error == NO_ERROR) {
       std::string status = request_args->GetString(1);
 
-      if (status == "online") {
+      if (status == kIndicatorOnlineName) {
         ClientHandler::GetInstance()->GetStatusIconHandle()->SetIcon(StatusIcon::Icon::ONLINE);
-      } else if (status == "offline") {
+      } else if (status == kIndicatorOfflineName) {
         ClientHandler::GetInstance()->GetStatusIconHandle()->SetIcon(StatusIcon::Icon::OFFLINE);
-      } else if (status == "flash") {
+      } else if (status == kIndicatorFlashName) {
         ClientHandler::GetInstance()->GetStatusIconHandle()->SetIcon(StatusIcon::Icon::FLASH);
-      } else if (status == "flash_important") {
+      } else if (status == kIndicatorFlashImportantName) {
         ClientHandler::GetInstance()->GetStatusIconHandle()->SetIcon(StatusIcon::Icon::FLASH_IMPORTANT);
       }
     }
