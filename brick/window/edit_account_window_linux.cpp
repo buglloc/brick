@@ -166,7 +166,6 @@ namespace {
 
     static void
     on_save_button(GtkWidget *widget, EditAccountWindow *self) {
-      LOG(INFO) << "Save button";
       const gchar* domain =
         gtk_entry_get_text(self->window_objects_.domain_entry);
       const gchar* login =

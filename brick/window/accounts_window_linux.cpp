@@ -144,7 +144,6 @@ namespace {
 
     static void
     on_add_button(GtkWidget *widget, AccountsWindow *self) {
-      LOG(INFO) << "Add button";
       EditAccountWindow *window(new EditAccountWindow);
       window->Init(CefRefPtr<Account> (new Account));
       window->Show();
@@ -152,7 +151,7 @@ namespace {
 
     static void
     on_edit_button(GtkWidget *widget, AccountsWindow *self) {
-      LOG(INFO) << "Edit button";
+      LOG(INFO) << "Not implemented: Edit button";
     }
 
     static void
