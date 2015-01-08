@@ -6,9 +6,9 @@
 #include "gtk/gtk.h"
 #endif
 #include <string>
+#include <include/cef_base.h>
 
-
-class StatusIcon {
+class StatusIcon : public CefBase {
 
   public:
     enum Icon {
@@ -43,6 +43,7 @@ class StatusIcon {
     GtkStatusIcon* icon_handler_;
   #endif
 
+IMPLEMENT_REFCOUNTING(StatusIcon);
 };
 
 #endif /* end of BRICK_BASE_STATUS_ICON_H_ */

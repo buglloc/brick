@@ -3,8 +3,9 @@
 #pragma once
 
 #include <string>
+#include <include/cef_base.h>
 
-class Account {
+class Account : public CefBase {
 
   public:
     Account(std::string login, std::string password, std::string base_url, bool is_default, int id = 0);
@@ -31,7 +32,8 @@ class Account {
     std::string label_;
     bool default_;
     bool secure_;
+  private:
+    IMPLEMENT_REFCOUNTING(Account);
 };
-
 
 #endif // BRICK_ACCOUNT_H_

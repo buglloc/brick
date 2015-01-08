@@ -23,7 +23,7 @@ enum WINDOW_STATE {
   WINDOW_STATE_FULLSCREEN
 };
 
-class MainWindow {
+class MainWindow : public CefBase {
 
   public:
 
@@ -67,6 +67,7 @@ class MainWindow {
     bool hided_;
     bool focused_;
 
+IMPLEMENT_REFCOUNTING(MainWindow);
 };
 
 #endif /* end of BRICK_MAIN_WINDOW_H_ */

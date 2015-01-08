@@ -20,7 +20,7 @@
 
 namespace {
 
-    ClientHandler *g_instance = NULL;
+    CefRefPtr<ClientHandler> g_instance = NULL;
     const char kInterceptionPath[] = "/desktop_app/internals/";
     std::string kScriptLoader = "appWindow.loadScript('#URL#');";
     std::string kUnknownInternalContent = "Failed to load resource";
@@ -44,7 +44,7 @@ ClientHandler::~ClientHandler() {
 }
 
 // static
-ClientHandler*
+CefRefPtr<ClientHandler>
 ClientHandler::GetInstance() {
   return g_instance;
 }
@@ -383,18 +383,18 @@ ClientHandler::OnProcessMessageReceived(
 }
 
 void
-ClientHandler::SetAccountManager(AccountManager* account_manager) {
+ClientHandler::SetAccountManager(CefRefPtr<AccountManager> account_manager) {
   account_manager_ = account_manager;
 }
 
-AccountManager*
+CefRefPtr<AccountManager>
 ClientHandler::GetAccountManager() const {
   return account_manager_;
 }
 
 
 void
-ClientHandler::SetMainWindowHandle(MainWindow* handle) {
+ClientHandler::SetMainWindowHandle(CefRefPtr<MainWindow> handle) {
   if (!CefCurrentlyOn(TID_UI)) {
     // Execute on the UI thread.
     CefPostTask(TID_UI,
@@ -405,14 +405,14 @@ ClientHandler::SetMainWindowHandle(MainWindow* handle) {
   main_handle_ = handle;
 }
 
-MainWindow*
+CefRefPtr<MainWindow>
 ClientHandler::GetMainWindowHandle() const {
   CEF_REQUIRE_UI_THREAD();
   return main_handle_;
 }
 
 void
-ClientHandler::SetStatusIconHandle(StatusIcon* handle) {
+ClientHandler::SetStatusIconHandle(CefRefPtr<StatusIcon> handle) {
   if (!CefCurrentlyOn(TID_UI)) {
     // Execute on the UI thread.
     CefPostTask(TID_UI,
@@ -423,7 +423,7 @@ ClientHandler::SetStatusIconHandle(StatusIcon* handle) {
   status_icon_handle_ = handle;
 }
 
-StatusIcon*
+CefRefPtr<StatusIcon>
 ClientHandler::GetStatusIconHandle() const {
   CEF_REQUIRE_UI_THREAD();
   return status_icon_handle_;

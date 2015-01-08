@@ -16,7 +16,7 @@ AccountManager::~AccountManager() {
 }
 
 bool
-AccountManager::AddAccount(Account* account) {
+AccountManager::AddAccount(const CefRefPtr<Account> account) {
   accounts_[++last_id_] = account;
   account->SetId(last_id_);
 
@@ -31,7 +31,6 @@ AccountManager::DeleteAccount(int id) {
   if (accounts_.count(id) == 0)
     return false;
 
-  delete accounts_[id];
   accounts_.erase(id);
   return true;
 }
@@ -55,7 +54,7 @@ AccountManager::Commit() {
 
   accounts_map::iterator it = accounts_.begin();
   for (; it != accounts_.end(); ++it) {
-    Account *account = (*it).second;
+    CefRefPtr<Account> account = (*it).second;
     Json::Value json_account(Json::objectValue);
     json_account["login"] = account->GetLogin();
     json_account["password"] = account->GetPassword();
@@ -70,7 +69,7 @@ AccountManager::Commit() {
   return true;
 }
 
-Account*
+CefRefPtr<Account>
 AccountManager::GetCurrentAccount() {
   return current_account_;
 }
@@ -100,11 +99,11 @@ AccountManager::Init(std::string config_path) {
 
   const Json::Value accounts = json["accounts"];
   for(unsigned int i=0; i < accounts.size(); ++i) {
-    AddAccount(new Account(
+    AddAccount(CefRefPtr<Account> (new Account(
        accounts[i].get("login", "").asString(),
        accounts[i].get("password", "").asString(),
        accounts[i].get("uri", "").asString(),
        accounts[i].get("default", false).asBool()
-    ));
+    )));
   }
 }

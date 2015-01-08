@@ -12,7 +12,7 @@
 
 #include "common/app_settings.h"
 
-class BrickApp {
+class BrickApp : public CefBase {
 
   public:
     static CefBrowserSettings GetBrowserSettings(AppSettings app_settings);
@@ -22,6 +22,8 @@ class BrickApp {
     // Platform specified methods
     static const char* GetConfigHome();
     static const char* GetCacheHome();
+  private:
+    IMPLEMENT_REFCOUNTING(BrickApp);
 };
 
 #endif // BRICK_APP_H_

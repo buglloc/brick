@@ -37,11 +37,11 @@ StatusIcon::GetIcon() {
 
 bool
 StatusIcon::OnClick() {
-  ClientHandler* client_handler = ClientHandler::GetInstance();
+  CefRefPtr<ClientHandler> client_handler = ClientHandler::GetInstance();
   if (!client_handler)
     return false;
 
-  MainWindow* window = client_handler->GetMainWindowHandle();
+  CefRefPtr<MainWindow> window = client_handler->GetMainWindowHandle();
   if (!window)
     return false;
 
@@ -79,8 +79,8 @@ StatusIcon::OnMenuManageAccount() {
 
 bool
 StatusIcon::OnMenuChangeAccount(int id) {
-  ClientHandler *client_handler = ClientHandler::GetInstance();
-  AccountManager *account_manager = client_handler->GetAccountManager();
+  CefRefPtr<ClientHandler> client_handler = ClientHandler::GetInstance();
+  CefRefPtr<AccountManager> account_manager = client_handler->GetAccountManager();
   if (account_manager->GetCurrentAccount()->GetId() == id)
     return true; // Selected current account
 

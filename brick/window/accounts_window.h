@@ -15,7 +15,7 @@
 #define ClientWindowHandle CefWindowHandle
 #endif
 
-class AccountsWindow {
+class AccountsWindow : public CefBase {
 
 public:
 
@@ -38,22 +38,23 @@ public:
 #if defined(__linux__)
   struct WindowObjects
   {
-    ClientWindowHandle      window;
-    AccountManager         *account_manager;
-    GtkTreeView            *accounts_view;
-    GtkListStore           *accounts_store;
+    ClientWindowHandle        window;
+    CefRefPtr<AccountManager> account_manager;
+    GtkTreeView              *accounts_view;
+    GtkListStore             *accounts_store;
   } window_objects_;
 #else
   struct WindowObjects
   {
-    ClientWindowHandle      window;
-    AccountManager         *account_manager;
+    ClientWindowHandle        window;
+    CefRefPtr<AccountManager> account_manager;
   } window_objects_;
 #endif
 
 private:
   static AccountsWindow* instance_;
 
+IMPLEMENT_REFCOUNTING(AccountsWindow);
 };
 
 #endif /* end of BRICK_ACCOUNTS_WINDOW_H_ */

@@ -15,8 +15,6 @@
 #undef Status   // Definition conflicts with cef_urlrequest.h
 #undef Success  // Definition conflicts with cef_message_router.h
 
-CefRefPtr<ClientHandler> g_handler;
-
 namespace {
     std::string APPICONS[] = {"brick16.png", "brick32.png", "brick48.png", "brick128.png", "brick256.png"};
     std::string szWorkingDir;  // The current working directory
@@ -80,19 +78,19 @@ int main(int argc, char* argv[]) {
   CefInitialize(main_args, BrickApp::GetCefSettings(app_settings), app.get(), NULL);
 
   // Create the handler.
-  g_handler = new ClientHandler();
+  CefRefPtr<ClientHandler> client_handler(new ClientHandler);
 
   // Initialize main window
-  MainWindow* main_window = new MainWindow();
+  CefRefPtr<MainWindow> main_window(new MainWindow);
   main_window->Init();
   main_window->SetTitle(APP_NAME);
   main_window->Show();
-  g_handler->SetMainWindowHandle(main_window);
-  g_handler->SetAccountManager(account_manager);
+  client_handler->SetMainWindowHandle(main_window);
+  client_handler->SetAccountManager(account_manager);
 
   // Initialize status icon
-  StatusIcon* status_icon = new StatusIcon(szWorkingDir + "/res/indicators/");
-  g_handler->SetStatusIconHandle(status_icon);
+  CefRefPtr<StatusIcon> status_icon(new StatusIcon(szWorkingDir + "/res/indicators/"));
+  client_handler->SetStatusIconHandle(status_icon);
 
   // Set window icon
   GList *list = NULL;
@@ -118,7 +116,7 @@ int main(int argc, char* argv[]) {
   std::string startup_url = account_manager->GetCurrentAccount()->GetBaseUrl() + "internals/pages/portal-loader#login=yes";
   // Create browser
   CefBrowserHost::CreateBrowserSync(
-     window_info, g_handler.get(),
+     window_info, client_handler.get(),
      startup_url, BrickApp::GetBrowserSettings(app_settings), NULL);
 
   // Install a signal handler so we clean up after ourselves.

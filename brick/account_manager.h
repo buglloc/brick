@@ -6,25 +6,25 @@
 #include <include/cef_base.h>
 #include "account.h"
 
-class AccountManager {
+class AccountManager : public CefBase {
   public:
-    typedef std::map<int, Account*> accounts_map;
+    typedef std::map<int, CefRefPtr<Account>> accounts_map;
 
     AccountManager();
     ~AccountManager();
 
     void Init(std::string config_path);
     accounts_map* GetAccounts();
-    bool AddAccount(Account* account);
+    bool AddAccount(const CefRefPtr<Account> account);
     bool DeleteAccount(int id);
     bool SwitchAccount(int id);
     bool Commit();
-    Account* GetCurrentAccount();
+    CefRefPtr<Account> GetCurrentAccount();
 
   protected:
     std::string config_path_;
     accounts_map accounts_;
-    Account* current_account_;
+    CefRefPtr<Account> current_account_;
     int last_id_;
 
   // Include the default reference counting implementation.

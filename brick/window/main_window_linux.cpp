@@ -20,7 +20,7 @@ namespace {
 
     void
     size_allocated_handler(GtkWidget *widget, GtkAllocation *allocation, void *data) {
-      ClientHandler *handler = ClientHandler::GetInstance();
+      CefRefPtr<ClientHandler> handler = ClientHandler::GetInstance();
 
       if (!handler)
         return;
@@ -57,7 +57,7 @@ namespace {
 
     gboolean
     state_handler(GtkWidget *widget, GdkEventWindowState *event, gpointer user_data) {
-      ClientHandler *handler = ClientHandler::GetInstance();
+      CefRefPtr<ClientHandler> handler = ClientHandler::GetInstance();
 
       if (!handler)
         return true;
@@ -120,7 +120,7 @@ namespace {
 //   GdkEvent* event,
 //   gpointer data) {
 //  // Called when size, position or stack order changes.
-//  ClientHandler* handler = ClientHandler::GetInstance();
+//  CefRefPtr<ClientHandler> handler = ClientHandler::GetInstance();
 //  if (handler) {
 //    CefRefPtr<CefBrowser> browser = handler->GetBrowser();
 //    if (browser) {

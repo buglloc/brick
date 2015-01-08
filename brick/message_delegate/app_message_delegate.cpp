@@ -68,7 +68,7 @@ AppMessageDelegate::OnProcessMessageReceived(
     }
 
     if (error == NO_ERROR) {
-      Account *account = ClientHandler::GetInstance()->GetAccountManager()->GetCurrentAccount();
+      CefRefPtr<Account> account = ClientHandler::GetInstance()->GetAccountManager()->GetCurrentAccount();
       HttpClient::response r = HttpClient::PostForm(
          account->GetBaseUrl() + "/login/",
          "action=login&login=" + account->GetLogin() + "&password=" + account->GetPassword()
@@ -186,7 +186,7 @@ AppMessageDelegate::OnProcessMessageReceived(
     }
 
     if (error == NO_ERROR) {
-      StatusIcon* status_icon = ClientHandler::GetInstance()->GetStatusIconHandle();
+      CefRefPtr<StatusIcon> status_icon = ClientHandler::GetInstance()->GetStatusIconHandle();
       bool is_important = request_args->GetBool(2);
       if (
           (is_important || status_icon->GetIcon() != StatusIcon::Icon::FLASH_IMPORTANT)

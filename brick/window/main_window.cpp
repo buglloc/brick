@@ -30,7 +30,7 @@ MainWindow::SetFocus(bool focused) {
   if (!focused)
     return false;
 
-  ClientHandler* handler = ClientHandler::GetInstance();
+  CefRefPtr<ClientHandler> handler = ClientHandler::GetInstance();
   if (!handler)
     return false;
 

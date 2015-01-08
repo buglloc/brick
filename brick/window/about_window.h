@@ -12,8 +12,9 @@
 
 #include <include/base/cef_lock.h>
 #include <include/internal/cef_linux.h>
+#include <include/cef_base.h>
 
-class AboutWindow {
+class AboutWindow : public CefBase {
 
 public:
 
@@ -30,6 +31,7 @@ private:
   ClientWindowHandle window_handler_;
   static AboutWindow* instance_;
 
+IMPLEMENT_REFCOUNTING(AboutWindow);
 };
 
 #endif /* end of BRICK_ABOUT_WINDOW_H_ */

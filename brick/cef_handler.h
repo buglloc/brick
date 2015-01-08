@@ -60,17 +60,17 @@ public:
   ClientHandler();
   ~ClientHandler();
 
-  void SetAccountManager(AccountManager* account_manager);
-  AccountManager* GetAccountManager() const;
+  void SetAccountManager(CefRefPtr<AccountManager> account_manager);
+  CefRefPtr<AccountManager> GetAccountManager() const;
 
-  void SetMainWindowHandle(MainWindow* handle);
-  MainWindow* GetMainWindowHandle() const;
+  void SetMainWindowHandle(CefRefPtr<MainWindow> handle);
+  CefRefPtr<MainWindow> GetMainWindowHandle() const;
 
-  void SetStatusIconHandle(StatusIcon* handle);
-  StatusIcon* GetStatusIconHandle() const;
+  void SetStatusIconHandle(CefRefPtr<StatusIcon> handle);
+  CefRefPtr<StatusIcon> GetStatusIconHandle() const;
 
   // Provide access to the single global instance of this object.
-  static ClientHandler *GetInstance();
+  static CefRefPtr<ClientHandler> GetInstance();
 
   // CefClient methods:
   virtual CefRefPtr<CefContextMenuHandler> GetContextMenuHandler() OVERRIDE {
@@ -218,11 +218,11 @@ private:
   bool is_closing_;
 
   // The main frame window handle.
-  MainWindow* main_handle_;
+  CefRefPtr<MainWindow> main_handle_;
 
-  StatusIcon* status_icon_handle_;
+  CefRefPtr<StatusIcon> status_icon_handle_;
 
-  AccountManager* account_manager_;
+  CefRefPtr<AccountManager> account_manager_;
 
   // Include the default reference counting implementation.
 IMPLEMENT_REFCOUNTING(ClientHandler);
