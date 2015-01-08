@@ -64,11 +64,14 @@ set(BRICK_WINDOWS_SRCS
   window/about_window.h
   window/accounts_window.cpp
   window/accounts_window.h
+  window/edit_account_window.cpp
+  window/edit_account_window.h
   )
 set(BRICK_WINDOWS_SRCS_LINUX
   window/main_window_linux.cpp
   window/about_window_linux.cpp
   window/accounts_window_linux.cpp
+  window/edit_account_window_linux.cpp
   )
 set(BRICK_JSON_SRCS
   ../third-party/json/json.h

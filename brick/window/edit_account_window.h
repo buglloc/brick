@@ -1,5 +1,5 @@
-#ifndef BRICK_ACCOUNTS_WINDOW_H_
-#define BRICK_ACCOUNTS_WINDOW_H_
+#ifndef BRICK_EDIT_ACCOUNT_WINDOW_H_
+#define BRICK_EDIT_ACCOUNT_WINDOW_H_
 #pragma once
 
 #include <include/base/cef_lock.h>
@@ -15,21 +15,20 @@
 #define ClientWindowHandle CefWindowHandle
 #endif
 
-class AccountsWindow : public CefBase {
+class EditAccountWindow : public CefBase {
 
 public:
 
-  AccountsWindow() {};
-  virtual ~AccountsWindow() {};
-  static AccountsWindow* Instance();
-  void ReloadAccounts();
+  EditAccountWindow() {};
+  ~EditAccountWindow() {};
+  void Save(std::string domain, std::string login, std::string password);
+
 
   // Platform specific methods
-  void Init();
+  void Init(CefRefPtr<Account> account);
   void Show();
   void Hide();
-  void Clear();
-  void AddToList(int id, std::string label);
+  void Close();
 
   enum {
     REF_ID = 0,
@@ -40,22 +39,21 @@ public:
   struct WindowObjects
   {
     ClientWindowHandle        window;
-    CefRefPtr<AccountManager> account_manager;
-    GtkTreeView              *accounts_view;
-    GtkListStore             *accounts_store;
+    CefRefPtr<Account>        account;
+    GtkEntry                 *domain_entry;
+    GtkEntry                 *login_entry;
+    GtkEntry                 *password_entry;
   } window_objects_;
 #else
   struct WindowObjects
   {
     ClientWindowHandle        window;
-    CefRefPtr<AccountManager> account_manager;
+    CefRefPtr<Account>        account;
   } window_objects_;
 #endif
 
-private:
-  static AccountsWindow* instance_;
 
-IMPLEMENT_REFCOUNTING(AccountsWindow);
+IMPLEMENT_REFCOUNTING(EditAccountWindow);
 };
 
-#endif /* end of BRICK_ACCOUNTS_WINDOW_H_ */
+#endif /* end of BRICK_EDIT_ACCOUNT_WINDOW_H_ */

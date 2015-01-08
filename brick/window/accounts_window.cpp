@@ -2,6 +2,7 @@
 
 void
 AccountsWindow::ReloadAccounts() {
+  Clear();
   AccountManager::accounts_map *accounts = window_objects_.account_manager->GetAccounts();
   AccountManager::accounts_map::iterator it = accounts->begin();
   for (; it != accounts->end(); ++it) {

@@ -8,29 +8,35 @@
 class Account : public CefBase {
 
   public:
-    Account(std::string login, std::string password, std::string base_url, bool is_default, int id = 0);
+    Account();
     ~Account();
 
     int GetId();
     std::string GetLogin();
     std::string GetPassword();
+    std::string GetDomain();
     std::string GetBaseUrl();
     std::string GetLabel();
-    void SetDefault(bool is_default);
-    bool IsDefault();
+    bool IsExisted();
     bool IsSecure();
     bool CheckBaseUrl(std::string url);
 
+    void SetLogin(std::string login);
+    void SetPassword(std::string password);
+    void SetDomain(std::string domain);
+    void SetSecure(bool is_secure);
     void SetId(int id);
 
+    std::string GenLabel();
+    std::string GenBaseUrl();
 
   protected:
     int id_;
     std::string login_;
     std::string password_;
+    std::string domain_;
     std::string base_url_;
     std::string label_;
-    bool default_;
     bool secure_;
   private:
     IMPLEMENT_REFCOUNTING(Account);

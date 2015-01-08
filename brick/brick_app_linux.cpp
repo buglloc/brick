@@ -71,9 +71,6 @@ int main(int argc, char* argv[]) {
      std::string(BrickApp::GetConfigHome()) + "/" + APP_COMMON_NAME + "/accounts.json"
   );
 
-  if (account_manager == NULL)
-    return 0;
-
   // Initialize CEF.
   CefInitialize(main_args, BrickApp::GetCefSettings(app_settings), app.get(), NULL);
 

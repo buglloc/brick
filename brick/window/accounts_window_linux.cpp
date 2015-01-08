@@ -1,6 +1,7 @@
 #include <include/base/cef_logging.h>
 #include <brick/cef_handler.h>
 #include "accounts_window.h"
+#include "edit_account_window.h"
 
 namespace {
 
@@ -11,7 +12,7 @@ namespace {
        "  <!-- interface-naming-policy project-wide -->\n"
        "  <object class=\"GtkListStore\" id=\"accounts_store\">\n"
        "    <columns>\n"
-       "      <!-- column-name Reference id -->\n"
+       "      <!-- column-name Reference -->\n"
        "      <column type=\"gint\"/>\n"
        "      <!-- column-name Account -->\n"
        "      <column type=\"gchararray\"/>\n"
@@ -20,6 +21,7 @@ namespace {
        "  <object class=\"GtkDialog\" id=\"accounts_dialog\">\n"
        "    <property name=\"can_focus\">False</property>\n"
        "    <property name=\"border_width\">5</property>\n"
+       "    <property name=\"title\" translatable=\"yes\">Manage Accounts</property>\n"
        "    <property name=\"window_position\">center</property>\n"
        "    <property name=\"default_width\">382</property>\n"
        "    <property name=\"default_height\">250</property>\n"
@@ -143,6 +145,9 @@ namespace {
     static void
     on_add_button(GtkWidget *widget, AccountsWindow *self) {
       LOG(INFO) << "Add button";
+      EditAccountWindow *window(new EditAccountWindow);
+      window->Init(CefRefPtr<Account> (new Account));
+      window->Show();
     }
 
     static void
@@ -243,4 +248,9 @@ AccountsWindow::AddToList(int id, std::string label) {
      LABEL, label.c_str(),
      -1
   );
+}
+
+void
+AccountsWindow::Clear() {
+  gtk_list_store_clear(window_objects_.accounts_store);
 }

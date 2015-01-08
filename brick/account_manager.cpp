@@ -19,10 +19,7 @@ bool
 AccountManager::AddAccount(const CefRefPtr<Account> account) {
   accounts_[++last_id_] = account;
   account->SetId(last_id_);
-
-  if (account->IsDefault()) {
-    current_account_ = account;
-  }
+  LOG(WARNING)<< "Acccount added: "<< last_id_;
   return true;
 }
 
@@ -39,10 +36,8 @@ bool
 AccountManager::SwitchAccount(int id) {
   if (accounts_.count(id) == 0)
     return false;
-  current_account_->SetDefault(false);
+
   current_account_ = accounts_[id];
-  current_account_->SetDefault(true);
-  Commit();
   return true;
 }
 
@@ -56,10 +51,11 @@ AccountManager::Commit() {
   for (; it != accounts_.end(); ++it) {
     CefRefPtr<Account> account = (*it).second;
     Json::Value json_account(Json::objectValue);
+    json_account["secure"] = account->IsSecure();
+    json_account["domain"] = account->GetDomain();
     json_account["login"] = account->GetLogin();
     json_account["password"] = account->GetPassword();
-    json_account["uri"] = account->GetBaseUrl();
-    json_account["default"] = account->IsDefault();
+    json_account["default"] = account == current_account_;
     json_accounts.append(json_account);
   }
   json["accounts"] = json_accounts;
@@ -99,11 +95,15 @@ AccountManager::Init(std::string config_path) {
 
   const Json::Value accounts = json["accounts"];
   for(unsigned int i=0; i < accounts.size(); ++i) {
-    AddAccount(CefRefPtr<Account> (new Account(
-       accounts[i].get("login", "").asString(),
-       accounts[i].get("password", "").asString(),
-       accounts[i].get("uri", "").asString(),
-       accounts[i].get("default", false).asBool()
-    )));
+    CefRefPtr<Account> account(new Account);
+    account->SetLogin(accounts[i].get("login", "").asString());
+    account->SetPassword(accounts[i].get("password", "").asString());
+    account->SetSecure(accounts[i].get("secure", false).asBool());
+    account->SetDomain(accounts[i].get("domain", "").asString());
+
+    AddAccount(account);
+    if (accounts[i].get("default", false).asBool()) {
+      SwitchAccount(account->GetId());
+    }
   }
 }
