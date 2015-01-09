@@ -23,6 +23,7 @@ class HttpClient
     typedef struct
     {
       int code;
+      char error[CURL_ERROR_SIZE];
       std::string body;
       header_map headers;
       cookie_map cookies;
@@ -54,6 +55,7 @@ class HttpClient
     static std::string Urlencode(const std::string& str, bool plusAsSpace = false);
 
   private:
+    static void InitCurl(CURL *curl, HttpClient::response *ret);
     static void ParseCookie(response *resp, const std::string &header);
     // writedata callback function
     static size_t WriteCallback(void *ptr, size_t size, size_t nmemb,
