@@ -10,6 +10,7 @@
 #include "helper.h"
 
 extern char _binary_desktop_extension_js_start;
+extern char _binary_desktop_extension_js_size;
 
 ClientApp::ClientApp() {
 //  CreateRenderDelegates(render_delegates_);
@@ -107,12 +108,13 @@ bool ClientApp::OnBeforeNavigation(CefRefPtr<CefBrowser> browser,
 }
 
 std::string ClientApp::GetExtensionJSSource() {
-  //# We objcopy the extensions/desktop_extensions.js file, and link it directly into the binary.
+  //# We objcopy the desktop_extensions.js file, and link it directly into the binary.
   //# See http://www.linuxjournal.com/content/embedding-file-executable-aka-hello-world-version-5967
-  //# And look at DESKTOP_EXT_EMBED_OBJ_FILES on CMake
+  //# And look at BRICK_EMBED_FILES on CMake
   const char* p = &_binary_desktop_extension_js_start;
-  std::string content(p);
+  unsigned long size = (unsigned long)&_binary_desktop_extension_js_size;
 
+  std::string content(p, size);
   return helper::string_replace(
      content, "#VERSION#", VERSION
   );
