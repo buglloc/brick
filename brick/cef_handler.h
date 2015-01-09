@@ -8,6 +8,7 @@
 #include <list>
 #include <map>
 #include <set>
+#include <brick/common/app_settings.h>
 #include "status_icon/status_icon.h"
 
 #include "include/cef_client.h"
@@ -62,6 +63,9 @@ public:
 
   void SetAccountManager(CefRefPtr<AccountManager> account_manager);
   CefRefPtr<AccountManager> GetAccountManager() const;
+
+  void SetAppSettings(AppSettings settings);
+  AppSettings GetAppSettings() const;
 
   void SetMainWindowHandle(CefRefPtr<MainWindow> handle);
   CefRefPtr<MainWindow> GetMainWindowHandle() const;
@@ -225,6 +229,8 @@ private:
   CefRefPtr<StatusIcon> status_icon_handle_;
 
   CefRefPtr<AccountManager> account_manager_;
+
+  AppSettings app_settings_;
 
   // Include the default reference counting implementation.
 IMPLEMENT_REFCOUNTING(ClientHandler);

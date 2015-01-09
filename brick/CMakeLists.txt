@@ -82,10 +82,6 @@ set(BRICK_JSON_SRCS
   ../third-party/json/jsoncpp.cpp
   )
 
-set(BRICK_RESOURCE_FILES
-  ../Resources/files/empty.html
-  )
-
 APPEND_PLATFORM_SOURCES(BRICK_SRCS)
 APPEND_PLATFORM_SOURCES(BRICK_STATUS_ICON_SRCS)
 APPEND_PLATFORM_SOURCES(BRICK_WINDOWS_SRCS)
@@ -113,7 +109,12 @@ set(BRICK_EMBED_FILES
   window/edit_account.glade
   )
 
-set(BRICK_RESOURCE_DIR        "${CMAKE_CURRENT_SOURCE_DIR}/brick/files")
+set(
+  BRICK_RESOURCES
+  app_icons
+  indicators
+  web
+  )
 
 # Target executable names.
 set(CEF_TARGET "brick")
@@ -165,16 +166,17 @@ target_link_libraries(${CEF_TARGET} libcef_lib libcef_dll_wrapper ${CEF_STANDARD
 # Set rpath so that libraries can be placed next to the executable.
 set_target_properties(${CEF_TARGET} PROPERTIES INSTALL_RPATH "$ORIGIN")
 set_target_properties(${CEF_TARGET} PROPERTIES BUILD_WITH_INSTALL_RPATH TRUE)
-set_target_properties(${CEF_TARGET} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CEF_TARGET_OUT_DIR})
+set_target_properties(${CEF_TARGET} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CEF_TARGET_OUT_DIR}/bin)
 
 # Copy binary and resource files to the target output directory.
-COPY_FILES("${CEF_TARGET}" "${CEF_BINARY_FILES}" "${CEF_BINARY_DIR}" "${CEF_TARGET_OUT_DIR}")
-COPY_FILES("${CEF_TARGET}" "${CEF_RESOURCE_FILES}" "${CEF_RESOURCE_DIR}" "${CEF_TARGET_OUT_DIR}")
-
-#COPY_FILES("${CEF_TARGET}" "${BRICK_RESOURCE_FILES}" "${CMAKE_CURRENT_SOURCE_DIR}" "${CEF_TARGET_OUT_DIR}")
+COPY_FILES("${CEF_TARGET}" "${CEF_BINARY_FILES}" "${CEF_BINARY_DIR}" "${CEF_TARGET_OUT_DIR}/bin")
+COPY_FILES("${CEF_TARGET}" "${CEF_RESOURCE_FILES}" "${CEF_RESOURCE_DIR}" "${CEF_TARGET_OUT_DIR}/resources/cef")
+COPY_FILES("${CEF_TARGET}" "${BRICK_RESOURCES}" "${CEF_RESOURCE_DIR}" "${CEF_TARGET_OUT_DIR}/resources")
+# Hack for ICU
+COPY_FILES("${CEF_TARGET}" "icudtl.dat" "${CEF_RESOURCE_DIR}" "${CEF_TARGET_OUT_DIR}/bin")
 
 target_link_libraries(${CEF_TARGET} ${LIBNOTIFY_LIBRARIES})
 target_link_libraries(${CEF_TARGET} ${CURL_LIBRARIES})
 
 # Set SUID permissions on the chrome-sandbox target.
-SET_LINUX_SUID_PERMISSIONS("${CEF_TARGET}" "${CEF_TARGET_OUT_DIR}/chrome-sandbox")
+SET_LINUX_SUID_PERMISSIONS("${CEF_TARGET}" "${CEF_TARGET_OUT_DIR}/bin/chrome-sandbox")

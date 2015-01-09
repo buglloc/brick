@@ -10,6 +10,7 @@
 #include "cef_handler.h"
 #include "cef_app.h"
 #include "window_util.h"
+#include "helper.h"
 
 
 #undef Status   // Definition conflicts with cef_urlrequest.h
@@ -65,6 +66,8 @@ int main(int argc, char* argv[]) {
   GetWorkingDir(szWorkingDir);
   std::string plain_config = BrickApp::GetConfig();
   AppSettings app_settings = AppSettings::InitByJson(plain_config);
+  app_settings.resource_dir = helper::BaseDir(szWorkingDir) + "/resources/";
+
   CefRefPtr<AccountManager> account_manager(new AccountManager);
   // ToDo: Fix this bulhit!
   account_manager->Init(
@@ -72,14 +75,14 @@ int main(int argc, char* argv[]) {
   );
 
   // Initialize CEF.
-  CefInitialize(main_args, BrickApp::GetCefSettings(app_settings), app.get(), NULL);
+  CefInitialize(main_args, BrickApp::GetCefSettings(szWorkingDir, app_settings), app.get(), NULL);
 
   // Create the handler.
   CefRefPtr<ClientHandler> client_handler(new ClientHandler);
 
   // Set default windows icon. Important to do this before any GTK window created!
   GList *list = NULL;
-  std::string icon_path = szWorkingDir + "/res/app_icons/";
+  std::string icon_path = app_settings.resource_dir + "/app_icons/";
   int icons_count = sizeof(APPICONS) / sizeof(APPICONS[0]);
   for (int i = 0; i < icons_count; ++i) {
     GdkPixbuf *icon = gdk_pixbuf_new_from_file((icon_path + APPICONS[i]).c_str(), NULL);
@@ -96,11 +99,12 @@ int main(int argc, char* argv[]) {
   main_window->Init();
   main_window->SetTitle(APP_NAME);
   main_window->Show();
+  client_handler->SetAppSettings(app_settings);
   client_handler->SetMainWindowHandle(main_window);
   client_handler->SetAccountManager(account_manager);
 
   // Initialize status icon
-  CefRefPtr<StatusIcon> status_icon(new StatusIcon(szWorkingDir + "/res/indicators/"));
+  CefRefPtr<StatusIcon> status_icon(new StatusIcon(app_settings.resource_dir + "/indicators/"));
   client_handler->SetStatusIconHandle(status_icon);
 
   CefWindowInfo window_info;
@@ -123,7 +127,7 @@ int main(int argc, char* argv[]) {
   // Create browser
   CefBrowserHost::CreateBrowserSync(
      window_info, client_handler.get(),
-     startup_url, BrickApp::GetBrowserSettings(app_settings), NULL);
+     startup_url, BrickApp::GetBrowserSettings(szWorkingDir, app_settings), NULL);
 
   // Install a signal handler so we clean up after ourselves.
   signal(SIGINT, TerminationSignalHandler);

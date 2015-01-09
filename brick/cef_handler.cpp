@@ -412,6 +412,16 @@ ClientHandler::GetMainWindowHandle() const {
 }
 
 void
+ClientHandler::SetAppSettings(AppSettings settings) {
+ app_settings_ = settings;
+}
+
+AppSettings
+ClientHandler::GetAppSettings() const {
+  return app_settings_;
+}
+
+void
 ClientHandler::SetStatusIconHandle(CefRefPtr<StatusIcon> handle) {
   if (!CefCurrentlyOn(TID_UI)) {
     // Execute on the UI thread.

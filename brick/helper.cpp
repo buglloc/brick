@@ -207,4 +207,24 @@ namespace helper {
 
       return hash;
     }
+
+    std::string
+    BaseDir(const std::string& source) {
+      if (source.size() <= 1) //Make sure it's possible to check the last character.
+      {
+        return source;
+      }
+
+      std::string result = source;
+      if (*(result.rbegin() + 1) == '/') //Remove trailing slash if it exists.
+      {
+        result.pop_back();
+      }
+      size_t pos = result.find_last_of('/');
+      if (pos == std::string::npos)
+        return source;
+
+      return result.substr(0, pos);
+    }
+
 }

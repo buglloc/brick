@@ -12,6 +12,7 @@ struct AppSettings {
   std::string cache_path;
   std::string log_file;
   std::string proxy_server;
+  std::string resource_dir;
   bool ignore_certificate_errors;
   cef_log_severity_t log_severity;
   bool start_minimized;

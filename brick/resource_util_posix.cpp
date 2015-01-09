@@ -6,29 +6,29 @@
 
 namespace {
 
-bool FileExists(const char* path) {
-  FILE* f = fopen(path, "rb");
-  if (f) {
-    fclose(f);
+  bool FileExists(const char* path) {
+    FILE* f = fopen(path, "rb");
+    if (f) {
+      fclose(f);
+      return true;
+    }
+    return false;
+  }
+
+  bool ReadFileToString(const char* path, std::string& data) {
+    // Implementation adapted from base/file_util.cc
+    FILE* file = fopen(path, "rb");
+    if (!file)
+      return false;
+
+    char buf[1 << 16];
+    size_t len;
+    while ((len = fread(buf, 1, sizeof(buf), file)) > 0)
+      data.append(buf, len);
+    fclose(file);
+
     return true;
   }
-  return false;
-}
-
-bool ReadFileToString(const char* path, std::string& data) {
-  // Implementation adapted from base/file_util.cc
-  FILE* file = fopen(path, "rb");
-  if (!file)
-    return false;
-
-  char buf[1 << 16];
-  size_t len;
-  while ((len = fread(buf, 1, sizeof(buf), file)) > 0)
-    data.append(buf, len);
-  fclose(file);
-
-  return true;
-}
 
 }  // namespace
 

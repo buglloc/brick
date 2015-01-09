@@ -289,7 +289,6 @@ if(OS_LINUX)
     cef_100_percent.pak
     cef_200_percent.pak
     devtools_resources.pak
-    icudtl.dat
     locales
     )
 endif()

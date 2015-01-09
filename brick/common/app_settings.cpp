@@ -8,6 +8,7 @@ AppSettings::AppSettings()
   cache_path(""),
   log_file(""),
   proxy_server(""),
+  resource_dir(""),
   ignore_certificate_errors(false),
   log_severity(LOGSEVERITY_DEFAULT),
 #ifndef NDEBUG
@@ -68,6 +69,11 @@ AppSettings::InitByJson(std::string json) {
   if (root.isMember("start_minimized")
      && root["start_minimized"].isBool()) {
     settings.start_minimized = root["start_minimized"].asBool();
+  }
+
+  if (root.isMember("resource_dir")
+     && root["resource_dir"].isString()) {
+    settings.profile_path = root["resource_dir"].asString();
   }
 
   return settings;

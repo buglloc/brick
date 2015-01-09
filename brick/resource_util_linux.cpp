@@ -4,25 +4,19 @@
 // found in the LICENSE file.
 
 #include "resource_util.h"
+#include "cef_handler.h"
 #include <unistd.h>
 
+namespace {
+    std::string resource_dir = "";
+}
+
 bool GetResourceDir(std::string& dir) {
-  char buff[1024];
 
-  // Retrieve the executable path.
-  ssize_t len = readlink("/proc/self/exe", buff, sizeof(buff)-1);
-  if (len == -1)
-    return false;
+  if (resource_dir.empty()) {
+    resource_dir = ClientHandler::GetInstance()->GetAppSettings().resource_dir + "/web";
+  }
 
-  buff[len] = 0;
-
-  // Remove the executable name from the path.
-  char* pos = strrchr(buff, '/');
-  if (!pos)
-    return false;
-
-  // Add "files" to the path.
-  strcpy(pos+1, "internals");  // NOLINT(runtime/printf)
-  dir = std::string(buff);
+  dir = resource_dir;
   return true;
 }
