@@ -14,13 +14,9 @@
     </div>
     <script>
       (function (app, $) {
-        function getHashValue(key) {
-            return location.hash.match(new RegExp(key+'=([^&]*)'))[1];
-        }
-     
         $(document).ready((function (app) {
           app.setIndicator('offline');
-          if (getHashValue('login') == 'yes') {
+          if (app.getHashValue('login') == 'yes') {
             app.login(function() {
               app.loadPortal();
             });
