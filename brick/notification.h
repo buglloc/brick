@@ -1,7 +1,7 @@
 #ifndef BRICK_NOTIFICATION_H_
 #define BRICK_NOTIFICATION_H_
 #pragma once
-
+#include <string>
 
 class Notification {
 
