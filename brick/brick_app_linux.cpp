@@ -77,6 +77,20 @@ int main(int argc, char* argv[]) {
   // Create the handler.
   CefRefPtr<ClientHandler> client_handler(new ClientHandler);
 
+  // Set default windows icon. Important to do this before any GTK window created!
+  GList *list = NULL;
+  std::string icon_path = szWorkingDir + "/res/app_icons/";
+  int icons_count = sizeof(APPICONS) / sizeof(APPICONS[0]);
+  for (int i = 0; i < icons_count; ++i) {
+    GdkPixbuf *icon = gdk_pixbuf_new_from_file((icon_path + APPICONS[i]).c_str(), NULL);
+    if (!icon)
+      continue;
+    list = g_list_append(list, icon);
+  }
+  gtk_window_set_default_icon_list(list);
+  g_list_foreach(list, (GFunc) g_object_unref, NULL);
+  g_list_free(list);
+
   // Initialize main window
   CefRefPtr<MainWindow> main_window(new MainWindow);
   main_window->Init();
@@ -88,19 +102,6 @@ int main(int argc, char* argv[]) {
   // Initialize status icon
   CefRefPtr<StatusIcon> status_icon(new StatusIcon(szWorkingDir + "/res/indicators/"));
   client_handler->SetStatusIconHandle(status_icon);
-
-  // Set window icon
-  GList *list = NULL;
-  std::string icon_path = szWorkingDir + "/res/app_icons/";
-  int icons_count = sizeof(APPICONS) / sizeof(APPICONS[0]);
-  for (int i = 0; i < icons_count; ++i) {
-    GdkPixbuf *icon = gdk_pixbuf_new_from_file((icon_path + APPICONS[i]).c_str(), NULL);
-    if (!icon)
-      continue;
-
-    list = g_list_append(list, icon);
-  }
-  gtk_window_set_icon_list(GTK_WINDOW(main_window->GetHandler()), list);
 
   CefWindowInfo window_info;
   // The GTK window must be visible before we can retrieve the XID.
