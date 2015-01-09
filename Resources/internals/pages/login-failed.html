@@ -11,11 +11,17 @@
     <div class="wrapper">
     <div class="wrapper-data">       
       <h2 class="form-signin-heading">Не удалось авторизоваться</h2>
+      <div data-role="reason-box"></div>
       <button class="btn btn-lg btn-primary btn-block" id="reconnect">Попробовать снова</button>   
     </div>
   </div>
     <script>
         $(document).ready((function (window, app) {
+          var reason = app.getHashValue('reason');
+          if (reason) {
+            $('div[data-role="reason-box"]').text('Причина: ' + decodeURIComponent(reason));
+          }
+
           app.setIndicator('offline');
             $('#reconnect').click(function() {
                 app.loadPortal();

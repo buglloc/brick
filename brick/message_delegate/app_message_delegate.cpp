@@ -81,13 +81,15 @@ AppMessageDelegate::OnProcessMessageReceived(
       );
 
       if (r.code != 200) {
-        LOG(WARNING) << "Auth failed: " << r.body;
+        LOG(WARNING) << "Auth failed: " << r.error << ", Body: " << r.body;
         error = ERR_ACCESS_DENIED;
         response_args->SetBool(2, false);
+        response_args->SetString(3, CefString(r.error));
       }
       else {
         SetCookies(CefCookieManager::GetGlobalManager(), account->GetBaseUrl(), r.cookies, account->IsSecure());
         response_args->SetBool(2, true);
+        response_args->SetString(3, "");
       }
     }
 

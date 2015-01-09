@@ -30,15 +30,15 @@ var app = {
       window.location.reload();
     });
 
-    onFailure = onFailure || (function() {
-      window.location.href = '/desktop_app/internals/pages/login-failed';
+    onFailure = onFailure || (function(error) {
+      window.location.href = '/desktop_app/internals/pages/login-failed#reason=' + encodeURIComponent(error);
     });
 
-    AppExLogin(function(response, success) {
+    AppExLogin(function(response, success, error) {
         if (success) {
           onSuccess();
         } else {
-          onFailure();
+          onFailure(error);
         }
     }.bind(this));
   },
@@ -110,6 +110,10 @@ var app = {
   setOption: function(name, value) {
     localStorage.setItem(name, value);
     return true;
+  },
+  getHashValue: function(key) {
+    var matches = location.hash.match(new RegExp(key+'=([^&]*)'));
+    return matches ? matches[1] : null;
   }
 };
 /*---------- App extension ---------*/
