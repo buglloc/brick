@@ -21,7 +21,7 @@ public:
 
   EditAccountWindow() {};
   ~EditAccountWindow() {};
-  void Save(std::string domain, std::string login, std::string password);
+  void Save(bool secure, std::string domain, std::string login, std::string password);
 
 
   // Platform specific methods
@@ -41,6 +41,7 @@ public:
     ClientWindowHandle        window;
     CefRefPtr<Account>        account;
     bool                      switch_on_save;
+    GtkComboBox              *protocol_chooser;
     GtkEntry                 *domain_entry;
     GtkEntry                 *login_entry;
     GtkEntry                 *password_entry;

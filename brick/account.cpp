@@ -1,3 +1,4 @@
+#include <utmp.h>
 #include "account.h"
 #include "include/base/cef_logging.h"
 
@@ -97,6 +98,21 @@ Account::SetDomain(std::string domain) {
 void
 Account::SetSecure(bool is_secure) {
   secure_ = is_secure;
+  base_url_ = GenBaseUrl();
+}
+
+void
+Account::Set(
+   bool secure,
+   std::string domain,
+   std::string login,
+   std::string password) {
+
+  secure_ = secure;
+  domain_ = domain;
+  login_ = login;
+  password_ = password;
+  label_ = GenLabel();
   base_url_ = GenBaseUrl();
 }
 

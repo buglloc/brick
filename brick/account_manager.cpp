@@ -126,4 +126,8 @@ AccountManager::Init(std::string config_path) {
     current_account_->SetDomain("brick.internal");
   }
 
+  if (current_account_ == NULL) {
+    SwitchAccount(1);
+  }
+
 }

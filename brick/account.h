@@ -21,6 +21,7 @@ class Account : public CefBase {
     bool IsSecure();
     bool CheckBaseUrl(std::string url);
 
+    void Set(bool secure, std::string domain, std::string login, std::string password);
     void SetLogin(std::string login);
     void SetPassword(std::string password);
     void SetDomain(std::string domain);

@@ -4,6 +4,7 @@
 
 void
 EditAccountWindow::Save(
+   bool secure,
    std::string domain,
    std::string login,
    std::string password) {
@@ -12,22 +13,29 @@ EditAccountWindow::Save(
   bool commit_needed = false;
 
   if (account->IsExisted()) {
-      if (account->GetLogin() != login) {
-        account->SetLogin(login);
-        commit_needed = true;
-      }
 
-      if (account->GetDomain() != domain) {
-        account->SetDomain(domain);
-        commit_needed = true;
-      }
+    if (account->IsSecure() != secure) {
+      account->SetSecure(secure);
+      commit_needed = true;
+    }
 
-      if (account->GetPassword() != password) {
-        account->SetPassword(password);
-        commit_needed = true;
-      }
+    if (account->GetDomain() != domain) {
+      account->SetDomain(domain);
+      commit_needed = true;
+    }
+
+    if (account->GetLogin() != login) {
+      account->SetLogin(login);
+      commit_needed = true;
+    }
+
+    if (account->GetPassword() != password) {
+      account->SetPassword(password);
+      commit_needed = true;
+    }
   } else {
     commit_needed = true;
+    account->SetSecure(secure);
     account->SetLogin(login);
     account->SetDomain(domain);
     account->SetPassword(password);

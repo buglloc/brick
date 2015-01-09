@@ -17,6 +17,7 @@ namespace {
          gtk_entry_get_text(GTK_ENTRY(self->window_objects_.password_entry));
 
       self->Save(
+         gtk_combo_box_get_active(self->window_objects_.protocol_chooser) == 0,
          std::string(domain),
          std::string(login),
          std::string(password)
@@ -45,6 +46,7 @@ EditAccountWindow::Init(CefRefPtr<Account> account, bool switch_on_save) {
   window_objects_.account = account;
   window_objects_.switch_on_save = switch_on_save;
   window_objects_.window = GTK_WIDGET(gtk_builder_get_object(builder, "edit_account_dialog"));
+  window_objects_.protocol_chooser = GTK_COMBO_BOX(gtk_builder_get_object(builder, "protocol_selector"));
   window_objects_.domain_entry = GTK_ENTRY(gtk_builder_get_object(builder, "domain_entry"));
   window_objects_.login_entry = GTK_ENTRY(gtk_builder_get_object(builder, "login_entry"));
   window_objects_.password_entry = GTK_ENTRY(gtk_builder_get_object(builder, "password_entry"));
