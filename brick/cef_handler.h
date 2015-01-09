@@ -184,6 +184,8 @@ public:
 
   bool IsAllowedUrl(std::string url);
 
+  void SwitchAccount(int id);
+
 protected:
   // Create all of ProcessMessageDelegate objects.
   static void CreateProcessMessageDelegates(

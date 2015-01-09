@@ -32,7 +32,7 @@ namespace {
 
 
 void
-EditAccountWindow::Init(CefRefPtr<Account> account) {
+EditAccountWindow::Init(CefRefPtr<Account> account, bool switch_on_save) {
   GtkBuilder *builder = gtk_builder_new ();
   GError* error = NULL;
 
@@ -43,6 +43,7 @@ EditAccountWindow::Init(CefRefPtr<Account> account) {
   }
 
   window_objects_.account = account;
+  window_objects_.switch_on_save = switch_on_save;
   window_objects_.window = GTK_WIDGET(gtk_builder_get_object(builder, "edit_account_dialog"));
   window_objects_.domain_entry = GTK_ENTRY(gtk_builder_get_object(builder, "domain_entry"));
   window_objects_.login_entry = GTK_ENTRY(gtk_builder_get_object(builder, "login_entry"));

@@ -111,7 +111,15 @@ int main(int argc, char* argv[]) {
   window_util::InitWindow(xwindow);
   window_util::InitHooks();
 
-  std::string startup_url = account_manager->GetCurrentAccount()->GetBaseUrl() + "internals/pages/portal-loader#login=yes";
+  std::string startup_url = account_manager->GetCurrentAccount()->GetBaseUrl();
+  if (account_manager->GetCurrentAccount()->IsExisted()) {
+    // Login to our account
+    startup_url += "internals/pages/portal-loader#login=yes";
+  } else {
+    // Otherwise let's show error page
+    startup_url += "internals/pages/home";
+  }
+
   // Create browser
   CefBrowserHost::CreateBrowserSync(
      window_info, client_handler.get(),

@@ -94,24 +94,36 @@ AccountManager::Init(std::string config_path) {
      (std::istreambuf_iterator<char>()    )
   );
 
-  bool parsingSuccessful = reader.parse(config, json);
-  if (!parsingSuccessful) {
-    LOG(ERROR) << "Failed to parse configuration\n"
-       << reader.getFormattedErrorMessages();
-    return;
-  }
-
-  const Json::Value accounts = json["accounts"];
-  for(unsigned int i=0; i < accounts.size(); ++i) {
-    CefRefPtr<Account> account(new Account);
-    account->SetLogin(accounts[i].get("login", "").asString());
-    account->SetPassword(accounts[i].get("password", "").asString());
-    account->SetSecure(accounts[i].get("secure", false).asBool());
-    account->SetDomain(accounts[i].get("domain", "").asString());
-
-    AddAccount(account);
-    if (accounts[i].get("default", false).asBool()) {
-      SwitchAccount(account->GetId());
+  if (!config.empty()) {
+    bool parsingSuccessful = reader.parse(config, json);
+    if (!parsingSuccessful) {
+      LOG(ERROR) << "Failed to parse configuration\n"
+         << reader.getFormattedErrorMessages();
+      return;
     }
+
+    const Json::Value accounts = json["accounts"];
+    for(unsigned int i=0; i < accounts.size(); ++i) {
+      CefRefPtr<Account> account(new Account);
+      account->SetLogin(accounts[i].get("login", "").asString());
+      account->SetPassword(accounts[i].get("password", "").asString());
+      account->SetSecure(accounts[i].get("secure", false).asBool());
+      account->SetDomain(accounts[i].get("domain", "").asString());
+
+      AddAccount(account);
+      if (accounts[i].get("default", false).asBool()) {
+        SwitchAccount(account->GetId());
+      }
+    }
+  } else {
+    LOG(INFO) << "Empty accounts config: " << config_path;
   }
+
+  if (!accounts_.size()) {
+    // If we don't have any accounts - lets fake current account
+    current_account_ = new Account;
+    current_account_->SetSecure(true);
+    current_account_->SetDomain("brick.internal");
+  }
+
 }

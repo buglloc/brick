@@ -1,3 +1,4 @@
+#include <include/base/cef_logging.h>
 #include <brick/cef_handler.h>
 #include "edit_account_window.h"
 
@@ -26,14 +27,19 @@ EditAccountWindow::Save(
         commit_needed = true;
       }
   } else {
+    commit_needed = true;
     account->SetLogin(login);
     account->SetDomain(domain);
-    account->SetPassword(domain);
+    account->SetPassword(password);
     ClientHandler::GetInstance()->GetAccountManager()->AddAccount(account);
   }
 
   if (commit_needed) {
     ClientHandler::GetInstance()->GetAccountManager()->Commit();
+  }
+
+  if (window_objects_.switch_on_save) {
+    ClientHandler::GetInstance()->SwitchAccount(account->GetId());
   }
 
   Close();

@@ -1,4 +1,5 @@
 #include <include/base/cef_bind.h>
+#include <brick/window/edit_account_window.h>
 #include "brick/helper.h"
 #include "brick/notification.h"
 #include "brick/platform_util.h"
@@ -16,6 +17,7 @@ namespace {
     const char kMessageSetIndicatorName[]     = "SetIndicator";
     const char kMessageIndicatorBadgeName[]   = "IndicatorBadgee";
     const char kMessageShowNotificationName[] = "ShowNotification";
+    const char kMessageAddAccountName[]       = "AddAccount";
 
     const char kCurrentPortalId[] = "current_portal";
 
@@ -64,7 +66,7 @@ AppMessageDelegate::OnProcessMessageReceived(
   }
 
   message_name = message_name.substr(strlen(kNameSpace));
-  
+
   if (message_name == kMessageLoginName) {
     // Parameters:
     //  0: int32 - callback id
@@ -197,8 +199,8 @@ AppMessageDelegate::OnProcessMessageReceived(
       CefRefPtr<StatusIcon> status_icon = ClientHandler::GetInstance()->GetStatusIconHandle();
       bool is_important = request_args->GetBool(2);
       if (
-          (is_important || status_icon->GetIcon() != StatusIcon::Icon::FLASH_IMPORTANT)
-          && request_args->GetInt(1) > 0
+         (is_important || status_icon->GetIcon() != StatusIcon::Icon::FLASH_IMPORTANT)
+            && request_args->GetInt(1) > 0
          ) {
         // Regular flash (e.g. notification) can't replace important flash status (e.g. messages)
         if (is_important) {
@@ -238,6 +240,24 @@ AppMessageDelegate::OnProcessMessageReceived(
          request_args->GetString(2),
          request_args->GetInt(3)
       );
+    };
+
+  } else if (message_name == kMessageAddAccountName) {
+    // Parameters:
+    // 0: int32 - callback id
+    // 1: bool - switch after add
+
+    if (
+       request_args->GetSize() != 2
+          || request_args->GetType(1) != VTYPE_BOOL
+       ) {
+      error = ERR_INVALID_PARAMS;
+    }
+
+    if (error == NO_ERROR) {
+      EditAccountWindow *window(new EditAccountWindow);
+      window->Init(CefRefPtr<Account> (new Account), request_args->GetBool(1));
+      window->Show();
     };
   }
 

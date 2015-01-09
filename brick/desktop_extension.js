@@ -114,6 +114,14 @@ var app = {
   getHashValue: function(key) {
     var matches = location.hash.match(new RegExp(key+'=([^&]*)'));
     return matches ? matches[1] : null;
+  },
+  addAccount: function(isSwitchNeeded) {
+    native function AppExAddAccount();
+
+    if (isSwitchNeeded !== true)
+      isSwitchNeeded = false;
+
+    AppExAddAccount(null, isSwitchNeeded);
   }
 };
 /*---------- App extension ---------*/

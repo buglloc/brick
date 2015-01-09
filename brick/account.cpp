@@ -11,7 +11,7 @@ Account::Account() {
   login_ = "";
   password_ = "";
   domain_ = "";
-  secure_ = false;
+  secure_ = true;
   label_ = "";
   base_url_ = "";
 }

@@ -84,14 +84,8 @@ StatusIcon::OnMenuChangeAccount(int id) {
   if (account_manager->GetCurrentAccount()->GetId() == id)
     return true; // Selected current account
 
-  // ToDo: move this logic to ClientHandler? Sure!
   SetIcon(Icon::OFFLINE);
-  client_handler->CloseAllPopups(true);
-  // ToDo: delete host/domain cookies here!!!
-  client_handler->GetAccountManager()->SwitchAccount(id);
-  client_handler->GetBrowser()->GetMainFrame()->LoadURL(
-     account_manager->GetCurrentAccount()->GetBaseUrl() + "internals/pages/portal-loader#login=yes"
-  );
+  client_handler->SwitchAccount(id);
 
   return true;
 }

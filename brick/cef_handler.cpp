@@ -456,6 +456,16 @@ ClientHandler::IsAllowedUrl(std::string url) {
   );
 }
 
+void
+ClientHandler::SwitchAccount(int id) {
+  CloseAllPopups(true);
+  // ToDo: delete host/domain cookies here!!!
+  account_manager_->SwitchAccount(id);
+  browser_->GetMainFrame()->LoadURL(
+     account_manager_->GetCurrentAccount()->GetBaseUrl() + "internals/pages/portal-loader#login=yes"
+  );
+}
+
 // static
 void
 ClientHandler::CreateProcessMessageDelegates(ProcessMessageDelegateSet& delegates) {

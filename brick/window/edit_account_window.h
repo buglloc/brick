@@ -25,7 +25,7 @@ public:
 
 
   // Platform specific methods
-  void Init(CefRefPtr<Account> account);
+  void Init(CefRefPtr<Account> account, bool switch_on_save = false);
   void Show();
   void Hide();
   void Close();
@@ -40,6 +40,7 @@ public:
   {
     ClientWindowHandle        window;
     CefRefPtr<Account>        account;
+    bool                      switch_on_save;
     GtkEntry                 *domain_entry;
     GtkEntry                 *login_entry;
     GtkEntry                 *password_entry;
@@ -49,6 +50,7 @@ public:
   {
     ClientWindowHandle        window;
     CefRefPtr<Account>        account;
+    bool                      switch_on_save;
   } window_objects_;
 #endif
 
