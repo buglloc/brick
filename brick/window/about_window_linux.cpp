@@ -35,21 +35,9 @@ AboutWindow::Init() {
   }
 
   window_handler_ = GTK_WIDGET(gtk_builder_get_object(builder, "about_dialog"));
-  LOG_IF(WARNING, !window_handler_)
-      << "Failed to handle aboud window";
 
   gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(window_handler_), kComment);
   g_signal_connect(G_OBJECT(window_handler_), "response", G_CALLBACK(on_response), this);
   g_signal_connect(G_OBJECT(window_handler_), "delete_event", G_CALLBACK(on_delete_event), this);
   g_object_unref(builder);
-}
-
-void
-AboutWindow::Show() {
-  gtk_widget_show_all(window_handler_);
-}
-
-void
-AboutWindow::Hide() {
-  gtk_widget_hide(window_handler_);
 }

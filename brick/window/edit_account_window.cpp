@@ -3,6 +3,11 @@
 #include "edit_account_window.h"
 
 void
+EditAccountWindow::Init() {
+  Init(CefRefPtr<Account> (new Account), false);
+}
+
+void
 EditAccountWindow::Save(
    bool secure,
    std::string domain,

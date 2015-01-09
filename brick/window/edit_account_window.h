@@ -2,39 +2,20 @@
 #define BRICK_EDIT_ACCOUNT_WINDOW_H_
 #pragma once
 
-#include <include/base/cef_lock.h>
-#include <include/internal/cef_linux.h>
+#include "base_window.h"
+#include "../account.h"
 
-#if defined(__linux__)
-// The Linux client uses GTK instead of the underlying platform type (X11).
-#include <gtk/gtk.h>
-#include <brick/account_manager.h>
-
-#define ClientWindowHandle GtkWidget*
-#else
-#define ClientWindowHandle CefWindowHandle
-#endif
-
-class EditAccountWindow : public CefBase {
+class EditAccountWindow : public BaseWindow {
 
 public:
-
   EditAccountWindow() {};
-  ~EditAccountWindow() {};
+  virtual ~EditAccountWindow() {};
   void Save(bool secure, std::string domain, std::string login, std::string password);
 
 
   // Platform specific methods
+  void Init() OVERRIDE;
   void Init(CefRefPtr<Account> account, bool switch_on_save = false);
-  void Show();
-  void Hide();
-  void Close();
-
-  enum {
-    REF_ID = 0,
-    LABEL,
-    N_COLUMN
-  };
 #if defined(__linux__)
   struct WindowObjects
   {

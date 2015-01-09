@@ -1,9 +1,5 @@
 #include "about_window.h"
 
-AboutWindow::AboutWindow()
-   : window_handler_(NULL) {
-}
-
 // static
 AboutWindow*
 AboutWindow::Instance() {

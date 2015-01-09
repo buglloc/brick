@@ -2,7 +2,7 @@
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <include/base/cef_logging.h>
-#include "include/base/cef_scoped_ptr.h"
+#include <include/base/cef_scoped_ptr.h>
 #include "brick/cef_handler.h"
 
 namespace {
@@ -43,7 +43,8 @@ namespace {
       if (!event->in)
         return false;
 
-      return window->SetFocus(true);
+      window->SetFocus(true);
+      return true;
     }
 
     gboolean
@@ -51,7 +52,8 @@ namespace {
       if (event->in)
         return false;
 
-      return window->SetFocus(false);
+      window->SetFocus(false);
+      return false;
     }
 
 
@@ -154,135 +156,4 @@ MainWindow::Init() {
 
   GtkWidget* vbox = gtk_vbox_new(false, 0);
   gtk_container_add(GTK_CONTAINER(window_handler_), vbox);
-}
-
-
-void
-MainWindow::Minimize() {
-  gtk_window_iconify(GTK_WINDOW(window_handler_));
-}
-
-void
-MainWindow::Maximize() {
-  gtk_window_maximize(GTK_WINDOW(window_handler_));
-}
-
-void
-MainWindow::Restore() {
-  if( this->GetState() == WINDOW_STATE_MAXIMIZED ) {
-    gtk_window_unmaximize(GTK_WINDOW(window_handler_));
-  } else if( this->GetState() == WINDOW_STATE_FULLSCREEN ) {
-    gtk_window_unfullscreen(GTK_WINDOW(window_handler_));
-  } else {
-    gtk_window_deiconify(GTK_WINDOW(window_handler_));
-  }
-
-}
-
-void
-MainWindow::Show() {
-  hided_ = false;
-  gtk_widget_show_all(window_handler_);
-}
-
-void
-MainWindow::Hide() {
-  hided_ = true;
-  gtk_widget_hide(window_handler_);
-}
-
-void
-MainWindow::Focus() {
-  gtk_window_present(GTK_WINDOW(window_handler_));
-}
-
-void
-MainWindow::Destroy() {
-  gtk_widget_destroy(window_handler_);
-}
-
-void
-MainWindow::Move(int left, int top, int width, int height) {
-  GtkWindow* window = GTK_WINDOW(window_handler_);
-  gtk_window_move(window, left, top);
-  gtk_window_resize(window, width, height);
-}
-
-void
-MainWindow::Move(int left, int top) {
-  gtk_window_move(GTK_WINDOW(window_handler_), left, top);
-}
-
-void
-MainWindow::Resize(int width, int height) {
-  gtk_window_resize(GTK_WINDOW(window_handler_), width, height);
-}
-
-const char*
-MainWindow::GetTitle() {
-  char* title = (char*) gtk_window_get_title(GTK_WINDOW(window_handler_));
-  if(title == NULL)
-    return "";
-  else
-    return title;
-}
-
-void
-MainWindow::SetTitle(const char* title) {
-  gtk_window_set_title(GTK_WINDOW(window_handler_), title);
-}
-
-void
-MainWindow::Fullscreen() {
-  gtk_window_fullscreen(GTK_WINDOW(window_handler_));
-}
-
-WINDOW_STATE
-MainWindow::GetState() {
-  gint state = gdk_window_get_state(window_handler_->window);
-  if (state & GDK_WINDOW_STATE_FULLSCREEN) {
-    return WINDOW_STATE_FULLSCREEN;
-  } else if (state & GDK_WINDOW_STATE_MAXIMIZED) {
-    return WINDOW_STATE_MAXIMIZED;
-  } else if (state & GDK_WINDOW_STATE_ICONIFIED) {
-    return WINDOW_STATE_MINIMIZED;
-  } else {
-    return WINDOW_STATE_NORMAL;
-  }
-}
-
-void
-MainWindow::SetTopmost(bool ontop) {
-  gtk_window_set_keep_above(GTK_WINDOW(window_handler_), ontop);
-}
-
-
-void
-MainWindow::SetResizable(bool resizable) {
-  gtk_window_set_resizable(GTK_WINDOW(window_handler_), resizable);
-}
-
-bool
-MainWindow::GetResizable() {
-  return (bool) gtk_window_get_resizable(GTK_WINDOW(window_handler_));
-}
-
-void
-MainWindow::SetShowChrome(bool showChrome) {
-  gtk_window_set_decorated(GTK_WINDOW(window_handler_), showChrome);
-}
-
-bool
-MainWindow::GetShowChrome() {
-  return (bool) gtk_window_get_decorated(GTK_WINDOW(window_handler_));
-}
-
-void
-MainWindow::SetOpacity(double opacity) {
-  gtk_window_set_opacity(GTK_WINDOW(window_handler_), opacity);
-}
-
-double
-MainWindow::GetOpacity() {
-  return gtk_window_get_opacity(GTK_WINDOW(window_handler_));
 }

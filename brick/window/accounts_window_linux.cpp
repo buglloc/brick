@@ -107,17 +107,10 @@ AccountsWindow::Init() {
 
   window_objects_.account_manager = ClientHandler::GetInstance()->GetAccountManager();
   window_objects_.edit_account_window = new EditAccountWindow();
-  window_objects_.window = GTK_WIDGET(gtk_builder_get_object(builder, "accounts_dialog"));
-  LOG_IF(WARNING, !window_objects_.window)
-      << "Failed to handle window";
-
+  window_handler_ = GTK_WIDGET(gtk_builder_get_object(builder, "accounts_dialog"));
+  window_objects_.window = window_handler_;
   window_objects_.accounts_view = GTK_TREE_VIEW(gtk_builder_get_object(builder, "accounts_view"));
-  LOG_IF(WARNING, !window_objects_.accounts_view)
-     << "Failed to handle AccountsView";
-
   window_objects_.accounts_store = GTK_LIST_STORE(gtk_builder_get_object(builder, "accounts_store"));
-  LOG_IF(WARNING, !window_objects_.accounts_store)
-     << "Failed to handle AccountsStore";
 
   g_signal_connect(gtk_builder_get_object(builder, "accounts_dialog"), "delete_event", G_CALLBACK(on_delete_event), this);
   g_signal_connect(gtk_builder_get_object(builder, "add_button"), "clicked", G_CALLBACK(on_add_button), this);
@@ -128,16 +121,6 @@ AccountsWindow::Init() {
   g_object_unref(builder);
 
   ReloadAccounts();
-}
-
-void
-AccountsWindow::Show() {
-  gtk_widget_show_all(window_objects_.window);
-}
-
-void
-AccountsWindow::Hide() {
-  gtk_widget_hide(window_objects_.window);
 }
 
 void

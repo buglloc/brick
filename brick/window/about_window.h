@@ -2,33 +2,20 @@
 #define BRICK_ABOUT_WINDOW_H_
 #pragma once
 
-#if defined(__linux__)
-// The Linux client uses GTK instead of the underlying platform type (X11).
-#include <gtk/gtk.h>
-#define ClientWindowHandle GtkWidget*
-#else
-#define ClientWindowHandle CefWindowHandle
-#endif
+#include "base_window.h"
 
-#include <include/base/cef_lock.h>
-#include <include/internal/cef_linux.h>
-#include <include/cef_base.h>
-
-class AboutWindow : public CefBase {
+class AboutWindow : public BaseWindow {
 
 public:
 
-  AboutWindow();
+  AboutWindow() {};
   virtual ~AboutWindow() {};
   static AboutWindow* Instance();
 
   // Platform specific methods
-  void Init();
-  void Show();
-  void Hide();
+  void Init() OVERRIDE;
 
 private:
-  ClientWindowHandle window_handler_;
   static AboutWindow* instance_;
 
 IMPLEMENT_REFCOUNTING(AboutWindow);

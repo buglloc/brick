@@ -45,7 +45,8 @@ EditAccountWindow::Init(CefRefPtr<Account> account, bool switch_on_save) {
 
   window_objects_.account = account;
   window_objects_.switch_on_save = switch_on_save;
-  window_objects_.window = GTK_WIDGET(gtk_builder_get_object(builder, "edit_account_dialog"));
+  window_handler_ = GTK_WIDGET(gtk_builder_get_object(builder, "edit_account_dialog"));
+  window_objects_.window = window_handler_;
   window_objects_.protocol_chooser = GTK_COMBO_BOX(gtk_builder_get_object(builder, "protocol_selector"));
   window_objects_.domain_entry = GTK_ENTRY(gtk_builder_get_object(builder, "domain_entry"));
   window_objects_.login_entry = GTK_ENTRY(gtk_builder_get_object(builder, "login_entry"));
@@ -72,19 +73,4 @@ EditAccountWindow::Init(CefRefPtr<Account> account, bool switch_on_save) {
      window_objects_.password_entry,
      account->GetPassword().c_str()
   );
-}
-
-void
-EditAccountWindow::Show() {
-  gtk_widget_show_all(window_objects_.window);
-}
-
-void
-EditAccountWindow::Close() {
-  gtk_widget_destroy(GTK_WIDGET(window_objects_.window));
-}
-
-void
-EditAccountWindow::Hide() {
-  gtk_widget_hide(window_objects_.window);
 }

@@ -58,6 +58,8 @@ set(BRICK_STATUS_ICON_SRCS_LINUX
   status_icon/status_icon_linux.cpp
   )
 set(BRICK_WINDOWS_SRCS
+  window/base_window.h
+  window/base_window.cpp
   window/main_window.cpp
   window/main_window.h
   window/about_window.cpp
@@ -68,6 +70,7 @@ set(BRICK_WINDOWS_SRCS
   window/edit_account_window.h
   )
 set(BRICK_WINDOWS_SRCS_LINUX
+  window/base_window_linux.cpp
   window/main_window_linux.cpp
   window/about_window_linux.cpp
   window/accounts_window_linux.cpp
