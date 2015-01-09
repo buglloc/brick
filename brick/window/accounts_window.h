@@ -9,6 +9,7 @@
 // The Linux client uses GTK instead of the underlying platform type (X11).
 #include <gtk/gtk.h>
 #include <brick/account_manager.h>
+#include "edit_account_window.h"
 
 #define ClientWindowHandle GtkWidget*
 #else
@@ -39,16 +40,18 @@ public:
 #if defined(__linux__)
   struct WindowObjects
   {
-    ClientWindowHandle        window;
-    CefRefPtr<AccountManager> account_manager;
-    GtkTreeView              *accounts_view;
-    GtkListStore             *accounts_store;
+    ClientWindowHandle           window;
+    CefRefPtr<AccountManager>    account_manager;
+    CefRefPtr<EditAccountWindow> edit_account_window;
+    GtkTreeView                 *accounts_view;
+    GtkListStore                *accounts_store;
   } window_objects_;
 #else
   struct WindowObjects
   {
-    ClientWindowHandle        window;
-    CefRefPtr<AccountManager> account_manager;
+    ClientWindowHandle           window;
+    CefRefPtr<AccountManager>    account_manager;
+    CefRefPtr<EditAccountWindow> edit_account_window;
   } window_objects_;
 #endif
 

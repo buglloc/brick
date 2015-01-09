@@ -15,10 +15,15 @@ namespace {
     }
 
     static void
+    on_edit_finished(GtkWidget *widget, AccountsWindow *self) {
+      self->ReloadAccounts();
+    }
+
+    static void
     on_add_button(GtkWidget *widget, AccountsWindow *self) {
-      CefRefPtr<EditAccountWindow> window(new EditAccountWindow);
-      window->Init(CefRefPtr<Account> (new Account));
-      window->Show();
+      self->window_objects_.edit_account_window->Init(CefRefPtr<Account> (new Account));
+      g_signal_connect(GTK_OBJECT(self->window_objects_.edit_account_window->window_objects_.window), "destroy", G_CALLBACK(on_edit_finished), self);
+      self->window_objects_.edit_account_window->Show();
     }
 
     static void
@@ -39,12 +44,12 @@ namespace {
            AccountsWindow::REF_ID, &ref_id,
            -1
         );
-        EditAccountWindow *window(new EditAccountWindow);
 
-        window->Init(
+        self->window_objects_.edit_account_window->Init(
            self->window_objects_.account_manager->GetById((int) ref_id)
         );
-        window->Show();
+        self->window_objects_.edit_account_window->Show();
+        g_signal_connect(GTK_OBJECT(self->window_objects_.edit_account_window->window_objects_.window), "destroy", G_CALLBACK(on_edit_finished), self);
 
       } else {
         LOG(WARNING)
@@ -101,6 +106,7 @@ AccountsWindow::Init() {
   }
 
   window_objects_.account_manager = ClientHandler::GetInstance()->GetAccountManager();
+  window_objects_.edit_account_window = new EditAccountWindow();
   window_objects_.window = GTK_WIDGET(gtk_builder_get_object(builder, "accounts_dialog"));
   LOG_IF(WARNING, !window_objects_.window)
       << "Failed to handle window";
