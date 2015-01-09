@@ -9,6 +9,7 @@ var TAB_B24NET = 2;
 var app = {
   windowCallbacks: {},
   defaultNotifyDuration: 3000,
+  authErrorCodes: {NONE:0, HTTP:1, CAPTCHA:2, OTP:3, UNKNOWN:4},
   setWindowCallback: function(windowId, callback) {
     app.windowCallbacks[windowId] = callback;
   },
@@ -30,15 +31,19 @@ var app = {
       window.location.reload();
     });
 
-    onFailure = onFailure || (function(error) {
-      window.location.href = '/desktop_app/internals/pages/login-failed#reason=' + encodeURIComponent(error);
+    onFailure = onFailure || (function(error_code, reason) {
+      window.location.href =
+          '/desktop_app/internals/pages/login-failed#' +
+          '&code=' + error_code +
+          '&reason=' + encodeURIComponent(reason)
+      ;
     });
 
-    AppExLogin(function(response, success, error) {
+    AppExLogin(function(response, success, error_code, reason) {
         if (success) {
           onSuccess();
         } else {
-          onFailure(error);
+          onFailure(error_code, reason);
         }
     }.bind(this));
   },

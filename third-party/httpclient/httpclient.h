@@ -28,6 +28,7 @@ class HttpClient
       header_map headers;
       cookie_map cookies;
     } response;
+
     /** struct used for uploading data */
     typedef struct
     {

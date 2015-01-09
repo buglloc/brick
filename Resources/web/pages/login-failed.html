@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <title>Авторизация не удалась</title>
+    <link href="../assets/css/bootstrap.css" rel="stylesheet">
+    <link href="../assets/css/default-page.css" rel="stylesheet">
+    <script src="../assets/js/jquery.js"></script>
+    <script src="../assets/js/bootstrap.js"></script>
+  </head>
+  <body>
+    <div class="wrapper">
+    <div class="wrapper-data">       
+      <h2 class="form-signin-heading">Не удалось авторизоваться</h2>
+      <div data-role="reason-box"></div>
+      <button class="btn btn-lg btn-primary btn-block" id="reconnect">Попробовать снова</button>   
+    </div>
+  </div>
+    <script>
+        $(document).ready((function (window, app) {
+          var errorCode = parseInt(app.getHashValue('code'), 10);
+          var reason = app.getHashValue('reason');
+          if (errorCode) {
+            var reasonBox = $('div[data-role="reason-box"]');
+
+            switch (errorCode) {
+              case app.authErrorCodes['HTTP']:
+                reasonBox.text('HTTP error: ' + decodeURIComponent(reason));
+                break;
+              case app.authErrorCodes['CAPTCHA']:
+                reasonBox.html('Превышено максимальное количество попыток входа.<br>' +
+                'Пожалуйста, сначала авторизуйтесь <b>в браузере</b>');
+                break;
+              case app.authErrorCodes['OTP']:
+                reasonBox.html('Для учетной записи включены одноразовые пароли.<br>' +
+                'Пожалуйста, воспользуйтесь <b>Паролем Приложений</b> для авторизации');
+                break;
+              default:
+                reasonBox.html('Произошла не известная ошибка :-(');
+                break;
+            }
+          }
+
+          app.setIndicator('offline');
+          $('#reconnect').click(function() {
+              app.loadPortal();
+          });
+        }).bind(null, window, app));
+    </script>
+  </body>
+</html>

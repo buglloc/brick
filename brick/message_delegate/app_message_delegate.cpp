@@ -77,21 +77,15 @@ AppMessageDelegate::OnProcessMessageReceived(
 
     if (error == NO_ERROR) {
       CefRefPtr<Account> account = ClientHandler::GetInstance()->GetAccountManager()->GetCurrentAccount();
-      HttpClient::response r = HttpClient::PostForm(
-         account->GetBaseUrl() + "/login/",
-         "action=login&login=" + account->GetLogin() + "&password=" + account->GetPassword()
-      );
+      Account::AuthResult auth_result = account->Auth();
 
-      if (r.code != 200) {
-        LOG(WARNING) << "Auth failed: " << r.error << ", Body: " << r.body;
-        error = ERR_ACCESS_DENIED;
-        response_args->SetBool(2, false);
-        response_args->SetString(3, CefString(r.error));
-      }
-      else {
-        SetCookies(CefCookieManager::GetGlobalManager(), account->GetBaseUrl(), r.cookies, account->IsSecure());
+      if (auth_result.success) {
+        SetCookies(CefCookieManager::GetGlobalManager(), account->GetBaseUrl(), auth_result.cookies, account->IsSecure());
         response_args->SetBool(2, true);
-        response_args->SetString(3, "");
+      } else {
+        response_args->SetBool(2, false);
+        response_args->SetInt(3, auth_result.error_code);
+        response_args->SetString(4, auth_result.http_error);
       }
     }
 

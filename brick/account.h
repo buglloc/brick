@@ -4,10 +4,30 @@
 
 #include <string>
 #include <include/cef_base.h>
+#include "third-party/httpclient/httpclient.h"
 
 class Account : public CefBase {
 
   public:
+
+    enum ERROR_CODE {
+    // Must be synced with desktop_extension.js!
+      NONE = 0,
+      HTTP,
+      CAPTCHA,
+      OTP,
+      UNKNOWN,
+      N_AUTH_ERROR
+    };
+
+    typedef struct
+    {
+      bool success;
+      ERROR_CODE error_code;
+      std::string http_error;
+      HttpClient::cookie_map cookies;
+    } AuthResult;
+
     Account();
     ~Account();
 
@@ -30,6 +50,8 @@ class Account : public CefBase {
 
     std::string GenLabel();
     std::string GenBaseUrl();
+
+    AuthResult Auth();
 
   protected:
     int id_;

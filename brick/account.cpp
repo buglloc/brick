@@ -1,4 +1,4 @@
-#include <utmp.h>
+#include <third-party/httpclient/httpclient.h>
 #include "account.h"
 #include "include/base/cef_logging.h"
 
@@ -123,4 +123,44 @@ Account::GenBaseUrl() {
       + domain_
       + "/desktop_app/" // ToDo: Need option here?
   );
+}
+
+Account::AuthResult
+Account::Auth() {
+  AuthResult result;
+  HttpClient::response r = HttpClient::PostForm(
+     base_url_ + "/login/",
+     "action=login&login=" + login_ + "&password=" + password_
+  );
+
+  if (r.code == -1 ) {
+    // http query failed
+    LOG(WARNING) << "Auth failed (HTTP error): " << r.error;
+    result.success = false;
+    result.error_code = ERROR_CODE::NONE;
+    result.http_error = r.error;
+  } else if (r.code == 200) {
+    // Auth successful
+    result.success = true;
+    result.error_code = ERROR_CODE::HTTP;
+    result.cookies = r.cookies;
+    result.http_error = "";
+  } else {
+    // Auth failed
+    LOG(WARNING) << "Auth failed (Application error): " << r.body;
+    if (r.body.find("needOtp:")) {
+      // ToDo: implement OTP authorization
+      result.error_code = ERROR_CODE::OTP;
+    } else if (r.body.find("captchaCode:")) {
+      result.error_code = ERROR_CODE::CAPTCHA;
+    } else {
+      result.error_code = ERROR_CODE::UNKNOWN;
+    }
+
+    result.success = false;
+    result.cookies = r.cookies;
+    result.http_error = "";
+  }
+
+  return result;
 }

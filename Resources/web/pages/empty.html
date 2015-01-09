@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>&nbsp;</title>
+</head>
+<body>
+<script>
+	(function (window) {
+	  if (!window.opener || !window.opener.app)
+		return;
+
+	  var callback = window.opener.app.getWindowCallback(app.getHashValue('id'));
+	   if (!callback)
+		return;
+
+	  callback(BXDesktopWindow);
+      appWindow.show();
+	})(window);
+</script>
+</body>
+</html>
