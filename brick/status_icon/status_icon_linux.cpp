@@ -61,11 +61,20 @@ StatusIcon::Init() {
   gtk_menu_append(GTK_MENU(accounts_menu), manage_accounts_item);
   gtk_menu_append(GTK_MENU(accounts_menu), gtk_separator_menu_item_new());
   AccountManager::accounts_map *accounts = ClientHandler::GetInstance()->GetAccountManager()->GetAccounts();
+  CefRefPtr<Account> current_account = ClientHandler::GetInstance()->GetAccountManager()->GetCurrentAccount();
   AccountManager::accounts_map::iterator it = accounts->begin();
   for (; it != accounts->end(); ++it) {
-    GtkWidget *account_item = gtk_menu_item_new_with_label(
-       (*it).second->GetLabel().c_str()
-    );
+    GtkWidget *account_item;
+    if (current_account == (*it).second) {
+      account_item = gtk_menu_item_new_with_label(
+         (" --> " + (*it).second->GetLabel()).c_str()
+      );
+    } else {
+     account_item = gtk_menu_item_new_with_label(
+         (*it).second->GetLabel().c_str()
+      );
+    }
+
     gtk_menu_append(GTK_MENU(accounts_menu), account_item);
     g_object_set_data(G_OBJECT(account_item), "account_id", GINT_TO_POINTER((*it).first));
     g_signal_connect(G_OBJECT(account_item), "activate", G_CALLBACK(menu_change_account), this);
