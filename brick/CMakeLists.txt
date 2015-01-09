@@ -37,7 +37,6 @@ set(BRICK_COMMON_SRCS
 set(BRICK_SRCS_LINUX
   cef_handler_linux.cpp
   brick_app_linux.cpp
-  resource_util_linux.cpp
   window_util_linux.cpp
   notification_linux.cpp
   platform_util_linux.cpp

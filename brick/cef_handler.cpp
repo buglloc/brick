@@ -328,7 +328,7 @@ ClientHandler::GetResourceHandler(
     file_name = file_name.substr(strlen(kInterceptionPath) - 1);
     // Load the resource from file.
     CefRefPtr<CefStreamReader> stream =
-       GetBinaryResourceReader(file_name.c_str());
+       GetBinaryResourceReader(app_settings_.resource_dir, file_name.c_str());
     if (stream.get())
       return new CefStreamResourceHandler(mime_type, stream);
   }

@@ -32,24 +32,20 @@ namespace {
 
 }  // namespace
 
-bool LoadBinaryResource(const char* resource_name, std::string& resource_data) {
-  std::string path;
-  if (!GetResourceDir(path))
-    return false;
-
-  path.append("/");
-  path.append(resource_name);
+bool LoadBinaryResource(const std::string resource_dir, const char* resource_name, std::string& resource_data) {
+  std::string path =
+     resource_dir
+      + "/web/"
+      + resource_name;
 
   return ReadFileToString(path.c_str(), resource_data);
 }
 
-CefRefPtr<CefStreamReader> GetBinaryResourceReader(const char* resource_name) {
-  std::string path;
-  if  (!GetResourceDir(path))
-    return NULL;
-
-  path.append("/");
-  path.append(resource_name);
+CefRefPtr<CefStreamReader> GetBinaryResourceReader(const std::string resource_dir, const char* resource_name) {
+  std::string path =
+     resource_dir
+      + "/web/"
+      + resource_name;
 
   if (!FileExists(path.c_str()))
     return NULL;
