@@ -103,6 +103,12 @@ set(BRICK_SRCS
   ${BRICK_HTTPCLIENT_SRCS}
   ${BRICK_JSON_SRCS}
   )
+set(BRICK_EMBED_FILES
+  desktop_extension.js
+  window/about.glade
+  window/accounts.glade
+  window/edit_account.glade
+  )
 
 set(BRICK_RESOURCE_DIR        "${CMAKE_CURRENT_SOURCE_DIR}/brick/files")
 
@@ -119,16 +125,16 @@ SET_CEF_TARGET_OUT_DIR()
 # Linux configuration.
 #
 
-set(BRICK_DESKTOP_EXT_EMBED_OBJ_FILES "desktop_extension.js")
-foreach(FILENAME ${BRICK_DESKTOP_EXT_EMBED_OBJ_FILES})
+set(BRICK_EMBED_FILES_COMPILED )
+foreach(FILENAME ${BRICK_EMBED_FILES})
     get_filename_component(FILENAME_ONLY ${FILENAME} NAME)
     get_filename_component(FILEPATH_ONLY ${FILENAME} PATH)
+    file(REMOVE ${CMAKE_CURRENT_BINARY_DIR}/${FILENAME_ONLY}.o)
     add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${FILENAME_ONLY}.o
                        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/brick/"
                        COMMAND ${CMAKE_OBJCOPY}
-                       ARGS -I binary -O elf64-x86-64 -B i386 ${FILENAME_ONLY} ${CMAKE_CURRENT_BINARY_DIR}/${FILENAME_ONLY}.o )
-    list(APPEND BRICK_DESKTOP_EXT_EMBED_OBJ_FILES ${CMAKE_CURRENT_BINARY_DIR}/${FILENAME_ONLY}.o)
-    set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${CMAKE_CURRENT_BINARY_DIR}/${FILENAME_ONLY}.o)
+                       ARGS -I binary -O elf64-x86-64 -B i386 ${FILENAME} ${CMAKE_CURRENT_BINARY_DIR}/${FILENAME_ONLY}.o )
+    list(APPEND BRICK_EMBED_FILES ${CMAKE_CURRENT_BINARY_DIR}/${FILENAME_ONLY}.o)
     message(STATUS "Objcopy'ing ${FILENAME}")
 endforeach(FILENAME)
 
@@ -149,7 +155,7 @@ FIND_LINUX_LIBRARIES("gmodule-2.0 gtk+-2.0 gthread-2.0")
 
 
 # Executable target.
-add_executable(${CEF_TARGET} ${BRICK_SRCS} ${BRICK_DESKTOP_EXT_EMBED_OBJ_FILES})
+add_executable(${CEF_TARGET} ${BRICK_SRCS} ${BRICK_EMBED_FILES})
 add_dependencies(${CEF_TARGET} libcef_dll_wrapper)
 target_link_libraries(${CEF_TARGET} libcef_lib libcef_dll_wrapper ${CEF_STANDARD_LIBS})
 

@@ -8,6 +8,8 @@
     <property name="title" translatable="yes">Add/Edit account</property>
     <property name="resizable">False</property>
     <property name="window_position">center</property>
+    <property name="default_width">382</property>
+    <property name="default_height">250</property>
     <property name="type_hint">dialog</property>
     <property name="has_separator">True</property>
     <child internal-child="vbox">
@@ -60,14 +62,6 @@
             <property name="n_rows">3</property>
             <property name="n_columns">2</property>
             <child>
-              <object class="GtkLabel" id="domain_label">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Domain</property>
-                <property name="track_visited_links">False</property>
-              </object>
-            </child>
-            <child>
               <object class="GtkLabel" id="login_label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -95,7 +89,6 @@
               <object class="GtkEntry" id="login_entry">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="invisible_char">●</property>
                 <property name="primary_icon_activatable">False</property>
                 <property name="secondary_icon_activatable">False</property>
                 <property name="primary_icon_sensitive">True</property>
@@ -110,9 +103,10 @@
             </child>
             <child>
               <object class="GtkEntry" id="password_entry">
-                <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="visibility">False</property>
                 <property name="invisible_char">●</property>
+                <property name="invisible_char_set">True</property>
                 <property name="primary_icon_activatable">False</property>
                 <property name="secondary_icon_activatable">False</property>
                 <property name="primary_icon_sensitive">True</property>
@@ -129,7 +123,6 @@
               <object class="GtkEntry" id="domain_entry">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="invisible_char">●</property>
                 <property name="primary_icon_activatable">False</property>
                 <property name="secondary_icon_activatable">False</property>
                 <property name="primary_icon_sensitive">True</property>
@@ -139,6 +132,14 @@
                 <property name="left_attach">1</property>
                 <property name="right_attach">2</property>
               </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="domain_label">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Domain</property>
+                <property name="track_visited_links">False</property>
+              </object>
             </child>
           </object>
           <packing>

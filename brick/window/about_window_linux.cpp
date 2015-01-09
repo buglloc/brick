@@ -4,43 +4,11 @@
 #include "gtk/gtk.h"
 #include "../brick_app.h"
 
-namespace {
-    const char kGladeWindow[]  = ""
-       "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-       "<interface>\n"
-       "  <!-- interface-requires gtk+ 3.0 -->\n"
-       "  <!-- interface-naming-policy toplevel-contextual -->\n"
-       "  <object class=\"GtkAboutDialog\" id=\"about_dialog\">\n"
-       "    <property name=\"can_focus\">False</property>\n"
-       "    <property name=\"type_hint\">normal</property>\n"
-       "    <property name=\"program_name\">Brick</property>\n"
-       "    <property name=\"comments\" translatable=\"yes\">Simple Bitrix messenger client\n"
-       "    Version " APP_VERSION ""
-       "    </property>\n"
-       "    <property name=\"website\">https://github.com/buglloc/brick</property>\n"
-       "    <property name=\"website_label\" translatable=\"yes\">https://github.com/buglloc/brick</property>\n"
-       "    <property name=\"authors\">Buglloc &lt;buglloc@yandex.ru&gt;\n"
-       "    </property>\n"
-       "    <property name=\"logo_icon_name\">brick</property>\n"
-       "    <signal name=\"close\" handler=\"close_event_handler\" swapped=\"no\"/>\n"
-       "    <child internal-child=\"vbox\">\n"
-       "      <object class=\"GtkVBox\" id=\"dialog-vbox1\">\n"
-       "        <property name=\"can_focus\">False</property>\n"
-       "        <child internal-child=\"action_area\">\n"
-       "          <object class=\"GtkHButtonBox\" id=\"dialog-action_area1\">\n"
-       "            <property name=\"can_focus\">False</property>\n"
-       "          </object>\n"
-       "          <packing>\n"
-       "            <property name=\"expand\">True</property>\n"
-       "            <property name=\"fill\">True</property>\n"
-       "            <property name=\"position\">0</property>\n"
-       "          </packing>\n"
-       "        </child>\n"
-       "      </object>\n"
-       "    </child>\n"
-       "  </object>\n"
-       "</interface>";
+extern char _binary_window_about_glade_start;
+extern char _binary_window_about_glade_size;
 
+namespace {
+    const char kComment[]  = "Simple Bitrix messenger client\nVersion " APP_VERSION;
 
     bool
     on_delete_event(GtkDialog *dialog, gpointer data, AboutWindow *self) {
@@ -59,7 +27,8 @@ void
 AboutWindow::Init() {
   GtkBuilder *builder = gtk_builder_new ();
   GError* error = NULL;
-  if (!gtk_builder_add_from_string(builder, kGladeWindow, strlen(kGladeWindow), &error))
+
+  if (!gtk_builder_add_from_string(builder, &_binary_window_about_glade_start, (gsize)&_binary_window_about_glade_size, &error))
   {
     LOG(WARNING) << "Failed to build aboud window: " << error->message;
     g_error_free (error);
@@ -69,6 +38,7 @@ AboutWindow::Init() {
   LOG_IF(WARNING, !window_handler_)
       << "Failed to handle aboud window";
 
+  gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(window_handler_), kComment);
   g_signal_connect(G_OBJECT(window_handler_), "response", G_CALLBACK(on_response), this);
   g_signal_connect(G_OBJECT(window_handler_), "delete_event", G_CALLBACK(on_delete_event), this);
   g_object_unref(builder);

@@ -1,4 +1,5 @@
 #include "account.h"
+#include "include/base/cef_logging.h"
 
 namespace {
     const char fake_id = -1;

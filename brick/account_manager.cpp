@@ -19,7 +19,6 @@ bool
 AccountManager::AddAccount(const CefRefPtr<Account> account) {
   accounts_[++last_id_] = account;
   account->SetId(last_id_);
-  LOG(WARNING)<< "Acccount added: "<< last_id_;
   return true;
 }
 
@@ -41,6 +40,15 @@ AccountManager::SwitchAccount(int id) {
   return true;
 }
 
+CefRefPtr<Account>
+AccountManager::GetById(int id) {
+  if (accounts_.count(id) == 0) {
+    LOG(WARNING) << "Non existent account: " << id;
+    return NULL;
+  }
+
+  return accounts_[id];
+}
 
 bool
 AccountManager::Commit() {

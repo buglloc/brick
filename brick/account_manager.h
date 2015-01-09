@@ -20,6 +20,7 @@ class AccountManager : public CefBase {
     bool SwitchAccount(int id);
     bool Commit();
     CefRefPtr<Account> GetCurrentAccount();
+    CefRefPtr<Account> GetById(int id);
 
   protected:
     std::string config_path_;
