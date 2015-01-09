@@ -474,6 +474,7 @@ ClientHandler::SwitchAccount(int id) {
   browser_->GetMainFrame()->LoadURL(
      account_manager_->GetCurrentAccount()->GetBaseUrl() + "internals/pages/portal-loader#login=yes"
   );
+  account_manager_->Commit();
 }
 
 // static
