@@ -135,10 +135,16 @@ Account::Auth() {
 
   if (r.code == 200) {
     // Auth successful
-    result.success = true;
-    result.error_code = ERROR_CODE::NONE;
-    result.cookies = r.cookies;
-    result.http_error = "";
+    if (r.body.find("success: true") != std::string::npos) {
+      result.success = true;
+      result.error_code = ERROR_CODE::NONE;
+      result.cookies = r.cookies;
+    } else {
+      // Probably application fatal occurred
+      result.success = false;
+      result.error_code = ERROR_CODE::UNKNOWN;
+    }
+
   } else if (r.code == -1 ) {
     // http query failed
     LOG(WARNING) << "Auth failed (HTTP error): " << r.error;
@@ -148,10 +154,10 @@ Account::Auth() {
   } else {
     // Auth failed
     LOG(WARNING) << "Auth failed (Application error): " << r.body;
-    if (r.body.find("needOtp:")) {
+    if (r.body.find("needOtp:") != std::string::npos) {
       // ToDo: implement OTP authorization
       result.error_code = ERROR_CODE::OTP;
-    } else if (r.body.find("captchaCode:")) {
+    } else if (r.body.find("captchaCode:") != std::string::npos) {
       result.error_code = ERROR_CODE::CAPTCHA;
     } else {
       result.error_code = ERROR_CODE::UNKNOWN;
@@ -159,7 +165,6 @@ Account::Auth() {
 
     result.success = false;
     result.cookies = r.cookies;
-    result.http_error = "";
   }
 
   return result;
