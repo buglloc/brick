@@ -334,7 +334,7 @@ class WeakPtrFactory {
 // it. This avoids the class itself implementing boilerplate to dispense weak
 // pointers.  However, since SupportsWeakPtr's destructor won't invalidate
 // weak pointers to the class until after the derived class' members have been
-// destroyed, its use can lead to subtle use-after-destroy_handler issues.
+// destroyed, its use can lead to subtle use-after-destroy issues.
 template <class T>
 class SupportsWeakPtr : public internal::SupportsWeakPtrBase {
  public:

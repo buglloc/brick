@@ -218,7 +218,7 @@ class CefMessageRouterBrowserSide :
   ///
   // Callback associated with a single pending asynchronous query. Execute the
   // Success or Failure method to send an asynchronous response to the
-  // associated JavaScript handler. It is a runtime error to destroy_handler a Callback
+  // associated JavaScript handler. It is a runtime error to destroy a Callback
   // object associated with an uncanceled query without first executing one of
   // the callback methods. The methods of this class may be called on any
   // browser process thread.

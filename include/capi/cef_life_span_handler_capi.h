@@ -102,7 +102,7 @@ typedef struct _cef_life_span_handler_t {
   //
   // If CEF created an OS window for the browser returning false (0) will send
   // an OS close notification to the browser window's top-level owner (e.g.
-  // WM_CLOSE on Windows, performClose: on OS-X and "delete_event_handler" on Linux). If
+  // WM_CLOSE on Windows, performClose: on OS-X and "delete_event" on Linux). If
   // no OS window exists (window rendering disabled) returning false (0) will
   // cause the browser object to be destroyed immediately. Return true (1) if
   // the browser is parented to another window and that other window needs to
@@ -127,7 +127,7 @@ typedef struct _cef_life_span_handler_t {
   // browser is parented to an application-provided top-level OS window. 1.
   // User clicks the window close button which sends an OS close
   //     notification (e.g. WM_CLOSE on Windows, performClose: on OS-X and
-  //     "delete_event_handler" on Linux).
+  //     "delete_event" on Linux).
   // 2.  Application's top-level window receives the close notification and:
   //     A. Calls CefBrowserHost::CloseBrowser(false).
   //     B. Cancels the window close.

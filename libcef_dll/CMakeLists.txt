@@ -80,6 +80,8 @@ set(LIBCEF_CPPTOC_SRCS
   cpptoc/life_span_handler_cpptoc.h
   cpptoc/load_handler_cpptoc.cc
   cpptoc/load_handler_cpptoc.h
+  cpptoc/navigation_entry_visitor_cpptoc.cc
+  cpptoc/navigation_entry_visitor_cpptoc.h
   cpptoc/print_handler_cpptoc.cc
   cpptoc/print_handler_cpptoc.h
   cpptoc/read_handler_cpptoc.cc
@@ -166,6 +168,8 @@ set(LIBCEF_CTOCPP_SRCS
   ctocpp/list_value_ctocpp.h
   ctocpp/menu_model_ctocpp.cc
   ctocpp/menu_model_ctocpp.h
+  ctocpp/navigation_entry_ctocpp.cc
+  ctocpp/navigation_entry_ctocpp.h
   ctocpp/post_data_ctocpp.cc
   ctocpp/post_data_ctocpp.h
   ctocpp/post_data_element_ctocpp.cc
@@ -242,6 +246,7 @@ set(LIBCEF_INCLUDE_SRCS
   ../include/cef_life_span_handler.h
   ../include/cef_load_handler.h
   ../include/cef_menu_model.h
+  ../include/cef_navigation_entry.h
   ../include/cef_origin_whitelist.h
   ../include/cef_pack_resources.h
   ../include/cef_pack_strings.h
@@ -361,6 +366,7 @@ set(LIBCEF_INCLUDE_CAPI_SRCS
   ../include/capi/cef_life_span_handler_capi.h
   ../include/capi/cef_load_handler_capi.h
   ../include/capi/cef_menu_model_capi.h
+  ../include/capi/cef_navigation_entry_capi.h
   ../include/capi/cef_origin_whitelist_capi.h
   ../include/capi/cef_path_util_capi.h
   ../include/capi/cef_print_handler_capi.h

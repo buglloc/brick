@@ -101,7 +101,7 @@ class CefLifeSpanHandler : public virtual CefBase {
   //
   // If CEF created an OS window for the browser returning false will send an OS
   // close notification to the browser window's top-level owner (e.g. WM_CLOSE
-  // on Windows, performClose: on OS-X and "delete_event_handler" on Linux). If no OS
+  // on Windows, performClose: on OS-X and "delete_event" on Linux). If no OS
   // window exists (window rendering disabled) returning false will cause the
   // browser object to be destroyed immediately. Return true if the browser is
   // parented to another window and that other window needs to receive close
@@ -125,7 +125,7 @@ class CefLifeSpanHandler : public virtual CefBase {
   // browser is parented to an application-provided top-level OS window.
   // 1.  User clicks the window close button which sends an OS close
   //     notification (e.g. WM_CLOSE on Windows, performClose: on OS-X and
-  //     "delete_event_handler" on Linux).
+  //     "delete_event" on Linux).
   // 2.  Application's top-level window receives the close notification and:
   //     A. Calls CefBrowserHost::CloseBrowser(false).
   //     B. Cancels the window close.

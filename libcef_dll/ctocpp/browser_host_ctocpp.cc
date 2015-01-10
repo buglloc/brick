@@ -11,6 +11,7 @@
 //
 
 #include "libcef_dll/cpptoc/client_cpptoc.h"
+#include "libcef_dll/cpptoc/navigation_entry_visitor_cpptoc.h"
 #include "libcef_dll/cpptoc/run_file_dialog_callback_cpptoc.h"
 #include "libcef_dll/ctocpp/browser_ctocpp.h"
 #include "libcef_dll/ctocpp/browser_host_ctocpp.h"
@@ -310,6 +311,24 @@ void CefBrowserHostCToCpp::CloseDevTools() {
   struct_->close_dev_tools(struct_);
 }
 
+void CefBrowserHostCToCpp::GetNavigationEntries(
+    CefRefPtr<CefNavigationEntryVisitor> visitor, bool current_only) {
+  if (CEF_MEMBER_MISSING(struct_, get_navigation_entries))
+    return;
+
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Verify param: visitor; type: refptr_diff
+  DCHECK(visitor.get());
+  if (!visitor.get())
+    return;
+
+  // Execute
+  struct_->get_navigation_entries(struct_,
+      CefNavigationEntryVisitorCppToC::Wrap(visitor),
+      current_only);
+}
+
 void CefBrowserHostCToCpp::SetMouseCursorChangeDisabled(bool disabled) {
   if (CEF_MEMBER_MISSING(struct_, set_mouse_cursor_change_disabled))
     return;
@@ -493,6 +512,16 @@ void CefBrowserHostCToCpp::SendCaptureLostEvent() {
 
   // Execute
   struct_->send_capture_lost_event(struct_);
+}
+
+void CefBrowserHostCToCpp::NotifyMoveOrResizeStarted() {
+  if (CEF_MEMBER_MISSING(struct_, notify_move_or_resize_started))
+    return;
+
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Execute
+  struct_->notify_move_or_resize_started(struct_);
 }
 
 CefTextInputContext CefBrowserHostCToCpp::GetNSTextInputContext() {
