@@ -151,18 +151,24 @@ Account::Auth() {
     result.success = false;
     result.error_code = ERROR_CODE::HTTP;
     result.http_error = r.error;
-  } else {
+  } else if (r.code == 401 ) {
     // Auth failed
-    LOG(WARNING) << "Auth failed (Application error): " << r.body;
+    LOG(WARNING) << "Auth failed: " << r.body;
     if (r.body.find("needOtp:") != std::string::npos) {
       // ToDo: implement OTP authorization
       result.error_code = ERROR_CODE::OTP;
     } else if (r.body.find("captchaCode:") != std::string::npos) {
       result.error_code = ERROR_CODE::CAPTCHA;
     } else {
-      result.error_code = ERROR_CODE::UNKNOWN;
+      result.error_code = ERROR_CODE::AUTH;
     }
 
+    result.success = false;
+    result.cookies = r.cookies;
+  } else {
+    // Some error occurred...
+    LOG(WARNING) << "Auth failed (Application error): " << r.body;
+    result.error_code = ERROR_CODE::UNKNOWN;
     result.success = false;
     result.cookies = r.cookies;
   }

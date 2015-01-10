@@ -30,6 +30,9 @@ namespace {
             body = "Account used two-step authentication.\n"
                "Please use <b>Application Password</b> for authorization";
             break;
+          case Account::ERROR_CODE::AUTH:
+            body = "Authentication failed.";
+            break;
           default:
             body = "An unknown error occurred :(";
             break;

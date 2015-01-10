@@ -11,14 +11,15 @@
     <div class="wrapper">
     <div class="wrapper-data">       
       <h2 class="form-signin-heading">Портал не доступен</h2>
-      <button class="btn btn-lg btn-primary btn-block" id="reconnect">Перезагрузить</button>   
+      <button class="btn btn-lg btn-primary btn-block" data-loading-text="Загрузка..."  id="reconnect">Перезагрузить</button>   
     </div>
   </div>
     <script>
         $(document).ready((function (window, app) {
           app.setIndicator('offline');
             $('#reconnect').click(function() {
-                app.loadPortal();
+              $(this).button('loading');
+              app.loadPortal();
             });
         }).bind(null, window, app));
     </script>

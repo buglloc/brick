@@ -9,7 +9,7 @@ var TAB_B24NET = 2;
 var app = {
   windowCallbacks: {},
   defaultNotifyDuration: 3000,
-  authErrorCodes: {NONE:0, HTTP:1, CAPTCHA:2, OTP:3, UNKNOWN:4},
+  authErrorCodes: {NONE:0, HTTP:1, CAPTCHA:2, OTP:3, AUTH:4, UNKNOWN:5},
   setWindowCallback: function(windowId, callback) {
     app.windowCallbacks[windowId] = callback;
   },
