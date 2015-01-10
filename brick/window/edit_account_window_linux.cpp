@@ -119,4 +119,9 @@ EditAccountWindow::Init(CefRefPtr<Account> account, bool switch_on_save) {
      window_objects_.password_entry,
      account->GetPassword().c_str()
   );
+
+  gtk_combo_box_set_active(
+     window_objects_.protocol_chooser,
+     account->IsSecure()? 0: 1
+  );
 }
