@@ -6,53 +6,63 @@
 
 namespace {
 
-  GtkWidget *menu;
+    GtkWidget *menu;
 
-  void
-  status_icon_click(GtkWidget *status_icon, StatusIcon *self) {
-    self->OnClick();
-  }
+#ifdef unity
+#else
+    void
+    status_icon_click(GtkWidget *status_icon, StatusIcon *self) {
+      self->OnClick();
+    }
 
-  void
-  status_icon_popup(GtkWidget *status_icon, guint button, guint32 activate_time, StatusIcon *self) {
-    if (self->OnPopup())
-      return;
+    void
+    status_icon_popup(GtkWidget *status_icon, guint button, guint32 activate_time, StatusIcon *self) {
+      if (self->OnPopup())
+        return;
 
-    gtk_widget_show_all(menu);
-    gtk_menu_popup (GTK_MENU(menu), NULL, NULL, NULL, status_icon, button, activate_time);
-  }
+      gtk_widget_show_all(menu);
+      gtk_menu_popup (GTK_MENU(menu), NULL, NULL, NULL, status_icon, button, activate_time);
+    }
+#endif
+    void
+    menu_about(GtkMenuItem *item, StatusIcon *self) {
+      self->OnMenuAbout();
+    }
 
-  void
-  menu_about(GtkMenuItem *item, StatusIcon *self) {
-    self->OnMenuAbout();
-  }
+    void
+    menu_manage_accounts(GtkMenuItem *item, StatusIcon *self) {
+      self->OnMenuManageAccount();
+    }
 
-  void
-  menu_manage_accounts(GtkMenuItem *item, StatusIcon *self) {
-    self->OnMenuManageAccount();
-  }
+    void
+    menu_quit(GtkMenuItem *item, StatusIcon *self) {
+      self->OnMenuQuit();
+    }
 
-  void
-  menu_quit(GtkMenuItem *item, StatusIcon *self) {
-    self->OnMenuQuit();
-  }
-
-  void
-  menu_change_account(GtkMenuItem *item, StatusIcon *self) {
-    int account_id = GPOINTER_TO_INT(
-       g_object_get_data(G_OBJECT(item), "account_id")
-    );
-    self->OnMenuChangeAccount(account_id);
-  }
+    void
+    menu_change_account(GtkMenuItem *item, StatusIcon *self) {
+      int account_id = GPOINTER_TO_INT(
+         g_object_get_data(G_OBJECT(item), "account_id")
+      );
+      self->OnMenuChangeAccount(account_id);
+    }
 
 } // namespace
 
 
 void
 StatusIcon::Init() {
+#ifdef unity
+  icon_handler_ = app_indicator_new(
+          "brick",
+          "indicator-messages",
+          APP_INDICATOR_CATEGORY_APPLICATION_STATUS
+  );
+#else
   icon_handler_ = gtk_status_icon_new();
   g_signal_connect(icon_handler_, "activate", G_CALLBACK(status_icon_click), this);
   g_signal_connect_swapped(icon_handler_, "popup-menu", G_CALLBACK(status_icon_popup), this);
+#endif
 
   // Create accounts menu
   GtkWidget *accounts_menu = gtk_menu_new();
@@ -70,7 +80,7 @@ StatusIcon::Init() {
          (" --> " + (*it).second->GetLabel()).c_str()
       );
     } else {
-     account_item = gtk_menu_item_new_with_label(
+      account_item = gtk_menu_item_new_with_label(
          (*it).second->GetLabel().c_str()
       );
     }
@@ -93,18 +103,34 @@ StatusIcon::Init() {
   g_signal_connect(G_OBJECT(quit_item), "activate", G_CALLBACK(menu_quit), NULL);
   gtk_menu_append(GTK_MENU(menu), quit_item);
 
+#ifdef unity
+  app_indicator_set_status (icon_handler_, APP_INDICATOR_STATUS_ACTIVE);
+  gtk_widget_show_all(menu);
+  app_indicator_set_menu(icon_handler_, GTK_MENU(menu));
+  app_indicator_set_icon_theme_path(icon_handler_, icons_folder_.c_str());
+#else
   gtk_status_icon_set_visible(icon_handler_, true);
+#endif
   SetIcon(DEFAULT);
 }
 
 void
 StatusIcon::SetIcon(Icon icon) {
   current_icon_ = icon;
+#ifdef unity
+  app_indicator_set_icon(icon_handler_, GetIconName(icon).c_str());
+#else
   gtk_status_icon_set_from_file(icon_handler_, GetIconPath(icon).c_str());
+#endif
+
 }
 
 void
 StatusIcon::SetTooltip(const char *tooltip) {
+#ifdef unity
+  app_indicator_set_title(icon_handler_, tooltip);
+#else
   gtk_status_icon_set_tooltip_text(icon_handler_, tooltip);
   gtk_status_icon_set_title(icon_handler_, tooltip);
+#endif
 }

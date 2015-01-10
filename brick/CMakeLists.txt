@@ -3,6 +3,32 @@
 # can be found in the LICENSE file.
 
 #
+# Determine the platform specific features.
+#
+
+if(OS_LINUX)
+  set(DESKTOP $ENV{XDG_CURRENT_DESKTOP})
+  if(NOT DEFINED UNITY_DESKTOP)
+    if ($DESKTOP STREQUAL "Unity")
+      set(UNITY_DESKTOP 1)
+    else()
+      set(UNITY_DESKTOP 0)
+    endif()
+  endif()
+
+
+  INCLUDE(CMakeDependentOption)
+  CMAKE_DEPENDENT_OPTION(UNITY "Compile Unity version" ON
+                        "UNITY_DESKTOP" OFF)
+
+  if (UNITY)
+    message(STATUS "Turning on Unity version")
+    add_definitions(-Dunity)
+  endif()
+
+endif()
+
+#
 # Source files.
 #
 
@@ -155,7 +181,9 @@ endif()
 
 
 FIND_LINUX_LIBRARIES("gmodule-2.0 gtk+-2.0 gthread-2.0")
-
+if (UNITY)
+  FIND_LINUX_LIBRARIES("appindicator-0.1")
+endif()
 
 # Executable target.
 add_executable(${CEF_TARGET} ${BRICK_SRCS} ${BRICK_EMBED_FILES})

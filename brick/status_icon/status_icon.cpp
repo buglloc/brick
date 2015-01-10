@@ -6,6 +6,14 @@
 
 namespace {
 
+    const char *const icon_names_[] = {
+       "offline",
+       "offline",
+       "online",
+       "flash",
+       "flash-important"
+    };
+
     const char *const icon_files_[] = {
        "offline.svg",
        "offline.svg",
@@ -16,8 +24,8 @@ namespace {
 }
 
 StatusIcon::StatusIcon(std::string icons_dir)
-: icons_folder_ (icons_dir),
-  icon_handler_(NULL)
+   : icons_folder_ (icons_dir),
+     icon_handler_(NULL)
 {
   Init();
 }
@@ -28,6 +36,11 @@ StatusIcon::~StatusIcon() {
 std::string
 StatusIcon::GetIconPath(Icon icon) {
   return icons_folder_ + icon_files_[icon];
+}
+
+std::string
+StatusIcon::GetIconName(Icon icon) {
+  return icon_names_[icon];
 }
 
 unsigned char
@@ -74,7 +87,7 @@ StatusIcon::OnMenuAbout() {
 bool
 StatusIcon::OnMenuManageAccount() {
   AccountsWindow::Instance()->Show();
- return true;
+  return true;
 }
 
 bool
