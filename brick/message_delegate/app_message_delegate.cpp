@@ -1,5 +1,6 @@
 #include <include/base/cef_bind.h>
 #include <brick/window/edit_account_window.h>
+#include <error.h>
 #include "brick/helper.h"
 #include "brick/notification.h"
 #include "brick/platform_util.h"
@@ -103,10 +104,19 @@ AppMessageDelegate::OnProcessMessageReceived(
 
     if (error == NO_ERROR) {
       std::string url = request_args->GetString(1);
-      if (url == kCurrentPortalId)
+      if (url == kCurrentPortalId) {
         url = ClientHandler::GetInstance()->GetAccountManager()->GetCurrentAccount()->GetBaseUrl();
+      }
 
-      browser->GetMainFrame()->LoadURL(url);
+      if (
+          url.find("https://") == 0
+          || url.find("http://") == 0
+         ) {
+        browser->GetMainFrame()->LoadURL(url);
+      } else {
+        LOG(WARNING) << "Trying to navigate to the forbidden url: " << url;
+        error = ERR_INVALID_URL;
+      }
     }
 
   } else if (message_name == kMessageBrowseName) {
@@ -123,13 +133,18 @@ AppMessageDelegate::OnProcessMessageReceived(
 
     if (error == NO_ERROR) {
       std::string url = request_args->GetString(1);
-      if (url.find("http://") == 0
-         || url.find("https://") == 0
+      if (
+         url.find("https://") == 0
+            || url.find("http://") == 0
          ) {
         // Currently allow only web urls opening...
         platform_util::OpenExternal(url);
+      } else {
+        LOG(WARNING) << "Trying to browse forbidden url: " << url;
+        error = ERR_INVALID_URL;
       }
     }
+
   } else if (message_name == kMessageChangeTooltipName) {
     // Parameters:
     //  0: int32 - callback id
