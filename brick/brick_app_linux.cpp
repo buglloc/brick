@@ -3,6 +3,7 @@
 #include <include/cef_app.h>
 #include <unistd.h>
 #include <gdk/gdkx.h>
+#include <sys/file.h>
 
 #include "brick_app.h"
 #include "third-party/json/json.h"
@@ -35,6 +36,16 @@ namespace {
 
       return true;
     }
+
+    bool EnsureSingleInstance() {
+      // ToDo: Replaced by IPC request, when IPC will be implemented
+      std::string lock_file = std::string(BrickApp::GetCacheHome()) + "/" + APP_COMMON_NAME + "/run.lock";
+      int fd = open(lock_file.c_str(), O_CREAT, 0600);
+      if (fd == -1)
+        return true;
+
+      return flock(fd, LOCK_EX|LOCK_NB) == 0;
+    }
 }
 
 // static
@@ -62,6 +73,12 @@ int main(int argc, char* argv[]) {
   int exit_code = CefExecuteProcess(main_args, app.get(), NULL);
   if (exit_code >= 0)
     return exit_code;
+
+  if (!EnsureSingleInstance()) {
+    // ToDo: change main window stack order, when IPC will be implemented
+    printf("Another instance is already running.\nExiting.");
+    return 0;
+  }
 
   GetWorkingDir(szWorkingDir);
   std::string plain_config = BrickApp::GetConfig();
