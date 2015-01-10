@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
   app_settings.resource_dir = helper::BaseDir(szWorkingDir) + "/resources/";
 
   CefRefPtr<AccountManager> account_manager(new AccountManager);
-  // ToDo: Fix this bulhit!
+  // ToDo: Fix this bullshit!
   account_manager->Init(
      std::string(BrickApp::GetConfigHome()) + "/" + APP_COMMON_NAME + "/accounts.json"
   );
