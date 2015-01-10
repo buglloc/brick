@@ -133,18 +133,18 @@ Account::Auth() {
      "action=login&login=" + login_ + "&password=" + password_
   );
 
-  if (r.code == -1 ) {
+  if (r.code == 200) {
+    // Auth successful
+    result.success = true;
+    result.error_code = ERROR_CODE::NONE;
+    result.cookies = r.cookies;
+    result.http_error = "";
+  } else if (r.code == -1 ) {
     // http query failed
     LOG(WARNING) << "Auth failed (HTTP error): " << r.error;
     result.success = false;
-    result.error_code = ERROR_CODE::NONE;
-    result.http_error = r.error;
-  } else if (r.code == 200) {
-    // Auth successful
-    result.success = true;
     result.error_code = ERROR_CODE::HTTP;
-    result.cookies = r.cookies;
-    result.http_error = "";
+    result.http_error = r.error;
   } else {
     // Auth failed
     LOG(WARNING) << "Auth failed (Application error): " << r.body;
