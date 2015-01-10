@@ -1,6 +1,6 @@
 .idea
-Debug
-Release
+Debug/*.so
+Debug/chrome-sandbox
 CMakeCache.txt
 CMakeFiles
 Makefile
