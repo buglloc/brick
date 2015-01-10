@@ -1,7 +1,8 @@
 Brick
 =====
 
-Unofficial, simple [Bitrix24](https://www.bitrix24.com/) messenger client
+Unofficial, simple [Bitrix24](https://www.bitrix24.com/) messenger client.
+
 Project is currently under (rather) heavy development, so stay tuned, more features will come soon.
 
 ##  Contributing

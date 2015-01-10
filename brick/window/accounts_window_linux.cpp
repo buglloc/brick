@@ -101,7 +101,7 @@ AccountsWindow::Init() {
 
   if (!gtk_builder_add_from_string(builder, &_binary_window_accounts_glade_start, (gsize)&_binary_window_accounts_glade_size, &error))
   {
-    LOG(WARNING) << "Failed to build aboud window: " << error->message;
+    LOG(WARNING) << "Failed to build accounts window: " << error->message;
     g_error_free (error);
   }
 
