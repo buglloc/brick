@@ -24,11 +24,11 @@ namespace {
             break;
           case Account::ERROR_CODE::CAPTCHA:
             body = "You have exceeded the maximum number of login attempts.\n"
-               "Please log in first <b>browser</b>";
+               "Please log in <b>browser</b> first";
             break;
           case Account::ERROR_CODE::OTP:
             body = "Account used two-step authentication.\n"
-               "Please use the <b>Application Password</b> for authorization";
+               "Please use <b>Application Password</b> for authorization";
             break;
           default:
             body = "An unknown error occurred :(";
