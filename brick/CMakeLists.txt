@@ -167,20 +167,8 @@ foreach(FILENAME ${BRICK_EMBED_FILES})
     message(STATUS "Objcopy'ing ${FILENAME}")
 endforeach(FILENAME)
 
-find_library(LIBNOTIFY_LIBRARIES notify
-    NAMES ${LIBNOTIFY_NAMES}
-)
 
-find_package(CURL REQUIRED)
-if(NOT CURL_FOUND)
-    message(SEND_ERROR "Failed to find curl")
-    return()
-else()
-    include_directories(${CURL_INCLUDE_DIRS})
-endif()
-
-
-FIND_LINUX_LIBRARIES("gmodule-2.0 gtk+-2.0 gthread-2.0")
+FIND_LINUX_LIBRARIES("gmodule-2.0 gtk+-2.0 gthread-2.0 libcurl libnotify")
 if (UNITY)
   FIND_LINUX_LIBRARIES("appindicator-0.1")
 endif()
@@ -201,9 +189,6 @@ COPY_FILES("${CEF_TARGET}" "${CEF_RESOURCE_FILES}" "${CEF_RESOURCE_DIR}" "${CEF_
 COPY_FILES("${CEF_TARGET}" "${BRICK_RESOURCES}" "${CEF_RESOURCE_DIR}" "${CEF_TARGET_OUT_DIR}/resources")
 # Hack for ICU
 COPY_FILES("${CEF_TARGET}" "icudtl.dat" "${CEF_RESOURCE_DIR}" "${CEF_TARGET_OUT_DIR}/bin")
-
-target_link_libraries(${CEF_TARGET} ${LIBNOTIFY_LIBRARIES})
-target_link_libraries(${CEF_TARGET} ${CURL_LIBRARIES})
 
 # Set SUID permissions on the chrome-sandbox target.
 SET_LINUX_SUID_PERMISSIONS("${CEF_TARGET}" "${CEF_TARGET_OUT_DIR}/bin/chrome-sandbox")
