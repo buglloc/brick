@@ -92,6 +92,10 @@ StatusIcon::Init() {
 
   // Create popup menu
   menu = gtk_menu_new();
+  GtkWidget * show_item = gtk_menu_item_new_with_label ("Show/Hide");
+  g_signal_connect(G_OBJECT(show_item), "activate", G_CALLBACK(status_icon_click), NULL);
+  gtk_menu_append(GTK_MENU(menu), show_item);
+  gtk_menu_append(GTK_MENU(menu), gtk_separator_menu_item_new());
   GtkWidget * accounts_item = gtk_menu_item_new_with_label("Accounts");
   gtk_menu_append(GTK_MENU(menu), accounts_item);
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(accounts_item), accounts_menu);
