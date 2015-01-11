@@ -148,7 +148,11 @@ set(CEF_TARGET "brick")
 ADD_LOGICAL_TARGET("libcef_lib" "${CEF_LIB_DEBUG}" "${CEF_LIB_RELEASE}")
 
 # Determine the target output directory.
-SET_CEF_TARGET_OUT_DIR()
+SET(CEF_TARGET_OUT_DIR "default" CACHE STRING "Output directory")
+if(${CEF_TARGET_OUT_DIR} STREQUAL "default")
+  SET_CEF_TARGET_OUT_DIR()
+endif()
+message(STATUS "Setting output directory to: ${CEF_TARGET_OUT_DIR}")
 
 #
 # Linux configuration.
