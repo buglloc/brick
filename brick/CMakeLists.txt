@@ -175,7 +175,7 @@ endforeach(FILENAME)
 
 FIND_LINUX_LIBRARIES("gmodule-2.0 gtk+-2.0 gthread-2.0 libcurl libnotify")
 if (UNITY)
-  FIND_LINUX_LIBRARIES("appindicator-0.1")
+  FIND_LINUX_LIBRARIES("appindicator3-0.1")
 endif()
 
 # Executable target.
