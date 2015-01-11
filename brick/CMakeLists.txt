@@ -149,7 +149,6 @@ ADD_LOGICAL_TARGET("libcef_lib" "${CEF_LIB_DEBUG}" "${CEF_LIB_RELEASE}")
 
 # Determine the target output directory.
 SET(CEF_TARGET_OUT_DIR "default" CACHE STRING "Output directory" PARENT_SCOPE)
-message(STATUS "Setting output directory to: ${CEF_TARGET_OUT_DIR}")
 if(NOT DEFINED CEF_TARGET_OUT_DIR)
   SET_CEF_TARGET_OUT_DIR()
 endif()
@@ -175,7 +174,7 @@ endforeach(FILENAME)
 
 FIND_LINUX_LIBRARIES("gmodule-2.0 gtk+-2.0 gthread-2.0 libcurl libnotify")
 if (UNITY)
-  FIND_LINUX_LIBRARIES("appindicator3-0.1")
+  FIND_LINUX_LIBRARIES("appindicator-0.1")
 endif()
 
 # Executable target.
