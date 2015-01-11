@@ -8,13 +8,13 @@ namespace {
 
     GtkWidget *menu;
 
-#ifdef unity
-#else
     void
     status_icon_click(GtkWidget *status_icon, StatusIcon *self) {
       self->OnClick();
     }
 
+#ifdef unity
+#else
     void
     status_icon_popup(GtkWidget *status_icon, guint button, guint32 activate_time, StatusIcon *self) {
       if (self->OnPopup())
