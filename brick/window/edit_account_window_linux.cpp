@@ -8,15 +8,27 @@ extern char _binary_window_edit_account_glade_size;
 namespace {
 
     static void
-    on_check_button(GtkWidget *widget, EditAccountWindow *self) {
-      Account::AuthResult auth_result = self->window_objects_.account->Auth();
-      GtkMessageType dialog_type;
-      std::string body;
-      if (auth_result.success) {
-        dialog_type = GTK_MESSAGE_INFO;
-        body = "Successful!";
-      } else {
-        dialog_type = GTK_MESSAGE_ERROR;
+    on_save_button(GtkWidget *widget, EditAccountWindow *self) {
+      bool secure =
+         gtk_combo_box_get_active(self->window_objects_.protocol_chooser) == 0;
+      const gchar* domain =
+        gtk_entry_get_text(self->window_objects_.domain_entry);
+      const gchar* login =
+         gtk_entry_get_text(self->window_objects_.login_entry);
+      const gchar* password =
+         gtk_entry_get_text(GTK_ENTRY(self->window_objects_.password_entry));
+
+      CefRefPtr<Account> check_account(new Account);
+      check_account->Set(
+        secure,
+         domain,
+         login,
+         password
+      );
+
+      Account::AuthResult auth_result = check_account->Auth();
+      if (!auth_result.success) {
+        std::string body;
 
         switch (auth_result.error_code) {
           case Account::ERROR_CODE::HTTP:
@@ -37,33 +49,24 @@ namespace {
             body = "An unknown error occurred :(";
             break;
         }
+
+        GtkWidget *dialog = gtk_message_dialog_new_with_markup(
+           GTK_WINDOW(self->window_objects_.window),
+           GTK_DIALOG_DESTROY_WITH_PARENT,
+           GTK_MESSAGE_ERROR,
+           GTK_BUTTONS_CLOSE,
+           NULL
+        );
+
+        gtk_message_dialog_set_markup(GTK_MESSAGE_DIALOG(dialog),
+           body.c_str());
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
+        return;
       }
 
-      GtkWidget *dialog = gtk_message_dialog_new_with_markup(
-         GTK_WINDOW(self->window_objects_.window),
-         GTK_DIALOG_DESTROY_WITH_PARENT,
-         dialog_type,
-         GTK_BUTTONS_CLOSE,
-         NULL
-      );
-
-      gtk_message_dialog_set_markup(GTK_MESSAGE_DIALOG(dialog),
-         body.c_str());
-      gtk_dialog_run(GTK_DIALOG(dialog));
-      gtk_widget_destroy(dialog);
-    }
-
-    static void
-    on_save_button(GtkWidget *widget, EditAccountWindow *self) {
-      const gchar* domain =
-        gtk_entry_get_text(self->window_objects_.domain_entry);
-      const gchar* login =
-         gtk_entry_get_text(self->window_objects_.login_entry);
-      const gchar* password =
-         gtk_entry_get_text(GTK_ENTRY(self->window_objects_.password_entry));
-
       self->Save(
-         gtk_combo_box_get_active(self->window_objects_.protocol_chooser) == 0,
+         secure,
          std::string(domain),
          std::string(login),
          std::string(password)
@@ -98,7 +101,6 @@ EditAccountWindow::Init(CefRefPtr<Account> account, bool switch_on_save) {
   window_objects_.login_entry = GTK_ENTRY(gtk_builder_get_object(builder, "login_entry"));
   window_objects_.password_entry = GTK_ENTRY(gtk_builder_get_object(builder, "password_entry"));
 
-  g_signal_connect(gtk_builder_get_object(builder, "check_button"), "clicked", G_CALLBACK(on_check_button), this);
   g_signal_connect(gtk_builder_get_object(builder, "save_button"), "clicked", G_CALLBACK(on_save_button), this);
   g_signal_connect(gtk_builder_get_object(builder, "cancel_button"), "clicked", G_CALLBACK(on_cancel_button), this);
 
