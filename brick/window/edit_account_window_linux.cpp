@@ -20,7 +20,7 @@ namespace {
 
       CefRefPtr<Account> check_account(new Account);
       check_account->Set(
-        secure,
+         secure,
          domain,
          login,
          password
@@ -69,7 +69,7 @@ namespace {
          secure,
          std::string(domain),
          std::string(login),
-         std::string(password)
+         check_account->GetPassword() // Server may update user password while login
       );
     }
 

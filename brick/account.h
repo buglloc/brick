@@ -62,6 +62,9 @@ class Account : public CefBase {
     std::string base_url_;
     std::string label_;
     bool secure_;
+
+    std::string TryParseApplicationPassword(std::string body);
+    std::string GetOsMark();
   private:
     IMPLEMENT_REFCOUNTING(Account);
 };

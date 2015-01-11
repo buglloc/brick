@@ -1,4 +1,5 @@
 #include <third-party/httpclient/httpclient.h>
+#include <unistd.h>
 #include "account.h"
 #include "include/base/cef_logging.h"
 
@@ -52,6 +53,14 @@ Account::GetDomain() {
 
 std::string
 Account::GetPassword() {
+  /**
+  * ToDo: Нужно передалать работу с паролем на корню:
+  *  1. Хранить в памяти пароль как можно меньше времени
+  *  2. Занулять область памяти где хранился пароль после его использования
+  *  3. Сделать поддержку GNOME Keyring и KWallet. И только при их отсутствии самому хранить пароль
+  *  4. При самостоятельном хранении паролей их нужно чемнить зашифровать (libsodium?).
+  *  5. Ключ для шифрования/дешифрования должен каждый раз читаться из файла и следовать правилу из пунктов 1 и 2
+  **/
   return password_;
 }
 
@@ -128,14 +137,25 @@ Account::GenBaseUrl() {
 Account::AuthResult
 Account::Auth() {
   AuthResult result;
+  HttpClient::form_map form;
+  form["action"] = "login";
+  form["login"] = login_;
+  // Ugly hack to get application password
+  form["password"] = password_.substr(0, password_.length() - 1);
+  // Ugly hack to get application password
+  form["otp"] = password_.substr(password_.length() - 1, 1);
+  form["user_os_mark"] = GetOsMark();
+
   HttpClient::response r = HttpClient::PostForm(
-     base_url_ + "/login/",
-     "action=login&login=" + login_ + "&password=" + password_
+     base_url_ + "/login/", &form
   );
 
   if (r.code == 200) {
     // Auth successful
     if (r.body.find("success: true") != std::string::npos) {
+      // Maybe server returns application password?
+      password_ = TryParseApplicationPassword(r.body);
+
       result.success = true;
       result.error_code = ERROR_CODE::NONE;
       result.cookies = r.cookies;
@@ -174,4 +194,29 @@ Account::Auth() {
   }
 
   return result;
+}
+
+std::string
+Account::TryParseApplicationPassword(std::string body) {
+  std::string password;
+  size_t pos = body.find("appPassword: '");
+  if (pos == std::string::npos)
+    return password_;
+
+  pos += sizeof("appPassword: '");
+  password = body.substr(
+     pos - 1,
+     body.find("'", pos + 1) - pos + 1
+  );
+
+  return password;
+}
+
+std::string
+Account::GetOsMark() {
+  // ToDo: use app_token!
+  char hostname[1024];
+  gethostname(hostname, 1024);
+
+  return std::string(hostname);
 }
