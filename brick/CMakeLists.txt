@@ -9,7 +9,7 @@
 if(OS_LINUX)
   set(DESKTOP $ENV{XDG_CURRENT_DESKTOP})
   if(NOT DEFINED UNITY_DESKTOP)
-    if ($DESKTOP STREQUAL "Unity")
+    if (${DESKTOP} STREQUAL "Unity")
       set(UNITY_DESKTOP 1)
     else()
       set(UNITY_DESKTOP 0)
