@@ -75,8 +75,13 @@ HttpClient::Get(const std::string &url)
 * @return response struct
 */
 HttpClient::response
-HttpClient::PostForm(const std::string &url, const std::string &data)
+HttpClient::PostForm(const std::string &url, form_map *form)
 {
+  std::string data;
+  form_map::iterator it = form->begin();
+  for (; it != form->end(); ++it) {
+    data += "&" + Urlencode(it->first) + "=" + Urlencode(it->second);
+  }
   return Post(url, "application/x-www-form-urlencoded", data);
 }
 

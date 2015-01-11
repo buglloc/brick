@@ -18,6 +18,7 @@ class HttpClient
      */
     typedef std::map<std::string, std::string> header_map;
     typedef std::map<std::string, std::string> cookie_map;
+    typedef std::map<std::string, std::string> form_map;
 
     /** response struct for queries */
     typedef struct
@@ -43,7 +44,7 @@ class HttpClient
     // HTTP GET
     static response Get(const std::string &url);
     // HTTP POST
-    static response PostForm(const std::string &url, const std::string &data);
+    static response PostForm(const std::string &url, form_map *form);
     static response Post(const std::string &url, const std::string &ctype,
        const std::string &data);
     // HTTP PUT
