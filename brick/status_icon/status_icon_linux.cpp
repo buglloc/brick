@@ -111,6 +111,7 @@ StatusIcon::Init() {
   app_indicator_set_status (icon_handler_, APP_INDICATOR_STATUS_ACTIVE);
   gtk_widget_show_all(menu);
   app_indicator_set_menu(icon_handler_, GTK_MENU(menu));
+  app_indicator_set_secondary_activate_target(icon_handler_, show_item);
   app_indicator_set_icon_theme_path(icon_handler_, icons_folder_.c_str());
 #else
   gtk_status_icon_set_visible(icon_handler_, true);
