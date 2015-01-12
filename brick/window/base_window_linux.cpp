@@ -134,3 +134,8 @@ double
 BaseWindow::GetOpacity() {
   return gtk_window_get_opacity(GTK_WINDOW(window_handler_));
 }
+
+void
+BaseWindow::Centralize() {
+  return gtk_window_set_position(GTK_WINDOW(window_handler_), GTK_WIN_POS_CENTER);
+}

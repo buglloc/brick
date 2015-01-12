@@ -58,6 +58,7 @@ public:
   virtual bool GetShowChrome();
   virtual void SetOpacity(double opacity);
   virtual double GetOpacity();
+  virtual void Centralize();
   // Event handlers
 
 
