@@ -3,6 +3,7 @@
 #include <signal.h>
 
 #include <include/wrapper/cef_helpers.h>
+#include <sys/stat.h>
 
 #include "helper.h"
 
@@ -105,6 +106,40 @@ namespace platform_util {
         XDGEmail(url);
       else
         XDGOpen(url);
+    }
+
+    bool
+    IsPathExists(std::string path) {
+      struct stat stat_data;
+      return stat(path.c_str(), &stat_data) != -1;
+    }
+
+    bool
+    MakeDirectory(std::string path) {
+      if (IsPathExists(path))
+        return true;
+
+      size_t pre=0, pos;
+      std::string dir;
+
+      if (path[path.size()-1] != '/'){
+        // force trailing / so we can handle everything in loop
+        path += '/';
+      }
+
+      while ((pos = path.find_first_of('/', pre)) !=std::string::npos){
+        dir = path.substr(0, pos++);
+        pre = pos;
+
+        if (dir.size()==0)
+          continue;
+
+        if (mkdir(dir.c_str(), 0700) && errno != EEXIST) {
+          return false;
+        }
+      }
+
+      return true;
     }
 
 }  // namespace platform_util

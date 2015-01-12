@@ -67,10 +67,20 @@ AccountManager::Commit() {
     json_accounts.append(json_account);
   }
   json["accounts"] = json_accounts;
-  std::ofstream ofs(config_path_);
-  ofs << json;
-  chmod(config_path_.c_str(), S_IRUSR|S_IWUSR);
-  return true;
+
+  bool directory_created = platform_util::MakeDirectory(
+     config_path_.substr(0, config_path_.find_last_of('/')) // Remove the config name from the path.
+  );
+
+  if (directory_created) {
+    std::ofstream ofs(config_path_);
+    ofs << json;
+    chmod(config_path_.c_str(), S_IRUSR|S_IWUSR);
+    return true;
+  } else {
+    return false;
+  }
+
 }
 
 CefRefPtr<Account>
