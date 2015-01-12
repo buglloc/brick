@@ -32,7 +32,9 @@ AppSettings::InitByJson(std::string json) {
 
   bool parsingSuccessful = reader.parse(json, root);
   if (!parsingSuccessful) {
+#if 0 // Turn off error message while we haven't any configuration file by default
       fprintf(stderr, "Failed to parse configuration: %s", reader.getFormattedErrorMessages().c_str());
+#endif
       return settings;
   }
 
