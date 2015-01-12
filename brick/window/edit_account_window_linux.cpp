@@ -1,5 +1,6 @@
 #include <include/base/cef_logging.h>
 #include <brick/cef_handler.h>
+#include <et/com_err.h>
 #include "edit_account_window.h"
 
 extern char _binary_window_edit_account_glade_start;
@@ -19,37 +20,55 @@ namespace {
          gtk_entry_get_text(GTK_ENTRY(self->window_objects_.password_entry));
 
       CefRefPtr<Account> check_account(new Account);
-      check_account->Set(
-         secure,
-         domain,
-         login,
-         password
-      );
+      bool show_error = false;
+      std::string error_message;
 
-      Account::AuthResult auth_result = check_account->Auth();
-      if (!auth_result.success) {
-        std::string body;
+      if (!strlen(domain)) {
+        show_error = true;
+        error_message = "Empty domain";
+      } else if (!strlen(login)) {
+        show_error = true;
+        error_message = "Empty login";
+      } else if (!strlen(password)) {
+        show_error = true;
+        error_message = "Empty password";
+      }
 
-        switch (auth_result.error_code) {
-          case Account::ERROR_CODE::HTTP:
-            body = "HTTP error: " + auth_result.http_error;
-            break;
-          case Account::ERROR_CODE::CAPTCHA:
-            body = "You have exceeded the maximum number of login attempts.\n"
-               "Please log in <b>browser</b> first";
-            break;
-          case Account::ERROR_CODE::OTP:
-            body = "Account used two-step authentication.\n"
-               "Please use <b>Application Password</b> for authorization";
-            break;
-          case Account::ERROR_CODE::AUTH:
-            body = "Authentication failed.";
-            break;
-          default:
-            body = "An unknown error occurred :(";
-            break;
+      if (!show_error) {
+        check_account->Set(
+           secure,
+           domain,
+           login,
+           password
+        );
+
+        Account::AuthResult auth_result = check_account->Auth();
+        if (!auth_result.success) {
+          show_error = true;
+
+          switch (auth_result.error_code) {
+            case Account::ERROR_CODE::HTTP:
+              error_message = "HTTP error: " + auth_result.http_error;
+              break;
+            case Account::ERROR_CODE::CAPTCHA:
+              error_message = "You have exceeded the maximum number of login attempts.\n"
+                 "Please log in <b>browser</b> first";
+              break;
+            case Account::ERROR_CODE::OTP:
+              error_message = "Account used two-step authentication.\n"
+                 "Please use <b>Application Password</b> for authorization";
+              break;
+            case Account::ERROR_CODE::AUTH:
+              error_message = "Authentication failed.";
+              break;
+            default:
+              error_message = "An unknown error occurred :(";
+              break;
+          }
         }
+      }
 
+      if (show_error) {
         GtkWidget *dialog = gtk_message_dialog_new_with_markup(
            GTK_WINDOW(self->window_objects_.window),
            GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -59,7 +78,7 @@ namespace {
         );
 
         gtk_message_dialog_set_markup(GTK_MESSAGE_DIALOG(dialog),
-           body.c_str());
+           error_message.c_str());
         gtk_dialog_run(GTK_DIALOG(dialog));
         gtk_widget_destroy(dialog);
         return;
