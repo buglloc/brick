@@ -156,4 +156,6 @@ MainWindow::Init() {
 
   GtkWidget* vbox = gtk_vbox_new(false, 0);
   gtk_container_add(GTK_CONTAINER(window_handler_), vbox);
+  // Main window placed to center by default
+  Centralize();
 }
