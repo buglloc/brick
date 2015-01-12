@@ -4,7 +4,6 @@
 #include <third-party/json/json.h>
 #include <sys/stat.h>
 #include "account_manager.h"
-#include "platform_util.h"
 
 AccountManager::AccountManager()
    : current_account_(NULL),
@@ -68,19 +67,10 @@ AccountManager::Commit() {
   }
   json["accounts"] = json_accounts;
 
-  bool directory_created = platform_util::MakeDirectory(
-     config_path_.substr(0, config_path_.find_last_of('/')) // Remove the config name from the path.
-  );
-
-  if (directory_created) {
-    std::ofstream ofs(config_path_);
-    ofs << json;
-    chmod(config_path_.c_str(), S_IRUSR|S_IWUSR);
-    return true;
-  } else {
-    return false;
-  }
-
+  std::ofstream ofs(config_path_);
+  ofs << json;
+  chmod(config_path_.c_str(), S_IRUSR|S_IWUSR);
+  return true;
 }
 
 CefRefPtr<Account>

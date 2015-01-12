@@ -12,6 +12,7 @@
 #include "cef_app.h"
 #include "window_util.h"
 #include "helper.h"
+#include "platform_util.h"
 
 
 #undef Status   // Definition conflicts with cef_urlrequest.h
@@ -35,6 +36,13 @@ namespace {
       dir = dir.substr(0, dir.find_last_of("/"));
 
       return true;
+    }
+
+    bool EnsureSystemDirectoryExists() {
+      return (
+         platform_util::MakeDirectory(std::string(BrickApp::GetConfigHome()) + "/" + APP_COMMON_NAME)
+          && platform_util::MakeDirectory(std::string(BrickApp::GetCacheHome()) + "/" + APP_COMMON_NAME)
+      );
     }
 
     bool EnsureSingleInstance() {
@@ -73,6 +81,11 @@ int main(int argc, char* argv[]) {
   int exit_code = CefExecuteProcess(main_args, app.get(), NULL);
   if (exit_code >= 0)
     return exit_code;
+
+  if (!EnsureSystemDirectoryExists()) {
+    printf("Can't create system directories");
+    return 1;
+  }
 
   if (!EnsureSingleInstance()) {
     // ToDo: change main window stack order, when IPC will be implemented
