@@ -1,6 +1,5 @@
 #include <include/base/cef_logging.h>
 #include <brick/cef_handler.h>
-#include <et/com_err.h>
 #include "edit_account_window.h"
 
 extern char _binary_window_edit_account_glade_start;
