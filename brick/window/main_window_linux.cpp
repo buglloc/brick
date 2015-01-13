@@ -116,26 +116,23 @@ namespace {
       return true;
     }
 
-// Only in new version of CEF
-//gboolean
-//window_configure_callback(GtkWindow* window,
-//   GdkEvent* event,
-//   gpointer data) {
-//  // Called when size, position or stack order changes.
-//  CefRefPtr<ClientHandler> handler = ClientHandler::GetInstance();
-//  if (handler) {
-//    CefRefPtr<CefBrowser> browser = handler->GetBrowser();
-//    if (browser) {
-//      // Notify the browser of move/resize events so that:
-//      // - Popup windows are displayed in the correct location and dismissed
-//      //   when the window moves.
-//      // - Drag&drop areas are updated accordingly.
-//      browser->GetHost()->NotifyMoveOrResizeStarted();
-//    }
-//  }
-//
-//  return FALSE;  // Don't stop this message.
-//}
+  gboolean
+  window_configure_handler(GtkWindow* window, GdkEvent* event, MainWindow *self) {
+    // Called when size, position or stack order changes.
+    CefRefPtr<ClientHandler> handler = ClientHandler::GetInstance();
+    if (handler) {
+      CefRefPtr<CefBrowser> browser = handler->GetBrowser();
+      if (browser) {
+        // Notify the browser of move/resize events so that:
+        // - Popup windows are displayed in the correct location and dismissed
+        //   when the window moves.
+        // - Drag&drop areas are updated accordingly.
+        browser->GetHost()->NotifyMoveOrResizeStarted();
+      }
+    }
+
+    return FALSE;  // Don't stop this message.
+  }
 
 } // namespace
 
@@ -151,8 +148,7 @@ MainWindow::Init() {
   g_signal_connect(G_OBJECT(window_handler_), "size-allocate", G_CALLBACK(size_allocated_handler), NULL);
   g_signal_connect(G_OBJECT(window_handler_), "destroy", G_CALLBACK(destroy_handler), this);
   g_signal_connect(G_OBJECT(window_handler_), "delete_event", G_CALLBACK(delete_event_handler), this);
-  // Only in new version of CEF
-//  g_signal_connect(G_OBJECT(window_handler_), "configure-event", G_CALLBACK(window_configure_callback), NULL);
+  g_signal_connect(G_OBJECT(window_handler_), "configure-event", G_CALLBACK(window_configure_handler), this);
 
   GtkWidget* vbox = gtk_vbox_new(false, 0);
   gtk_container_add(GTK_CONTAINER(window_handler_), vbox);
