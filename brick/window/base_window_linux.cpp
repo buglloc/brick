@@ -139,3 +139,8 @@ void
 BaseWindow::Centralize() {
   return gtk_window_set_position(GTK_WINDOW(window_handler_), GTK_WIN_POS_CENTER);
 }
+
+void
+BaseWindow::Present() {
+  gtk_window_present(GTK_WINDOW(window_handler_));
+}

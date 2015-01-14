@@ -59,6 +59,7 @@ public:
   virtual void SetOpacity(double opacity);
   virtual double GetOpacity();
   virtual void Centralize();
+  virtual void Present();
   // Event handlers
 
 
