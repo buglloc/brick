@@ -62,14 +62,18 @@ namespace {
       if (!handler)
         return true;
 
-      if (!(event->changed_mask & GDK_WINDOW_STATE_ICONIFIED))
+      if (!(event->changed_mask &
+            (GDK_WINDOW_STATE_ICONIFIED | GDK_WINDOW_STATE_WITHDRAWN))
+         )
         return true;
 
       CefRefPtr<CefBrowser> browser = handler->GetBrowser();
       if (!browser)
         return true;
 
-      const bool iconified = (event->new_window_state & GDK_WINDOW_STATE_ICONIFIED);
+      const bool hidden = (event->new_window_state &
+         (GDK_WINDOW_STATE_ICONIFIED | GDK_WINDOW_STATE_WITHDRAWN)
+      );
       // Forward the state change event to the browser window.
       ::Display *xdisplay = cef_get_xdisplay();
       ::Window xwindow = browser->GetHost()->GetWindowHandle();
@@ -86,7 +90,7 @@ namespace {
       if (!result)
         NOTREACHED();
 
-      if (iconified) {
+      if (hidden) {
         // Set the hidden property state value.
         scoped_ptr<Atom[]> data(new Atom[1]);
         data[0] = atoms[2];
