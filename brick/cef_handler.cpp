@@ -477,6 +477,19 @@ ClientHandler::SwitchAccount(int id) {
   account_manager_->Commit();
 }
 
+bool
+ClientHandler::SendJSEvent(CefRefPtr<CefBrowser> browser, const CefString& name, const CefString& data)
+{
+  CefRefPtr<CefProcessMessage> message = CefProcessMessage::Create("dispatchEvent");
+  message->GetArgumentList()->SetString(0, name);
+  if (!data.empty())
+    message->GetArgumentList()->SetString(1, data);
+
+  browser->SendProcessMessage(PID_RENDERER, message);
+
+  return true;
+}
+
 // static
 void
 ClientHandler::CreateProcessMessageDelegates(ProcessMessageDelegateSet& delegates) {

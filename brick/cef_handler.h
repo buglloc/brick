@@ -190,6 +190,8 @@ public:
 
   void SwitchAccount(int id);
 
+  bool SendJSEvent(CefRefPtr<CefBrowser> browser, const CefString& name, const CefString& data = "");
+
 protected:
   // Create all of ProcessMessageDelegate objects.
   static void CreateProcessMessageDelegates(

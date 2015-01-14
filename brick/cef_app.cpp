@@ -80,6 +80,20 @@ bool ClientApp::OnProcessMessageReceived(
       context->Exit();
 
       callback_map_.erase(callbackId);
+
+    } else if (message->GetName() == "dispatchEvent") {
+      // This is called by the browser process to dispatch a Event to JavaScript
+      //
+      // The first argument is the event name. This is required.
+      // The second argument is a custom event data. This is optional. Currently only string data supported :-(
+
+      CefRefPtr<CefListValue> messageArgs = message->GetArgumentList();
+      std::string eventName = messageArgs->GetString(0);
+      std::string eventData = messageArgs->GetSize() > 1 ? messageArgs->GetString(1) : "{}";
+      // FIXME: Use ExecuteFunction instead ExecuteJavaScript
+      std::string cmd = "BXDesktopWindow.DispatchCustomEvent('" + eventName + "', " + eventData + ");";
+      browser->GetMainFrame()->ExecuteJavaScript(CefString(cmd.c_str()),
+         browser->GetMainFrame()->GetURL(), 0);
     }
   }
 
