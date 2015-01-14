@@ -6,9 +6,6 @@ bool
 MainWindow::SetFocus(bool focused) {
   BaseWindow::SetFocus(focused);
 
-  if (!focused)
-    return false;
-
   CefRefPtr<ClientHandler> handler = ClientHandler::GetInstance();
   if (!handler)
     return false;
@@ -18,9 +15,16 @@ MainWindow::SetFocus(bool focused) {
     return false;
 
   // Give focus to the browser window.
-  browser->GetHost()->SetFocus(true);
+  browser->GetHost()->SetFocus(focused);
 
-  // Hide previously  showed notification
-  Notification::Hide();
+  if (focused) {
+    // Hide previously  showed notification
+    Notification::Hide();
+  }
+
+  // Hack: CEF have strange behaviour for onfocus/onblur event, so we send custom event
+  // ToDo: Research
+  handler->SendJSEvent(browser, "BXForegroundChanged", focused? "[true]": "[false]");
+
   return true;
 }
