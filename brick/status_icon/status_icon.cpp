@@ -59,7 +59,7 @@ StatusIcon::OnClick() {
     return false;
 
   if (window->GetHided()) {
-    window->Show();
+    window->Present();
   } else {
     window->Hide();
   }
