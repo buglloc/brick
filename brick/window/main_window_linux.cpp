@@ -43,8 +43,7 @@ namespace {
       if (!event->in)
         return false;
 
-      window->SetFocus(true);
-      return true;
+      return window->SetFocus(true);
     }
 
     gboolean
@@ -52,8 +51,7 @@ namespace {
       if (event->in)
         return false;
 
-      window->SetFocus(false);
-      return false;
+      return window->SetFocus(false);
     }
 
 

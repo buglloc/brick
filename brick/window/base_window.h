@@ -64,7 +64,7 @@ public:
 
 
   // Shared methods
-  virtual void SetFocus(bool focused);
+  bool void SetFocus(bool focused);
   virtual bool HasFocus();
 
 protected:

@@ -10,9 +10,10 @@ BaseWindow::GetHided() {
   return hided_;
 }
 
-void
+bool
 BaseWindow::SetFocus(bool focused) {
   focused_ = focused;
+  return false;
 }
 
 bool

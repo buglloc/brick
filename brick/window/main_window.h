@@ -14,7 +14,7 @@ class MainWindow : public BaseWindow {
     MainWindow() {};
     ~MainWindow() {} ;
     void Init() OVERRIDE;
-    void SetFocus(bool focused) OVERRIDE;
+    bool SetFocus(bool focused) OVERRIDE;
 
 IMPLEMENT_REFCOUNTING(MainWindow);
 };
