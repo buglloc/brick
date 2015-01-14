@@ -1,6 +1,5 @@
 
 /*---------- Fake globals ---------*/
-var BXIM = BXIM || {};
 var TAB_CP = 1;
 var TAB_B24NET = 2;
 /*---------- Fake globals ---------*/
@@ -243,7 +242,7 @@ BXDesktopWindow.GetProperty = function(name) {
   return result;
 };
 
-BXDesktopWindow.SetProperty = function(name,value) {    
+BXDesktopWindow.SetProperty = function(name,value) {
   switch (name) {
     case 'title':
       window.document.title = value;
@@ -354,8 +353,7 @@ BXDesktopSystem.videoLog = function(value) {
 };
 
 BXDesktopWindow.DispatchCustomEvent = function(name, params) {
-    var event = new Event(name);
-    event.detail = params;
+    var event = new CustomEvent(name, {"detail": params});
     try {
       window.dispatchEvent(event);
     } catch(e) {
