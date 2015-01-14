@@ -89,7 +89,7 @@ bool ClientApp::OnProcessMessageReceived(
 
       CefRefPtr<CefListValue> messageArgs = message->GetArgumentList();
       std::string eventName = messageArgs->GetString(0);
-      std::string eventData = messageArgs->GetSize() > 1 ? messageArgs->GetString(1) : "{}";
+      std::string eventData = messageArgs->GetSize() > 1 ? messageArgs->GetString(1) : "[]";
       // FIXME: Use ExecuteFunction instead ExecuteJavaScript
       std::string cmd = "BXDesktopWindow.DispatchCustomEvent('" + eventName + "', " + eventData + ");";
       browser->GetMainFrame()->ExecuteJavaScript(CefString(cmd.c_str()),
