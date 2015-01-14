@@ -13,8 +13,8 @@ namespace {
     }
 
     gboolean
-    delete_event_handler(GtkWidget *widget, GdkEvent *event, GtkWindow *window, MainWindow *self) {
-      gtk_widget_hide(widget);
+    delete_event_handler(GtkWidget *widget, GdkEvent *event, MainWindow *self) {
+      self->Hide();
       return true;
     }
 
