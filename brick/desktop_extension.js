@@ -353,12 +353,16 @@ BXDesktopSystem.videoLog = function(value) {
 };
 
 BXDesktopWindow.DispatchCustomEvent = function(name, params) {
-    var event = new CustomEvent(name, {"detail": params});
-    try {
-      window.dispatchEvent(event);
-    } catch(e) {
-      console.error('BXDesktopWindow.DispatchCustomEvent failed:' + name + ', handler exception: ' + e.message);
-    }
+  // Deal with ClientHandler::SendJSEvent
+  if (Object.prototype.toString.call(params) == '[object String]')
+    params = JSON.parse(params);
+
+  var event = new CustomEvent(name, {"detail": params});
+  try {
+    window.dispatchEvent(event);
+  } catch(e) {
+    console.error('BXDesktopWindow.DispatchCustomEvent failed:' + name + ', handler exception: ' + e.message);
+  }
 };
 
 BXDesktopSystem.GetProperty = function GetProperty(property) {

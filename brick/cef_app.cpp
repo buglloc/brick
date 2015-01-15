@@ -90,10 +90,23 @@ bool ClientApp::OnProcessMessageReceived(
       CefRefPtr<CefListValue> messageArgs = message->GetArgumentList();
       std::string eventName = messageArgs->GetString(0);
       std::string eventData = messageArgs->GetSize() > 1 ? messageArgs->GetString(1) : "[]";
-      // FIXME: Use ExecuteFunction instead ExecuteJavaScript
-      std::string cmd = "BXDesktopWindow.DispatchCustomEvent('" + eventName + "', " + eventData + ");";
-      browser->GetMainFrame()->ExecuteJavaScript(CefString(cmd.c_str()),
-         browser->GetMainFrame()->GetURL(), 0);
+
+      CefRefPtr<CefV8Context> context = browser->GetMainFrame()->GetV8Context();
+      context->Enter();
+      CefRefPtr<CefV8Value> global = context->GetGlobal();
+      if (global->HasValue("BXDesktopWindow")) {
+        CefRefPtr<CefV8Value> js_window = global->GetValue("BXDesktopWindow");
+        CefRefPtr<CefV8Value> dispatcher = js_window->GetValue("DispatchCustomEvent");
+        if (dispatcher->IsFunction()) {
+          CefV8ValueList args;
+          args.push_back(CefV8Value::CreateString(eventName));
+          args.push_back(CefV8Value::CreateString(eventData));
+
+          dispatcher->ExecuteFunction(global, args);
+        }
+      }
+
+      context->Exit();
     }
   }
 
