@@ -20,8 +20,8 @@ class BrowserWindow : public CefBase {
 
 public:
   BrowserWindow() : window_handler_(NULL),
-                 hided_(true),
-                 focused_(false) {};
+                 hided_(false),
+                 focused_(true) {};
 
   BrowserWindowHandle GetHandler();
 
