@@ -158,6 +158,14 @@ message(STATUS "Setting output directory to: ${CEF_TARGET_OUT_DIR}")
 # Linux configuration.
 #
 
+if(PROJECT_ARCH STREQUAL "x86_64")
+  # 64-bit architecture.
+  set(BRICK_EMBED_FORMAT "elf64-x86-64")
+elseif(PROJECT_ARCH STREQUAL "x86")
+  # 32-bit architecture.
+  set(BRICK_EMBED_FORMAT "elf32-i386")
+endif()
+
 set(BRICK_EMBED_FILES_COMPILED )
 foreach(FILENAME ${BRICK_EMBED_FILES})
     get_filename_component(FILENAME_ONLY ${FILENAME} NAME)
@@ -166,7 +174,7 @@ foreach(FILENAME ${BRICK_EMBED_FILES})
     add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${FILENAME_ONLY}.o
                        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/brick/"
                        COMMAND ${CMAKE_OBJCOPY}
-                       ARGS -I binary -O elf64-x86-64 -B i386 ${FILENAME} ${CMAKE_CURRENT_BINARY_DIR}/${FILENAME_ONLY}.o )
+                       ARGS -I binary -O ${BRICK_EMBED_FORMAT} -B i386 ${FILENAME} ${CMAKE_CURRENT_BINARY_DIR}/${FILENAME_ONLY}.o )
     list(APPEND BRICK_EMBED_FILES ${CMAKE_CURRENT_BINARY_DIR}/${FILENAME_ONLY}.o)
     message(STATUS "Objcopy'ing ${FILENAME}")
 endforeach(FILENAME)
