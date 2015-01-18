@@ -9,11 +9,11 @@
 #include <map>
 #include <set>
 #include <brick/common/app_settings.h>
+#include <brick/window/browser_window.h>
 #include "status_icon/status_icon.h"
 
 #include "include/cef_client.h"
 
-#include "window/main_window.h"
 #include "command_callbacks.h"
 #include "account_manager.h"
 
@@ -67,8 +67,7 @@ public:
   void SetAppSettings(AppSettings settings);
   AppSettings GetAppSettings() const;
 
-  void SetMainWindowHandle(CefRefPtr<MainWindow> handle);
-  CefRefPtr<MainWindow> GetMainWindowHandle() const;
+  CefRefPtr<BrowserWindow> GetMainWindowHandle() const;
 
   void SetStatusIconHandle(CefRefPtr<StatusIcon> handle);
   CefRefPtr<StatusIcon> GetStatusIconHandle() const;
@@ -226,7 +225,7 @@ private:
   bool is_closing_;
 
   // The main frame window handle.
-  CefRefPtr<MainWindow> main_handle_;
+  CefRefPtr<BrowserWindow> main_handle_;
 
   CefRefPtr<StatusIcon> status_icon_handle_;
 

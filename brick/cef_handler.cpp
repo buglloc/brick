@@ -58,17 +58,16 @@ ClientHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
     // We need to keep the main child window, but not popup windows
     browser_ = browser;
     browser_id_ = browser->GetIdentifier();
+    // ToDo: leaks
+    main_handle_ = new BrowserWindow;
+    main_handle_->WrapNative(browser->GetHost()->GetWindowHandle());
   } else if (browser->IsPopup()) {
     // Add to the list of popup browsers.
 //    popup_browsers_.push_back(browser);
 
-    CefWindowHandle window = browser->GetHost()->GetWindowHandle();
-    // Base window initialization...
-    window_util::InitWindow(window);
-    // Init our popup
-    window_util::InitAsPopup(window);
-    // Let's initialize some hooks (e.g. handlers for non-fatail X11 errors)
-    window_util::InitHooks();
+    // ToDo: leaks
+    BrowserWindow *window = new BrowserWindow;
+    window->WrapNative(browser->GetHost()->GetWindowHandle());
 
     // Give focus to the popup browser. Perform asynchronously because the
     // parent window may attempt to keep focus after launching the popup.
@@ -93,6 +92,11 @@ ClientHandler::DoClose(CefRefPtr<CefBrowser> browser) {
 
   // Allow the close. For windowed browsers this will result in the OS close
   // event being sent.
+  if (!browser->IsPopup()) {
+    // Dont' close main window, just hide it
+    main_handle_->Hide();
+    return true;
+  }
   return false;
 }
 
@@ -392,20 +396,7 @@ ClientHandler::GetAccountManager() const {
   return account_manager_;
 }
 
-
-void
-ClientHandler::SetMainWindowHandle(CefRefPtr<MainWindow> handle) {
-  if (!CefCurrentlyOn(TID_UI)) {
-    // Execute on the UI thread.
-    CefPostTask(TID_UI,
-       base::Bind(&ClientHandler::SetMainWindowHandle, this, handle));
-    return;
-  }
-
-  main_handle_ = handle;
-}
-
-CefRefPtr<MainWindow>
+CefRefPtr<BrowserWindow>
 ClientHandler::GetMainWindowHandle() const {
   CEF_REQUIRE_UI_THREAD();
   return main_handle_;

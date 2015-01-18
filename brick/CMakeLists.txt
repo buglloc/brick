@@ -85,21 +85,21 @@ set(BRICK_STATUS_ICON_SRCS_LINUX
 set(BRICK_WINDOWS_SRCS
   window/base_window.h
   window/base_window.cpp
-  window/main_window.cpp
-  window/main_window.h
   window/about_window.cpp
   window/about_window.h
   window/accounts_window.cpp
   window/accounts_window.h
   window/edit_account_window.cpp
   window/edit_account_window.h
+  window/browser_window.h
+  window/browser_window.cpp
   )
 set(BRICK_WINDOWS_SRCS_LINUX
   window/base_window_linux.cpp
-  window/main_window_linux.cpp
   window/about_window_linux.cpp
   window/accounts_window_linux.cpp
   window/edit_account_window_linux.cpp
+  window/browser_window_linux.cpp
   )
 set(BRICK_JSON_SRCS
   ../third-party/json/json.h

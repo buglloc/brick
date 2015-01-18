@@ -3,12 +3,14 @@
 #include <X11/Xutil.h>
 #include <X11/Xatom.h>
 #include <include/base/cef_logging.h>
+#include <gtk/gtk.h>
 #include "window_util.h"
 #include "brick_app.h"
 
 namespace window_util {
 
     namespace {
+        GList *default_icons = NULL;
         CefWindowHandle leader_window_;
 
         int
@@ -256,5 +258,26 @@ namespace window_util {
     InitWindow(CefWindowHandle handle) {
       SetClientLeader(handle);
       SetClassHints(handle, (char *) APP_COMMON_NAME, (char *) APP_NAME);
+    }
+
+    GList*
+    GetDefaultIcons() {
+      return default_icons;
+    }
+
+    void SetDefaultIcons(GList* icons) {
+      if (default_icons) {
+        g_list_foreach(default_icons, (GFunc) g_object_unref, NULL);
+        g_list_free(default_icons);
+      }
+
+      default_icons = icons;
+      gtk_window_set_default_icon_list(icons);
+    }
+
+    BrowserWindow*
+    LookupBrowserWindow(CefWindowHandle native_window) {
+      GdkWindow * gdk_window = GDK_WINDOW(gdk_xid_table_lookup(native_window));
+      return (BrowserWindow*) g_object_get_data(G_OBJECT(gdk_window), "wrapper");
     }
 }

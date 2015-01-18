@@ -93,6 +93,7 @@ int main(int argc, char* argv[]) {
     return 0;
   }
 
+
   GetWorkingDir(szWorkingDir);
   std::string plain_config = BrickApp::GetConfig();
   AppSettings app_settings = AppSettings::InitByJson(plain_config);
@@ -107,30 +108,25 @@ int main(int argc, char* argv[]) {
   // Initialize CEF.
   CefInitialize(main_args, BrickApp::GetCefSettings(szWorkingDir, app_settings), app.get(), NULL);
 
-  // Create the handler.
-  CefRefPtr<ClientHandler> client_handler(new ClientHandler);
+  gtk_init(0, NULL);
+  window_util::InitHooks();
 
   // Set default windows icon. Important to do this before any GTK window created!
-  GList *list = NULL;
+  GList *icons = NULL;
   std::string icon_path = app_settings.resource_dir + "/app_icons/";
   int icons_count = sizeof(APPICONS) / sizeof(APPICONS[0]);
   for (int i = 0; i < icons_count; ++i) {
     GdkPixbuf *icon = gdk_pixbuf_new_from_file((icon_path + APPICONS[i]).c_str(), NULL);
     if (!icon)
       continue;
-    list = g_list_append(list, icon);
+    icons = g_list_append(icons, icon);
   }
-  gtk_window_set_default_icon_list(list);
-  g_list_foreach(list, (GFunc) g_object_unref, NULL);
-  g_list_free(list);
+  window_util::SetDefaultIcons(icons);
 
-  // Initialize main window
-  CefRefPtr<MainWindow> main_window(new MainWindow);
-  main_window->Init();
-  main_window->SetTitle(APP_NAME);
-  main_window->Show();
+
+  // Create the handler.
+  CefRefPtr<ClientHandler> client_handler(new ClientHandler);
   client_handler->SetAppSettings(app_settings);
-  client_handler->SetMainWindowHandle(main_window);
   client_handler->SetAccountManager(account_manager);
 
   // Initialize status icon
@@ -138,13 +134,6 @@ int main(int argc, char* argv[]) {
   client_handler->SetStatusIconHandle(status_icon);
 
   CefWindowInfo window_info;
-  // The GTK window must be visible before we can retrieve the XID.
-  ::Window xwindow = GDK_WINDOW_XID(gtk_widget_get_window(main_window->GetHandler()));
-  window_info.SetAsChild(xwindow, CefRect(0, 0, 0, 0));
-  window_util::SetLeaderWindow(xwindow);
-  window_util::InitWindow(xwindow);
-  window_util::InitHooks();
-
   std::string startup_url = account_manager->GetCurrentAccount()->GetBaseUrl();
   if (account_manager->GetCurrentAccount()->IsExisted()) {
     // Login to our account

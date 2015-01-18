@@ -55,9 +55,8 @@ AppWindowMessageDelegate::OnProcessMessageReceived(
   }
 
   message_name = message_name.substr(strlen(kNameSpace));
-  CefWindowHandle window = browser->GetHost()->GetWindowHandle();
-  if (!browser->IsPopup())
-    window = window_util::GetParent(window);
+  CefWindowHandle cef_window = browser->GetHost()->GetWindowHandle();
+  BrowserWindow *window = window_util::LookupBrowserWindow(cef_window);
 
   if(message_name == kMessageSetSizeName || message_name == kMessageSetClientSizeName) {
 
@@ -74,9 +73,7 @@ AppWindowMessageDelegate::OnProcessMessageReceived(
     }
 
     if (error == NO_ERROR) {
-
-      window_util::Resize(
-         window,
+      window->Resize(
          request_args->GetInt(1),
          request_args->GetInt(2)
       );
@@ -97,8 +94,7 @@ AppWindowMessageDelegate::OnProcessMessageReceived(
     }
 
     if (error == NO_ERROR) {
-      window_util::SetMinSize(
-         window,
+      window->SetMinSize(
          request_args->GetInt(1),
          request_args->GetInt(2)
       );
@@ -118,21 +114,20 @@ AppWindowMessageDelegate::OnProcessMessageReceived(
     }
 
     if (error == NO_ERROR) {
-      window_util::FixSize(
-         window,
+      window->FrozeSize(
          request_args->GetInt(1),
          request_args->GetInt(2)
       );
     }
 
   } else if (message_name == kMessageHideName) {
-    window_util::Hide(window);
+    window->Hide();
 
   } else if (message_name == kMessageShowName) {
-    window_util::Show(window);
+    window->Show();
 
   } else if (message_name == kMessageCenterName) {
-    window_util::CenterPosition(window);
+    // ToDo: implement!
 
   } else if (message_name == kMessageOpenDeveloperToolsName) {
     ClientHandler::GetInstance()->ShowDevTools(browser, CefPoint());

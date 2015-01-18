@@ -2,20 +2,31 @@
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 
+#include <caca_conio.h>
 #include "cef_handler.h"
 
 #include "include/wrapper/cef_helpers.h"
 #include "window_util.h"
+#include "brick_app.h"
 
 void
 ClientHandler::OnTitleChange(CefRefPtr<CefBrowser> browser,
                                   const CefString& title) {
     CEF_REQUIRE_UI_THREAD();
 
-    if (!browser->IsPopup())
-      return;
+  BrowserWindow *window = window_util::LookupBrowserWindow(
+     browser->GetHost()->GetWindowHandle()
+  );
+  std::string window_title = APP_NAME;
+  window_title.append(": ");
 
-    window_util::SetTitle(browser->GetHost()->GetWindowHandle(), title);
+  if (browser->IsPopup()) {
+    window_title.append(title);
+  } else {
+    window_title.append(account_manager_->GetCurrentAccount()->GetLabel());
+  }
+
+  window->SetTitle(window_title);
 }
 
 bool

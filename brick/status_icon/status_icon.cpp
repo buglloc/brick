@@ -54,7 +54,7 @@ StatusIcon::OnClick() {
   if (!client_handler)
     return false;
 
-  CefRefPtr<MainWindow> window = client_handler->GetMainWindowHandle();
+  CefRefPtr<BrowserWindow> window = client_handler->GetMainWindowHandle();
   if (!window)
     return false;
 

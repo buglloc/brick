@@ -240,10 +240,7 @@ AppMessageDelegate::OnProcessMessageReceived(
       error = ERR_INVALID_PARAMS;
     }
 
-    if (
-       error == NO_ERROR
-          && !ClientHandler::GetInstance()->GetMainWindowHandle()->HasFocus()
-       ) {
+    if (error == NO_ERROR) {
       Notification::Notify(
          request_args->GetString(1),
          request_args->GetString(2),
