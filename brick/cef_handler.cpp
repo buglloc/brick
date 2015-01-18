@@ -90,13 +90,6 @@ ClientHandler::DoClose(CefRefPtr<CefBrowser> browser) {
     is_closing_ = true;
   }
 
-  // Allow the close. For windowed browsers this will result in the OS close
-  // event being sent.
-  if (!browser->IsPopup()) {
-    // Dont' close main window, just hide it
-    main_handle_->Hide();
-    return true;
-  }
   return false;
 }
 
