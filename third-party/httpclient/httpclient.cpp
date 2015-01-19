@@ -454,6 +454,8 @@ HttpClient::InitCurl(CURL *curl, HttpClient::response *ret) {
     curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
     curl_easy_setopt(curl, CURLOPT_USERPWD, HttpClient::user_pass.c_str());
   }
+
+  curl_easy_setopt(curl, CURLOPT_TIMEOUT, HTTP_CLIENT_CONNECTION_TIMEOUT);
   /** SSL configuration **/
   curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1L);
   curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 2L);

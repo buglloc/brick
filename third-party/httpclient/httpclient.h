@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #define HTTP_CLIENT_USER_AGENT "HttpClient/0.1"
+#define HTTP_CLIENT_CONNECTION_TIMEOUT 3L
 
 class HttpClient
 {
