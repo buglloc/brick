@@ -25,8 +25,8 @@ Or you can build Brick from sources:
 # Install some dependencies and build tools
 sudo apt-get install build-essential cmake
 sudo apt-get install libcurl3-openssl-dev libgtk2.0-dev libudev libnss3 libgconf-2-4 libnotify-dev
-# Install appindicator only if you are using Unity
-sudo apt-get install libappindicator-dev
+# Install this only if you are using Unity
+sudo apt-get install libappindicator-dev libunity-dev
 
 # Let's make it
 mkdir ~/tmp && cd ~/tmp
