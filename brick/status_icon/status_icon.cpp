@@ -48,6 +48,31 @@ StatusIcon::GetIcon() {
   return current_icon_;
 }
 
+void
+StatusIcon::SetBadge(int badge, bool is_important) {
+    if (
+        (is_important || GetIcon() != StatusIcon::Icon::FLASH_IMPORTANT)
+        && badge > 0
+       ) {
+        // Regular flash (e.g. notification) can't replace important flash status (e.g. messages)
+        if (is_important) {
+            SetIcon(StatusIcon::Icon::FLASH_IMPORTANT);
+        } else {
+            SetIcon(StatusIcon::Icon::FLASH);
+        }
+#ifdef unity
+        // Parts of simple Unity integration - let's set badge in launcher!
+        unity_launcher_entry_set_count(launcher_handler_, badge);
+#endif
+    } else {
+        // if you don't know what to do just set "online" status
+        SetIcon(StatusIcon::Icon::ONLINE);
+#ifdef unity
+        unity_launcher_entry_set_count(launcher_handler_, 0);
+#endif
+    }
+}
+
 bool
 StatusIcon::OnClick() {
   CefRefPtr<ClientHandler> client_handler = ClientHandler::GetInstance();

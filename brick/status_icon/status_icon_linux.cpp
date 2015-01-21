@@ -1,7 +1,8 @@
 #include <gtk/gtk.h>
 #include <include/base/cef_logging.h>
-#include <brick/account_manager.h>
-#include <brick/cef_handler.h>
+#include "../account_manager.h"
+#include "../cef_handler.h"
+#include "../brick_app.h"
 #include "status_icon.h"
 
 namespace {
@@ -58,6 +59,8 @@ StatusIcon::Init() {
           "indicator-messages",
           APP_INDICATOR_CATEGORY_APPLICATION_STATUS
   );
+  launcher_handler_ = unity_launcher_entry_get_for_desktop_id(APP_COMMON_NAME ".desktop");
+  unity_launcher_entry_set_count_visible(launcher_handler_, true);
 #else
   icon_handler_ = gtk_status_icon_new();
   g_signal_connect(icon_handler_, "activate", G_CALLBACK(status_icon_click), this);

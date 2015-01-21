@@ -5,6 +5,7 @@
 #if defined(__linux__)
 
 #ifdef unity
+#include <unity.h>
 #include <libappindicator/app-indicator.h>
 #else
 #include "gtk/gtk.h"
@@ -27,7 +28,7 @@ public:
   unsigned char GetIcon();
   void SetIcon(Icon icon);
   void SetTooltip(const char* text);
-
+  void SetBadge(int badge, bool is_important = false);
   // Platform specific methods
   void Init();
 
@@ -51,6 +52,7 @@ private:
 
 #ifdef unity
   AppIndicator *icon_handler_;
+  UnityLauncherEntry *launcher_handler_;
 #else
   GtkStatusIcon* icon_handler_;
 #endif

@@ -205,23 +205,10 @@ AppMessageDelegate::OnProcessMessageReceived(
     }
 
     if (error == NO_ERROR) {
-      CefRefPtr<StatusIcon> status_icon = ClientHandler::GetInstance()->GetStatusIconHandle();
-      bool is_important = request_args->GetBool(2);
-      if (
-         (is_important || status_icon->GetIcon() != StatusIcon::Icon::FLASH_IMPORTANT)
-            && request_args->GetInt(1) > 0
-         ) {
-        // Regular flash (e.g. notification) can't replace important flash status (e.g. messages)
-        if (is_important) {
-          status_icon->SetIcon(StatusIcon::Icon::FLASH_IMPORTANT);
-        } else {
-          status_icon->SetIcon(StatusIcon::Icon::FLASH);
-        }
-      } else {
-        // if you don't know what to do just set "online" status
-        status_icon->SetIcon(StatusIcon::Icon::ONLINE);
-      }
-
+        ClientHandler::GetInstance()->GetStatusIconHandle()->SetBadge(
+                request_args->GetInt(1),
+                request_args->GetBool(2)
+        );
     }
 
   } else if (message_name == kMessageShowNotificationName) {
