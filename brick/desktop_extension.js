@@ -301,12 +301,15 @@ BXDesktopSystem.SetProperty = function(name, value) {
 };
 
 BXDesktopSystem.ParseNotificationHtml = function(html) {
-  var fakeDocument = document.implementation.createHTMLDocument("fake");
-  fakeDocument.documentElement.innerHTML = html;
+  if (!this.hasOwnProperty('parser')) {
+      this.parser = new DOMParser();
+  }
 
-  var date = fakeDocument.body.querySelector('span.bx-notifier-item-date').innerHTML;
-  var title = fakeDocument.body.querySelector('span.bx-notifier-item-name').innerHTML;
-  var text = fakeDocument.body.querySelector('span.bx-notifier-item-text').innerHTML;
+  var document = this.parser.parseFromString(html, "text/html");
+
+  var date = document.body.querySelector('span.bx-notifier-item-date').innerHTML;
+  var title = document.body.querySelector('span.bx-notifier-item-name').innerHTML;
+  var text = document.body.querySelector('span.bx-notifier-item-text').innerHTML;
 
   return {
     'date': date,
