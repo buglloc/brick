@@ -301,14 +301,17 @@ BXDesktopSystem.SetProperty = function(name, value) {
 };
 
 BXDesktopSystem.ParseNotificationHtml = function(html) {
-  var date = /(<span class="bx-notifier-item-date">)([\s\S]+?)(<\/span>)/.exec(html)
-  var title = /(<span class="bx-notifier-item-name">)([\s\S]+?)(<\/span>)/.exec(html)
-  var text = /(<span class="bx-notifier-item-text">)([\s\S]+?)(<\/span>)/.exec(html)
+  var fakeDocument = document.implementation.createHTMLDocument("fake");
+  fakeDocument.documentElement.innerHTML = html;
+
+  var date = fakeDocument.body.querySelector('span.bx-notifier-item-date').innerHTML;
+  var title = fakeDocument.body.querySelector('span.bx-notifier-item-name').innerHTML;
+  var text = fakeDocument.body.querySelector('span.bx-notifier-item-text').innerHTML;
 
   return {
-    'date': date[2],
-    'title': title[2].replace(/<[^>]+>/g, ''),
-    'text': text[2].replace(/<[^>]+>/g, '')
+    'date': date,
+    'title': title.replace(/<[^>]+>/g, ''),
+    'text': text.replace(/<br[^>]*>/gi, '\n').replace(/<p[^>]*>/gi, '\n').replace(/<[^>]+>/g, '')
   }
 };
 
