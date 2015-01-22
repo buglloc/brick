@@ -106,6 +106,9 @@ macro(FIND_LINUX_LIBRARIES libraries)
   set(CMAKE_EXE_LINKER_FLAGS    "${CMAKE_EXE_LINKER_FLAGS} ${FLL_LDFLAGS}")
   set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${FLL_LDFLAGS}")
   set(CEF_STANDARD_LIBS         "${CEF_STANDARD_LIBS} ${FLL_LIBS}")
+
+  # Strip leading and trailing whitepspace to deal with policy CMP0004.
+  STRING(STRIP "${CEF_STANDARD_LIBS}"    CEF_STANDARD_LIBS)
 endmacro()
 
 # Set SUID permissions on the specified executable.
