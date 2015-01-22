@@ -7,7 +7,7 @@ extern char _binary_window_edit_account_glade_size;
 
 namespace {
 
-    static void
+    void
     on_save_button(GtkWidget *widget, EditAccountWindow *self) {
       bool secure =
          gtk_combo_box_get_active(self->window_objects_.protocol_chooser) == 0;
@@ -91,7 +91,7 @@ namespace {
       );
     }
 
-    static void
+    void
     on_cancel_button(GtkWidget *widget, EditAccountWindow *self) {
       self->Close();
     }

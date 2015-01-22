@@ -8,25 +8,25 @@ extern char _binary_window_accounts_glade_size;
 
 namespace {
 
-    static bool
+    bool
     on_delete_event(GtkDialog *dialog, gpointer data, AccountsWindow *self) {
        self->Hide();
        return true;
     }
 
-    static void
+    void
     on_edit_finished(GtkWidget *widget, AccountsWindow *self) {
       self->ReloadAccounts();
     }
 
-    static void
+    void
     on_add_button(GtkWidget *widget, AccountsWindow *self) {
       self->window_objects_.edit_account_window->Init(CefRefPtr<Account> (new Account));
       g_signal_connect(GTK_OBJECT(self->window_objects_.edit_account_window->window_objects_.window), "destroy", G_CALLBACK(on_edit_finished), self);
       self->window_objects_.edit_account_window->Show();
     }
 
-    static void
+    void
     on_edit_button(GtkWidget *widget, AccountsWindow *self) {
       GtkTreeSelection *selection;
       GtkTreeModel *model;
@@ -57,7 +57,7 @@ namespace {
       }
     }
 
-    static void
+    void
     on_delete_button(GtkWidget *widget, AccountsWindow *self) {
       GtkTreeSelection *selection;
       GtkTreeModel *model;
