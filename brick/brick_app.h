@@ -2,11 +2,15 @@
 #define BRICK_APP_H_
 #pragma once
 
+// ToDo: move defines to separate file?
+
 #define VERSION "0.1.8.29" // IM API version in last part!
 #define APP_VERSION "Robin-Brick/" VERSION
 #define CEF_PRODUCT_VERSION APP_VERSION " (BitrixDesktop/3.x compatible) Chrome/39.0.2171.0"
 #define APP_NAME "Brick"
 #define APP_COMMON_NAME "brick"
+
+#define IDLE_TIMEOUT 600000
 
 #include <include/internal/cef_types_wrappers.h>
 

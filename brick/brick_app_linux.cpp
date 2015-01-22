@@ -1,4 +1,5 @@
 #include <X11/Xlib.h>
+#include <X11/extensions/scrnsaver.h>
 #include <include/wrapper/cef_helpers.h>
 #include <include/cef_app.h>
 #include <unistd.h>
@@ -22,7 +23,8 @@ namespace {
     std::string APPICONS[] = {"brick16.png", "brick32.png", "brick48.png", "brick128.png", "brick256.png"};
     std::string szWorkingDir;  // The current working directory
 
-    bool GetWorkingDir(std::string& dir) {
+    bool
+    GetWorkingDir(std::string& dir) {
       char buff[1024];
 
       // Retrieve the executable path.
@@ -38,14 +40,16 @@ namespace {
       return true;
     }
 
-    bool EnsureSystemDirectoryExists() {
+    bool
+    EnsureSystemDirectoryExists() {
       return (
          platform_util::MakeDirectory(std::string(BrickApp::GetConfigHome()) + "/" + APP_COMMON_NAME)
           && platform_util::MakeDirectory(std::string(BrickApp::GetCacheHome()) + "/" + APP_COMMON_NAME)
       );
     }
 
-    bool EnsureSingleInstance() {
+    bool
+    EnsureSingleInstance() {
       // ToDo: Replaced by IPC request, when IPC will be implemented
       std::string lock_file = std::string(BrickApp::GetCacheHome()) + "/" + APP_COMMON_NAME + "/run.lock";
       int fd = open(lock_file.c_str(), O_CREAT, 0600);
@@ -53,6 +57,44 @@ namespace {
         return true;
 
       return flock(fd, LOCK_EX|LOCK_NB) == 0;
+    }
+
+    gboolean
+    CheckUserIdle(gpointer data) {
+      /* Query xscreensaver */
+      static XScreenSaverInfo *mit_info = NULL;
+      static int has_extension = -1;
+      static bool idle_state = false;
+      int event_base, error_base;
+
+      if (has_extension == -1)
+        has_extension = XScreenSaverQueryExtension(GDK_DISPLAY(), &event_base, &error_base);
+
+      if (!has_extension)
+        return false; // Don't call this function any more
+
+      CefRefPtr<ClientHandler> handler = ClientHandler::GetInstance();
+      if (!handler)
+        return true;
+
+      CefRefPtr<CefBrowser> browser = handler->GetBrowser();
+      if (!browser)
+        return true;
+
+      if (mit_info == NULL)
+        mit_info = XScreenSaverAllocInfo();
+
+      XScreenSaverQueryInfo(GDK_DISPLAY(), GDK_ROOT_WINDOW(), mit_info);
+
+      if (mit_info->idle >= IDLE_TIMEOUT && !idle_state) {
+        idle_state = true;
+        handler->SendJSEvent(browser, "BXUserAway", "[true]");
+      } else if (mit_info->idle < IDLE_TIMEOUT && idle_state) {
+        idle_state = false;
+        handler->SendJSEvent(browser, "BXUserAway", "[false]");
+      }
+
+      return true;
     }
 }
 
@@ -109,6 +151,7 @@ int main(int argc, char* argv[]) {
   CefInitialize(main_args, BrickApp::GetCefSettings(szWorkingDir, app_settings), app.get(), NULL);
 
   gtk_init(0, NULL);
+  gtk_timeout_add(2000, CheckUserIdle, NULL);
   window_util::InitHooks();
 
   // Set default windows icon. Important to do this before any GTK window created!

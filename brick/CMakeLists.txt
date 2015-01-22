@@ -180,7 +180,7 @@ foreach(FILENAME ${BRICK_EMBED_FILES})
 endforeach(FILENAME)
 
 
-FIND_LINUX_LIBRARIES("gmodule-2.0 gtk+-2.0 gthread-2.0 libcurl libnotify")
+FIND_LINUX_LIBRARIES("gmodule-2.0 gtk+-2.0 gthread-2.0 libcurl libnotify xscrnsaver")
 if (UNITY)
   FIND_LINUX_LIBRARIES("unity appindicator-0.1")
 endif()
