@@ -39,6 +39,7 @@ namespace window_util {
 #endif
 
   BrowserWindow* LookupBrowserWindow(CefWindowHandle native_window);
+  BrowserWindow* LookupBrowserWindow(GdkEvent* event);
 
 }
 #endif  // BRICK_WINDOW_UTIL_H_

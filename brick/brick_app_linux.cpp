@@ -96,6 +96,16 @@ namespace {
 
       return true;
     }
+
+    void
+    GdkEventDispatcher(GdkEvent *event, gpointer	data) {
+      BrowserWindow *window = window_util::LookupBrowserWindow(event);
+      if (window != NULL) {
+        // We have event for browser window
+        window->OnNativeEvent(event);
+      }
+      gtk_main_do_event(event);
+    }
 }
 
 // static
@@ -152,6 +162,7 @@ int main(int argc, char* argv[]) {
 
   gtk_init(0, NULL);
   gtk_timeout_add(2000, CheckUserIdle, NULL);
+  gdk_event_handler_set(GdkEventDispatcher, NULL, NULL);
   window_util::InitHooks();
 
   // Set default windows icon. Important to do this before any GTK window created!

@@ -280,4 +280,9 @@ namespace window_util {
       GdkWindow * gdk_window = GDK_WINDOW(gdk_xid_table_lookup(native_window));
       return (BrowserWindow*) g_object_get_data(G_OBJECT(gdk_window), "wrapper");
     }
+
+    BrowserWindow*
+    LookupBrowserWindow(GdkEvent* event) {
+      return (BrowserWindow*) g_object_get_data(G_OBJECT(event->any.window), "wrapper");
+    }
 }
