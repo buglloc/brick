@@ -23,7 +23,8 @@ class BrowserWindow : public CefBase {
 public:
   BrowserWindow() : window_handler_(NULL),
                  hided_(false),
-                 focused_(true) {};
+                 focused_(true),
+                 visible_(true) {};
 
   BrowserWindowHandle GetHandler();
 
@@ -40,6 +41,7 @@ public:
   virtual void Popupping();
   virtual void FrozeSize(int width, int height);
   virtual void ToggleVisibility();
+  virtual void Present();
 
   // Event handlers
   virtual bool OnHide();
@@ -53,6 +55,7 @@ protected:
   BrowserWindowHandle window_handler_;
   bool hided_;
   bool focused_;
+  bool visible_;
 
 IMPLEMENT_REFCOUNTING(BrowserWindow);
 };

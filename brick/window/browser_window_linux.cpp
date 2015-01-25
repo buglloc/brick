@@ -17,7 +17,9 @@ BrowserWindow::WrapNative(CefWindowHandle window) {
   window_handler_ = gdk_window_foreign_new(window);
   g_object_set_data(G_OBJECT(window_handler_), "wrapper", this);
   gdk_window_set_icon_list(window_handler_, window_util::GetDefaultIcons());
-  gdk_window_set_events(window_handler_, (GdkEventMask) (GDK_STRUCTURE_MASK|GDK_VISIBILITY_NOTIFY_MASK));
+  gdk_window_set_events(window_handler_, (GdkEventMask) (
+          GDK_STRUCTURE_MASK|GDK_VISIBILITY_NOTIFY_MASK
+  ));
 }
 
 void
@@ -52,6 +54,11 @@ BrowserWindow::SetTitle(std::string title) {
 }
 
 void
+BrowserWindow::Present() {
+  Show();
+}
+
+void
 BrowserWindow::Show() {
   bool handled = OnShow();
   if (!handled)
@@ -77,17 +84,20 @@ BrowserWindow::Popupping() {
 
 void
 BrowserWindow::OnNativeEvent(BrowserWindowNativeEvent event) {
-  LOG(INFO) << "Window state on event " << gdk_window_get_state(window_handler_);
+  // ToDo: implement native window event handlers
   switch (event->type) {
     case GDK_DESTROY:
       // Release reference when wrapped window destroy
       Release();
       break;
+    case GDK_UNMAP:
+      visible_ = false;
+      break;
     case GDK_VISIBILITY_NOTIFY:
-      LOG(INFO) << "GDK_VISIBILITY_NOTIFY for " << window_handler_ << ", state: " << event->visibility.state;
+      visible_ = (event->visibility.state != GDK_VISIBILITY_FULLY_OBSCURED);
       break;
     default:
-      LOG(INFO) << "window: " << window_handler_ << ", event: " << event->type;
+//      LOG(INFO) << "window: " << window_handler_ << ", event: " << event->type;
       break;
   }
 
@@ -95,9 +105,14 @@ BrowserWindow::OnNativeEvent(BrowserWindowNativeEvent event) {
 
 void
 BrowserWindow::ToggleVisibility() {
-  if (hided_) {
-    Show();
-  } else {
+  bool is_hided = (
+     hided_
+     || !visible_
+     || (gdk_window_get_state(window_handler_) & GDK_WINDOW_STATE_ICONIFIED)
+  );
+
+  if (is_hided)
+    Present();
+  else
     Hide();
-  }
 }
