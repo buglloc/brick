@@ -7,6 +7,7 @@
 // The Linux client uses GTK instead of the underlying platform type (X11).
 #include <gdk/gdkx.h>
 #define BrowserWindowHandle GdkWindow*
+#define BrowserWindowNativeEvent GdkEvent*
 #else
 
 #endif
@@ -15,6 +16,7 @@
 #include <include/base/cef_lock.h>
 #include <include/internal/cef_linux.h>
 
+#include <include/base/cef_logging.h>
 
 class BrowserWindow : public CefBase {
 
@@ -26,6 +28,7 @@ public:
   BrowserWindowHandle GetHandler();
 
   // Platform specific methods
+  virtual void OnNativeEvent(BrowserWindowNativeEvent event);
   virtual void WrapNative(CefWindowHandle window);
   virtual void Show();
   virtual void Hide();
@@ -36,8 +39,11 @@ public:
   virtual void SetTitle(std::string title);
   virtual void Popupping();
   virtual void FrozeSize(int width, int height);
-  // Event handlers
+  virtual void ToggleVisibility();
 
+  // Event handlers
+  virtual bool OnHide();
+  virtual bool OnShow();
 
   // Shared methods
 //  virtual bool SetFocus(bool focused);

@@ -58,15 +58,13 @@ ClientHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
     // We need to keep the main child window, but not popup windows
     browser_ = browser;
     browser_id_ = browser->GetIdentifier();
-    // ToDo: leaks
     main_handle_ = new BrowserWindow;
     main_handle_->WrapNative(browser->GetHost()->GetWindowHandle());
   } else if (browser->IsPopup()) {
     // Add to the list of popup browsers.
 //    popup_browsers_.push_back(browser);
 
-    // ToDo: leaks
-    BrowserWindow *window = new BrowserWindow;
+    CefRefPtr<BrowserWindow> window(new BrowserWindow);
     window->WrapNative(browser->GetHost()->GetWindowHandle());
 
     // Give focus to the popup browser. Perform asynchronously because the

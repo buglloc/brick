@@ -1,13 +1,23 @@
 #include <gtk/gtkeventbox.h>
 #include <gtk/gtk.h>
+#include <include/base/cef_logging.h>
+
 #include "../window_util.h"
 #include "browser_window.h"
 
+
 void
 BrowserWindow::WrapNative(CefWindowHandle window) {
+  if (window_handler_) {
+    LOG(ERROR) << "Browser window already have native window. Can't wrap one more window.";
+    return;
+  }
+
+  AddRef();
   window_handler_ = gdk_window_foreign_new(window);
   g_object_set_data(G_OBJECT(window_handler_), "wrapper", this);
   gdk_window_set_icon_list(window_handler_, window_util::GetDefaultIcons());
+  gdk_window_set_events(window_handler_, (GdkEventMask) (GDK_STRUCTURE_MASK|GDK_VISIBILITY_NOTIFY_MASK));
 }
 
 void
@@ -43,14 +53,16 @@ BrowserWindow::SetTitle(std::string title) {
 
 void
 BrowserWindow::Show() {
-  hided_ = false;
-  gdk_window_show(window_handler_);
+  bool handled = OnShow();
+  if (!handled)
+    gdk_window_show(window_handler_);
 }
 
 void
 BrowserWindow::Hide() {
-  hided_ = true;
-  gdk_window_hide(window_handler_);
+  bool handled = OnHide();
+  if (!handled)
+    gdk_window_hide(window_handler_);
 }
 
 void
@@ -61,4 +73,31 @@ BrowserWindow::Close() {
 void
 BrowserWindow::Popupping() {
   gdk_window_set_type_hint(window_handler_, GDK_WINDOW_TYPE_HINT_DIALOG);
+}
+
+void
+BrowserWindow::OnNativeEvent(BrowserWindowNativeEvent event) {
+  LOG(INFO) << "Window state on event " << gdk_window_get_state(window_handler_);
+  switch (event->type) {
+    case GDK_DESTROY:
+      // Release reference when wrapped window destroy
+      Release();
+      break;
+    case GDK_VISIBILITY_NOTIFY:
+      LOG(INFO) << "GDK_VISIBILITY_NOTIFY for " << window_handler_ << ", state: " << event->visibility.state;
+      break;
+    default:
+      LOG(INFO) << "window: " << window_handler_ << ", event: " << event->type;
+      break;
+  }
+
+}
+
+void
+BrowserWindow::ToggleVisibility() {
+  if (hided_) {
+    Show();
+  } else {
+    Hide();
+  }
 }

@@ -9,3 +9,15 @@ bool
 BrowserWindow::GetHided() {
   return hided_;
 }
+
+bool
+BrowserWindow::OnHide() {
+  hided_ = true;
+  return false;
+}
+
+bool
+BrowserWindow::OnShow() {
+  hided_ = false;
+  return false;
+}
