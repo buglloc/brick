@@ -83,11 +83,7 @@ StatusIcon::OnClick() {
   if (!window)
     return false;
 
-  if (window->GetHided()) {
-    window->Show();
-  } else {
-    window->Hide();
-  }
+  window->ToggleVisibility();
 
   return true;
 }
