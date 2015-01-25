@@ -23,6 +23,7 @@ class ClientHandler : public CefClient,
                       public CefLoadHandler,
                       public CefDialogHandler,
                       public CefContextMenuHandler,
+                      public CefRenderHandler,
                       public CefRequestHandler {
 public:
   // Interface for process message delegates. Do not perform work in the
@@ -67,6 +68,7 @@ public:
   void SetAppSettings(AppSettings settings);
   AppSettings GetAppSettings() const;
 
+  void SetMainWindowHandle(CefRefPtr<BrowserWindow> handle);
   CefRefPtr<BrowserWindow> GetMainWindowHandle() const;
 
   void SetStatusIconHandle(CefRefPtr<StatusIcon> handle);
@@ -89,6 +91,10 @@ public:
   }
 
   virtual CefRefPtr<CefLoadHandler> GetLoadHandler() OVERRIDE {
+    return this;
+  }
+
+  virtual CefRefPtr<CefRenderHandler> GetRenderHandler() OVERRIDE {
     return this;
   }
 
@@ -161,6 +167,39 @@ public:
      CefRefPtr<CefBrowser> browser,
      CefRefPtr<CefFrame> frame,
      CefRefPtr<CefRequest> request) OVERRIDE;
+
+  // CefRenderHandler methods
+  virtual bool GetRootScreenRect(CefRefPtr<CefBrowser> browser,
+     CefRect& rect) OVERRIDE;
+  virtual bool GetViewRect(CefRefPtr<CefBrowser> browser,
+     CefRect& rect) OVERRIDE;
+  virtual bool GetScreenPoint(CefRefPtr<CefBrowser> browser,
+     int viewX,
+     int viewY,
+     int& screenX,
+     int& screenY) OVERRIDE;
+  virtual bool GetScreenInfo(CefRefPtr<CefBrowser> browser,
+     CefScreenInfo& screen_info) OVERRIDE;
+  virtual void OnPopupShow(CefRefPtr<CefBrowser> browser, bool show) OVERRIDE;
+  virtual void OnPopupSize(CefRefPtr<CefBrowser> browser,
+     const CefRect& rect) OVERRIDE;
+  virtual void OnPaint(CefRefPtr<CefBrowser> browser,
+     PaintElementType type,
+     const RectList& dirtyRects,
+     const void* buffer,
+     int width,
+     int height) OVERRIDE;
+  virtual void OnCursorChange(CefRefPtr<CefBrowser> browser,
+     CefCursorHandle cursor,
+     CursorType type,
+     const CefCursorInfo& custom_cursor_info) OVERRIDE;
+  virtual bool StartDragging(CefRefPtr<CefBrowser> browser,
+     CefRefPtr<CefDragData> drag_data,
+     CefRenderHandler::DragOperationsMask allowed_ops,
+     int x, int y) OVERRIDE;
+  virtual void UpdateDragCursor(CefRefPtr<CefBrowser> browser,
+     CefRenderHandler::DragOperation operation)
+     OVERRIDE;
 
   CefRefPtr<CefBrowser> GetBrowser() const;
 

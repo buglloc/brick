@@ -3,12 +3,6 @@
 #pragma once
 
 #include <include/internal/cef_linux.h>
-#if defined(__linux__)
-#include <glib.h>
-#else
-#endif
-
-#include "window/browser_window.h"
 
 namespace window_util {
   CefWindowHandle GetParent(CefWindowHandle handle);
@@ -31,14 +25,5 @@ namespace window_util {
 
   void InitHooks();
   void InitWindow(CefWindowHandle handle);
-
-#if defined(__linux__)
-  GList* GetDefaultIcons();
-  void SetDefaultIcons(GList* icons);
-#else
-#endif
-
-  BrowserWindow* LookupBrowserWindow(CefWindowHandle native_window);
-
 }
 #endif  // BRICK_WINDOW_UTIL_H_

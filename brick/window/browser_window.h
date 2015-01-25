@@ -3,39 +3,21 @@
 #pragma once
 
 
-#if defined(__linux__)
-// The Linux client uses GTK instead of the underlying platform type (X11).
-#include <gdk/gdkx.h>
-#define BrowserWindowHandle GdkWindow*
-#else
-
-#endif
-
 #include <include/cef_base.h>
 #include <include/base/cef_lock.h>
+#include "base_window.h"
+
 #include <include/internal/cef_linux.h>
+#include "../osr_widget_gtk.h"
 
-
-class BrowserWindow : public CefBase {
+class BrowserWindow : public BaseWindow {
 
 public:
-  BrowserWindow() : window_handler_(NULL),
-                 hided_(false),
-                 focused_(true) {};
 
-  BrowserWindowHandle GetHandler();
-
+  CefRefPtr<OSRWindow> GetOsrWindow();
   // Platform specific methods
-  virtual void WrapNative(CefWindowHandle window);
-  virtual void Show();
-  virtual void Hide();
-  virtual bool GetHided();
-  virtual void Close();
-  virtual void SetMinSize(int width, int height);
-  virtual void Resize(int width, int height);
-  virtual void SetTitle(std::string title);
-  virtual void Popupping();
-  virtual void FrozeSize(int width, int height);
+  void Init() OVERRIDE;
+  CefWindowHandle GetId();
   // Event handlers
 
 
@@ -44,10 +26,7 @@ public:
 //  virtual bool HasFocus();
 
 protected:
-  BrowserWindowHandle window_handler_;
-  bool hided_;
-  bool focused_;
-
+  CefRefPtr<OSRWindow> osr_window_;
 IMPLEMENT_REFCOUNTING(BrowserWindow);
 };
 

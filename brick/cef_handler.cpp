@@ -59,15 +59,15 @@ ClientHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
     browser_ = browser;
     browser_id_ = browser->GetIdentifier();
     // ToDo: leaks
-    main_handle_ = new BrowserWindow;
-    main_handle_->WrapNative(browser->GetHost()->GetWindowHandle());
+//    main_handle_ = new BrowserWindow;
+//    main_handle_->WrapNative(browser->GetHost()->GetWindowHandle());
   } else if (browser->IsPopup()) {
     // Add to the list of popup browsers.
 //    popup_browsers_.push_back(browser);
 
     // ToDo: leaks
-    BrowserWindow *window = new BrowserWindow;
-    window->WrapNative(browser->GetHost()->GetWindowHandle());
+//    BrowserWindow *window = new BrowserWindow;
+//    window->WrapNative(browser->GetHost()->GetWindowHandle());
 
     // Give focus to the popup browser. Perform asynchronously because the
     // parent window may attempt to keep focus after launching the popup.
@@ -379,6 +379,118 @@ ClientHandler::OnProcessMessageReceived(
   return handled;
 }
 
+bool
+ClientHandler::GetRootScreenRect(CefRefPtr<CefBrowser> browser,
+   CefRect& rect) {
+  CEF_REQUIRE_UI_THREAD();
+  if (!main_handle_.get())
+    return false;
+
+  return main_handle_->GetOsrWindow()->GetRootScreenRect(browser, rect);
+}
+
+bool
+ClientHandler::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect& rect) {
+  CEF_REQUIRE_UI_THREAD();
+  if (!main_handle_.get())
+    return false;
+
+  return main_handle_->GetOsrWindow()->GetViewRect(browser, rect);
+}
+
+bool
+ClientHandler::GetScreenPoint(CefRefPtr<CefBrowser> browser,
+   int viewX,
+   int viewY,
+   int& screenX,
+   int& screenY) {
+
+  CEF_REQUIRE_UI_THREAD();
+  if (!main_handle_.get())
+    return false;
+
+  return main_handle_->GetOsrWindow()->GetScreenPoint(browser, viewX, viewY, screenX, screenY);
+}
+
+bool
+ClientHandler::GetScreenInfo(CefRefPtr<CefBrowser> browser, CefScreenInfo& screen_info) {
+  CEF_REQUIRE_UI_THREAD();
+  if (!main_handle_.get())
+    return false;
+
+  return main_handle_->GetOsrWindow()->GetScreenInfo(browser, screen_info);
+}
+
+void
+ClientHandler::OnPopupShow(CefRefPtr<CefBrowser> browser, bool show) {
+  CEF_REQUIRE_UI_THREAD();
+  if (!main_handle_.get())
+    return;
+
+  return main_handle_->GetOsrWindow()->OnPopupShow(browser, show);
+}
+
+void
+ClientHandler::OnPopupSize(CefRefPtr<CefBrowser> browser, const CefRect& rect) {
+  CEF_REQUIRE_UI_THREAD();
+  if (!main_handle_.get())
+    return;
+
+  return main_handle_->GetOsrWindow()->OnPopupSize(browser, rect);
+}
+
+void
+ClientHandler::OnPaint(CefRefPtr<CefBrowser> browser,
+   PaintElementType type,
+   const RectList& dirtyRects,
+   const void* buffer,
+   int width,
+   int height) {
+
+  CEF_REQUIRE_UI_THREAD();
+  if (!main_handle_.get())
+    return;
+
+  main_handle_->GetOsrWindow()->OnPaint(browser, type, dirtyRects, buffer, width, height);
+}
+
+void
+ClientHandler::OnCursorChange(CefRefPtr<CefBrowser> browser,
+   CefCursorHandle cursor,
+   CursorType type,
+   const CefCursorInfo& custom_cursor_info) {
+
+  CEF_REQUIRE_UI_THREAD();
+  if (!main_handle_.get())
+    return;
+
+  main_handle_->GetOsrWindow()->OnCursorChange(browser, cursor, type, custom_cursor_info);
+}
+
+bool
+ClientHandler::StartDragging(CefRefPtr<CefBrowser> browser,
+   CefRefPtr<CefDragData> drag_data,
+   CefRenderHandler::DragOperationsMask allowed_ops,
+   int x, int y) {
+
+  CEF_REQUIRE_UI_THREAD();
+  if (!main_handle_)
+    return false;
+
+  return main_handle_->GetOsrWindow()->StartDragging(browser, drag_data, allowed_ops, x, y);
+}
+
+void
+ClientHandler::UpdateDragCursor(CefRefPtr<CefBrowser> browser,
+   CefRenderHandler::DragOperation operation) {
+
+  CEF_REQUIRE_UI_THREAD();
+  if (!main_handle_)
+    return;
+
+  main_handle_->GetOsrWindow()->UpdateDragCursor(browser, operation);
+}
+
 void
 ClientHandler::SetAccountManager(CefRefPtr<AccountManager> account_manager) {
   account_manager_ = account_manager;
@@ -387,6 +499,18 @@ ClientHandler::SetAccountManager(CefRefPtr<AccountManager> account_manager) {
 CefRefPtr<AccountManager>
 ClientHandler::GetAccountManager() const {
   return account_manager_;
+}
+
+void
+ClientHandler::SetMainWindowHandle(CefRefPtr<BrowserWindow> handle) {
+  if (!CefCurrentlyOn(TID_UI)) {
+    // Execute on the UI thread.
+    CefPostTask(TID_UI,
+       base::Bind(&ClientHandler::SetMainWindowHandle, this, handle));
+    return;
+  }
+
+  main_handle_ = handle;
 }
 
 CefRefPtr<BrowserWindow>

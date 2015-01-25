@@ -48,7 +48,7 @@ public:
   virtual void Move(int left, int top);
   virtual void Resize(int width, int height);
   virtual const char* GetTitle();
-  virtual void SetTitle(const char* title);
+  virtual void SetTitle(std::string title);
   virtual void Fullscreen();
   virtual STATE GetState();
   virtual void SetTopmost(bool ontop);

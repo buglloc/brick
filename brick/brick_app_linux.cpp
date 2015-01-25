@@ -4,6 +4,7 @@
 #include <include/cef_app.h>
 #include <unistd.h>
 #include <gdk/gdkx.h>
+#include <gtk/gtkgl.h>
 #include <sys/file.h>
 
 #include "brick_app.h"
@@ -151,6 +152,8 @@ int main(int argc, char* argv[]) {
   CefInitialize(main_args, BrickApp::GetCefSettings(szWorkingDir, app_settings), app.get(), NULL);
 
   gtk_init(0, NULL);
+  // Perform gtkglext initialization required by the OSR.
+  gtk_gl_init(0, NULL);
   gtk_timeout_add(2000, CheckUserIdle, NULL);
   window_util::InitHooks();
 
@@ -164,11 +167,17 @@ int main(int argc, char* argv[]) {
       continue;
     icons = g_list_append(icons, icon);
   }
-  window_util::SetDefaultIcons(icons);
+  gtk_window_set_default_icon_list(icons);
+  g_list_foreach(icons, (GFunc) g_object_unref, NULL);
+  g_list_free(icons);
 
-
+  // Create main window
+  CefRefPtr<BrowserWindow> main_window(new BrowserWindow);
+  main_window->Init();
+  main_window->Show();
   // Create the handler.
   CefRefPtr<ClientHandler> client_handler(new ClientHandler);
+  client_handler->SetMainWindowHandle(main_window);
   client_handler->SetAppSettings(app_settings);
   client_handler->SetAccountManager(account_manager);
 
@@ -177,6 +186,7 @@ int main(int argc, char* argv[]) {
   client_handler->SetStatusIconHandle(status_icon);
 
   CefWindowInfo window_info;
+  window_info.SetAsWindowless(main_window->GetId(), false);
   std::string startup_url = account_manager->GetCurrentAccount()->GetBaseUrl();
   if (account_manager->GetCurrentAccount()->IsExisted()) {
     // Login to our account

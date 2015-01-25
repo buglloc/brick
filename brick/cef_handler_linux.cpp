@@ -52,9 +52,6 @@ ClientHandler::OnTitleChange(CefRefPtr<CefBrowser> browser,
                                   const CefString& title) {
     CEF_REQUIRE_UI_THREAD();
 
-  BrowserWindow *window = window_util::LookupBrowserWindow(
-     browser->GetHost()->GetWindowHandle()
-  );
   std::string window_title = APP_NAME;
   window_title.append(": ");
 
@@ -64,7 +61,7 @@ ClientHandler::OnTitleChange(CefRefPtr<CefBrowser> browser,
     window_title.append(account_manager_->GetCurrentAccount()->GetLabel());
   }
 
-  window->SetTitle(window_title);
+  window_util::SetTitle(browser->GetHost()->GetWindowHandle(), window_title);
 }
 
 bool

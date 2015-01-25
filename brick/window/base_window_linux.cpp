@@ -76,8 +76,8 @@ BaseWindow::GetTitle() {
 }
 
 void
-BaseWindow::SetTitle(const char* title) {
-  gtk_window_set_title(GTK_WINDOW(window_handler_), title);
+BaseWindow::SetTitle(std::string title) {
+  gtk_window_set_title(GTK_WINDOW(window_handler_), title.c_str());
 }
 
 void

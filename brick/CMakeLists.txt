@@ -49,6 +49,8 @@ set(BRICK_SRCS
   window_util.h
   notification.h
   platform_util.h
+  osrenderer.h
+  osrenderer.cpp
   )
 set(BRICK_COMMON_SRCS
   common/app_settings.cpp
@@ -66,6 +68,8 @@ set(BRICK_SRCS_LINUX
   window_util_linux.cpp
   notification_linux.cpp
   platform_util_linux.cpp
+  osr_widget_gtk.h
+  osr_widget_gtk.cpp
   )
 set(BRICK_EXTENSIONS_SRCS
   v8_handler.cpp
@@ -180,7 +184,7 @@ foreach(FILENAME ${BRICK_EMBED_FILES})
 endforeach(FILENAME)
 
 
-FIND_LINUX_LIBRARIES("gmodule-2.0 gtk+-2.0 gthread-2.0 libcurl libnotify xscrnsaver")
+FIND_LINUX_LIBRARIES("gmodule-2.0 gtk+-2.0 gthread-2.0 libcurl libnotify xscrnsaver gtkglext-1.0")
 if (UNITY)
   FIND_LINUX_LIBRARIES("unity appindicator-0.1")
 endif()

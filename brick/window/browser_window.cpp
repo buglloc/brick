@@ -1,11 +1,6 @@
 #include "browser_window.h"
 
-BrowserWindowHandle
-BrowserWindow::GetHandler() {
-  return window_handler_;
-}
-
-bool
-BrowserWindow::GetHided() {
-  return hided_;
+CefRefPtr<OSRWindow>
+BrowserWindow::GetOsrWindow() {
+  return osr_window_;
 }
