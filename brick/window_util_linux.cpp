@@ -283,6 +283,20 @@ namespace window_util {
 
     BrowserWindow*
     LookupBrowserWindow(GdkEvent* event) {
-      return (BrowserWindow*) g_object_get_data(G_OBJECT(event->any.window), "wrapper");
+      if (event->type == GDK_NOTHING) {
+        // GDK_NOTHING event doesn't have any windows
+        return NULL;
+      }
+
+      GObject *object = G_OBJECT(event->any.window);
+      if (!G_IS_OBJECT(object)) {
+        LOG(ERROR) << "Try lookup browser window of bad native window"
+           << ", event type: " << event->type
+           << ", event window: " << event->any.window
+        ;
+        return NULL;
+      }
+
+      return (BrowserWindow*) g_object_get_data(object, "wrapper");
     }
 }
