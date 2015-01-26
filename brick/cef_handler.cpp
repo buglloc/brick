@@ -66,6 +66,7 @@ ClientHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
 
     CefRefPtr<BrowserWindow> window(new BrowserWindow);
     window->WrapNative(browser->GetHost()->GetWindowHandle());
+    window->Popupping();
 
     // Give focus to the popup browser. Perform asynchronously because the
     // parent window may attempt to keep focus after launching the popup.
