@@ -123,7 +123,7 @@ BrowserWindow::ToggleVisibility() {
   if (is_hided) {
     Present();
   } else {
-      Hide();
+    Hide();
   }
 }
 
