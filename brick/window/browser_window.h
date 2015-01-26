@@ -42,6 +42,7 @@ public:
   virtual void FrozeSize(int width, int height);
   virtual void ToggleVisibility();
   virtual void Present();
+  virtual void SetActive();
 
   // Event handlers
   virtual bool OnHide();

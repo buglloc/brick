@@ -1,5 +1,6 @@
-#include <gtk/gtkeventbox.h>
-#include <gtk/gtk.h>
+
+#include <gdk/gdk.h>
+#include <gdk/gdkx.h>
 #include <include/base/cef_logging.h>
 
 #include "../window_util.h"
@@ -56,6 +57,10 @@ BrowserWindow::SetTitle(std::string title) {
 void
 BrowserWindow::Present() {
   Show();
+  if (!hided_) {
+      // If window mapped - activate it immediately
+      SetActive();
+  }
 }
 
 void
@@ -90,8 +95,12 @@ BrowserWindow::OnNativeEvent(BrowserWindowNativeEvent event) {
       // Release reference when wrapped window destroy
       Release();
       break;
+    case GDK_MAP:
+      hided_ = false;
+      SetActive();
+      break;
     case GDK_UNMAP:
-      visible_ = false;
+      hided_ = true;
       break;
     case GDK_VISIBILITY_NOTIFY:
       visible_ = (event->visibility.state != GDK_VISIBILITY_FULLY_OBSCURED);
@@ -108,11 +117,19 @@ BrowserWindow::ToggleVisibility() {
   bool is_hided = (
      hided_
      || !visible_
-     || (gdk_window_get_state(window_handler_) & GDK_WINDOW_STATE_ICONIFIED)
+     || (gdk_window_get_state(window_handler_) & (GDK_WINDOW_STATE_ICONIFIED|GDK_WINDOW_STATE_WITHDRAWN))
   );
 
-  if (is_hided)
+  if (is_hided) {
     Present();
-  else
-    Hide();
+  } else {
+      Hide();
+  }
+}
+
+void
+BrowserWindow::SetActive() {
+    gdk_window_focus(window_handler_,
+            gdk_x11_display_get_user_time(gdk_window_get_display(window_handler_))
+    );
 }
