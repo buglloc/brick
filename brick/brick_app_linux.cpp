@@ -70,8 +70,11 @@ namespace {
       if (has_extension == -1)
         has_extension = XScreenSaverQueryExtension(GDK_DISPLAY(), &event_base, &error_base);
 
-      if (!has_extension)
-        return false; // Don't call this function any more
+      if (!has_extension) {
+        LOG(WARNING) << "XScreenSaver extension not found, 'auto away' feature is  being disabled.";
+        // Don't call this function any more
+        return false;
+      }
 
       CefRefPtr<ClientHandler> handler = ClientHandler::GetInstance();
       if (!handler)
@@ -161,9 +164,12 @@ int main(int argc, char* argv[]) {
   CefInitialize(main_args, BrickApp::GetCefSettings(szWorkingDir, app_settings), app.get(), NULL);
 
   gtk_init(0, NULL);
-  gtk_timeout_add(2000, CheckUserIdle, NULL);
   gdk_event_handler_set(GdkEventDispatcher, NULL, NULL);
   window_util::InitHooks();
+
+  if (app_settings.auto_away) {
+    gtk_timeout_add(4000, CheckUserIdle, NULL);
+  }
 
   // Set default windows icon. Important to do this before any GTK window created!
   GList *icons = NULL;
