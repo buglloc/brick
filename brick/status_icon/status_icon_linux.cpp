@@ -60,7 +60,6 @@ StatusIcon::Init() {
           APP_INDICATOR_CATEGORY_APPLICATION_STATUS
   );
   launcher_handler_ = unity_launcher_entry_get_for_desktop_id(APP_COMMON_NAME ".desktop");
-  unity_launcher_entry_set_count_visible(launcher_handler_, true);
 #else
   icon_handler_ = gtk_status_icon_new();
   g_signal_connect(icon_handler_, "activate", G_CALLBACK(status_icon_click), this);

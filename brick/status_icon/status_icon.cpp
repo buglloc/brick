@@ -63,12 +63,14 @@ StatusIcon::SetBadge(int badge, bool is_important) {
 #ifdef unity
         // Parts of simple Unity integration - let's set badge in launcher!
         unity_launcher_entry_set_count(launcher_handler_, badge);
+        unity_launcher_entry_set_count_visible(launcher_handler_, true);
 #endif
     } else {
         // if you don't know what to do just set "online" status
         SetIcon(StatusIcon::Icon::ONLINE);
 #ifdef unity
         unity_launcher_entry_set_count(launcher_handler_, 0);
+        unity_launcher_entry_set_count_visible(launcher_handler_, false);
 #endif
     }
 }
