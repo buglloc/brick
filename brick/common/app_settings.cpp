@@ -12,10 +12,12 @@ AppSettings::AppSettings()
   ignore_certificate_errors(false),
   log_severity(LOGSEVERITY_DEFAULT),
 #ifndef NDEBUG
-  start_minimized(true)
+  start_minimized(true),
 #else
-  start_minimized(false)
+  start_minimized(false),
 #endif
+  auto_away(true),
+  hide_on_delete(false)
 {
 
 }
@@ -65,7 +67,7 @@ AppSettings::InitByJson(std::string json) {
 
   if (root.isMember("ignore_certificate_errors")
      && root["ignore_certificate_errors"].isBool()) {
-    settings.profile_path = root["ignore_certificate_errors"].asBool();
+    settings.ignore_certificate_errors = root["ignore_certificate_errors"].asBool();
   }
 
   if (root.isMember("start_minimized")
@@ -75,7 +77,17 @@ AppSettings::InitByJson(std::string json) {
 
   if (root.isMember("resource_dir")
      && root["resource_dir"].isString()) {
-    settings.profile_path = root["resource_dir"].asString();
+    settings.resource_dir = root["resource_dir"].asString();
+  }
+
+  if (root.isMember("auto_away")
+     && root["auto_away"].isBool()) {
+    settings.auto_away = root["auto_away"].asBool();
+  }
+
+  if (root.isMember("hide_on_delete")
+     && root["hide_on_delete"].isBool()) {
+    settings.hide_on_delete = root["hide_on_delete"].asBool();
   }
 
   return settings;
