@@ -15,8 +15,15 @@
 
 #include <string>
 #include <include/cef_base.h>
+#include "../event/account_switch_event.h"
+#include "../event/account_list_event.h"
+#include "../event/event_handler.h"
+#include "../event/event_bus.h"
 
-class StatusIcon : public CefBase {
+class StatusIcon : public CefBase,
+                   public EventSender,
+                   public EventHandler<AccountListEvent>,
+                   public EventHandler<AccountSwitchEvent> {
 
 public:
   enum Icon {
@@ -40,6 +47,10 @@ public:
   bool OnMenuAbout();
   bool OnMenuManageAccount();
   bool OnMenuChangeAccount(int id);
+
+  // System events handler
+  virtual void onEvent(AccountListEvent &event) OVERRIDE;
+  virtual void onEvent(AccountSwitchEvent &event) OVERRIDE;
 
 protected:
   std::string GetIconPath(Icon icon);

@@ -2,6 +2,7 @@
 #include <include/base/cef_logging.h>
 #include <include/wrapper/cef_helpers.h>
 
+#include "../event/event_bus.h"
 #include "dbus_protocol.h"
 #include "app_message_delegate.h"
 #include "app_window_message_delegate.h"
@@ -22,6 +23,16 @@ namespace {
           "    </method>"
           "    <method name='ShowAccountsDialog' />"
           "    <method name='Quit' />"
+          "    <signal name='IndicatorTooltipChanged'>"
+          "      <arg type='s' name='text'/>"
+          "    </signal>"
+          "    <signal name='IndicatorStateChanged'>"
+          "      <arg type='s' name='state'/>"
+          "    </signal>"
+          "    <signal name='IndicatorBadgeChanged'>"
+          "      <arg type='i' name='badge'/>"
+          "      <arg type='b' name='important'/>"
+          "    </signal>"
           "  </interface>"
           "  <interface name='org.brick.Brick.AppWindowInterface'>"
           "    <method name='Hide' />"
@@ -195,6 +206,7 @@ DBusProtocol::Init(bool send_show_on_exists) {
 
   on_bus_acquired(connection_, kOwnName, this);
   RegisterMessageDelegates();
+  RegisterEventListeners();
   return 0;
 }
 
@@ -220,3 +232,82 @@ DBusProtocol::RegisterMessageDelegates() {
   external_message_delegates_.insert(new ExternalAppMessageDelegate);
   external_message_delegates_.insert(new ExternalAppWindowMessageDelegate);
 }
+
+void
+DBusProtocol::RegisterEventListeners() {
+  EventBus::AddHandler<AccountListEvent>(*this);
+  EventBus::AddHandler<AccountSwitchEvent>(*this);
+  EventBus::AddHandler<IndicatorBadgeEvent>(*this);
+  EventBus::AddHandler<IndicatorStateEvent>(*this);
+  EventBus::AddHandler<IndicatorTooltipEvent>(*this);
+}
+
+void
+DBusProtocol::onEvent(AccountListEvent &event) {
+  LOG(WARNING) << "DBUS implement me: AccountListEvent";
+};
+
+void
+DBusProtocol::onEvent(AccountSwitchEvent &event) {
+  LOG(WARNING) << "DBUS implement me: AccountSwitchEvent";
+};
+
+void
+DBusProtocol::onEvent(IndicatorBadgeEvent &event) {
+  GError *error = NULL;
+  gboolean result;
+
+  result = g_dbus_connection_emit_signal (
+     connection_,
+     NULL,
+     kAppPath,
+     kAppInterface,
+     "IndicatorBadgeChanged",
+     g_variant_new ("(ib)", event.getBadge(), event.isImportant()),
+     &error);
+
+  if (!result) {
+    LOG(ERROR) << "Failed to emit IndicatorBadgeChanged signal: " << error->message;
+    g_error_free (error);
+  }
+};
+
+void
+DBusProtocol::onEvent(IndicatorStateEvent &event) {
+  GError *error = NULL;
+  gboolean result;
+
+  result = g_dbus_connection_emit_signal (
+     connection_,
+     NULL,
+     kAppPath,
+     kAppInterface,
+     "IndicatorStateChanged",
+     g_variant_new ("(s)", event.getState().c_str()),
+     &error);
+
+  if (!result) {
+    LOG(ERROR) << "Failed to emit IndicatorStateChanged signal: " << error->message;
+    g_error_free (error);
+  }
+};
+
+void
+DBusProtocol::onEvent(IndicatorTooltipEvent &event) {
+  GError *error = NULL;
+  gboolean result;
+
+  result = g_dbus_connection_emit_signal (
+     connection_,
+     NULL,
+     kAppPath,
+     kAppInterface,
+     "IndicatorTooltipChanged",
+     g_variant_new ("(s)", event.getTooltip().c_str()),
+     &error);
+
+  if (!result) {
+    LOG(ERROR) << "Failed to emit IndicatorTooltipChanged signal: " << error->message;
+    g_error_free (error);
+  }
+};

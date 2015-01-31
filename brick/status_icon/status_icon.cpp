@@ -1,8 +1,10 @@
 #include <include/cef_app.h>
 
+
 #include "../cef_handler.h"
 #include "../window/about_window.h"
 #include "../window/accounts_window.h"
+#include "../event/indicator_badge_event.h"
 
 namespace {
 
@@ -50,29 +52,32 @@ StatusIcon::GetIcon() {
 
 void
 StatusIcon::SetBadge(int badge, bool is_important) {
-    if (
-        (is_important || GetIcon() != StatusIcon::Icon::FLASH_IMPORTANT)
-        && badge > 0
-       ) {
-        // Regular flash (e.g. notification) can't replace important flash status (e.g. messages)
-        if (is_important) {
-            SetIcon(StatusIcon::Icon::FLASH_IMPORTANT);
-        } else {
-            SetIcon(StatusIcon::Icon::FLASH);
-        }
-#ifdef unity
-        // Parts of simple Unity integration - let's set badge in launcher!
-        unity_launcher_entry_set_count(launcher_handler_, badge);
-        unity_launcher_entry_set_count_visible(launcher_handler_, true);
-#endif
+  if (
+    (is_important || GetIcon() != StatusIcon::Icon::FLASH_IMPORTANT)
+    && badge > 0
+   ) {
+    // Regular flash (e.g. notification) can't replace important flash status (e.g. messages)
+    if (is_important) {
+        SetIcon(StatusIcon::Icon::FLASH_IMPORTANT);
     } else {
-        // if you don't know what to do just set "online" status
-        SetIcon(StatusIcon::Icon::ONLINE);
-#ifdef unity
-        unity_launcher_entry_set_count(launcher_handler_, 0);
-        unity_launcher_entry_set_count_visible(launcher_handler_, false);
-#endif
+        SetIcon(StatusIcon::Icon::FLASH);
     }
+#ifdef unity
+    // Parts of simple Unity integration - let's set badge in launcher!
+    unity_launcher_entry_set_count(launcher_handler_, badge);
+    unity_launcher_entry_set_count_visible(launcher_handler_, true);
+#endif
+  } else {
+    // if you don't know what to do just set "online" status
+    SetIcon(StatusIcon::Icon::ONLINE);
+#ifdef unity
+    unity_launcher_entry_set_count(launcher_handler_, 0);
+    unity_launcher_entry_set_count_visible(launcher_handler_, false);
+#endif
+  }
+
+  IndicatorBadgeEvent e(*this, badge, is_important);
+  EventBus::FireEvent(e);
 }
 
 bool
@@ -125,3 +130,13 @@ StatusIcon::OnMenuChangeAccount(int id) {
 
   return true;
 }
+
+void
+StatusIcon::onEvent(AccountListEvent &event) {
+  LOG(WARNING) << "StatusIcon implement me: AccountListEvent";
+};
+
+void
+StatusIcon::onEvent(AccountSwitchEvent &event) {
+  LOG(WARNING) << "StatusIcon implement me: AccountSwitchEvent";
+};

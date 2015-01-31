@@ -204,7 +204,7 @@ if(OS_LINUX)
   # -fvisibility-inlines-hidden     = Give hidden visibility to inlined class member functions
   # -std=gnu++11                    = Use the C++11 language standard including GNU extensions
   # -Wsign-compare                  = Warn about mixed signed/unsigned type comparisons
-  set(CEF_CXX_COMPILER_FLAGS      "-fno-rtti -fno-threadsafe-statics -fvisibility-inlines-hidden -std=gnu++11 -Wsign-compare")
+  set(CEF_CXX_COMPILER_FLAGS      "-fno-threadsafe-statics -fvisibility-inlines-hidden -std=gnu++11 -Wsign-compare")
   # -O0                             = Disable optimizations
   # -g                              = Generate debug information
   set(CEF_COMPILER_FLAGS_DEBUG    "-O0 -g")
@@ -324,7 +324,7 @@ if(OS_MACOSX)
   # -std=gnu++11                    = Use the C++11 language standard including GNU extensions
   # -Wno-narrowing                  = Don't warn about type narrowing
   # -Wsign-compare                  = Warn about mixed signed/unsigned type comparisons
-  set(CEF_CXX_COMPILER_FLAGS      "-fno-exceptions -fno-rtti -fno-threadsafe-statics -fobjc-call-cxx-cdtors -fvisibility-inlines-hidden -std=gnu++11 -Wno-narrowing -Wsign-compare")
+  set(CEF_CXX_COMPILER_FLAGS      "-fno-exceptions -fno-threadsafe-statics -fobjc-call-cxx-cdtors -fvisibility-inlines-hidden -std=gnu++11 -Wno-narrowing -Wsign-compare")
   # -O0                             = Disable optimizations
   # -g                              = Generate debug information
   set(CEF_COMPILER_FLAGS_DEBUG    "-O0 -g")

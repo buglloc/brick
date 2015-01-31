@@ -1,5 +1,7 @@
 #include <gtk/gtk.h>
 #include <include/base/cef_logging.h>
+#include "../event/indicator_state_event.h"
+#include "../event/indicator_tooltip_event.h"
 #include "../account_manager.h"
 #include "../cef_handler.h"
 #include "../brick_app.h"
@@ -130,6 +132,8 @@ StatusIcon::SetIcon(Icon icon) {
   gtk_status_icon_set_from_file(icon_handler_, GetIconPath(icon).c_str());
 #endif
 
+  IndicatorStateEvent e(*this, GetIconName(icon));
+  EventBus::FireEvent(e);
 }
 
 void
@@ -140,4 +144,7 @@ StatusIcon::SetTooltip(const char *tooltip) {
   gtk_status_icon_set_tooltip_text(icon_handler_, tooltip);
   gtk_status_icon_set_title(icon_handler_, tooltip);
 #endif
+
+  IndicatorTooltipEvent e(*this, tooltip);
+  EventBus::FireEvent(e);
 }

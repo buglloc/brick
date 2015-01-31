@@ -4,9 +4,11 @@
 
 #include <map>
 #include <include/cef_base.h>
+#include "event/event_sender.h"
 #include "account.h"
 
-class AccountManager : public CefBase {
+class AccountManager : public CefBase,
+                       public EventSender {
   public:
     typedef std::map<int, CefRefPtr<Account>> accounts_map;
 

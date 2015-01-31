@@ -117,11 +117,26 @@ set(BRICK_EXTERNAL_INTERFACE
   external_interface/app_window_message_delegate.h
   external_interface/app_window_message_delegate.cpp
   )
+set(BRICK_EVENT_SYSTEM
+  event/event.h
+  event/event_bus.cpp
+  event/event_handler.h
+  event/event_object.h
+  event/event_sender.h
+  event/handler_registration.h
+  event/account_list_event.h
+  event/account_switch_event.h
+  event/indicator_badge_event.h
+  event/indicator_state_event.h
+  event/indicator_tooltip_event.h
+  event/sleep_event.h
+  )
 
 APPEND_PLATFORM_SOURCES(BRICK_SRCS)
 APPEND_PLATFORM_SOURCES(BRICK_STATUS_ICON_SRCS)
 APPEND_PLATFORM_SOURCES(BRICK_WINDOWS_SRCS)
 APPEND_PLATFORM_SOURCES(BRICK_EXTERNAL_INTERFACE)
+APPEND_PLATFORM_SOURCES(BRICK_EVENT_SYSTEM)
 
 source_group(brick FILES ${BRICK_SRCS})
 
@@ -140,6 +155,7 @@ set(BRICK_SRCS
   ${BRICK_HTTPCLIENT_SRCS}
   ${BRICK_JSON_SRCS}
   ${BRICK_EXTERNAL_INTERFACE}
+  ${BRICK_EVENT_SYSTEM}
   )
 set(BRICK_EMBED_FILES
   desktop_extension.js

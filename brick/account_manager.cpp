@@ -3,6 +3,8 @@
 
 #include <third-party/json/json.h>
 #include <sys/stat.h>
+#include "event/event_bus.h"
+#include "event/account_switch_event.h"
 #include "account_manager.h"
 
 AccountManager::AccountManager()
@@ -36,6 +38,9 @@ AccountManager::SwitchAccount(int id) {
     return false;
 
   current_account_ = accounts_[id];
+
+  AccountSwitchEvent e(*this);
+  EventBus::FireEvent(e); // Fire the event
   return true;
 }
 
