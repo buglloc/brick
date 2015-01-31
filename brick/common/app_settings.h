@@ -17,6 +17,7 @@ struct AppSettings {
   cef_log_severity_t log_severity;
   bool start_minimized;
   bool auto_away;
+  bool external_api;
   bool hide_on_delete;
 
   static AppSettings InitByJson(std::string json);

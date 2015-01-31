@@ -14,7 +14,7 @@
 #include "window_util.h"
 #include "helper.h"
 #include "platform_util.h"
-
+#include "external_interface/dbus_protocol.h"
 
 #undef Status   // Definition conflicts with cef_urlrequest.h
 #undef Success  // Definition conflicts with cef_message_router.h
@@ -129,6 +129,8 @@ TerminationSignalHandler(int signatl) {
 }
 
 int main(int argc, char* argv[]) {
+  // ToDo: Good refactoring candidate!
+
   CefMainArgs main_args(argc, argv);
   CefRefPtr<ClientApp> app(new ClientApp);
 
@@ -142,20 +144,25 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
-  if (!EnsureSingleInstance()) {
-    // ToDo: change main window stack order, when IPC will be implemented
-    printf("Another instance is already running.\nExiting.");
-    return 0;
-  }
-
-
   GetWorkingDir(szWorkingDir);
   std::string plain_config = BrickApp::GetConfig();
   AppSettings app_settings = AppSettings::InitByJson(plain_config);
   app_settings.resource_dir = helper::BaseDir(szWorkingDir) + "/resources/";
 
+  CefRefPtr<DBusProtocol> dbus(new DBusProtocol);
+
+  if (app_settings.external_api) {
+    if (dbus->Init(true) == 1) {
+      // We already own dbus session in another instance
+      printf("Another instance is already running.");
+      return 0;
+    }
+  } else if (!EnsureSingleInstance()) {
+    printf("Another instance is already running.");
+    return 0;
+  }
+
   CefRefPtr<AccountManager> account_manager(new AccountManager);
-  // ToDo: Fix this bullshit!
   account_manager->Init(
      std::string(BrickApp::GetConfigHome()) + "/" + APP_COMMON_NAME + "/accounts.json"
   );

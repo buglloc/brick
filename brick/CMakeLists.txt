@@ -49,6 +49,7 @@ set(BRICK_SRCS
   window_util.h
   notification.h
   platform_util.h
+  api_error.h
   )
 set(BRICK_COMMON_SRCS
   common/app_settings.cpp
@@ -106,10 +107,22 @@ set(BRICK_JSON_SRCS
   ../third-party/json/json-forwards.h
   ../third-party/json/jsoncpp.cpp
   )
+set(BRICK_EXTERNAL_INTERFACE
+  external_interface/dbus_protocol.h
+  external_interface/dbus_protocol.cpp
+  external_interface/external_message_delegate.h
+  external_interface/external_message_delegate.cpp
+  external_interface/app_message_delegate.h
+  external_interface/app_message_delegate.cpp
+  external_interface/app_window_message_delegate.h
+  external_interface/app_window_message_delegate.cpp
+  )
 
 APPEND_PLATFORM_SOURCES(BRICK_SRCS)
 APPEND_PLATFORM_SOURCES(BRICK_STATUS_ICON_SRCS)
 APPEND_PLATFORM_SOURCES(BRICK_WINDOWS_SRCS)
+APPEND_PLATFORM_SOURCES(BRICK_EXTERNAL_INTERFACE)
+
 source_group(brick FILES ${BRICK_SRCS})
 
 set(BRICK_HTTPCLIENT_SRCS
@@ -126,6 +139,7 @@ set(BRICK_SRCS
   ${BRICK_WINDOWS_SRCS}
   ${BRICK_HTTPCLIENT_SRCS}
   ${BRICK_JSON_SRCS}
+  ${BRICK_EXTERNAL_INTERFACE}
   )
 set(BRICK_EMBED_FILES
   desktop_extension.js

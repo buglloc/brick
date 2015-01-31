@@ -16,6 +16,8 @@
 
 #include "command_callbacks.h"
 #include "account_manager.h"
+#include "api_error.h"
+
 
 class ClientHandler : public CefClient,
                       public CefDisplayHandler,

@@ -17,6 +17,7 @@ AppSettings::AppSettings()
   start_minimized(false),
 #endif
   auto_away(true),
+  external_api(true),
   hide_on_delete(false)
 {
 
@@ -83,6 +84,11 @@ AppSettings::InitByJson(std::string json) {
   if (root.isMember("auto_away")
      && root["auto_away"].isBool()) {
     settings.auto_away = root["auto_away"].asBool();
+  }
+
+  if (root.isMember("external_api")
+     && root["external_api"].isBool()) {
+    settings.external_api = root["external_api"].asBool();
   }
 
   if (root.isMember("hide_on_delete")
