@@ -9,19 +9,24 @@
 class IndicatorTooltipEvent : public Event
 {
 public:
-  IndicatorTooltipEvent(EventSender &sender, std::string const &tooltip) :
+  IndicatorTooltipEvent(const EventSender* sender, const std::string tooltip) :
      Event(sender),
+     tooltip_(tooltip) {
+  }
+
+  IndicatorTooltipEvent(const std::string tooltip) :
+     Event(nullptr),
      tooltip_(tooltip) {
   }
 
   virtual ~IndicatorTooltipEvent() { }
 
-  std::string const &getTooltip() {
+  const std::string getTooltip() {
     return tooltip_;
   }
 
 private:
-  std::string const &tooltip_;
+  const std::string tooltip_;
 
 IMPLEMENT_REFCOUNTING(IndicatorTooltipEvent);
 };

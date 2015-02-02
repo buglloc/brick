@@ -132,7 +132,7 @@ StatusIcon::SetIcon(Icon icon) {
   gtk_status_icon_set_from_file(icon_handler_, GetIconPath(icon).c_str());
 #endif
 
-  IndicatorStateEvent e(*this, GetIconName(icon));
+  IndicatorStateEvent e(GetIconName(icon));
   EventBus::FireEvent(e);
 }
 
@@ -145,6 +145,6 @@ StatusIcon::SetTooltip(const char *tooltip) {
   gtk_status_icon_set_title(icon_handler_, tooltip);
 #endif
 
-  IndicatorTooltipEvent e(*this, tooltip);
+  IndicatorTooltipEvent e(tooltip);
   EventBus::FireEvent(e);
 }

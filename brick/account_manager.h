@@ -7,8 +7,7 @@
 #include "event/event_sender.h"
 #include "account.h"
 
-class AccountManager : public CefBase,
-                       public EventSender {
+class AccountManager : public CefBase {
   public:
     typedef std::map<int, CefRefPtr<Account>> accounts_map;
 
@@ -25,6 +24,7 @@ class AccountManager : public CefBase,
     CefRefPtr<Account> GetById(int id);
 
   protected:
+    bool initialized_;
     std::string config_path_;
     accounts_map accounts_;
     CefRefPtr<Account> current_account_;

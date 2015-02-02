@@ -21,7 +21,6 @@
 #include "../event/event_bus.h"
 
 class StatusIcon : public CefBase,
-                   public EventSender,
                    public EventHandler<AccountListEvent>,
                    public EventHandler<AccountSwitchEvent> {
 

@@ -21,10 +21,15 @@ public:
 	 * @param typeIndex The type ID of the inherited class
 	 * @param sender The sender of the event
 	 */
-	Event(EventSender &sender) :
+	Event(const EventSender* sender) :
 		sender(sender),
 		canceled(false) {
 	}
+
+  Event() :
+     sender(nullptr),
+     canceled(false) {
+  }
 
 
 	/**
@@ -38,7 +43,7 @@ public:
 	 *
 	 * @return The event sender
 	 */
-  EventSender &getSender() {
+  const EventSender* getSender() {
 		return sender;
 	}
 
@@ -63,7 +68,7 @@ public:
 	}
 
 private:
-  EventSender &sender;
+  const EventSender* sender;
 	bool canceled;
 
 };

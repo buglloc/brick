@@ -7,8 +7,14 @@
 class IndicatorBadgeEvent : public Event
 {
 public:
-  IndicatorBadgeEvent(EventSender &sender, int badge, bool important) :
+  IndicatorBadgeEvent(const EventSender* sender, int badge, bool important) :
      Event(sender),
+     badge_(badge),
+     important_(important) {
+  }
+
+  IndicatorBadgeEvent(int badge, bool important) :
+     Event(nullptr),
      badge_(badge),
      important_(important) {
   }

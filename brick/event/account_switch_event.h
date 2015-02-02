@@ -9,13 +9,24 @@
 class AccountSwitchEvent : public Event
 {
 public:
-  AccountSwitchEvent(EventSender &sender) :
-     Event(sender) {
+  AccountSwitchEvent(const EventSender* sender, const Account *account) :
+     Event(sender),
+     account_(account) {
+  }
+
+  AccountSwitchEvent(const Account *account) :
+     Event(nullptr),
+     account_(account) {
   }
 
   virtual ~AccountSwitchEvent() { }
 
+  const Account *getAccount() {
+    return account_;
+  }
+
 private:
+  const Account *account_;
 
 IMPLEMENT_REFCOUNTING(AccountSwitchEvent);
 };

@@ -3,12 +3,14 @@
 
 #include <third-party/json/json.h>
 #include <sys/stat.h>
+#include "event/account_list_event.h"
 #include "event/event_bus.h"
 #include "event/account_switch_event.h"
 #include "account_manager.h"
 
 AccountManager::AccountManager()
-   : current_account_(NULL),
+   : initialized_(false),
+     current_account_(NULL),
      last_id_(0)
 {
 }
@@ -20,6 +22,11 @@ bool
 AccountManager::AddAccount(const CefRefPtr<Account> account) {
   accounts_[++last_id_] = account;
   account->SetId(last_id_);
+  if (initialized_) {
+    AccountListEvent e;
+    EventBus::FireEvent(e);
+  }
+
   return true;
 }
 
@@ -29,6 +36,11 @@ AccountManager::DeleteAccount(int id) {
     return false;
 
   accounts_.erase(id);
+  if (initialized_) {
+    AccountListEvent e;
+    EventBus::FireEvent(e);
+  }
+
   return true;
 }
 
@@ -39,8 +51,8 @@ AccountManager::SwitchAccount(int id) {
 
   current_account_ = accounts_[id];
 
-  AccountSwitchEvent e(*this);
-  EventBus::FireEvent(e); // Fire the event
+  AccountSwitchEvent e(current_account_);
+  EventBus::FireEvent(e);
   return true;
 }
 
@@ -135,4 +147,5 @@ AccountManager::Init(std::string config_path) {
     SwitchAccount(1);
   }
 
+  initialized_ = true;
 }

@@ -58,7 +58,7 @@ namespace {
          CefProcessMessage::Create(method_name);
       CefRefPtr<CefListValue> message_args = message->GetArgumentList();
       // ToDo: callback needed?
-      message_args->SetBool(0, NULL);
+      message_args->SetNull(0);
 
       if (!g_strcmp0(method_name, "ShowAddAccountDialog")) {
         bool switch_on_save;

@@ -2,11 +2,17 @@
 #define _BRICK_ACCOUNT_LIST_EVENT_EVENT_H_
 
 #include "event.h"
+#include "../account.h"
 
 class AccountListEvent : public Event
 {
 public:
-  AccountListEvent(EventSender &sender) : Event(sender) {
+  AccountListEvent(const EventSender* sender) :
+     Event(sender) {
+  }
+
+  AccountListEvent() :
+     Event(nullptr) {
   }
 
   virtual ~AccountListEvent() { }

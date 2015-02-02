@@ -6,8 +6,13 @@
 class SleepEvent : public Event
 {
 public:
-  SleepEvent(EventSender &sender, bool is_sleep) :
+  SleepEvent(const EventSender* sender, bool is_sleep) :
      Event(sender),
+     sleep_(is_sleep) {
+  }
+
+  SleepEvent(bool is_sleep) :
+     Event(nullptr),
      sleep_(is_sleep) {
   }
 

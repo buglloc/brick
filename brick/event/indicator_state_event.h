@@ -8,19 +8,24 @@
 class IndicatorStateEvent : public Event
 {
 public:
-  IndicatorStateEvent(EventSender &sender, std::string const &state) :
+  IndicatorStateEvent(const EventSender* sender, const std::string state) :
      Event(sender),
+     state_(state) {
+  }
+
+  IndicatorStateEvent(const std::string state) :
+     Event(nullptr),
      state_(state) {
   }
 
   virtual ~IndicatorStateEvent() { }
 
-  std::string const &getState() {
+  const std::string getState() {
     return state_;
   }
 
 private:
-  std::string const &state_;
+  const std::string state_;
 
 IMPLEMENT_REFCOUNTING(IndicatorStateEvent);
 };

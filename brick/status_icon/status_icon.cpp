@@ -76,7 +76,7 @@ StatusIcon::SetBadge(int badge, bool is_important) {
 #endif
   }
 
-  IndicatorBadgeEvent e(*this, badge, is_important);
+  IndicatorBadgeEvent e(badge, is_important);
   EventBus::FireEvent(e);
 }
 

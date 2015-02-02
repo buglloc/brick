@@ -1,5 +1,5 @@
-#ifndef _BRICK_EVENT_EVENT_BUS_H_
-#define _BRICK_EVENT_EVENT_BUS_H_
+#ifndef _BRICK_EVENT_BUS_H_
+#define _BRICK_EVENT_BUS_H_
 
 #include "event_object.h"
 #include "event_handler.h"
@@ -120,7 +120,11 @@ public:
 		// Iterate through all the registered handlers and dispatch to each one if the sender
 		// matches the source or if the sender is not specified
 		for (auto &reg : *registrations) {
-			if ((reg->getSender() == nullptr) || (reg->getSender() == &e.getSender())) {
+			if (
+         (reg->getSender() == nullptr)
+         || (e.getSender() == nullptr)
+         || (reg->getSender() == e.getSender())
+         ) {
 
 				// This is where some magic happens. The void * handler is statically cast to an event handler
 				// of generic type Event and dispatched. The dispatch function will then do a dynamic
@@ -215,4 +219,4 @@ private:
 
 };
 
-#endif /* _BRICK_EVENT_EVENT_BUS_H_ */
+#endif /* _BRICK_EVENT_BUS_H_ */
