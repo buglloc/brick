@@ -129,7 +129,7 @@ BrowserWindow::ToggleVisibility() {
 
 void
 BrowserWindow::SetActive() {
-    gdk_window_focus(window_handler_,
-            gdk_x11_display_get_user_time(gdk_window_get_display(window_handler_))
-    );
+  gdk_window_focus(window_handler_,
+          gdk_x11_display_get_user_time(gdk_window_get_display(window_handler_))
+  );
 }

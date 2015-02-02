@@ -150,7 +150,6 @@ int main(int argc, char* argv[]) {
   app_settings.resource_dir = helper::BaseDir(szWorkingDir) + "/resources/";
 
   CefRefPtr<DBusProtocol> dbus(new DBusProtocol);
-
   if (app_settings.external_api) {
     if (dbus->Init(true) == 1) {
       // We already own dbus session in another instance
