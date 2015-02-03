@@ -52,6 +52,8 @@ class BrickClient(object):
                 'org.brick.Brick.AppWindowInterface'
             )
 
+        return self._app_window
+
     @staticmethod
     def on_indicator_badge(badge, is_important):
         print('Indicator badge changed: {badge} ({notice})'.format(
