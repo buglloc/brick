@@ -9,15 +9,17 @@
 
 namespace {
 
-    const char *kOwnName = "org.brick.Brick";
-    const char *kAppInterface = "org.brick.Brick.AppInterface";
-    const char *kAppPath = "/org/brick/Brick/App";
-    const char *kAppWindowInterface = "org.brick.Brick.AppWindowInterface";
-    const char *kAppWindowPath = "/org/brick/Brick/AppWindow";
+    const char kOwnName[] = "org.brick.Brick";
+    const char kAppInterface[] = "org.brick.Brick.AppInterface";
+    const char kAppPath[] = "/org/brick/Brick/App";
+    const char kAppWindowInterface[] = "org.brick.Brick.AppWindowInterface";
+    const char kAppWindowPath[] = "/org/brick/Brick/AppWindow";
 
     const gchar introspection_xml[] =
        "<node>"
           "  <interface name='org.brick.Brick.AppInterface'>"
+          "    <method name='UserAway' />"
+          "    <method name='UserPresent' />"
           "    <method name='ShowAddAccountDialog'>"
           "       <arg type='b' name='switch_on_save' direction='in'/>"
           "    </method>"
@@ -154,7 +156,7 @@ DBusProtocol::Init(bool send_show_on_exists) {
   GError *error = NULL;
   connection_ = g_bus_get_sync(G_BUS_TYPE_SESSION, NULL, &error);
   if (!connection_) {
-    LOG(ERROR) << "Can't register DBUS: " << error->message;
+    LOG(ERROR) << "Can't register D-BUS: " << error->message;
     g_error_free(error);
     return -1;
   }
@@ -172,7 +174,7 @@ DBusProtocol::Init(bool send_show_on_exists) {
      -1, NULL, &error);
 
   if (!result) {
-    LOG(ERROR) << "Can't register DBUS: " << error->message;
+    LOG(ERROR) << "Can't register D-BUS: " << error->message;
     g_error_free(error);
     return -1;
   }
@@ -196,7 +198,7 @@ DBusProtocol::Init(bool send_show_on_exists) {
          -1, NULL, &error);
 
       if (!result) {
-        LOG(ERROR) << "Can't present window via DBUS: " << error->message;
+        LOG(ERROR) << "Can't present window via D-BUS: " << error->message;
         g_error_free(error);
       }
     }
@@ -244,12 +246,12 @@ DBusProtocol::RegisterEventListeners() {
 
 void
 DBusProtocol::onEvent(AccountListEvent &event) {
-  LOG(WARNING) << "DBUS implement me: AccountListEvent";
+  LOG(WARNING) << "D-BUS implement me: AccountListEvent";
 };
 
 void
 DBusProtocol::onEvent(AccountSwitchEvent &event) {
-  LOG(WARNING) << "DBUS implement me: AccountSwitchEvent";
+  LOG(WARNING) << "D-BUS implement me: AccountSwitchEvent";
 };
 
 void

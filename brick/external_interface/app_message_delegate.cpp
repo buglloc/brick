@@ -9,6 +9,8 @@ namespace {
     const char kNameSpace[]                       = "AppInterface";
     const char kMessageShowAddAccountDialogName[] = "ShowAddAccountDialog";
     const char kMessageShowAccountsDialogName[]   = "ShowAccountsDialog";
+    const char kMessageUserAwayName[]   = "UserAway";
+    const char kMessageUserPresentName[]   = "UserPresent";
     const char kMessageQuitName[]   = "Quit";
 
 
@@ -52,6 +54,38 @@ ExternalAppMessageDelegate::OnMessageReceived(CefRefPtr<CefProcessMessage> messa
 
   } else if (message_name == kMessageQuitName) {
     CefQuitMessageLoop();
+
+  } else if (message_name == kMessageUserAwayName) {
+    CefRefPtr<ClientHandler> handler = ClientHandler::GetInstance();
+    CefRefPtr<CefBrowser> browser;
+    if (!handler)
+      error = ERR_UNKNOWN;
+
+    if (error == NO_ERROR) {
+      browser = handler->GetBrowser();
+      if (!browser)
+        error = ERR_UNKNOWN;
+    }
+
+    if (error == NO_ERROR) {
+      handler->SendJSEvent(browser, "BXUserAway", "[true]");
+    }
+
+  } else if (message_name == kMessageQuitName) {
+    CefRefPtr<ClientHandler> handler = ClientHandler::GetInstance();
+    CefRefPtr<CefBrowser> browser;
+    if (!handler)
+      error = ERR_UNKNOWN;
+
+    if (error == NO_ERROR) {
+      browser = handler->GetBrowser();
+      if (!browser)
+        error = ERR_UNKNOWN;
+    }
+
+    if (error == NO_ERROR) {
+      handler->SendJSEvent(browser, "BXUserAway", "[false]");
+    }
 
   } else {
     return false;
