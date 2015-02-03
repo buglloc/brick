@@ -307,14 +307,15 @@ BXDesktopSystem.ParseNotificationHtml = function(html) {
 
   var document = this.parser.parseFromString(html, "text/html");
 
-  var date = document.body.querySelector('span.bx-notifier-item-date').innerHTML;
-  var title = document.body.querySelector('span.bx-notifier-item-name').innerHTML;
-  var text = document.body.querySelector('span.bx-notifier-item-text').innerHTML;
+  var date = document.body.querySelector('span.bx-notifier-item-date');
+  var title = document.body.querySelector('span.bx-notifier-item-name');
+  var text = document.body.querySelector('span.bx-notifier-item-text');
 
   return {
-    'date': date,
-    'title': title.replace(/<[^>]+>/g, ''),
-    'text': text.replace(/<br[^>]*>/gi, '\n').replace(/<p[^>]*>/gi, '\n').replace(/<[^>]+>/g, '')
+    'date': date !== null ? date.innerHTML : '',
+    'title': title !== null ? title.innerHTML.replace(/<[^>]+>/g, '') : '',
+    'text': (text !== null ? text.innerHTML: html)
+      .replace(/<br[^>]*>/gi, '\n').replace(/<p[^>]*>/gi, '\n').replace(/<[^>]+>/g, '')
   }
 };
 

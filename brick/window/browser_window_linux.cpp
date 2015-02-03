@@ -5,7 +5,7 @@
 
 #include "../window_util.h"
 #include "browser_window.h"
-
+#include "../brick_app.h"
 
 void
 BrowserWindow::WrapNative(CefWindowHandle window) {
@@ -21,6 +21,7 @@ BrowserWindow::WrapNative(CefWindowHandle window) {
   gdk_window_set_events(window_handler_, (GdkEventMask) (
           GDK_STRUCTURE_MASK|GDK_VISIBILITY_NOTIFY_MASK
   ));
+  window_util::SetClassHints(window, (char *)APP_COMMON_NAME, (char *)APP_NAME);
 }
 
 void

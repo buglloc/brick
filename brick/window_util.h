@@ -26,6 +26,7 @@ namespace window_util {
   void SetTypeDialog(CefWindowHandle handle);
   void InitAsPopup(CefWindowHandle handle);
 
+  void SetClassHints(CefWindowHandle handle, char *res_name, char *res_class);
   void SetLeaderWindow(CefWindowHandle handle);
   CefWindowHandle GetLeaderWindow();
 
