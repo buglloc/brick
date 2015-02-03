@@ -29,6 +29,7 @@ namespace {
 
 ClientHandler::ClientHandler()
     : is_closing_ (false),
+      is_idle_ (false),
       main_handle_ (NULL),
       status_icon_handle_ (NULL),
       account_manager_ (NULL)
@@ -37,6 +38,7 @@ ClientHandler::ClientHandler()
   g_instance = this;
   callbackId = 0;
   CreateProcessMessageDelegates(process_message_delegates_);
+  RegisterSystemEventListeners();
 }
 
 ClientHandler::~ClientHandler() {
@@ -471,6 +473,24 @@ ClientHandler::SendJSEvent(CefRefPtr<CefBrowser> browser, const CefString& name,
   browser->SendProcessMessage(PID_RENDERER, message);
 
   return true;
+}
+
+void
+ClientHandler::onEvent(UserAwayEvent &event) {
+  is_idle_ = event.isAway();
+  if (event.isManual())
+    idle_pending_ = false;
+
+  CefRefPtr<CefBrowser> browser = GetBrowser();
+  if (!browser)
+    return;
+
+  SendJSEvent(browser, "BXUserAway", is_idle_? "[true]": "[false]");
+}
+
+void
+ClientHandler::RegisterSystemEventListeners() {
+  EventBus::AddHandler<UserAwayEvent>(*this);
 }
 
 // static

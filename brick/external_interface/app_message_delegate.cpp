@@ -56,36 +56,12 @@ ExternalAppMessageDelegate::OnMessageReceived(CefRefPtr<CefProcessMessage> messa
     CefQuitMessageLoop();
 
   } else if (message_name == kMessageUserAwayName) {
-    CefRefPtr<ClientHandler> handler = ClientHandler::GetInstance();
-    CefRefPtr<CefBrowser> browser;
-    if (!handler)
-      error = ERR_UNKNOWN;
-
-    if (error == NO_ERROR) {
-      browser = handler->GetBrowser();
-      if (!browser)
-        error = ERR_UNKNOWN;
-    }
-
-    if (error == NO_ERROR) {
-      handler->SendJSEvent(browser, "BXUserAway", "[true]");
-    }
+    UserAwayEvent e(true, true);
+    EventBus::FireEvent(e);
 
   } else if (message_name == kMessageQuitName) {
-    CefRefPtr<ClientHandler> handler = ClientHandler::GetInstance();
-    CefRefPtr<CefBrowser> browser;
-    if (!handler)
-      error = ERR_UNKNOWN;
-
-    if (error == NO_ERROR) {
-      browser = handler->GetBrowser();
-      if (!browser)
-        error = ERR_UNKNOWN;
-    }
-
-    if (error == NO_ERROR) {
-      handler->SendJSEvent(browser, "BXUserAway", "[false]");
-    }
+    UserAwayEvent e(false, true);
+    EventBus::FireEvent(e);
 
   } else {
     return false;

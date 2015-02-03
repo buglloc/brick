@@ -64,7 +64,6 @@ namespace {
       /* Query xscreensaver */
       static XScreenSaverInfo *mit_info = NULL;
       static int has_extension = -1;
-      static bool idle_state = false;
       int event_base, error_base;
 
       if (has_extension == -1)
@@ -80,21 +79,19 @@ namespace {
       if (!handler)
         return true;
 
-      CefRefPtr<CefBrowser> browser = handler->GetBrowser();
-      if (!browser)
-        return true;
-
       if (mit_info == NULL)
         mit_info = XScreenSaverAllocInfo();
 
       XScreenSaverQueryInfo(GDK_DISPLAY(), GDK_ROOT_WINDOW(), mit_info);
 
-      if (mit_info->idle >= IDLE_TIMEOUT && !idle_state) {
-        idle_state = true;
-        handler->SendJSEvent(browser, "BXUserAway", "[true]");
-      } else if (mit_info->idle < IDLE_TIMEOUT && idle_state) {
-        idle_state = false;
-        handler->SendJSEvent(browser, "BXUserAway", "[false]");
+      if (mit_info->idle >= IDLE_TIMEOUT && !handler->IsIdle()) {
+        UserAwayEvent e(true);
+        EventBus::FireEvent(e);
+      } else if (mit_info->idle < IDLE_CHECK_INTERVAL && handler->IsIdle() && handler->IsIdlePending()) {
+        UserAwayEvent e(false);
+        EventBus::FireEvent(e);
+      } else if (!handler->IsIdlePending()) {
+        handler->SetIdlePending(true);
       }
 
       return true;
@@ -174,7 +171,7 @@ int main(int argc, char* argv[]) {
   window_util::InitHooks();
 
   if (app_settings.auto_away) {
-    gtk_timeout_add(4000, CheckUserIdle, NULL);
+    gtk_timeout_add(IDLE_CHECK_INTERVAL, CheckUserIdle, NULL);
   }
 
   // Set default windows icon. Important to do this before any GTK window created!

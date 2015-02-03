@@ -8,8 +8,9 @@
 #include <list>
 #include <map>
 #include <set>
-#include <brick/common/app_settings.h>
-#include <brick/window/browser_window.h>
+#include "common/app_settings.h"
+#include "window/browser_window.h"
+#include "event/user_away_event.h"
 #include "status_icon/status_icon.h"
 
 #include "include/cef_client.h"
@@ -25,7 +26,8 @@ class ClientHandler : public CefClient,
                       public CefLoadHandler,
                       public CefDialogHandler,
                       public CefContextMenuHandler,
-                      public CefRequestHandler {
+                      public CefRequestHandler,
+                      public EventHandler<UserAwayEvent> {
 public:
   // Interface for process message delegates. Do not perform work in the
   // RenderDelegate constructor.
@@ -177,6 +179,23 @@ public:
     return is_closing_;
   }
 
+  void SetIdle(bool is_idle) {
+    is_idle_ = is_idle;
+  }
+
+  bool IsIdle() const {
+    return is_idle_;
+  }
+
+  // ToDo: move this logic to system events handler
+  void SetIdlePending(bool pending) {
+    idle_pending_ = pending;
+  }
+
+  bool IsIdlePending() const {
+    return idle_pending_;
+  }
+
   void ShowDevTools(CefRefPtr<CefBrowser> browser,
      const CefPoint &inspect_element_at);
 
@@ -192,6 +211,10 @@ public:
   void SwitchAccount(int id);
 
   bool SendJSEvent(CefRefPtr<CefBrowser> browser, const CefString& name, const CefString& data = "");
+
+  // System event handlers
+  void RegisterSystemEventListeners();
+  virtual void onEvent(UserAwayEvent &event) OVERRIDE;
 
 protected:
   // Create all of ProcessMessageDelegate objects.
@@ -225,6 +248,8 @@ private:
   CommandCallbackMap command_callback_map_;
 
   bool is_closing_;
+  bool is_idle_;
+  bool idle_pending_;
 
   // The main frame window handle.
   CefRefPtr<BrowserWindow> main_handle_;

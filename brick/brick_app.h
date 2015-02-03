@@ -10,7 +10,8 @@
 #define APP_NAME "Brick"
 #define APP_COMMON_NAME "brick"
 
-#define IDLE_TIMEOUT 600000
+#define IDLE_TIMEOUT 600000L
+#define IDLE_CHECK_INTERVAL 4000L
 
 #include <include/internal/cef_types_wrappers.h>
 
