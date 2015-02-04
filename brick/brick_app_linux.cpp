@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <gdk/gdkx.h>
 #include <sys/file.h>
+#include <sys/stat.h>
 
 #include "brick_app.h"
 #include "third-party/json/json.h"
@@ -106,6 +107,20 @@ namespace {
       }
       gtk_main_do_event(event);
     }
+
+    bool
+    CheckLogFileSize(CefString path) {
+      std::string file_path = path;
+      struct stat stat_buf;
+      int rc = stat(file_path.c_str(), &stat_buf);
+
+      if (rc == 0 && stat_buf.st_size > 1024*1024*20) {
+        unlink(file_path.c_str());
+        LOG(INFO) << "Runtime log is too big (" << stat_buf.st_size << ") and will be truncated";
+      }
+
+      return true;
+    }
 }
 
 // static
@@ -145,11 +160,15 @@ int main(int argc, char* argv[]) {
   std::string plain_config = BrickApp::GetConfig();
   AppSettings app_settings = AppSettings::InitByJson(plain_config);
   app_settings.resource_dir = helper::BaseDir(szWorkingDir) + "/resources/";
+  CefSettings cef_settings = BrickApp::GetCefSettings(szWorkingDir, app_settings);
+
+  LOG_IF(WARNING,
+     !CheckLogFileSize(&cef_settings.log_file)) << "Can't check runtie log file size";
 
   CefRefPtr<DBusProtocol> dbus(new DBusProtocol);
   if (app_settings.external_api) {
     if (dbus->Init(true) == 1) {
-      // We already own dbus session in another instance
+      // We already own D-BUS session in another instance
       printf("Another instance is already running.");
       return 0;
     }
@@ -164,7 +183,7 @@ int main(int argc, char* argv[]) {
   );
 
   // Initialize CEF.
-  CefInitialize(main_args, BrickApp::GetCefSettings(szWorkingDir, app_settings), app.get(), NULL);
+  CefInitialize(main_args, cef_settings, app.get(), NULL);
 
   gtk_init(0, NULL);
   gdk_event_handler_set(GdkEventDispatcher, NULL, NULL);
