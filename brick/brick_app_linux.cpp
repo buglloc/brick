@@ -51,7 +51,6 @@ namespace {
 
     bool
     EnsureSingleInstance() {
-      // ToDo: Replaced by IPC request, when IPC will be implemented
       std::string lock_file = std::string(BrickApp::GetCacheHome()) + "/" + APP_COMMON_NAME + "/run.lock";
       int fd = open(lock_file.c_str(), O_CREAT, 0600);
       if (fd == -1)
@@ -165,6 +164,8 @@ int main(int argc, char* argv[]) {
   LOG_IF(WARNING,
      !CheckLogFileSize(&cef_settings.log_file)) << "Can't check runtie log file size";
 
+  // If we have D-BUS - check single running with it (and call App::Present)
+  // Otherwise - fallback to EnsureSingleInstance with flock
   CefRefPtr<DBusProtocol> dbus(new DBusProtocol);
   if (app_settings.external_api) {
     if (dbus->Init(true) == 1) {
