@@ -109,7 +109,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         'command',
-        choices=['preset', 'hide', 'toggle', 'user_away', 'user_present', 'watch', 'introspect']
+        choices=['present', 'hide', 'toggle', 'user_away', 'user_present', 'watch', 'introspect']
     )
     args = parser.parse_args()
 
