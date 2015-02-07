@@ -18,7 +18,7 @@ AppSettings::AppSettings()
 #endif
   auto_away(true),
   external_api(true),
-  hide_on_delete(true)
+  hide_on_delete(false)
 {
 
 }
