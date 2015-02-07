@@ -194,9 +194,6 @@ DBusProtocol::isSingleInstance() {
 
 void
 DBusProtocol::BringAnotherInstance() {
-  if (!owned_)
-    return;
-
   GError *error = NULL;
   GVariant *result = g_dbus_connection_call_sync (connection_,
      "org.brick.Brick",
