@@ -175,10 +175,6 @@ public:
   // Request that all existing popup windows close.
   void CloseAllPopups(bool force_close);
 
-  bool IsClosing() const {
-    return is_closing_;
-  }
-
   void SetIdle(bool is_idle) {
     is_idle_ = is_idle;
   }
@@ -247,7 +243,6 @@ private:
   int32 callbackId;
   CommandCallbackMap command_callback_map_;
 
-  bool is_closing_;
   bool is_idle_;
   bool idle_pending_;
 

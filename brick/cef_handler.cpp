@@ -28,8 +28,7 @@ namespace {
 } // namespace
 
 ClientHandler::ClientHandler()
-    : is_closing_ (false),
-      is_idle_ (false),
+    : is_idle_ (false),
       main_handle_ (NULL),
       status_icon_handle_ (NULL),
       account_manager_ (NULL)
@@ -83,14 +82,11 @@ bool
 ClientHandler::DoClose(CefRefPtr<CefBrowser> browser) {
   CEF_REQUIRE_UI_THREAD();
 
-  // Closing the main window requires special handling. See the DoClose()
-  // documentation in the CEF header for a detailed destription of this
-  // process.
-  if (browser_list_.size() == 1) {
-    // Set a flag to indicate that the window close should be allowed.
-    is_closing_ = true;
+  if (app_settings_.hide_on_delete && !browser->IsPopup()) {
+    // Doesn't close main window
+    main_handle_->Hide();
+    return true;
   }
-
   return false;
 }
 
