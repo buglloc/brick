@@ -485,8 +485,23 @@ ClientHandler::onEvent(UserAwayEvent &event) {
 }
 
 void
+ClientHandler::onEvent(SleepEvent &event) {
+  CefRefPtr<CefBrowser> browser = GetBrowser();
+  if (!browser)
+    return;
+
+  if (event.isSleep()) {
+    SendJSEvent(browser, "BXSleepAction");
+  } {
+    SendJSEvent(browser, "BXWakeAction");
+  }
+
+}
+
+void
 ClientHandler::RegisterSystemEventListeners() {
   EventBus::AddHandler<UserAwayEvent>(*this);
+  EventBus::AddHandler<SleepEvent>(*this);
 }
 
 // static

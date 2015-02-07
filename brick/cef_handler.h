@@ -11,6 +11,7 @@
 #include "common/app_settings.h"
 #include "window/browser_window.h"
 #include "event/user_away_event.h"
+#include "event/sleep_event.h"
 #include "status_icon/status_icon.h"
 
 #include "include/cef_client.h"
@@ -27,7 +28,8 @@ class ClientHandler : public CefClient,
                       public CefDialogHandler,
                       public CefContextMenuHandler,
                       public CefRequestHandler,
-                      public EventHandler<UserAwayEvent> {
+                      public EventHandler<UserAwayEvent>,
+                      public EventHandler<SleepEvent> {
 public:
   // Interface for process message delegates. Do not perform work in the
   // RenderDelegate constructor.
@@ -211,6 +213,7 @@ public:
   // System event handlers
   void RegisterSystemEventListeners();
   virtual void onEvent(UserAwayEvent &event) OVERRIDE;
+  virtual void onEvent(SleepEvent &event) OVERRIDE;
 
 protected:
   // Create all of ProcessMessageDelegate objects.

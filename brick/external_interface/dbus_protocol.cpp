@@ -3,6 +3,7 @@
 #include <include/wrapper/cef_helpers.h>
 
 #include "../event/event_bus.h"
+#include "../event/sleep_event.h"
 #include "dbus_protocol.h"
 #include "app_message_delegate.h"
 #include "app_window_message_delegate.h"
@@ -139,6 +140,21 @@ namespace {
       );
     }
 
+    void on_sleep(GDBusConnection *connection,
+       const gchar *sender_name,
+       const gchar *object_path,
+       const gchar *interface_name,
+       const gchar *signal_name,
+       GVariant *parameters,
+       gpointer user_data) {
+
+      bool is_sleep;
+      g_variant_get(parameters, "(b)", &is_sleep);
+      SleepEvent e(is_sleep);
+      EventBus::FireEvent(e);
+
+    }
+
 } // namespace
 
 bool
@@ -180,6 +196,7 @@ DBusProtocol::Init() {
 
   if (owned_) {
     on_bus_acquired(connection_, kOwnName, this);
+    RegisterSystemListeners();
     RegisterMessageDelegates();
     RegisterEventListeners();
   }
@@ -226,6 +243,30 @@ DBusProtocol::Handle(std::string interface_name, CefRefPtr<CefProcessMessage> me
   }
 
   return handled;
+}
+
+void
+DBusProtocol::RegisterSystemListeners() {
+  GError *error = NULL;
+  GDBusConnection *system_bus = g_bus_get_sync(G_BUS_TYPE_SYSTEM, NULL, &error);
+  if (!system_bus) {
+    LOG(ERROR) << "Can't get system D-BUS: " << error->message;
+    g_error_free(error);
+    return;
+  }
+
+  g_dbus_connection_signal_subscribe(
+     system_bus,
+     NULL,
+     "org.freedesktop.login1.Manager",
+     "PrepareForSleep",
+     "/org/freedesktop/login1",
+     NULL,
+     G_DBUS_SIGNAL_FLAGS_NONE,
+     on_sleep,
+     NULL,
+     NULL
+  );
 }
 
 void

@@ -44,6 +44,7 @@ public:
   virtual void onEvent(IndicatorTooltipEvent &event) OVERRIDE;
 
 protected:
+  void RegisterSystemListeners();
   void RegisterMessageDelegates();
   void RegisterEventListeners();
 
