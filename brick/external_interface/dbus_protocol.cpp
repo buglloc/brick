@@ -141,16 +141,8 @@ namespace {
 
 } // namespace
 
-DBusProtocol::~DBusProtocol() {
-
-}
-
-DBusProtocol::DBusProtocol() {
-
-}
-
-char
-DBusProtocol::Init(bool send_show_on_exists) {
+bool
+DBusProtocol::Init() {
   // Simulate g_bus_own_name in sync way...
 
   GError *error = NULL;
@@ -158,7 +150,7 @@ DBusProtocol::Init(bool send_show_on_exists) {
   if (!connection_) {
     LOG(ERROR) << "Can't register D-BUS: " << error->message;
     g_error_free(error);
-    return -1;
+    return false;
   }
 
   GVariant *result = g_dbus_connection_call_sync (connection_,
@@ -176,40 +168,50 @@ DBusProtocol::Init(bool send_show_on_exists) {
   if (!result) {
     LOG(ERROR) << "Can't register D-BUS: " << error->message;
     g_error_free(error);
-    return -1;
+    return false;
   }
 
   guint32 request_name_reply;
   g_variant_get(result, "(u)", &request_name_reply);
   g_variant_unref(result);
 
-  if (request_name_reply != 1 && request_name_reply != 4) {
-    // If name already exists: not DBUS_REQUEST_NAME_REPLY_PRIMARY_OWNER and DBUS_REQUEST_NAME_REPLY_ALREADY_OWNER
-    if (send_show_on_exists) {
-      // Send call Present method
-      result = g_dbus_connection_call_sync (connection_,
-         "org.brick.Brick",
-         "/org/brick/Brick/AppWindow",
-         "org.brick.Brick.AppWindowInterface",
-         "Present",
-         g_variant_new ("()"),
-         G_VARIANT_TYPE ("()"),
-         G_DBUS_CALL_FLAGS_NONE,
-         -1, NULL, &error);
+  // DBUS_REQUEST_NAME_REPLY_PRIMARY_OWNER or DBUS_REQUEST_NAME_REPLY_ALREADY_OWNER
+  owned_ = (request_name_reply == 1 || request_name_reply == 4);
 
-      if (!result) {
-        LOG(ERROR) << "Can't present window via D-BUS: " << error->message;
-        g_error_free(error);
-      }
-    }
-
-    return 1;
+  if (owned_) {
+    on_bus_acquired(connection_, kOwnName, this);
+    RegisterMessageDelegates();
+    RegisterEventListeners();
   }
 
-  on_bus_acquired(connection_, kOwnName, this);
-  RegisterMessageDelegates();
-  RegisterEventListeners();
-  return 0;
+  return true;
+}
+
+bool
+DBusProtocol::isSingleInstance() {
+  return owned_;
+}
+
+void
+DBusProtocol::BringAnotherInstance() {
+  if (!owned_)
+    return;
+
+  GError *error = NULL;
+  GVariant *result = g_dbus_connection_call_sync (connection_,
+     "org.brick.Brick",
+     "/org/brick/Brick/AppWindow",
+     "org.brick.Brick.AppWindowInterface",
+     "Present",
+     g_variant_new ("()"),
+     G_VARIANT_TYPE ("()"),
+     G_DBUS_CALL_FLAGS_NONE,
+     -1, NULL, &error);
+
+  if (!result) {
+    LOG(ERROR) << "Can't bring another instance via D-BUS: " << error->message;
+    g_error_free(error);
+  }
 }
 
 bool

@@ -23,10 +23,17 @@ public:
   typedef std::set<CefRefPtr<ExternalMessageDelegate> >
      ExternalMessageDelegateSet;
 
-  DBusProtocol();
-  ~DBusProtocol();
+  DBusProtocol():
+     connection_(NULL),
+     owned_(false) {
 
-  char Init(bool send_show_on_exists = true);
+  }
+
+  ~DBusProtocol() {}
+
+  bool Init();
+  bool isSingleInstance();
+  void BringAnotherInstance();
   bool Handle(std::string interface_name, CefRefPtr<CefProcessMessage> message);
 
   // Event handlers
@@ -39,8 +46,9 @@ public:
 protected:
   void RegisterMessageDelegates();
   void RegisterEventListeners();
+
   GDBusConnection  *connection_;
-  guint own_id_;
+  bool owned_;
 
   // Registered delegates.
   ExternalMessageDelegateSet external_message_delegates_;

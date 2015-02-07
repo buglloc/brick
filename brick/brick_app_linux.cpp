@@ -166,10 +166,12 @@ int main(int argc, char* argv[]) {
 
   // If we have D-BUS - check single running with it (and call App::Present)
   // Otherwise - fallback to EnsureSingleInstance with flock
-  CefRefPtr<DBusProtocol> dbus(new DBusProtocol);
+  CefRefPtr<DBusProtocol> dbus = NULL;
   if (app_settings.external_api) {
-    if (dbus->Init(true) == 1) {
+    dbus = new DBusProtocol;
+    if (dbus->Init() && !dbus->isSingleInstance()) {
       // We already own D-BUS session in another instance
+      dbus->BringAnotherInstance();
       printf("Another instance is already running.");
       return 0;
     }
