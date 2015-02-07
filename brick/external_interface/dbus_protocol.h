@@ -24,7 +24,7 @@ public:
      ExternalMessageDelegateSet;
 
   DBusProtocol():
-     connection_(NULL),
+     session_bus_(NULL),
      owned_(false) {
 
   }
@@ -48,7 +48,7 @@ protected:
   void RegisterMessageDelegates();
   void RegisterEventListeners();
 
-  GDBusConnection  *connection_;
+  GDBusConnection  *session_bus_;
   bool owned_;
 
   // Registered delegates.

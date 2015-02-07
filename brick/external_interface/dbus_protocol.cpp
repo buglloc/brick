@@ -4,6 +4,9 @@
 
 #include "../event/event_bus.h"
 #include "../event/sleep_event.h"
+#ifdef unity
+#include "../event/user_away_event.h"
+#endif
 #include "dbus_protocol.h"
 #include "app_message_delegate.h"
 #include "app_window_message_delegate.h"
@@ -155,6 +158,32 @@ namespace {
 
     }
 
+#ifdef unity
+    void on_locked(GDBusConnection *connection,
+       const gchar *sender_name,
+       const gchar *object_path,
+       const gchar *interface_name,
+       const gchar *signal_name,
+       GVariant *parameters,
+       gpointer user_data) {
+
+      UserAwayEvent e(true, true);
+      EventBus::FireEvent(e);
+    }
+
+    void on_unlocked(GDBusConnection *connection,
+       const gchar *sender_name,
+       const gchar *object_path,
+       const gchar *interface_name,
+       const gchar *signal_name,
+       GVariant *parameters,
+       gpointer user_data) {
+
+      UserAwayEvent e(false, true);
+      EventBus::FireEvent(e);
+    }
+#endif
+
 } // namespace
 
 bool
@@ -162,14 +191,14 @@ DBusProtocol::Init() {
   // Simulate g_bus_own_name in sync way...
 
   GError *error = NULL;
-  connection_ = g_bus_get_sync(G_BUS_TYPE_SESSION, NULL, &error);
-  if (!connection_) {
+  session_bus_ = g_bus_get_sync(G_BUS_TYPE_SESSION, NULL, &error);
+  if (!session_bus_) {
     LOG(ERROR) << "Can't register D-BUS: " << error->message;
     g_error_free(error);
     return false;
   }
 
-  GVariant *result = g_dbus_connection_call_sync (connection_,
+  GVariant *result = g_dbus_connection_call_sync (session_bus_,
      "org.freedesktop.DBus",
      "/org/freedesktop/DBus",
      "org.freedesktop.DBus",
@@ -195,7 +224,7 @@ DBusProtocol::Init() {
   owned_ = (request_name_reply == 1 || request_name_reply == 4);
 
   if (owned_) {
-    on_bus_acquired(connection_, kOwnName, this);
+    on_bus_acquired(session_bus_, kOwnName, this);
     RegisterSystemListeners();
     RegisterMessageDelegates();
     RegisterEventListeners();
@@ -212,7 +241,7 @@ DBusProtocol::isSingleInstance() {
 void
 DBusProtocol::BringAnotherInstance() {
   GError *error = NULL;
-  GVariant *result = g_dbus_connection_call_sync (connection_,
+  GVariant *result = g_dbus_connection_call_sync (session_bus_,
      "org.brick.Brick",
      "/org/brick/Brick/AppWindow",
      "org.brick.Brick.AppWindowInterface",
@@ -267,6 +296,34 @@ DBusProtocol::RegisterSystemListeners() {
      NULL,
      NULL
   );
+
+#ifdef unity
+  g_dbus_connection_signal_subscribe(
+     session_bus_,
+     NULL,
+     "com.canonical.Unity.Session",
+     "Locked",
+     "/com/canonical/Unity/Session",
+     NULL,
+     G_DBUS_SIGNAL_FLAGS_NONE,
+     on_locked,
+     NULL,
+     NULL
+  );
+
+  g_dbus_connection_signal_subscribe(
+     session_bus_,
+     NULL,
+     "com.canonical.Unity.Session",
+     "Unlocked",
+     "/com/canonical/Unity/Session",
+     NULL,
+     G_DBUS_SIGNAL_FLAGS_NONE,
+     on_unlocked,
+     NULL,
+     NULL
+  );
+#endif
 }
 
 void
@@ -300,7 +357,7 @@ DBusProtocol::onEvent(IndicatorBadgeEvent &event) {
   gboolean result;
 
   result = g_dbus_connection_emit_signal (
-     connection_,
+     session_bus_,
      NULL,
      kAppPath,
      kAppInterface,
@@ -320,7 +377,7 @@ DBusProtocol::onEvent(IndicatorStateEvent &event) {
   gboolean result;
 
   result = g_dbus_connection_emit_signal (
-     connection_,
+     session_bus_,
      NULL,
      kAppPath,
      kAppInterface,
@@ -340,7 +397,7 @@ DBusProtocol::onEvent(IndicatorTooltipEvent &event) {
   gboolean result;
 
   result = g_dbus_connection_emit_signal (
-     connection_,
+     session_bus_,
      NULL,
      kAppPath,
      kAppInterface,
