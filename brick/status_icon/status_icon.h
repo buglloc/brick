@@ -37,6 +37,7 @@ public:
   void SetBadge(int badge, bool is_important = false);
   // Platform specific methods
   void Init();
+  void UpdateAccountsMenu();
 
   // Event handlers
   bool OnClick();
@@ -52,6 +53,7 @@ public:
   virtual void onEvent(AccountSwitchEvent &event) OVERRIDE;
 
 protected:
+  void RegisterEventListeners();
   std::string GetIconPath(Icon icon);
   std::string GetIconName(Icon icon);
 

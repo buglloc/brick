@@ -133,10 +133,16 @@ StatusIcon::OnMenuChangeAccount(int id) {
 
 void
 StatusIcon::onEvent(AccountListEvent &event) {
-  LOG(WARNING) << "StatusIcon implement me: AccountListEvent";
+  UpdateAccountsMenu();
 };
 
 void
 StatusIcon::onEvent(AccountSwitchEvent &event) {
-  LOG(WARNING) << "StatusIcon implement me: AccountSwitchEvent";
+  UpdateAccountsMenu();
 };
+
+void
+StatusIcon::RegisterEventListeners() {
+  EventBus::AddHandler<AccountListEvent>(*this);
+  EventBus::AddHandler<AccountSwitchEvent>(*this);
+}

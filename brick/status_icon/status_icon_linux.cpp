@@ -10,6 +10,7 @@
 namespace {
 
     GtkWidget *menu;
+    GtkWidget *accounts_menu;
 
     void
     status_icon_click(GtkWidget *status_icon, StatusIcon *self) {
@@ -68,41 +69,14 @@ StatusIcon::Init() {
   g_signal_connect_swapped(icon_handler_, "popup-menu", G_CALLBACK(status_icon_popup), this);
 #endif
 
-  // Create accounts menu
-  GtkWidget *accounts_menu = gtk_menu_new();
-  GtkWidget *manage_accounts_item = gtk_menu_item_new_with_label("Manage Accounts");
-  g_signal_connect(G_OBJECT(manage_accounts_item), "activate", G_CALLBACK(menu_manage_accounts), NULL);
-  gtk_menu_append(GTK_MENU(accounts_menu), manage_accounts_item);
-  gtk_menu_append(GTK_MENU(accounts_menu), gtk_separator_menu_item_new());
-  AccountManager::accounts_map *accounts = ClientHandler::GetInstance()->GetAccountManager()->GetAccounts();
-  CefRefPtr<Account> current_account = ClientHandler::GetInstance()->GetAccountManager()->GetCurrentAccount();
-  AccountManager::accounts_map::iterator it = accounts->begin();
-  for (; it != accounts->end(); ++it) {
-    GtkWidget *account_item;
-    if (current_account == (*it).second) {
-      account_item = gtk_menu_item_new_with_label(
-         (" --> " + (*it).second->GetLabel()).c_str()
-      );
-    } else {
-      account_item = gtk_menu_item_new_with_label(
-         (*it).second->GetLabel().c_str()
-      );
-    }
-
-    gtk_menu_append(GTK_MENU(accounts_menu), account_item);
-    g_object_set_data(G_OBJECT(account_item), "account_id", GINT_TO_POINTER((*it).first));
-    g_signal_connect(G_OBJECT(account_item), "activate", G_CALLBACK(menu_change_account), this);
-  }
-
   // Create popup menu
   menu = gtk_menu_new();
   GtkWidget * show_item = gtk_menu_item_new_with_label ("Show/Hide");
   g_signal_connect(G_OBJECT(show_item), "activate", G_CALLBACK(status_icon_click), NULL);
   gtk_menu_append(GTK_MENU(menu), show_item);
   gtk_menu_append(GTK_MENU(menu), gtk_separator_menu_item_new());
-  GtkWidget * accounts_item = gtk_menu_item_new_with_label("Accounts");
-  gtk_menu_append(GTK_MENU(menu), accounts_item);
-  gtk_menu_item_set_submenu(GTK_MENU_ITEM(accounts_item), accounts_menu);
+  accounts_menu = gtk_menu_item_new_with_label("Accounts");
+  gtk_menu_append(GTK_MENU(menu), accounts_menu);
   gtk_menu_append(GTK_MENU(menu), gtk_separator_menu_item_new());
   GtkWidget * about_item = gtk_menu_item_new_with_label ("About");
   g_signal_connect(G_OBJECT(about_item), "activate", G_CALLBACK(menu_about), NULL);
@@ -110,6 +84,9 @@ StatusIcon::Init() {
   GtkWidget * quit_item = gtk_menu_item_new_with_label ("Quit");
   g_signal_connect(G_OBJECT(quit_item), "activate", G_CALLBACK(menu_quit), NULL);
   gtk_menu_append(GTK_MENU(menu), quit_item);
+
+  UpdateAccountsMenu();
+  RegisterEventListeners();
 
 #ifdef unity
   app_indicator_set_status (icon_handler_, APP_INDICATOR_STATUS_ACTIVE);
@@ -147,4 +124,33 @@ StatusIcon::SetTooltip(const char *tooltip) {
 
   IndicatorTooltipEvent e(tooltip);
   EventBus::FireEvent(e);
+}
+
+void
+StatusIcon::UpdateAccountsMenu() {
+  GtkWidget *submenu = gtk_menu_new();
+  gtk_menu_item_set_submenu(GTK_MENU_ITEM(accounts_menu), submenu);
+  GtkWidget *manage_accounts_item = gtk_menu_item_new_with_label("Manage Accounts");
+  g_signal_connect(G_OBJECT(manage_accounts_item), "activate", G_CALLBACK(menu_manage_accounts), NULL);
+  gtk_menu_append(GTK_MENU(submenu), manage_accounts_item);
+  gtk_menu_append(GTK_MENU(submenu), gtk_separator_menu_item_new());
+  AccountManager::accounts_map *accounts = ClientHandler::GetInstance()->GetAccountManager()->GetAccounts();
+  CefRefPtr<Account> current_account = ClientHandler::GetInstance()->GetAccountManager()->GetCurrentAccount();
+  AccountManager::accounts_map::iterator it = accounts->begin();
+  for (; it != accounts->end(); ++it) {
+    GtkWidget *account_item;
+    if (current_account == (*it).second) {
+      account_item = gtk_menu_item_new_with_label(
+         (" --> " + (*it).second->GetLabel()).c_str()
+      );
+    } else {
+      account_item = gtk_menu_item_new_with_label(
+         (*it).second->GetLabel().c_str()
+      );
+    }
+
+    gtk_menu_append(GTK_MENU(submenu), account_item);
+    g_object_set_data(G_OBJECT(account_item), "account_id", GINT_TO_POINTER((*it).first));
+    g_signal_connect(G_OBJECT(account_item), "activate", G_CALLBACK(menu_change_account), this);
+  }
 }
