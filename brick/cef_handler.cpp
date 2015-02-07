@@ -85,6 +85,9 @@ ClientHandler::DoClose(CefRefPtr<CefBrowser> browser) {
   if (app_settings_.hide_on_delete && !browser->IsPopup()) {
     // Doesn't close main window
     main_handle_->Hide();
+    // ToDo: Remove!
+    // Browser will losses mostly all event handlers...so we do some ugly hack with reloading here
+    browser->Reload();
     return true;
   }
   return false;
