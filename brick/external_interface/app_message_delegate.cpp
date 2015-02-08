@@ -48,9 +48,7 @@ ExternalAppMessageDelegate::OnMessageReceived(CefRefPtr<CefProcessMessage> messa
     };
 
   } else if(message_name == kMessageShowAccountsDialogName) {
-    AccountsWindow *window(new AccountsWindow);
-    window->Init();
-    window->Show();
+    AccountsWindow::Instance()->Show();
 
   } else if (message_name == kMessageQuitName) {
     CefQuitMessageLoop();
