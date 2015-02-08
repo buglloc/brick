@@ -24,7 +24,9 @@ public:
   BrowserWindow() : window_handler_(NULL),
                  hided_(false),
                  focused_(true),
-                 visible_(true) {};
+                 visible_(true),
+                 last_x_(0),
+                 last_y_(0) {};
 
   BrowserWindowHandle GetHandler();
 
@@ -53,10 +55,13 @@ public:
 //  virtual bool HasFocus();
 
 protected:
+  void SaveRestorePosition(bool save = false);
   BrowserWindowHandle window_handler_;
   bool hided_;
   bool focused_;
   bool visible_;
+  int last_x_;
+  int last_y_;
 
 IMPLEMENT_REFCOUNTING(BrowserWindow);
 };
