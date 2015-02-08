@@ -153,4 +153,5 @@ StatusIcon::UpdateAccountsMenu() {
     g_object_set_data(G_OBJECT(account_item), "account_id", GINT_TO_POINTER((*it).first));
     g_signal_connect(G_OBJECT(account_item), "activate", G_CALLBACK(menu_change_account), this);
   }
+  gtk_widget_show_all(submenu);
 }
