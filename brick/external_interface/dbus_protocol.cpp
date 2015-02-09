@@ -188,7 +188,6 @@ namespace {
 
 bool
 DBusProtocol::Init() {
-  // Simulate g_bus_own_name in sync way...
   if (glib_check_version(2, 36, 0)) {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
@@ -196,6 +195,8 @@ DBusProtocol::Init() {
     g_type_init();
 #pragma GCC diagnostic pop
   }
+
+  // Simulate g_bus_own_name in sync way...
   GError *error = NULL;
   session_bus_ = g_bus_get_sync(G_BUS_TYPE_SESSION, NULL, &error);
   if (!session_bus_) {
