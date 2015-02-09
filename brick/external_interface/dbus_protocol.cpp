@@ -189,7 +189,13 @@ namespace {
 bool
 DBusProtocol::Init() {
   // Simulate g_bus_own_name in sync way...
-
+  if (glib_check_version(2, 36, 0)) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+  // In older version of glib we must call g_type_init manually (see https://developer.gnome.org/gobject/unstable/gobject-Type-Information.html#g-type-init)
+    g_type_init();
+#pragma GCC diagnostic pop
+  }
   GError *error = NULL;
   session_bus_ = g_bus_get_sync(G_BUS_TYPE_SESSION, NULL, &error);
   if (!session_bus_) {
