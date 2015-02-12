@@ -30,17 +30,6 @@ AppSettings::~AppSettings() {
 AppSettings
 AppSettings::InitByJson(std::string json) {
   AppSettings settings;
-  Json::Value root;   // will contains the root value after parsing.
-  Json::Reader reader;
-
-  bool parsingSuccessful = reader.parse(json, root);
-  if (!parsingSuccessful) {
-#if 0 // Turn off error message while we haven't any configuration file by default
-      fprintf(stderr, "Failed to parse configuration: %s", reader.getFormattedErrorMessages().c_str());
-#endif
-      return settings;
-  }
-
   settings.UpdateByJson(json);
 
   return settings;
