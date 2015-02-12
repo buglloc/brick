@@ -156,8 +156,13 @@ int main(int argc, char* argv[]) {
   }
 
   GetWorkingDir(szWorkingDir);
-  std::string plain_config = BrickApp::GetConfig();
-  AppSettings app_settings = AppSettings::InitByJson(plain_config);
+  AppSettings app_settings = AppSettings::InitByJson(
+     BrickApp::GetSystemConfig(szWorkingDir)
+  );
+  app_settings.UpdateByJson(
+     BrickApp::GetUserConfig()
+  );
+
   app_settings.resource_dir = helper::BaseDir(szWorkingDir) + "/resources/";
   CefSettings cef_settings = BrickApp::GetCefSettings(szWorkingDir, app_settings);
 

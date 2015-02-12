@@ -1,5 +1,7 @@
 #include <fstream>
 #include "brick_app.h"
+#include "helper.h"
+#include "platform_util.h"
 
 
 CefBrowserSettings
@@ -35,8 +37,27 @@ BrickApp::GetCefSettings(std::string work_dir, AppSettings app_settings) {
 }
 
 std::string
-BrickApp::GetConfig() {
-  std::ifstream ifs(std::string(GetConfigHome()) + "/" + APP_COMMON_NAME + "/config.json");
+BrickApp::GetSystemConfig(std::string work_dir) {
+  std::string config_path = helper::BaseDir(work_dir) + "/etc/config.json";
+  if (!platform_util::IsPathExists(config_path))
+    return "";
+
+  std::ifstream ifs(config_path);
+  std::string content(
+     (std::istreambuf_iterator<char>(ifs) ),
+     (std::istreambuf_iterator<char>()    )
+  );
+
+  return content;
+}
+
+std::string
+BrickApp::GetUserConfig() {
+  std::string config_path = std::string(GetConfigHome()) + "/" + APP_COMMON_NAME + "/config.json";
+  if (!platform_util::IsPathExists(config_path))
+    return "";
+
+  std::ifstream ifs(config_path);
   std::string content(
      (std::istreambuf_iterator<char>(ifs) ),
      (std::istreambuf_iterator<char>()    )

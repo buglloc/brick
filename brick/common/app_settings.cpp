@@ -41,62 +41,79 @@ AppSettings::InitByJson(std::string json) {
       return settings;
   }
 
+  settings.UpdateByJson(json);
+
+  return settings;
+}
+
+void
+AppSettings::UpdateByJson(std::string json) {
+  Json::Value root;   // will contains the root value after parsing.
+  Json::Reader reader;
+
+  bool parsingSuccessful = reader.parse(json, root);
+  if (!parsingSuccessful) {
+#if 0 // Turn off error message while we haven't any configuration file by default
+      fprintf(stderr, "Failed to parse configuration: %s", reader.getFormattedErrorMessages().c_str());
+#endif
+    return;
+  }
+
   if (root.isMember("app_token")
      && root["app_token"].isString()) {
-    settings.profile_path = root["app_token"].asString();
+    this->profile_path = root["app_token"].asString();
   }
 
   if (root.isMember("profile_path")
-      && root["profile_path"].isString()) {
-    settings.profile_path = root["profile_path"].asString();
+     && root["profile_path"].isString()) {
+    this->profile_path = root["profile_path"].asString();
   }
 
   if (root.isMember("cache_path")
-      && root["cache_path"].isString()) {
-    settings.cache_path = root["cache_path"].asString();
+     && root["cache_path"].isString()) {
+    this->cache_path = root["cache_path"].asString();
   }
 
   if (root.isMember("log_file")
      && root["log_file"].isString()) {
-    settings.log_file = root["log_file"].asString();
+    this->log_file = root["log_file"].asString();
   }
 
   if (root.isMember("proxy_server")
      && root["proxy_server"].isString()) {
-    settings.proxy_server = root["proxy_server"].asString();
+    this->proxy_server = root["proxy_server"].asString();
   }
 
   if (root.isMember("ignore_certificate_errors")
      && root["ignore_certificate_errors"].isBool()) {
-    settings.ignore_certificate_errors = root["ignore_certificate_errors"].asBool();
+    this->ignore_certificate_errors = root["ignore_certificate_errors"].asBool();
   }
 
   if (root.isMember("start_minimized")
      && root["start_minimized"].isBool()) {
-    settings.start_minimized = root["start_minimized"].asBool();
+    this->start_minimized = root["start_minimized"].asBool();
   }
 
   if (root.isMember("resource_dir")
      && root["resource_dir"].isString()) {
-    settings.resource_dir = root["resource_dir"].asString();
+    this->resource_dir = root["resource_dir"].asString();
   }
 
   if (root.isMember("auto_away")
      && root["auto_away"].isBool()) {
-    settings.auto_away = root["auto_away"].asBool();
+    this->auto_away = root["auto_away"].asBool();
   }
 
   if (root.isMember("external_api")
      && root["external_api"].isBool()) {
-    settings.external_api = root["external_api"].asBool();
+    this->external_api = root["external_api"].asBool();
   }
 
   if (root.isMember("hide_on_delete")
      && root["hide_on_delete"].isBool()) {
-    settings.hide_on_delete = root["hide_on_delete"].asBool();
+    this->hide_on_delete = root["hide_on_delete"].asBool();
   }
 
-  return settings;
 }
 
 std::string

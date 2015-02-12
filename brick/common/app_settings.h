@@ -24,6 +24,7 @@ struct AppSettings {
 
   AppSettings();
   ~AppSettings();
+  void UpdateByJson(std::string json);
   std::string DumpJson();
 };
 
