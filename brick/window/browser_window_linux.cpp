@@ -135,7 +135,7 @@ BrowserWindow::ToggleVisibility() {
 void
 BrowserWindow::SetActive() {
   gdk_window_focus(window_handler_,
-          gdk_x11_display_get_user_time(gdk_window_get_display(window_handler_))
+    gdk_x11_display_get_user_time(gdk_window_get_display(window_handler_))
   );
 }
 
@@ -147,8 +147,8 @@ BrowserWindow::SaveRestorePosition(bool save) {
     last_x_ = extents.x;
     last_y_ = extents.y;
   } else if (
-     last_x_ >=0 && last_x_ < (gdk_screen_width() - 60)
-     && last_y_ >=0 && last_y_ < (gdk_screen_height() - 60)
+     last_x_ >= 0 && last_x_ < (gdk_screen_width() - 60)
+     && last_y_ >= 0 && last_y_ < (gdk_screen_height() - 60)
      ) {
 
     gdk_window_move(window_handler_, last_x_, last_y_);
