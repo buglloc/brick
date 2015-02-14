@@ -129,6 +129,38 @@ BrickApp::GetConfigHome() {
 }
 
 // static
+std::string
+BrickApp::FindUserConfig(const char* name) {
+  std::string result = "";
+  char* filename = g_build_filename(g_get_user_config_dir(), APP_COMMON_NAME, name, NULL);
+  if (platform_util::IsPathExists(filename))
+    result = filename;
+  g_free(filename);
+  return result;
+}
+
+// static
+std::string
+BrickApp::FindSystemConfig(const char* name) {
+  std::string result = "";
+  const gchar* const *dirs = g_get_system_config_dirs();
+  const gchar* const *dir;
+  char* filename;
+
+  for(dir = dirs; *dir; ++dir) {
+    filename = g_build_filename(*dir, APP_COMMON_NAME, name, NULL);
+    if (platform_util::IsPathExists(filename)) {
+      result = filename;
+      g_free(filename);
+      break;
+    }
+    g_free(filename);
+  }
+
+  return result;
+}
+
+// static
 const char*
 BrickApp::GetCacheHome() {
   return g_get_user_cache_dir();
@@ -157,7 +189,7 @@ int main(int argc, char* argv[]) {
 
   GetWorkingDir(szWorkingDir);
   AppSettings app_settings = AppSettings::InitByJson(
-     BrickApp::GetSystemConfig(szWorkingDir)
+     BrickApp::GetSystemConfig()
   );
   app_settings.UpdateByJson(
      BrickApp::GetUserConfig()

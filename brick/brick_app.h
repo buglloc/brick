@@ -23,10 +23,11 @@ class BrickApp : public CefBase {
     static CefBrowserSettings GetBrowserSettings(std::string work_dir, AppSettings app_settings);
     static CefSettings GetCefSettings(std::string work_dir, AppSettings app_settings);
     static std::string GetUserConfig();
-    static std::string GetSystemConfig(std::string work_dir);
+    static std::string GetSystemConfig();
 
     // Platform specified methods
-
+    static std::string FindUserConfig(const char* name);
+    static std::string FindSystemConfig(const char* name);
     static const char* GetConfigHome();
     static const char* GetCacheHome();
   private:

@@ -37,12 +37,12 @@ BrickApp::GetCefSettings(std::string work_dir, AppSettings app_settings) {
 }
 
 std::string
-BrickApp::GetSystemConfig(std::string work_dir) {
-  std::string config_path = helper::BaseDir(work_dir) + "/etc/config.json";
-  if (!platform_util::IsPathExists(config_path))
+BrickApp::GetSystemConfig() {
+  std::string file = FindSystemConfig("config.json");
+  if (file.empty())
     return "";
 
-  std::ifstream ifs(config_path);
+  std::ifstream ifs(file);
   std::string content(
      (std::istreambuf_iterator<char>(ifs) ),
      (std::istreambuf_iterator<char>()    )
@@ -53,11 +53,11 @@ BrickApp::GetSystemConfig(std::string work_dir) {
 
 std::string
 BrickApp::GetUserConfig() {
-  std::string config_path = std::string(GetConfigHome()) + "/" + APP_COMMON_NAME + "/config.json";
-  if (!platform_util::IsPathExists(config_path))
+  std::string file = FindUserConfig("config.json");
+  if (file.empty())
     return "";
 
-  std::ifstream ifs(config_path);
+  std::ifstream ifs(file);
   std::string content(
      (std::istreambuf_iterator<char>(ifs) ),
      (std::istreambuf_iterator<char>()    )
