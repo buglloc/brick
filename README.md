@@ -5,6 +5,12 @@ Unofficial, simple [Bitrix24](https://www.bitrix24.com/) messenger client.
 
 Project is currently under (rather) heavy development, so stay tuned, more features will come soon.
 
+## Some screenshots
+
+![Chat](/doc/chat.png?raw=true)
+![Video](/doc/video.png?raw=true)
+![Notify](/doc/notify.png?raw=true)
+
 ## How to install and run Brick
 
 ### PPA
