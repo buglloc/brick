@@ -291,8 +291,11 @@ BXDesktopWindow.ExecuteCommand = function(cmd, params) {
     case 'html.load':
       window.document.write(params);
       break;
+    case 'topmost.show.html':
+      implementMe('BXDesktopWindow.ExecuteCommand(topmost.show.html, "html content")');
+      break;
     default: 
-    implementMe('BXDesktopWindow.ExecuteCommand', arguments);
+      implementMe('BXDesktopWindow.ExecuteCommand', arguments);
   }
 };
 
