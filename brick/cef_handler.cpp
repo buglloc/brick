@@ -214,17 +214,18 @@ ClientHandler::OnBeforeContextMenu(
    CefRefPtr<CefMenuModel> model) {
   CEF_REQUIRE_UI_THREAD();
 
-  // ToDo: disable native context menu in feature
   if ((params->GetTypeFlags() & (CM_TYPEFLAG_PAGE | CM_TYPEFLAG_FRAME)) != 0) {
     // Add a separator if the menu already has items.
     if (model->GetCount() > 0)
       model->Clear();
 
-    // Add DevTools items to all context menus.
+#ifndef NDEBUG
+    // Add DevTools items to all context menus in debug build.
     model->AddItem(1, "&Show DevTools");
     model->AddItem(2, "Close DevTools");
     model->AddSeparator();
     model->AddItem(3, "Inspect Element");
+#endif
   }
 }
 
@@ -237,6 +238,7 @@ ClientHandler::OnContextMenuCommand(
    EventFlags event_flags) {
   CEF_REQUIRE_UI_THREAD();
 
+#ifndef NDEBUG
   switch (command_id) {
     case 1:
       ShowDevTools(browser, CefPoint());
@@ -250,6 +252,10 @@ ClientHandler::OnContextMenuCommand(
     default:
       return false;
   }
+
+#else
+  return false;
+#endif
 }
 
 void
