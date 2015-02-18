@@ -214,10 +214,11 @@ ClientHandler::OnBeforeContextMenu(
    CefRefPtr<CefMenuModel> model) {
   CEF_REQUIRE_UI_THREAD();
 
+  // ToDo: disable native context menu in feature
   if ((params->GetTypeFlags() & (CM_TYPEFLAG_PAGE | CM_TYPEFLAG_FRAME)) != 0) {
     // Add a separator if the menu already has items.
     if (model->GetCount() > 0)
-      model->AddSeparator();
+      model->Clear();
 
     // Add DevTools items to all context menus.
     model->AddItem(1, "&Show DevTools");
