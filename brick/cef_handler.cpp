@@ -347,8 +347,8 @@ ClientHandler::OnProcessMessageReceived(
    CefRefPtr<CefProcessMessage> message) {
   bool handled = false;
 
-  // Check for callbacks first
   if (message->GetName() == "executeCommandCallback") {
+    // Check for callbacks first
     int32 commandId = message->GetArgumentList()->GetInt(0);
     bool result = message->GetArgumentList()->GetBool(1);
 
@@ -356,6 +356,11 @@ ClientHandler::OnProcessMessageReceived(
     callback->CommandComplete(result);
     command_callback_map_.erase(commandId);
 
+    handled = true;
+
+  } else if (message->GetName() == "openExternal") {
+    std::string url = message->GetArgumentList()->GetString(0);
+    platform_util::OpenExternal(url);
     handled = true;
   }
 

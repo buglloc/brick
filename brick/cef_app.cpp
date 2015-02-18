@@ -8,6 +8,7 @@
 #include "v8_handler.h"
 #include "include/wrapper/cef_helpers.h"
 #include "helper.h"
+#include "platform_util.h"
 
 extern char _binary_desktop_extension_js_start;
 extern char _binary_desktop_extension_js_size;
@@ -122,6 +123,15 @@ bool ClientApp::OnBeforeNavigation(CefRefPtr<CefBrowser> browser,
 
   if (is_redirect)
     return true; // Disable redirects at all
+
+  if (navigation_type == NAVIGATION_LINK_CLICKED) {
+    // We have single page app, so we open all links and redirects in external browser
+    CefRefPtr<CefProcessMessage> message = CefProcessMessage::Create("openExternal");
+    message->GetArgumentList()->SetString(0, request->GetURL());
+    browser->SendProcessMessage(PID_BROWSER, message);
+    return true;
+  }
+
 
   RenderDelegateSet::iterator it = render_delegates_.begin();
   for (; it != render_delegates_.end(); ++it) {
