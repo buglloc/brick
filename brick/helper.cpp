@@ -162,9 +162,8 @@ namespace helper {
       }
 
       // Determine the mime type based on the file extension, if any.
-      size_t pos = file.rfind(".");
-      if (pos != std::string::npos) {
-        std::string ext = file.substr(pos + 1);
+      std::string ext = GetFileExtension(file);
+      if (!ext.empty()) {
         if (ext == "html")
           *mime_type = "text/html";
         else if (ext == "png")
@@ -189,21 +188,17 @@ namespace helper {
       return true;
     }
 
-    uint32_t
-    HashString(const char * s)
+    unsigned int
+    HashString(const std::string& str)
     {
-      uint32_t hash = 0;
-
-      for(; *s; ++s)
+      // Currently based on FNV-1 with 32 bit prime
+      const unsigned int fnv_prime = 0x811C9DC5;
+      unsigned int hash = 0;
+      for(std::size_t i = 0; i < str.length(); i++)
       {
-        hash += *s;
-        hash += (hash << 10);
-        hash ^= (hash >> 6);
+        hash *= fnv_prime;
+        hash ^= str[i];
       }
-
-      hash += (hash << 3);
-      hash ^= (hash >> 11);
-      hash += (hash << 15);
 
       return hash;
     }
@@ -225,6 +220,16 @@ namespace helper {
         return source;
 
       return result.substr(0, pos);
+    }
+
+    std::string
+    GetFileExtension(const std::string& source) {
+      size_t pos = source.rfind(".");
+      if (pos != std::string::npos) {
+        return source.substr(pos + 1);
+      }
+
+      return "";
     }
 
 }
