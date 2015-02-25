@@ -2,7 +2,12 @@
 
 #include <cstring>
 #include <iostream>
-
+#include <brick/platform_util.h>
+#include "../helper.h"
+#include <include/base/cef_bind.h>
+#include <brick/brick_app.h>
+#include <include/cef_url.h>
+#include "include/wrapper/cef_closure_task.h"
 
 namespace {
     const char kCookieHeaderName[] = "Set-Cookie";
@@ -12,6 +17,7 @@ namespace {
 const char* HttpClient::user_agent = HTTP_CLIENT_USER_AGENT;
 /** initialize authentication variable */
 std::string HttpClient::user_pass =  std::string();
+std::string HttpClient::cache_path =  std::string();
 /** Authentication Methods implementation */
 
 void
@@ -20,10 +26,46 @@ HttpClient::ClearAuth(){
 }
 
 void
-HttpClient::SetAuth(const std::string &user, const std::string &password){
+HttpClient::SetAuth(const std::string &user, const std::string &password) {
   HttpClient::user_pass.clear();
   HttpClient::user_pass += user+":"+password;
 }
+
+void
+HttpClient::SetCachePath(const std::string &path) {
+  HttpClient::cache_path = path;
+  platform_util::MakeDirectory(path);
+}
+
+std::string
+HttpClient::GetCachePath(const std::string& url, const std::string& prefix) {
+  if (HttpClient::cache_path.empty()) {
+    HttpClient::cache_path = std::string(BrickApp::GetCacheHome()) + "/" + APP_COMMON_NAME + "/http/" + prefix;
+  }
+
+  std::string hash = std::to_string(helper::HashString(url));
+  std::string result = HttpClient::cache_path;
+  CefURLParts parts;
+  CefParseURL(url, parts);
+
+  if (parts.host.length) {
+    std::string host = CefString(&parts.host);
+    result += "/" + host;
+  }
+
+  result  += "/" + hash.substr(0, 1) + "/" + hash;
+
+  if (parts.path.length) {
+    std::string file_path = CefString(&parts.path);
+    std::string ext = helper::GetFileExtension(file_path);
+    if (!ext.empty()) {
+      result += "." + ext;
+    }
+  }
+
+  return result;
+}
+
 /**
  * @brief HTTP GET method
  *
@@ -283,6 +325,26 @@ HttpClient::WriteCallback(void *data,
 }
 
 /**
+* @brief write callback function for libcurl
+*
+* @param data returned data of size (size*nmemb)
+* @param size size parameter
+* @param nmemb memblock parameter
+* @param userdata pointer to user data to save/work with return data
+*
+* @return (size * nmemb)
+*/
+size_t
+HttpClient::WriteFileCallback(void *data,
+   size_t size,
+   size_t nmemb,
+   std::ofstream *output)
+{
+  output->write(reinterpret_cast<char*>(data), size*nmemb);
+  return size*nmemb;
+}
+
+/**
  * @brief header callback for libcurl
  *
  * @param data returned (header line)
@@ -471,4 +533,74 @@ HttpClient::InitCurl(CURL *curl, HttpClient::response *ret) {
   curl_easy_setopt(curl, CURLOPT_HEADERDATA, ret);
   /**  set error buffer for error messages **/
   curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, ret->error);
+}
+
+bool
+HttpClient::Download(const std::string& url, const std::string& path) {
+  /** create return struct */
+  HttpClient::response ret = {};
+
+  // use libcurl
+  CURL *curl = NULL;
+  CURLcode res = CURLE_OK;
+
+  curl = curl_easy_init();
+  if (curl)
+  {
+    platform_util::MakeDirectory(helper::BaseDir(path));
+    std::ofstream outfile(path, std::ofstream::binary);
+
+    InitCurl(curl, &ret);
+
+    /** set callback function */
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, HttpClient::WriteFileCallback);
+    /** set data object to pass to callback function */
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &outfile);
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+
+    /** perform the actual query */
+    res = curl_easy_perform(curl);
+    outfile.close();
+    if (res != CURLE_OK)
+    {
+      ret.body = "Failed to query.";
+      ret.code = -1;
+      return false;
+    }
+    long http_code = 0;
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
+    ret.code = static_cast<int>(http_code);
+
+    curl_easy_cleanup(curl);
+    curl_global_cleanup();
+  }
+
+  return true;
+}
+
+void
+HttpClient::DownloadAsync(const std::string &url, const std::string &path) {
+  if (!CefCurrentlyOn(TID_IO)) {
+    CefPostTask(TID_IO, base::Bind(&HttpClient::DownloadAsync, url, path));
+    return;
+  }
+
+  if (!Download(url, path))
+    LOG(WARNING) << "Can't download url '" << url << "' to file '" << path << "'";
+}
+
+std::string
+HttpClient::GetCached(const std::string& url, const std::string& prefix, bool sync) {
+  std::string path = GetCachePath(url, prefix);
+
+  if (platform_util::IsPathExists(path)) {
+    return path;
+  }
+
+  if (sync) {
+    return Download(url, path)? path: "";
+  }
+
+  DownloadAsync(url, path);
+  return "";
 }

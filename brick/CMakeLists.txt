@@ -132,6 +132,10 @@ set(BRICK_EVENT_SYSTEM
   event/sleep_event.h
   event/user_away_event.h
   )
+set(BRICK_HTTPCLIENT_SRCS
+  httpclient/httpclient.cpp
+  httpclient/httpclient.h
+  )
 
 APPEND_PLATFORM_SOURCES(BRICK_SRCS)
 APPEND_PLATFORM_SOURCES(BRICK_STATUS_ICON_SRCS)
@@ -140,11 +144,6 @@ APPEND_PLATFORM_SOURCES(BRICK_EXTERNAL_INTERFACE)
 APPEND_PLATFORM_SOURCES(BRICK_EVENT_SYSTEM)
 
 source_group(brick FILES ${BRICK_SRCS})
-
-set(BRICK_HTTPCLIENT_SRCS
-  ../third-party/httpclient/httpclient.cpp
-  ../third-party/httpclient/httpclient.h
-  )
 
 set(BRICK_SRCS
   ${BRICK_SRCS}

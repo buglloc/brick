@@ -2,7 +2,7 @@
 #define BRICK_APP_MESSAGE_DELEGATE_H_
 
 #include "brick/cef_handler.h"
-#include "third-party/httpclient/httpclient.h"
+#include "../httpclient/httpclient.h"
 
 class AppMessageDelegate : public ClientHandler::ProcessMessageDelegate {
   public:

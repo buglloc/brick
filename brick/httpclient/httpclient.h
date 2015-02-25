@@ -7,6 +7,7 @@
 #include <map>
 #include <cstdlib>
 #include <algorithm>
+#include <fstream>
 
 #define HTTP_CLIENT_USER_AGENT "HttpClient/0.1"
 #define HTTP_CLIENT_CONNECTION_TIMEOUT 6L
@@ -42,6 +43,15 @@ class HttpClient
     // Auth
     static void ClearAuth();
     static void SetAuth(const std::string &user, const std::string &password);
+
+    // Cache
+    static void SetCachePath(const std::string &path);
+    static std::string GetCachePath(const std::string& url, const std::string& prefix);
+    static std::string GetCached(const std::string& url, const std::string& prefix = "", bool sync = false);
+
+    static bool Download(const std::string& url, const std::string& path);
+    static void DownloadAsync(const std::string& url, const std::string& path);
+
     // HTTP GET
     static response Get(const std::string &url);
     // HTTP POST
@@ -63,6 +73,8 @@ class HttpClient
     // writedata callback function
     static size_t WriteCallback(void *ptr, size_t size, size_t nmemb,
        void *userdata);
+    static size_t WriteFileCallback(void *ptr, size_t size, size_t nmemb,
+       std::ofstream *output);
 
     // header callback function
     static size_t HeaderCallback(void *ptr, size_t size, size_t nmemb,
@@ -72,6 +84,7 @@ class HttpClient
        void *userdata);
     static const char* user_agent;
     static std::string user_pass;
+    static std::string cache_path;
 
     // trim from start
     static inline std::string &ltrim(std::string &s) {
