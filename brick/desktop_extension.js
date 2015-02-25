@@ -81,11 +81,18 @@ var app = {
         !!isImportant
     );
   },
-  showNotification: function(title, text, duration) {
+  showNotification: function(title, text, icon, duration) {
     native function AppExShowNotification();
 
     duration = duration || this.defaultNotifyDuration;
-    AppExShowNotification(null, title, text, duration);  
+    icon = icon || '';
+    AppExShowNotification(
+        null,
+        title,
+        text,
+        icon,
+        duration
+    );
   },
   hideNotification: function() {
     native function AppExHideNotification();
@@ -310,11 +317,13 @@ BXDesktopSystem.ParseNotificationHtml = function(html) {
 
   var document = this.parser.parseFromString(html, "text/html");
 
+  var icon = document.body.querySelector('span.bx-notifier-item-avatar > img');
   var date = document.body.querySelector('span.bx-notifier-item-date');
   var title = document.body.querySelector('span.bx-notifier-item-name');
   var text = document.body.querySelector('span.bx-notifier-item-text');
 
   return {
+    'icon': icon !== null ? icon.src : null,
     'date': date !== null ? date.innerHTML : '',
     'title': title !== null ? title.innerHTML.replace(/<[^>]+>/g, '') : '',
     'text': (text !== null ? text.innerHTML: html)
@@ -331,7 +340,8 @@ BXDesktopSystem.ExecuteCommand = function(command, params) {
       var parsed = this.ParseNotificationHtml(params);
       app.showNotification(
         parsed.title,
-        parsed.text
+        parsed.text,
+        parsed.icon
       );
       break;
     case 'browse':

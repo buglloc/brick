@@ -2,35 +2,50 @@
 #include <string>
 #include <libnotify/notify.h>
 #include <include/base/cef_logging.h>
+#include <ksba.h>
 
 #include "notification.h"
+#include "httpclient/httpclient.h"
 
 namespace {
     NotifyNotification *notification = NULL;
+
+    std::string
+    TryGetIcon(std::string icon) {
+      std::string result;
+
+      if (icon.find("http://") == 0 || icon.find("https://") == 0) {
+        result = HttpClient::GetCached(icon, "buddy");
+      } else {
+        result = icon;
+      }
+
+      return result.empty()? "" : "file://" + result;
+    }
+
 } //namespace
 
-//static gboolean
-//close_handler(NotifyNotification *n) {
-////  g_object_unref (G_OBJECT(n));
-//  notification = NULL;
-//  return FALSE;
-//}
-
 void
-Notification::Notify(const std::string title, std::string body, int delay) {
- notify_init ("brick");
+Notification::Notify(const std::string title, std::string body, std::string icon, int delay) {
+  notify_init ("brick");
+
+  std::string notification_icon;
+  if (!icon.empty()) {
+    notification_icon = TryGetIcon(icon);
+  }
+
   if (notification == NULL) {
     notification = notify_notification_new(
        title.c_str(),
        body.c_str(),
-       "notification-message-IM"
+       notification_icon.empty() ? "notification-message-IM" : notification_icon.c_str()
     );
   } else {
     notify_notification_update(
        notification,
        title.c_str(),
        body.c_str(),
-       "notification-message-IM"
+       notification_icon.empty() ? "notification-message-IM" : notification_icon.c_str()
     );
   }
 

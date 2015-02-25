@@ -216,13 +216,15 @@ AppMessageDelegate::OnProcessMessageReceived(
     //  0: int32 - callback id
     //  1: string - title
     //  2: string - text
-    //  3: int - duration
+    //  3: string - icon path
+    //  4: int - duration
 
     if (
-       request_args->GetSize() != 4
+       request_args->GetSize() != 5
           || request_args->GetType(1) != VTYPE_STRING
           || request_args->GetType(2) != VTYPE_STRING
-          || request_args->GetType(3) != VTYPE_INT
+          || request_args->GetType(3) != VTYPE_STRING
+          || request_args->GetType(4) != VTYPE_INT
        ) {
       error = ERR_INVALID_PARAMS;
     }
@@ -231,7 +233,8 @@ AppMessageDelegate::OnProcessMessageReceived(
       Notification::Notify(
          request_args->GetString(1),
          request_args->GetString(2),
-         request_args->GetInt(3)
+         request_args->GetString(3),
+         request_args->GetInt(4)
       );
     };
 

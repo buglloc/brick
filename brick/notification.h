@@ -6,7 +6,7 @@
 class Notification {
 
 public:
-  static void Notify(const std::string title, std::string body, int delay);
+  static void Notify(const std::string title, std::string body, std::string icon, int delay);
   static void Hide();
 };
 
