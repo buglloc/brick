@@ -230,12 +230,23 @@ AppMessageDelegate::OnProcessMessageReceived(
     }
 
     if (error == NO_ERROR) {
-      Notification::Notify(
-         request_args->GetString(1),
-         request_args->GetString(2),
-         request_args->GetString(3),
-         request_args->GetInt(4)
-      );
+      std::string icon_url = request_args->GetString(3);
+
+      if (
+         icon_url.find("https://") == 0
+            || icon_url.find("http://") == 0
+         ) {
+
+        Notification::Notify(
+           request_args->GetString(1),
+           request_args->GetString(2),
+           icon_url,
+           request_args->GetInt(4)
+        );
+      } else {
+        LOG(WARNING) << "Trying to show forbidden icon: " << icon_url;
+        error = ERR_INVALID_URL;
+      }
     };
 
   } else if (message_name == kMessageAddAccountName) {

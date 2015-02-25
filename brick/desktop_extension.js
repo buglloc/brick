@@ -317,13 +317,18 @@ BXDesktopSystem.ParseNotificationHtml = function(html) {
 
   var document = this.parser.parseFromString(html, "text/html");
 
-  var icon = document.body.querySelector('span.bx-notifier-item-avatar > img');
+  var icon = document.body.querySelector('img.bx-notifier-item-avatar-img');
   var date = document.body.querySelector('span.bx-notifier-item-date');
   var title = document.body.querySelector('span.bx-notifier-item-name');
   var text = document.body.querySelector('span.bx-notifier-item-text');
 
+
+  var iconUri = null;
+  if (icon !== null)
+    iconUri = qualifyUrl(icon.getAttribute('src'));
+
   return {
-    'icon': icon !== null ? icon.src : null,
+    'icon': iconUri,
     'date': date !== null ? date.innerHTML : '',
     'title': title !== null ? title.innerHTML.replace(/<[^>]+>/g, '') : '',
     'text': (text !== null ? text.innerHTML: html)
@@ -575,6 +580,15 @@ function decode_utf8(text) {
 
 function implementMe(name, args) {
   console.error('Implement me: ' + buildFunctionCall(name, args));
+}
+
+function qualifyUrl(url) {
+  if (/^https?:\/\//.test(url))
+    return url;
+
+  var a = document.createElement('a');
+  a.href = url;
+  return a.href;
 }
 
 /*---------- Helpers ---------*/
