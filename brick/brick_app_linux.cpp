@@ -245,7 +245,6 @@ int main(int argc, char* argv[]) {
   }
   window_util::SetDefaultIcons(icons);
 
-
   // Create the handler.
   CefRefPtr<ClientHandler> client_handler(new ClientHandler);
   client_handler->SetAppSettings(app_settings);

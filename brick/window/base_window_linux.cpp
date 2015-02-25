@@ -69,10 +69,10 @@ BaseWindow::Resize(int width, int height) {
 const char*
 BaseWindow::GetTitle() {
   char* title = (char*) gtk_window_get_title(GTK_WINDOW(window_handler_));
-  if(title == NULL)
+  if (title == NULL)
     return "";
-  else
-    return title;
+
+  return title;
 }
 
 void
