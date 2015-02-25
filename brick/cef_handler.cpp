@@ -408,6 +408,16 @@ ClientHandler::GetMainWindowHandle() const {
 }
 
 void
+ClientHandler::SetCacheManager(CefRefPtr<CacheManager> cache_manager) {
+  cache_manager_ = cache_manager;
+}
+
+CefRefPtr<CacheManager>
+ClientHandler::GetCacheManager() const {
+  return cache_manager_;
+}
+
+void
 ClientHandler::SetAppSettings(AppSettings settings) {
  app_settings_ = settings;
 }

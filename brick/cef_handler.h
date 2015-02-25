@@ -67,6 +67,9 @@ public:
   ClientHandler();
   ~ClientHandler();
 
+  void SetCacheManager(CefRefPtr<CacheManager> cache_manager);
+  CefRefPtr<CacheManager> GetCacheManager() const;
+
   void SetAccountManager(CefRefPtr<AccountManager> account_manager);
   CefRefPtr<AccountManager> GetAccountManager() const;
 
@@ -255,6 +258,8 @@ private:
   CefRefPtr<StatusIcon> status_icon_handle_;
 
   CefRefPtr<AccountManager> account_manager_;
+
+  CefRefPtr<CacheManager> cache_manager_;
 
   AppSettings app_settings_;
 

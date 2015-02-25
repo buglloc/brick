@@ -7,6 +7,7 @@
 #include <include/base/cef_bind.h>
 #include <brick/brick_app.h>
 #include <include/cef_url.h>
+#include <brick/cef_handler.h>
 #include "include/wrapper/cef_closure_task.h"
 
 namespace {
@@ -17,7 +18,7 @@ namespace {
 const char* HttpClient::user_agent = HTTP_CLIENT_USER_AGENT;
 /** initialize authentication variable */
 std::string HttpClient::user_pass =  std::string();
-std::string HttpClient::cache_path =  std::string();
+
 /** Authentication Methods implementation */
 
 void
@@ -29,41 +30,6 @@ void
 HttpClient::SetAuth(const std::string &user, const std::string &password) {
   HttpClient::user_pass.clear();
   HttpClient::user_pass += user+":"+password;
-}
-
-void
-HttpClient::SetCachePath(const std::string &path) {
-  HttpClient::cache_path = path;
-  platform_util::MakeDirectory(path);
-}
-
-std::string
-HttpClient::GetCachePath(const std::string& url, const std::string& prefix) {
-  if (HttpClient::cache_path.empty()) {
-    HttpClient::cache_path = std::string(BrickApp::GetCacheHome()) + "/" + APP_COMMON_NAME + "/http/" + prefix;
-  }
-
-  std::string hash = std::to_string(helper::HashString(url));
-  std::string result = HttpClient::cache_path;
-  CefURLParts parts;
-  CefParseURL(url, parts);
-
-  if (parts.host.length) {
-    std::string host = CefString(&parts.host);
-    result += "/" + host;
-  }
-
-  result  += "/" + hash.substr(0, 1) + "/" + hash;
-
-  if (parts.path.length) {
-    std::string file_path = CefString(&parts.path);
-    std::string ext = helper::GetFileExtension(file_path);
-    if (!ext.empty()) {
-      result += "." + ext;
-    }
-  }
-
-  return result;
 }
 
 /**
@@ -590,8 +556,12 @@ HttpClient::DownloadAsync(const std::string &url, const std::string &path) {
 }
 
 std::string
-HttpClient::GetCached(const std::string& url, const std::string& prefix, bool sync) {
-  std::string path = GetCachePath(url, prefix);
+HttpClient::GetCached(const std::string& url, CacheManager::TYPE type, bool sync) {
+  CefRefPtr<ClientHandler> client_handler = ClientHandler::GetInstance();
+  if (!client_handler)
+    return "";
+
+  std::string path = client_handler->GetCacheManager()->GetCachePath(url, type);
 
   if (platform_util::IsPathExists(path)) {
     return path;

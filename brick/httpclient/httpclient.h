@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <algorithm>
 #include <fstream>
+#include "../cache_manager.h"
 
 #define HTTP_CLIENT_USER_AGENT "HttpClient/0.1"
 #define HTTP_CLIENT_CONNECTION_TIMEOUT 6L
@@ -45,9 +46,7 @@ class HttpClient
     static void SetAuth(const std::string &user, const std::string &password);
 
     // Cache
-    static void SetCachePath(const std::string &path);
-    static std::string GetCachePath(const std::string& url, const std::string& prefix);
-    static std::string GetCached(const std::string& url, const std::string& prefix = "", bool sync = false);
+    static std::string GetCached(const std::string& url, CacheManager::TYPE type = CacheManager::TYPE::DEFAULT, bool sync = false);
 
     static bool Download(const std::string& url, const std::string& path);
     static void DownloadAsync(const std::string& url, const std::string& path);
@@ -84,7 +83,6 @@ class HttpClient
        void *userdata);
     static const char* user_agent;
     static std::string user_pass;
-    static std::string cache_path;
 
     // trim from start
     static inline std::string &ltrim(std::string &s) {

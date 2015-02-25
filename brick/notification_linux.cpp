@@ -15,7 +15,7 @@ namespace {
       std::string result;
 
       if (icon.find("http://") == 0 || icon.find("https://") == 0) {
-        result = HttpClient::GetCached(icon, "buddy");
+        result = HttpClient::GetCached(icon, CacheManager::TYPE::BUDDY_ICON);
       } else {
         result = icon;
       }

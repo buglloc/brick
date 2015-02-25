@@ -222,6 +222,13 @@ int main(int argc, char* argv[]) {
      std::string(BrickApp::GetConfigHome()) + "/" + APP_COMMON_NAME + "/accounts.json"
   );
 
+  CefRefPtr<CacheManager> cache_manager(new CacheManager);
+  cache_manager->Init(
+     std::string(BrickApp::GetCacheHome()) + "/" + APP_COMMON_NAME + "/app/"
+  );
+  // ToDo: need to be safer?
+  cache_manager->CleanUpCache();
+
   // Initialize CEF.
   CefInitialize(main_args, cef_settings, app.get(), NULL);
 
@@ -249,6 +256,7 @@ int main(int argc, char* argv[]) {
   CefRefPtr<ClientHandler> client_handler(new ClientHandler);
   client_handler->SetAppSettings(app_settings);
   client_handler->SetAccountManager(account_manager);
+  client_handler->SetCacheManager(cache_manager);
 
   // Initialize status icon
   CefRefPtr<StatusIcon> status_icon(new StatusIcon(app_settings.resource_dir + "/indicators/"));

@@ -50,6 +50,8 @@ set(BRICK_SRCS
   notification.h
   platform_util.h
   api_error.h
+  cache_manager.h
+  cache_manager.cpp
   )
 set(BRICK_COMMON_SRCS
   common/app_settings.cpp
