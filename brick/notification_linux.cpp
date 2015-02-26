@@ -6,23 +6,10 @@
 
 #include "notification.h"
 #include "httpclient/httpclient.h"
+#include "cef_handler.h"
 
 namespace {
     NotifyNotification *notification = NULL;
-
-    std::string
-    TryGetIcon(std::string icon) {
-      std::string result;
-
-      if (icon.find("http://") == 0 || icon.find("https://") == 0) {
-        result = HttpClient::GetCached(icon, CacheManager::TYPE::BUDDY_ICON);
-      } else {
-        result = icon;
-      }
-
-      return result.empty()? "" : "file://" + result;
-    }
-
 } //namespace
 
 void
@@ -32,6 +19,8 @@ Notification::Notify(const std::string title, std::string body, std::string icon
   std::string notification_icon;
   if (!icon.empty()) {
     notification_icon = TryGetIcon(icon);
+  } else {
+    notification_icon = GetDefaultIcon();
   }
 
   if (notification == NULL) {
@@ -67,4 +56,26 @@ Notification::Hide() {
 
   g_object_unref (G_OBJECT(notification));
   notification = NULL;
+}
+
+std::string
+Notification::TryGetIcon(std::string icon) {
+  std::string result;
+
+  if (icon.find("http://") == 0 || icon.find("https://") == 0) {
+    result = HttpClient::GetCached(icon, CacheManager::TYPE::BUDDY_ICON);
+  } else {
+    result = icon;
+  }
+
+  return result.empty()? GetDefaultIcon() : "file://" + result;
+}
+
+std::string
+Notification::GetDefaultIcon() {
+  CefRefPtr<ClientHandler> client_handler = ClientHandler::GetInstance();
+  if (!client_handler)
+    return "";
+
+  return "file://" + client_handler->GetAppSettings().resource_dir + "/ui/buddy.png";
 }

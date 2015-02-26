@@ -171,6 +171,7 @@ set(
   app_icons
   indicators
   web
+  ui
   )
 
 # Target executable names.
