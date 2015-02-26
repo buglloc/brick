@@ -324,11 +324,12 @@ BXDesktopSystem.ParseNotificationHtml = function(html) {
 
 
   var iconUri = null;
-  if (icon !== null)
+  if (icon !== null) {
     iconUri = qualifyUrl(icon.getAttribute('src'));
+  }
 
   return {
-    'icon': iconUri,
+    'icon': /blank\.gif$/.test(iconUri) ? null : iconUri, // Don't show blank.gif (1x1 px) as notification icon
     'date': date !== null ? date.innerHTML : '',
     'title': title !== null ? title.innerHTML.replace(/<[^>]+>/g, '') : '',
     'text': (text !== null ? text.innerHTML: html)
