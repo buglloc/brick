@@ -233,7 +233,8 @@ AppMessageDelegate::OnProcessMessageReceived(
       std::string icon_url = request_args->GetString(3);
 
       if (
-         icon_url.find("https://") == 0
+         icon_url.empty()
+            || icon_url.find("https://") == 0
             || icon_url.find("http://") == 0
          ) {
 
