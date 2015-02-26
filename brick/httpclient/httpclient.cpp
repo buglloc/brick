@@ -476,9 +476,9 @@ HttpClient::Urlencode(const std::string& str, bool plusAsSpace) {
 }
 
 void
-HttpClient::InitCurl(CURL *curl, HttpClient::response *ret) {
+HttpClient::SetDefaultOpts(CURL *curl) {
   /** set basic authentication if present*/
-  if(HttpClient::user_pass.length()>0){
+  if (HttpClient::user_pass.length()) {
     curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
     curl_easy_setopt(curl, CURLOPT_USERPWD, HttpClient::user_pass.c_str());
   }
@@ -490,6 +490,10 @@ HttpClient::InitCurl(CURL *curl, HttpClient::response *ret) {
   /** set user agent */
   curl_easy_setopt(curl, CURLOPT_USERAGENT, HttpClient::user_agent);
   /** set callback function */
+}
+
+void
+HttpClient::SetDefaultHandlers(CURL *curl, HttpClient::response *ret) {
   curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, HttpClient::WriteCallback);
   /** set data object to pass to callback function */
   curl_easy_setopt(curl, CURLOPT_WRITEDATA, ret);
@@ -501,46 +505,72 @@ HttpClient::InitCurl(CURL *curl, HttpClient::response *ret) {
   curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, ret->error);
 }
 
-bool
-HttpClient::Download(const std::string& url, const std::string& path) {
-  /** create return struct */
-  HttpClient::response ret = {};
+void
+HttpClient::InitCurl(CURL *curl, HttpClient::response *ret) {
+  SetDefaultOpts(curl);
+  SetDefaultHandlers(curl, ret);
+}
 
-  // use libcurl
+bool
+HttpClient::Download(
+   const std::string& url,
+   const std::string& path,
+   const std::string& valid_type) {
+
+  // ToDo: limit file size?
   CURL *curl = NULL;
   CURLcode res = CURLE_OK;
 
   curl = curl_easy_init();
-  if (curl)
-  {
-    platform_util::MakeDirectory(helper::BaseDir(path));
-    std::ofstream outfile(path, std::ofstream::binary);
+  if (!curl)
+    return false;
 
-    InitCurl(curl, &ret);
+  if (!platform_util::MakeDirectory(helper::BaseDir(path)))
+    return false;
 
-    /** set callback function */
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, HttpClient::WriteFileCallback);
-    /** set data object to pass to callback function */
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &outfile);
-    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+  std::string tmp_path = path + ".tmp";
+  std::ofstream tmp_file(tmp_path, std::ofstream::binary);
 
-    /** perform the actual query */
-    res = curl_easy_perform(curl);
-    outfile.close();
-    if (res != CURLE_OK)
-    {
-      ret.body = "Failed to query.";
-      ret.code = -1;
-      return false;
-    }
-    long http_code = 0;
-    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
-    ret.code = static_cast<int>(http_code);
+  SetDefaultOpts(curl);
+  curl_easy_setopt(curl, CURLOPT_USERAGENT, HttpClient::user_agent);
+  curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, HttpClient::WriteFileCallback);
+  curl_easy_setopt(curl, CURLOPT_WRITEDATA, &tmp_file);
+  curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 
-    curl_easy_cleanup(curl);
-    curl_global_cleanup();
+  /** perform the actual query */
+  res = curl_easy_perform(curl);
+
+  tmp_file.close();
+
+  if (res != CURLE_OK) {
+    unlink(tmp_path.c_str());;
+    return false;
   }
 
+  long http_code = 0;
+  curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
+  char *content_type;
+  curl_easy_getinfo(curl, CURLINFO_CONTENT_TYPE, &content_type);
+
+  curl_easy_cleanup(curl);
+  curl_global_cleanup();
+
+  if (http_code != 200) {
+    unlink(tmp_path.c_str());;
+    return false;
+  }
+
+  if (
+     !valid_type.empty()
+     && strlen(content_type) < valid_type.length()
+     && strncmp(content_type, valid_type.c_str(), valid_type.length())
+     ) {
+
+    unlink(tmp_path.c_str());;
+    return false;
+  }
+
+  rename(tmp_path.c_str(), path.c_str());
   return true;
 }
 

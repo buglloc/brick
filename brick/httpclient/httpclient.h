@@ -48,7 +48,7 @@ class HttpClient
     // Cache
     static std::string GetCached(const std::string& url, CacheManager::TYPE type = CacheManager::TYPE::DEFAULT, bool sync = false);
 
-    static bool Download(const std::string& url, const std::string& path);
+    static bool Download(const std::string& url, const std::string& path, const std::string& valid_type = "image/");
     static void DownloadAsync(const std::string& url, const std::string& path);
 
     // HTTP GET
@@ -68,6 +68,9 @@ class HttpClient
 
   private:
     static void InitCurl(CURL *curl, HttpClient::response *ret);
+    static void SetDefaultOpts(CURL *curl);
+    static void SetDefaultHandlers(CURL *curl, HttpClient::response *ret);
+
     static void ParseCookie(response *resp, const std::string &header);
     // writedata callback function
     static size_t WriteCallback(void *ptr, size_t size, size_t nmemb,
