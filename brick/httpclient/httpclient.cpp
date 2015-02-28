@@ -576,8 +576,8 @@ HttpClient::Download(
 
 void
 HttpClient::DownloadAsync(const std::string &url, const std::string &path) {
-  if (!CefCurrentlyOn(TID_IO)) {
-    CefPostTask(TID_IO, base::Bind(&HttpClient::DownloadAsync, url, path));
+  if (!CefCurrentlyOn(TID_FILE)) {
+    CefPostTask(TID_FILE, base::Bind(&HttpClient::DownloadAsync, url, path));
     return;
   }
 
