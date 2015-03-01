@@ -3,12 +3,8 @@
 #include <cstring>
 #include <iostream>
 #include <brick/platform_util.h>
+#include <unistd.h>
 #include "../helper.h"
-#include <include/base/cef_bind.h>
-#include <brick/brick_app.h>
-#include <include/cef_url.h>
-#include <brick/cef_handler.h>
-#include "include/wrapper/cef_closure_task.h"
 
 namespace {
     const char kCookieHeaderName[] = "Set-Cookie";
@@ -556,7 +552,7 @@ HttpClient::Download(
   curl_global_cleanup();
 
   if (http_code != 200) {
-    unlink(tmp_path.c_str());;
+    unlink(tmp_path.c_str());
     return false;
   }
 
@@ -566,41 +562,10 @@ HttpClient::Download(
      && strncmp(content_type, valid_type.c_str(), valid_type.length())
      ) {
 
-    unlink(tmp_path.c_str());;
+    unlink(tmp_path.c_str());
     return false;
   }
 
   rename(tmp_path.c_str(), path.c_str());
   return true;
-}
-
-void
-HttpClient::DownloadAsync(const std::string &url, const std::string &path) {
-  if (!CefCurrentlyOn(TID_FILE)) {
-    CefPostTask(TID_FILE, base::Bind(&HttpClient::DownloadAsync, url, path));
-    return;
-  }
-
-  if (!Download(url, path))
-    LOG(WARNING) << "Can't download url '" << url << "' to file '" << path << "'";
-}
-
-std::string
-HttpClient::GetCached(const std::string& url, CacheManager::TYPE type, bool sync) {
-  CefRefPtr<ClientHandler> client_handler = ClientHandler::GetInstance();
-  if (!client_handler)
-    return "";
-
-  std::string path = client_handler->GetCacheManager()->GetCachePath(url, type);
-
-  if (platform_util::IsPathExists(path)) {
-    return path;
-  }
-
-  if (sync) {
-    return Download(url, path)? path: "";
-  }
-
-  DownloadAsync(url, path);
-  return "";
 }

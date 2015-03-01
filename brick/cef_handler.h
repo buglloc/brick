@@ -16,6 +16,7 @@
 
 #include "include/cef_client.h"
 
+#include "cache_manager.h"
 #include "command_callbacks.h"
 #include "account_manager.h"
 #include "api_error.h"
