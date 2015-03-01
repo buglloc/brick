@@ -10,7 +10,7 @@ public:
   static void Hide();
 
 private:
-  static std::string TryGetIcon(std::string icon);
+  static std::string TryGetIcon(std::string icon, bool &need_download);
   static std::string GetDefaultIcon();
 };
 
