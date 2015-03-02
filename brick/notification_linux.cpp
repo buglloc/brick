@@ -50,6 +50,11 @@ namespace {
       }
     }
 
+    void
+    CloseNotificationCb(NotifyNotification *notify) {
+      notification = NULL;
+    }
+
 } //namespace
 
 void
@@ -77,6 +82,7 @@ Notification::Notify(const std::string title, std::string body, std::string icon
 
   notify_notification_set_timeout(notification, delay);
   notify_notification_set_urgency(notification, NOTIFY_URGENCY_NORMAL);
+  g_signal_connect(notification, "closed", G_CALLBACK(CloseNotificationCb), NULL);
 
   if (need_download) {
     AsyncDownloadIcon(last_id, icon, notification_icon);
