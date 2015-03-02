@@ -9,6 +9,8 @@
 #include "brick_app.h"
 
 namespace {
+    const int kPreviewWidth = 256;
+    const int kPreviewHeight = 512;
 
     void
     file_dialog_response(GtkDialog *dialog, gint response_id, ClientHandler *client_handler) {
@@ -44,6 +46,25 @@ namespace {
         callback->Continue(files);
       else
         callback->Cancel();
+    }
+
+    void
+    update_preview_panel(GtkWidget* chooser, GtkWidget *preview) {
+      gchar* filename = gtk_file_chooser_get_preview_filename(GTK_FILE_CHOOSER(chooser));
+      if (!filename)
+        return;
+
+      // This will preserve the image's aspect ratio.
+      GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file_at_size(filename, kPreviewWidth, kPreviewHeight, NULL);
+      g_free(filename);
+
+      if (pixbuf) {
+        gtk_image_set_from_pixbuf(GTK_IMAGE(preview), pixbuf);
+        g_object_unref(pixbuf);
+      }
+
+      gtk_file_chooser_set_preview_widget_active(GTK_FILE_CHOOSER(chooser),
+         pixbuf != NULL);
     }
 }
 
@@ -118,6 +139,12 @@ ClientHandler::OnFileDialog(CefRefPtr<CefBrowser> browser,
      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
      accept_button, GTK_RESPONSE_ACCEPT,
      NULL);
+
+  if (mode == FILE_DIALOG_OPEN_MULTIPLE || mode == FILE_DIALOG_OPEN) {
+    GtkWidget *thumbnail = gtk_image_new();
+    gtk_file_chooser_set_preview_widget(GTK_FILE_CHOOSER(dialog), thumbnail);
+    g_signal_connect (dialog, "update-preview", G_CALLBACK(update_preview_panel), thumbnail);
+  }
 
   if (mode == FILE_DIALOG_OPEN_MULTIPLE) {
     gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), true);
