@@ -71,6 +71,7 @@ Notification::Notify(const std::string title, std::string body, std::string icon
        body.c_str(),
        need_download || notification_icon.empty() ? GetDefaultIcon().c_str() : notification_icon.c_str()
     );
+    g_signal_connect(notification, "closed", G_CALLBACK(CloseNotificationCb), NULL);
   } else {
     notify_notification_update(
        notification,
@@ -82,7 +83,6 @@ Notification::Notify(const std::string title, std::string body, std::string icon
 
   notify_notification_set_timeout(notification, delay);
   notify_notification_set_urgency(notification, NOTIFY_URGENCY_NORMAL);
-  g_signal_connect(notification, "closed", G_CALLBACK(CloseNotificationCb), NULL);
 
   if (need_download) {
     AsyncDownloadIcon(last_id, icon, notification_icon);
