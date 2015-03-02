@@ -1,4 +1,5 @@
 #include <unistd.h>
+#include <brick/httpclient/httpclient.h>
 #include "account.h"
 #include "httpclient/httpclient.h"
 #include "include/base/cef_logging.h"
@@ -138,6 +139,9 @@ Account::AuthResult
 Account::Auth() {
   AuthResult result;
   HttpClient::form_map form;
+  // ToDo: use new authentication IM protocol
+//  form["json"] = "y"; // New versions of IM must return result in json format
+//  form["renew_password"] = "y"; // New versions of IM must generate application password
   form["action"] = "login";
   form["login"] = login_;
   // Ugly hack to get application password

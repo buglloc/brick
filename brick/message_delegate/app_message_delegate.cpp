@@ -79,6 +79,7 @@ AppMessageDelegate::OnProcessMessageReceived(
     if (error == NO_ERROR) {
       CefRefPtr<Account> account = ClientHandler::GetInstance()->GetAccountManager()->GetCurrentAccount();
       Account::AuthResult auth_result = account->Auth();
+      // Save app password if success?
 
       if (auth_result.success) {
         SetCookies(CefCookieManager::GetGlobalManager(), account->GetBaseUrl(), auth_result.cookies, account->IsSecure());
