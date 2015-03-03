@@ -52,7 +52,7 @@ class Account : public CefBase {
     std::string GenLabel();
     std::string GenBaseUrl();
 
-    AuthResult Auth();
+    AuthResult Auth(bool renew_password = false, std::string otp = "");
 
   protected:
     int id_;

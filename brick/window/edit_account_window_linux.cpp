@@ -6,9 +6,53 @@ extern char _binary_window_edit_account_glade_start;
 extern char _binary_window_edit_account_glade_size;
 
 namespace {
+    // Forward declaration
+    void OnSave(GtkWidget *widget, EditAccountWindow *self);
+    void OnOtpDialogResponse(GtkDialog *dialog, gint response_id, EditAccountWindow *self);
+    void ShowOtpDialog(EditAccountWindow *self);
+
+    const char kOtpPromptId[] = "otp_prompt_text";
 
     void
-    on_save_button(GtkWidget *widget, EditAccountWindow *self) {
+    OnOtpDialogResponse(GtkDialog *dialog, gint response_id, EditAccountWindow *self) {
+      switch (response_id) {
+        case GTK_RESPONSE_OK:
+          OnSave(GTK_WIDGET(dialog), self);
+        case GTK_RESPONSE_CANCEL:
+        case GTK_RESPONSE_DELETE_EVENT:
+          gtk_widget_destroy(GTK_WIDGET(dialog));
+          break;
+        default:
+          NOTREACHED();
+      }
+    }
+
+    void
+    ShowOtpDialog(EditAccountWindow *self) {
+      GtkWidget *dialog = gtk_message_dialog_new_with_markup(
+         GTK_WINDOW(self->window_objects_.window),
+         GTK_DIALOG_DESTROY_WITH_PARENT,
+         GTK_MESSAGE_OTHER,
+         GTK_BUTTONS_OK_CANCEL,
+         NULL
+      );
+
+      gtk_window_set_title(GTK_WINDOW(dialog), "Two-step authentication");
+      gtk_message_dialog_set_markup(GTK_MESSAGE_DIALOG(dialog),
+         "Two-step authentication enabled.\nPlease enter your one-time password:");
+
+      GtkWidget* content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+      GtkWidget* text_box = gtk_entry_new();
+      gtk_box_pack_start(GTK_BOX(content_area), text_box, true, true, 0);
+      g_object_set_data(G_OBJECT(dialog), kOtpPromptId, text_box);
+      gtk_entry_set_activates_default(GTK_ENTRY(text_box), true);
+
+      g_signal_connect(dialog, "response", G_CALLBACK(OnOtpDialogResponse), self);
+      gtk_widget_show_all(GTK_WIDGET(dialog));
+    }
+
+    void
+    OnSave(GtkWidget *widget, EditAccountWindow *self) {
       bool secure =
          gtk_combo_box_get_active(self->window_objects_.protocol_chooser) == 0;
       const gchar* domain =
@@ -17,6 +61,14 @@ namespace {
          gtk_entry_get_text(self->window_objects_.login_entry);
       const gchar* password =
          gtk_entry_get_text(GTK_ENTRY(self->window_objects_.password_entry));
+
+      GtkWidget* otp_widget = static_cast<GtkWidget*>(
+         g_object_get_data(G_OBJECT(widget), kOtpPromptId));
+
+      const gchar* otp = "";
+      if (otp_widget) {
+        otp = gtk_entry_get_text(GTK_ENTRY(otp_widget));
+      }
 
       CefRefPtr<Account> check_account(new Account);
       bool show_error = false;
@@ -41,7 +93,7 @@ namespace {
            password
         );
 
-        Account::AuthResult auth_result = check_account->Auth();
+        Account::AuthResult auth_result = check_account->Auth(true, otp);
         if (!auth_result.success) {
           show_error = true;
 
@@ -54,8 +106,8 @@ namespace {
                  "Please log in <b>browser</b> first";
               break;
             case Account::ERROR_CODE::OTP:
-              error_message = "Account used two-step authentication.\n"
-                 "Please use <b>Application Password</b> for authorization";
+              ShowOtpDialog(self);
+              return;
               break;
             case Account::ERROR_CODE::AUTH:
               error_message = "Authentication failed.";
@@ -92,7 +144,7 @@ namespace {
     }
 
     void
-    on_cancel_button(GtkWidget *widget, EditAccountWindow *self) {
+    OnCancel(GtkWidget *widget, EditAccountWindow *self) {
       self->Close();
     }
 
@@ -119,8 +171,8 @@ EditAccountWindow::Init(CefRefPtr<Account> account, bool switch_on_save) {
   window_objects_.login_entry = GTK_ENTRY(gtk_builder_get_object(builder, "login_entry"));
   window_objects_.password_entry = GTK_ENTRY(gtk_builder_get_object(builder, "password_entry"));
 
-  g_signal_connect(gtk_builder_get_object(builder, "save_button"), "clicked", G_CALLBACK(on_save_button), this);
-  g_signal_connect(gtk_builder_get_object(builder, "cancel_button"), "clicked", G_CALLBACK(on_cancel_button), this);
+  g_signal_connect(gtk_builder_get_object(builder, "save_button"), "clicked", G_CALLBACK(OnSave), this);
+  g_signal_connect(gtk_builder_get_object(builder, "cancel_button"), "clicked", G_CALLBACK(OnCancel), this);
 
 
   g_object_unref(builder);

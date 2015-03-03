@@ -136,18 +136,28 @@ Account::GenBaseUrl() {
 }
 
 Account::AuthResult
-Account::Auth() {
+Account::Auth(bool renew_password, std::string otp) {
   AuthResult result;
   HttpClient::form_map form;
   // ToDo: use new authentication IM protocol
 //  form["json"] = "y"; // New versions of IM must return result in json format
-//  form["renew_password"] = "y"; // New versions of IM must generate application password
+  if (renew_password) {
+    // New versions of IM must generate application password
+    form["renew_password"] = "y";
+  }
+
   form["action"] = "login";
   form["login"] = login_;
-  // Ugly hack to get application password
-  form["password"] = password_.substr(0, password_.length() - 1);
-  // Ugly hack to get application password
-  form["otp"] = password_.substr(password_.length() - 1, 1);
+  if (renew_password && otp.empty()) {
+    // Ugly hack to get application password in older IM versions
+    form["password"] = password_.substr(0, password_.length() - 1);
+    form["otp"] = password_.substr(password_.length() - 1, 1);
+  } else {
+    form["password"] = password_;
+    form["otp"] = otp;
+  }
+
+
   form["user_os_mark"] = GetOsMark();
 
   HttpClient::response r = HttpClient::PostForm(
@@ -158,7 +168,11 @@ Account::Auth() {
     // Auth successful
     if (r.body.find("success: true") != std::string::npos) {
       // Maybe server returns application password?
-      password_ = TryParseApplicationPassword(r.body);
+      std::string new_password = TryParseApplicationPassword(r.body);
+      if (password_ != new_password) {
+        LOG_IF(WARNING, !renew_password) << "Unexpected password update";
+        password_ = new_password;
+      }
 
       result.success = true;
       result.error_code = ERROR_CODE::NONE;
