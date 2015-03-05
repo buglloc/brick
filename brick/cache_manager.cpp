@@ -73,8 +73,8 @@ CacheManager::GetCachePath(const std::string& url, TYPE type) {
 }
 
 void CacheManager::CleanUpCache() {
-  struct timespec spec;
-  clock_gettime(CLOCK_REALTIME, &spec);
-  old_file_time = spec.tv_sec - 86400 * 31;
+  struct timeval now;
+  gettimeofday(&now, NULL);
+  old_file_time = now.tv_sec - 86400 * 31;
   ftw(cache_path_.c_str(), RemoveOldFile, FTW_F);
 }
