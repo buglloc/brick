@@ -19,9 +19,7 @@ namespace {
     }
 
     bool
-    LaunchProcess(const std::vector<std::string>& argv) {
-      const size_t command_size = argv.size();
-      char** command = new char*[command_size+1]; // extra space for terminating NULL
+    LaunchProcess(const std::vector<std::string>& args) {
       sigset_t full_sigset;
       sigfillset(&full_sigset);
       const sigset_t orig_sigmask = SetSignalMask(full_sigset);
@@ -41,19 +39,11 @@ namespace {
       } else if (pid == 0) {
         // Child process
 
-        // DANGER: no calls to malloc or locks are allowed from now on:
-        // http://crbug.com/36678
-
         // DANGER: fork() rule: in the child, if you don't end up doing exec*(),
         // you call _exit() instead of exit(). This is because _exit() does not
         // call any previously-registered (in the parent) exit handlers, which
         // might do things like block waiting for threads that don't even exist
         // in the child.
-        for (size_t i = 0; i < command_size; ++i)
-        {
-          command[i] = strdup(argv[i].c_str());
-        }
-        command[command_size] = NULL;
 
         // ToDo: Put environment like Google chrome
         //      options.allow_new_privs = true;
@@ -68,10 +58,16 @@ namespace {
 //      if (disable_gnome_bug_buddy &&
 //         disable_gnome_bug_buddy == std::string("SET_BY_GOOGLE_CHROME"))
 //        options.environ["GNOME_DISABLE_CRASH_DIALOG"] = std::string();
-        execvp(command[0], command);
+
+        std::vector<char*> argv(args.size() + 1, NULL);
+        for (size_t i = 0; i < args.size(); ++i) {
+          argv[i] = const_cast<char*>(args[i].c_str());
+        }
+
+        execvp(argv[0], &argv[0]);
 
         LOG(ERROR)
-           << "LaunchProcess: failed to execvp:" << command[0];
+           << "LaunchProcess: failed to execvp:" << argv[0];
         _exit(127);
       }
 
