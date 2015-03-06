@@ -158,7 +158,7 @@ var appWindow = {
   setClientSize: function(width, height) {
     native function AppWindowExSetClientSize();
 
-    if (width == this.width || height == this.height)
+    if (width == this.width && height == this.height)
       return;
 
     this.width = width;
