@@ -52,11 +52,7 @@ StatusIcon::GetIcon() {
 
 void
 StatusIcon::SetBadge(int badge, bool is_important) {
-  if (
-    (is_important || GetIcon() != StatusIcon::Icon::FLASH_IMPORTANT)
-    && badge > 0
-   ) {
-    // Regular flash (e.g. notification) can't replace important flash status (e.g. messages)
+  if (badge > 0) {
     if (is_important) {
         SetIcon(StatusIcon::Icon::FLASH_IMPORTANT);
     } else {
