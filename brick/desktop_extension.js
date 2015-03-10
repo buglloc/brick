@@ -9,6 +9,7 @@ var app = {
   windowCallbacks: {},
   defaultNotifyDuration: 3000,
   authErrorCodes: {NONE:0, HTTP:1, CAPTCHA:2, OTP:3, AUTH:4, UNKNOWN:5},
+  badge: {count: 0, important: false},
   setWindowCallback: function(windowId, callback) {
     app.windowCallbacks[windowId] = callback;
   },
@@ -70,15 +71,23 @@ var app = {
   setIndicator: function(type) {
     native function AppExSetIndicator();
 
+    if (type == 'online' && this.badge.count > 0) {
+      // We must suppress setting online status icon when have some messages or notifications
+      return;
+    }
+
     AppExSetIndicator(null, type);
   },
   setIndicatorBadge: function(badge, isImportant) {
     native function AppExIndicatorBadgee();
 
+    this.badge.count = Math.floor(badge);
+    this.badge.important = !!isImportant;
+
     AppExIndicatorBadgee(
         null,
-        Math.floor(badge),
-        !!isImportant
+        this.badge.count,
+        this.badge.important
     );
   },
   showNotification: function(title, text, icon, duration) {
