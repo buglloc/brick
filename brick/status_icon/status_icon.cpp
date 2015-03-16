@@ -12,6 +12,8 @@ namespace {
        "offline",
        "offline",
        "online",
+       "dnd",
+       "away",
        "flash",
        "flash-important"
     };
@@ -20,14 +22,19 @@ namespace {
        "offline.svg",
        "offline.svg",
        "online.svg",
+       "dnd.svg",
+       "away.svg",
        "flash.svg",
        "flash-important.svg"
     };
 }
 
 StatusIcon::StatusIcon(std::string icons_dir)
-   : icons_folder_ (icons_dir),
-     icon_handler_(NULL)
+   : current_icon_ (Icon::DEFAULT),
+     idle_icon_ (Icon::DEFAULT),
+     icons_folder_ (icons_dir),
+     idle_ (true),
+     icon_handler_ (NULL)
 {
   Init();
 }
@@ -64,8 +71,8 @@ StatusIcon::SetBadge(int badge, bool is_important) {
     unity_launcher_entry_set_count_visible(launcher_handler_, true);
 #endif
   } else {
-    // if you don't know what to do just set "online" status
-    SetIcon(StatusIcon::Icon::ONLINE);
+    // restore icon for current application state
+    SwitchToIdle();
 #ifdef unity
     unity_launcher_entry_set_count(launcher_handler_, 0);
     unity_launcher_entry_set_count_visible(launcher_handler_, false);
@@ -121,10 +128,17 @@ StatusIcon::OnMenuChangeAccount(int id) {
   if (account_manager->GetCurrentAccount()->GetId() == id)
     return true; // Selected current account
 
-  SetIcon(Icon::OFFLINE);
+  SetIdleIcon(Icon::DEFAULT);
+  SetIcon(Icon::DEFAULT);
   client_handler->SwitchAccount(id);
 
   return true;
+}
+
+void
+StatusIcon::SwitchToIdle() {
+  idle_ = true;
+  SetIcon((Icon) idle_icon_);
 }
 
 void

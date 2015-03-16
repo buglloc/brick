@@ -16,6 +16,7 @@ namespace {
     const char kMessageBrowseName[]           = "Browse";
     const char kMessageChangeTooltipName[]    = "ChangeTooltip";
     const char kMessageSetIndicatorName[]     = "SetIndicator";
+    const char kMessageSetIdleIndicatorName[] = "SetIdleIndicator";
     const char kMessageIndicatorBadgeName[]   = "IndicatorBadgee";
     const char kMessageShowNotificationName[] = "ShowNotification";
     const char kMessageAddAccountName[]       = "AddAccount";
@@ -23,6 +24,8 @@ namespace {
     const char kCurrentPortalId[] = "current_portal";
 
     const char kIndicatorOnlineName[]         = "online";
+    const char kIndicatorDndName[]            = "dnd";
+    const char kIndicatorAwayName[]           = "away";
     const char kIndicatorOfflineName[]        = "offline";
     const char kIndicatorFlashName[]          = "flash";
     const char kIndicatorFlashImportantName[] = "flash_important";
@@ -165,6 +168,32 @@ AppMessageDelegate::OnProcessMessageReceived(
       );
     }
 
+  } else if (message_name == kMessageSetIdleIndicatorName) {
+    // Parameters:
+    //  0: int32 - callback id
+    //  1: string - status from StatusIcon::Icon
+
+    if (
+       request_args->GetSize() != 2
+          || request_args->GetType(1) != VTYPE_STRING
+       ) {
+      error = ERR_INVALID_PARAMS;
+    }
+
+    if (error == NO_ERROR) {
+      std::string status = request_args->GetString(1);
+
+      if (status == kIndicatorOnlineName) {
+        ClientHandler::GetInstance()->GetStatusIconHandle()->SetIdleIcon(StatusIcon::Icon::ONLINE);
+      } else if (status == kIndicatorDndName) {
+        ClientHandler::GetInstance()->GetStatusIconHandle()->SetIdleIcon(StatusIcon::Icon::DND);
+      } else if (status == kIndicatorAwayName) {
+        ClientHandler::GetInstance()->GetStatusIconHandle()->SetIdleIcon(StatusIcon::Icon::AWAY);
+      } else if (status == kIndicatorOfflineName) {
+        ClientHandler::GetInstance()->GetStatusIconHandle()->SetIdleIcon(StatusIcon::Icon::OFFLINE);
+      }
+    }
+
   } else if (message_name == kMessageSetIndicatorName) {
     // Parameters:
     //  0: int32 - callback id
@@ -182,6 +211,10 @@ AppMessageDelegate::OnProcessMessageReceived(
 
       if (status == kIndicatorOnlineName) {
         ClientHandler::GetInstance()->GetStatusIconHandle()->SetIcon(StatusIcon::Icon::ONLINE);
+      } else if (status == kIndicatorDndName) {
+        ClientHandler::GetInstance()->GetStatusIconHandle()->SetIcon(StatusIcon::Icon::DND);
+      } else if (status == kIndicatorAwayName) {
+        ClientHandler::GetInstance()->GetStatusIconHandle()->SetIcon(StatusIcon::Icon::AWAY);
       } else if (status == kIndicatorOfflineName) {
         ClientHandler::GetInstance()->GetStatusIconHandle()->SetIcon(StatusIcon::Icon::OFFLINE);
       } else if (status == kIndicatorFlashName) {

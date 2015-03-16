@@ -9,7 +9,6 @@ var app = {
   windowCallbacks: {},
   defaultNotifyDuration: 3000,
   authErrorCodes: {NONE:0, HTTP:1, CAPTCHA:2, OTP:3, AUTH:4, UNKNOWN:5},
-  badge: {count: 0, important: false},
   setWindowCallback: function(windowId, callback) {
     app.windowCallbacks[windowId] = callback;
   },
@@ -68,26 +67,23 @@ var app = {
   loader: function() {
     window.location.href = '/desktop_app/internals/pages/portal-loader';
   },
+  setIdleIndicator: function(type) {
+    native function AppExSetIdleIndicator();
+
+    AppExSetIdleIndicator(null, type);
+  },
   setIndicator: function(type) {
     native function AppExSetIndicator();
-
-    if (type == 'online' && this.badge.count > 0) {
-      // We must suppress setting online status icon when have some messages or notifications
-      return;
-    }
 
     AppExSetIndicator(null, type);
   },
   setIndicatorBadge: function(badge, isImportant) {
     native function AppExIndicatorBadgee();
 
-    this.badge.count = Math.floor(badge);
-    this.badge.important = !!isImportant;
-
     AppExIndicatorBadgee(
         null,
-        this.badge.count,
-        this.badge.important
+        Math.floor(badge),
+        !!isImportant
     );
   },
   showNotification: function(title, text, icon, duration) {
@@ -412,7 +408,7 @@ BXDesktopSystem.GetProperty = function GetProperty(property) {
 };
 
 BXDesktopSystem.SetIconStatus = function(status) {
-    app.setIndicator(status);
+    app.setIdleIndicator(status);
 };
 
 BXDesktopSystem.FlashIcon = function(flag) {

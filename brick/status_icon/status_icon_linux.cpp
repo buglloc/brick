@@ -97,11 +97,20 @@ StatusIcon::Init() {
 #else
   gtk_status_icon_set_visible(icon_handler_, true);
 #endif
-  SetIcon(DEFAULT);
+  SwitchToIdle();
+}
+
+void
+StatusIcon::SetIdleIcon(Icon icon) {
+  idle_icon_ = icon;
+  if (idle_)
+    SetIcon(icon);
 }
 
 void
 StatusIcon::SetIcon(Icon icon) {
+  idle_ = icon < Icon::FLASH;
+
   current_icon_ = icon;
 #ifdef unity
   app_indicator_set_icon(icon_handler_, GetIconName(icon).c_str());

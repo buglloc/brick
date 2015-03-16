@@ -26,12 +26,19 @@ class StatusIcon : public CefBase,
 
 public:
   enum Icon {
-    DEFAULT, OFFLINE, ONLINE, FLASH, FLASH_IMPORTANT
+    DEFAULT = 0,
+    OFFLINE,
+    ONLINE,
+    DND,
+    AWAY,
+    FLASH,
+    FLASH_IMPORTANT
   };
 
   StatusIcon(std::string icons_dir);
   ~StatusIcon();
   unsigned char GetIcon();
+  void SetIdleIcon(Icon icon);
   void SetIcon(Icon icon);
   void SetTooltip(const char* text);
   void SetBadge(int badge, bool is_important = false);
@@ -56,10 +63,13 @@ protected:
   void RegisterEventListeners();
   std::string GetIconPath(Icon icon);
   std::string GetIconName(Icon icon);
+  void SwitchToIdle();
 
 private:
   unsigned char current_icon_;
+  unsigned char idle_icon_;
   std::string icons_folder_;
+  bool idle_;
 #if defined(__linux__)
 
 #ifdef unity
