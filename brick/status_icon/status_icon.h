@@ -45,6 +45,7 @@ public:
   // Platform specific methods
   void Init();
   void UpdateAccountsMenu();
+  void UseExtendedStatus(bool use = true);
 
   // Event handlers
   bool OnClick();
@@ -66,10 +67,11 @@ protected:
   void SwitchToIdle();
 
 private:
-  unsigned char current_icon_;
-  unsigned char idle_icon_;
+  Icon current_icon_;
+  Icon idle_icon_;
   std::string icons_folder_;
   bool idle_;
+  bool extended_status_;
 #if defined(__linux__)
 
 #ifdef unity

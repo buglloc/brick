@@ -260,6 +260,7 @@ int main(int argc, char* argv[]) {
 
   // Initialize status icon
   CefRefPtr<StatusIcon> status_icon(new StatusIcon(app_settings.resource_dir + "/indicators/"));
+  status_icon->UseExtendedStatus(app_settings.extended_status);
   client_handler->SetStatusIconHandle(status_icon);
 
   CefWindowInfo window_info;

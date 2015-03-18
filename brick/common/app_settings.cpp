@@ -18,7 +18,8 @@ AppSettings::AppSettings()
 #endif
   auto_away(true),
   external_api(true),
-  hide_on_delete(false)
+  hide_on_delete(false),
+  extended_status(true)
 {
 
 }
@@ -103,6 +104,10 @@ AppSettings::UpdateByJson(std::string json) {
     this->hide_on_delete = root["hide_on_delete"].asBool();
   }
 
+  if (root.isMember("extended_status")
+     && root["extended_status"].isBool()) {
+    this->extended_status = root["extended_status"].asBool();
+  }
 }
 
 std::string

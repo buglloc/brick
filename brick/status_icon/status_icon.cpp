@@ -34,6 +34,7 @@ StatusIcon::StatusIcon(std::string icons_dir)
      idle_icon_ (Icon::DEFAULT),
      icons_folder_ (icons_dir),
      idle_ (true),
+     extended_status_ (true),
      icon_handler_ (NULL)
 {
   Init();
@@ -139,6 +140,11 @@ void
 StatusIcon::SwitchToIdle() {
   idle_ = true;
   SetIcon((Icon) idle_icon_);
+}
+
+void
+StatusIcon::UseExtendedStatus(bool use) {
+  extended_status_ = use;
 }
 
 void

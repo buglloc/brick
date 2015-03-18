@@ -102,9 +102,17 @@ StatusIcon::Init() {
 
 void
 StatusIcon::SetIdleIcon(Icon icon) {
-  idle_icon_ = icon;
+  if (extended_status_) {
+    idle_icon_ = icon;
+  } else {
+    if (icon > Icon::OFFLINE &&  icon < Icon::FLASH)
+      idle_icon_ = Icon::ONLINE;
+    else
+      idle_icon_ = icon;
+  }
+
   if (idle_)
-    SetIcon(icon);
+    SetIcon(idle_icon_);
 }
 
 void

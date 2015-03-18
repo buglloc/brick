@@ -19,6 +19,7 @@ struct AppSettings {
   bool auto_away;
   bool external_api;
   bool hide_on_delete;
+  bool extended_status;
 
   static AppSettings InitByJson(std::string json);
 
