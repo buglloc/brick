@@ -53,7 +53,7 @@ StatusIcon::GetIconName(Icon icon) {
   return icon_names_[icon];
 }
 
-unsigned char
+Icon
 StatusIcon::GetIcon() {
   return current_icon_;
 }
