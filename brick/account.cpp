@@ -148,15 +148,8 @@ Account::Auth(bool renew_password, std::string otp) {
 
   form["action"] = "login";
   form["login"] = login_;
-  if (renew_password && otp.empty()) {
-    // Ugly hack to get application password in older IM versions
-    form["password"] = password_.substr(0, password_.length() - 1);
-    form["otp"] = password_.substr(password_.length() - 1, 1);
-  } else {
-    form["password"] = password_;
-    form["otp"] = otp;
-  }
-
+  form["password"] = password_;
+  form["otp"] = otp;
 
   form["user_os_mark"] = GetOsMark();
 
