@@ -86,6 +86,7 @@ HttpClient::PostForm(const std::string &url, form_map *form)
   for (; it != form->end(); ++it) {
     data += "&" + Urlencode(it->first) + "=" + Urlencode(it->second);
   }
+
   return Post(url, "application/x-www-form-urlencoded", data);
 }
 
@@ -458,14 +459,12 @@ HttpClient::Urlencode(const std::string& str, bool plusAsSpace) {
     {
       result += c;
     }
-    else if (c <= 0x20 || c >= 0x7F)
+    else
     {
       result += '%';
-      result += hex[(c >> 4)] & 15;
-      result += hex[(c & 15)] & 15;
+      result += hex[(c >> 4)];
+      result += hex[(c & 15)];
     }
-    else
-      result += c;
   }
 
   return result;
