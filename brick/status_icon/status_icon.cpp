@@ -53,11 +53,6 @@ StatusIcon::GetIconName(Icon icon) {
   return icon_names_[icon];
 }
 
-Icon
-StatusIcon::GetIcon() {
-  return current_icon_;
-}
-
 void
 StatusIcon::SetBadge(int badge, bool is_important) {
   if (badge > 0) {

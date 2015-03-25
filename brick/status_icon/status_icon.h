@@ -37,7 +37,6 @@ public:
 
   StatusIcon(std::string icons_dir);
   ~StatusIcon();
-  Icon GetIcon();
   void SetIdleIcon(Icon icon);
   void SetIcon(Icon icon);
   void SetTooltip(const char* text);
