@@ -296,6 +296,12 @@ ClientHandler::OnBeforePopup(CefRefPtr<CefBrowser> browser,
     return true;
   }
 
+  // Temporary&Ugly hack for strange IM settings window size behavior. Most likely caused by asynchronous X11.
+  // ToDo: Research&Fix!
+
+  windowInfo.width = 567;
+  windowInfo.height = 335;
+
   return false;
 }
 
