@@ -26,7 +26,7 @@ BrowserWindow::WrapNative(CefWindowHandle window) {
 
 void
 BrowserWindow::Resize(int width, int height) {
-  bool need_froze_size = resizable_;
+  bool need_froze_size = !resizable_;
   if (need_froze_size)
     FrozeSize(0, 0);
 
