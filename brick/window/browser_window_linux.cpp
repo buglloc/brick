@@ -26,7 +26,14 @@ BrowserWindow::WrapNative(CefWindowHandle window) {
 
 void
 BrowserWindow::Resize(int width, int height) {
+  bool need_froze_size = resizable_;
+  if (need_froze_size)
+    FrozeSize(0, 0);
+
   gdk_window_resize(window_handler_, width, height);
+
+  if (need_froze_size)
+    FrozeSize(width, height);
 }
 
 void
@@ -41,10 +48,13 @@ void
 BrowserWindow::FrozeSize(int width, int height) {
   GdkGeometry hints = {0};
   if (width && height) {
+    resizable_ = false;
     hints.min_width = width;
     hints.min_height = height;
     hints.max_width = width;
     hints.max_height = height;
+  } else {
+    resizable_ = true;
   }
 
   gdk_window_set_geometry_hints(window_handler_, &hints, (GdkWindowHints) (GDK_HINT_MIN_SIZE | GDK_HINT_MAX_SIZE));

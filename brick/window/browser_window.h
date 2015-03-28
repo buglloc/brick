@@ -25,6 +25,7 @@ public:
                  hided_(false),
                  focused_(true),
                  visible_(true),
+                 resizable_(true),
                  last_x_(0),
                  last_y_(0) {};
 
@@ -60,6 +61,7 @@ protected:
   bool hided_;
   bool focused_;
   bool visible_;
+  bool resizable_;
   int last_x_;
   int last_y_;
 
