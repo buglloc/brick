@@ -446,7 +446,7 @@ HttpClient::Urldecode(const std::string& str, bool plusAsSpace) {
 
 std::string
 HttpClient::Urlencode(const std::string& str, bool plusAsSpace) {
-  static char hex[] = "0123456789abcdef";
+  static char hex[] = "0123456789ABCDEF";
   std::string result;
   for (std::string::const_iterator it = str.begin(); it != str.end(); ++it)
   {
@@ -462,8 +462,8 @@ HttpClient::Urlencode(const std::string& str, bool plusAsSpace) {
     else
     {
       result += '%';
-      result += hex[(c >> 4)];
-      result += hex[(c & 15)];
+      result += hex[(c >> 4) & 0xf];
+      result += hex[(c & 0xf)];
     }
   }
 
