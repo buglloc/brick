@@ -155,7 +155,7 @@ var appWindow = {
     this.width = width;
     this.height = height;
     AppWindowExSetSize(
-      methodLogger.bind(null, 'appWindow.setSize'),
+      null,
       parseInt(width),
       parseInt(height)
     );
@@ -169,7 +169,7 @@ var appWindow = {
     this.width = width;
     this.height = height;
     AppWindowExSetClientSize(
-      methodLogger.bind(null, 'appWindow.setClientSize'),
+      null,
       parseInt(width),
       parseInt(height)
     );
