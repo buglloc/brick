@@ -138,6 +138,18 @@ var app = {
       isSwitchNeeded = false;
 
     AppExAddAccount(null, isSwitchNeeded);
+  },
+  loadScript: function(url) {
+    var script = document.createElement('script');
+    script.src = url;
+
+    (document.head || document.documentElement).appendChild(script);
+    script.onload = function () {
+      script.parentNode.removeChild(script);
+    };
+  },
+  loadScripts: function(urls) {
+    urls.forEach(this.loadScript.bind(this));
   }
 };
 /*---------- App extension ---------*/
@@ -223,15 +235,6 @@ var appWindow = {
     native function AppWindowExOpenDeveloperTools();
 
     AppWindowExOpenDeveloperTools(null);
-  },
-  loadScript: function(url) {
-    var script = document.createElement('script');
-    script.src = url;
-
-    (document.head || document.documentElement).appendChild(script);
-    script.onload = function () {
-      script.parentNode.removeChild(script);
-    };
   }
 };
 /*---------- AppWindow extension ---------*/

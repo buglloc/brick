@@ -14,5 +14,6 @@ bool LoadBinaryResource(const std::string resource_dir, const char* resource_nam
 
 // Retrieve a resource as a steam reader.
 CefRefPtr<CefStreamReader> GetBinaryResourceReader(const std::string resource_dir, const char* resource_name);
+CefRefPtr<CefStreamReader> GetBinaryFileReader(std::string path);
 
 #endif  // CEF_TESTS_CEFCLIENT_RESOURCE_UTIL_H_

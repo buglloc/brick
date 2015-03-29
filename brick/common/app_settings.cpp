@@ -1,6 +1,8 @@
-#include "brick/helper.h"
 #include "app_settings.h"
+#include "../platform_util.h"
+#include "../helper.h"
 #include "third-party/json/json.h"
+#include <include/base/cef_logging.h>
 
 AppSettings::AppSettings()
 : app_token(""),
@@ -107,6 +109,29 @@ AppSettings::UpdateByJson(std::string json) {
   if (root.isMember("extended_status")
      && root["extended_status"].isBool()) {
     this->extended_status = root["extended_status"].asBool();
+  }
+
+  if (root.isMember("client_scripts")
+     && root["client_scripts"].isArray()) {
+    for(unsigned int i=0; i < root["client_scripts"].size(); ++i) {
+      const Json::Value script = root["client_scripts"][i];
+
+      if (!script.isString()) {
+        LOG(WARNING) << "Strange client script: " << script << "; Skipping";
+        continue;
+      }
+
+      std::string script_path = script.asString();
+      if (script_path.find('/') != 0) {
+        LOG(WARNING) << "Can't load client script, supported only absolute path: " << script_path << "; Skipping";
+        continue;
+      }
+
+      std::string id;
+      id.append(std::to_string(helper::HashString(script_path)));
+      id.append(".js");
+      client_scripts[id] = script_path;
+    }
   }
 }
 

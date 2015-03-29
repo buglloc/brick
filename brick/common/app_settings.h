@@ -7,6 +7,8 @@
 #include <include/internal/cef_types_wrappers.h>
 
 struct AppSettings {
+  typedef std::map<std::string, std::string> client_scripts_map;
+
   std::string app_token;
   std::string profile_path;
   std::string cache_path;
@@ -20,6 +22,7 @@ struct AppSettings {
   bool external_api;
   bool hide_on_delete;
   bool extended_status;
+  client_scripts_map client_scripts;
 
   static AppSettings InitByJson(std::string json);
 

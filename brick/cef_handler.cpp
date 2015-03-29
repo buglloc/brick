@@ -22,7 +22,7 @@ namespace {
 
     CefRefPtr<ClientHandler> g_instance = NULL;
     const char kInterceptionPath[] = "/desktop_app/internals/";
-    std::string kScriptLoader = "appWindow.loadScript('#URL#');";
+    const char kInjectedJsPath[] = "/desktop_app/internals/injected_js/";
     std::string kUnknownInternalContent = "Failed to load resource";
 
 } // namespace
@@ -145,24 +145,28 @@ ClientHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser,
   if (httpStatusCode != 200 || !frame->IsMain())
     return; // We need only successful loaded main frame
 
-#if 0
-  frame->ExecuteJavaScript(
-     helper::string_replace(kScriptLoader, "#URL#", "http://ya.ru"),
-     "",
-     0
-  );
-#endif
-  // Fix IM autoresize
-  std::string code =
-    "(function(window) {"
-      "var event = document.createEvent('UIEvents');"
-      "event.initUIEvent('resize', true, false, window, 0);"
-      "window.dispatchEvent(event);"
-    "})(window)";
+  std::string injected_js = "(function(window) {"
+     "var event = document.createEvent('UIEvents');"
+     "event.initUIEvent('resize', true, false, window, 0);"
+     "window.dispatchEvent(event);"
+     "})(window);";
+
+  // ToDo: Use CefV8Value::ExecuteFuncion? Maybe something like SendJSEvent...
+  if (!app_settings_.client_scripts.empty()) {
+    injected_js.append("if (app !== void 0 && app.loadScript !== void 0) app.loadScripts([");
+    std::string url;
+    AppSettings::client_scripts_map::iterator it = app_settings_.client_scripts.begin();
+    for (; it != app_settings_.client_scripts.end(); ++it) {
+      url = kInjectedJsPath;
+      url.append(it->first);
+      injected_js.append("'" + url +"',");
+    }
+    injected_js.append("]);");
+  }
 
   frame->ExecuteJavaScript(
-     code,
-     "",
+     injected_js,
+     "ijected_js",
      0
   );
 }
@@ -334,11 +338,22 @@ ClientHandler::GetResourceHandler(
   // Handle URLs in interception path
   std::string file_name, mime_type;
   if (helper::ParseUrl(url, &file_name, &mime_type)) {
-    // Remove interception path
-    file_name = file_name.substr(strlen(kInterceptionPath) - 1);
-    // Load the resource from file.
-    CefRefPtr<CefStreamReader> stream =
-       GetBinaryResourceReader(app_settings_.resource_dir, file_name.c_str());
+    CefRefPtr<CefStreamReader> stream = NULL;
+
+    if (file_name.find(kInjectedJsPath) == 0 ) {
+      // Special logic for client injected JS
+      file_name = file_name.substr(strlen(kInjectedJsPath));
+      if (app_settings_.client_scripts.count(file_name)) {
+        // If we found our client script - load it :)
+        file_name = app_settings_.client_scripts[file_name];
+        stream = GetBinaryFileReader(file_name);
+      }
+    } else {
+      file_name = file_name.substr(strlen(kInterceptionPath) - 1);
+      // Load the resource from file.
+      stream = GetBinaryResourceReader(app_settings_.resource_dir, file_name.c_str());
+    }
+
     if (stream.get())
       return new CefStreamResourceHandler(mime_type, stream);
   }
