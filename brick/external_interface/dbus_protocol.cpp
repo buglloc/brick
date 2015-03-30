@@ -20,32 +20,33 @@ namespace {
     const char kAppWindowPath[] = "/org/brick/Brick/AppWindow";
 
     const gchar introspection_xml[] =
-       "<node>"
-          "  <interface name='org.brick.Brick.AppInterface'>"
-          "    <method name='UserAway' />"
-          "    <method name='UserPresent' />"
-          "    <method name='ShowAddAccountDialog'>"
-          "       <arg type='b' name='switch_on_save' direction='in'/>"
-          "    </method>"
-          "    <method name='ShowAccountsDialog' />"
-          "    <method name='Quit' />"
-          "    <signal name='IndicatorTooltipChanged'>"
-          "      <arg type='s' name='text'/>"
-          "    </signal>"
-          "    <signal name='IndicatorStateChanged'>"
-          "      <arg type='s' name='state'/>"
-          "    </signal>"
-          "    <signal name='IndicatorBadgeChanged'>"
-          "      <arg type='i' name='badge'/>"
-          "      <arg type='b' name='important'/>"
-          "    </signal>"
-          "  </interface>"
-          "  <interface name='org.brick.Brick.AppWindowInterface'>"
-          "    <method name='Hide' />"
-          "    <method name='Present' />"
-          "    <method name='ToggleVisibility' />"
-          "  </interface>"
-          "</node>";
+       R"(<node>
+            <interface name='org.brick.Brick.AppInterface'>
+              <method name='UserAway' />
+              <method name='UserPresent' />
+              <method name='ShowAddAccountDialog'>
+                 <arg type='b' name='switch_on_save' direction='in'/>
+              </method>
+              <method name='ShowAccountsDialog' />
+              <method name='Quit' />
+              <signal name='IndicatorTooltipChanged'>
+                <arg type='s' name='text'/>
+              </signal>
+              <signal name='IndicatorStateChanged'>
+                <arg type='s' name='state'/>
+              </signal>
+              <signal name='IndicatorBadgeChanged'>
+                <arg type='i' name='badge'/>
+                <arg type='b' name='important'/>
+              </signal>
+            </interface>
+            <interface name='org.brick.Brick.AppWindowInterface'>
+              <method name='Hide' />
+              <method name='Present' />
+              <method name='ToggleVisibility' />
+            </interface>
+          </node>
+       )";
 
     void
     handle_method_call(GDBusConnection *conn,

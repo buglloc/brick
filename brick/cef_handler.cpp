@@ -145,15 +145,16 @@ ClientHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser,
   if (httpStatusCode != 200 || !frame->IsMain())
     return; // We need only successful loaded main frame
 
-  std::string injected_js = "(function(window) {"
-     "var event = document.createEvent('UIEvents');"
-     "event.initUIEvent('resize', true, false, window, 0);"
-     "window.dispatchEvent(event);"
-     "})(window);";
+  std::string injected_js = R"((function(window) {
+       var event = document.createEvent('UIEvents');
+       event.initUIEvent('resize', true, false, window, 0);
+       window.dispatchEvent(event);
+     })(window);
+  )";
 
-  // ToDo: Use CefV8Value::ExecuteFuncion? Maybe something like SendJSEvent...
+  // ToDo: Use CefV8Value::ExecuteFunction? Maybe something like SendJSEvent...
   if (!app_settings_.client_scripts.empty()) {
-    injected_js.append("if (app !== void 0 && app.loadScript !== void 0) app.loadScripts([");
+    injected_js.append("if (typeof BX != 'undefined' && app.loadScripts !== void 0) app.loadScripts([");
     std::string url;
     AppSettings::client_scripts_map::iterator it = app_settings_.client_scripts.begin();
     for (; it != app_settings_.client_scripts.end(); ++it) {
