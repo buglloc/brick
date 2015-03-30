@@ -156,7 +156,7 @@ ClientHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser,
   if (!app_settings_.client_scripts.empty()) {
     injected_js.append("if (typeof BX != 'undefined' && app.loadScripts !== void 0) app.loadScripts([");
     std::string url;
-    AppSettings::client_scripts_map::iterator it = app_settings_.client_scripts.begin();
+    auto it = app_settings_.client_scripts.begin();
     for (; it != app_settings_.client_scripts.end(); ++it) {
       url = kInjectedJsPath;
       url.append(it->first);
