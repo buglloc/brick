@@ -145,12 +145,12 @@ ClientHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser,
   if (httpStatusCode != 200 || !frame->IsMain())
     return; // We need only successful loaded main frame
 
-  std::string injected_js = R"((function(window) {
+  std::string injected_js = R"js((function(window) {
        var event = document.createEvent('UIEvents');
        event.initUIEvent('resize', true, false, window, 0);
        window.dispatchEvent(event);
      })(window);
-  )";
+  )js";
 
   // ToDo: Use CefV8Value::ExecuteFunction? Maybe something like SendJSEvent...
   if (!app_settings_.client_scripts.empty()) {

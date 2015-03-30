@@ -20,7 +20,7 @@ namespace {
     const char kAppWindowPath[] = "/org/brick/Brick/AppWindow";
 
     const gchar introspection_xml[] =
-       R"(<node>
+       R"xml(<node>
             <interface name='org.brick.Brick.AppInterface'>
               <method name='UserAway' />
               <method name='UserPresent' />
@@ -46,7 +46,7 @@ namespace {
               <method name='ToggleVisibility' />
             </interface>
           </node>
-       )";
+       )xml";
 
     void
     handle_method_call(GDBusConnection *conn,
