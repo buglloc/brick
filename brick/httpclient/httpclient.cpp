@@ -14,8 +14,14 @@ namespace {
 const char* HttpClient::user_agent = HTTP_CLIENT_USER_AGENT;
 /** initialize authentication variable */
 std::string HttpClient::user_pass =  std::string();
+bool HttpClient::validate_ssl = true;
 
 /** Authentication Methods implementation */
+
+void
+HttpClient::ValidateSsl(bool validate){
+  HttpClient::validate_ssl = validate;
+}
 
 void
 HttpClient::ClearAuth(){
@@ -480,8 +486,14 @@ HttpClient::SetDefaultOpts(CURL *curl) {
 
   curl_easy_setopt(curl, CURLOPT_TIMEOUT, HTTP_CLIENT_CONNECTION_TIMEOUT);
   /** SSL configuration **/
-  curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1L);
-  curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 2L);
+  if (validate_ssl) {
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1L);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 2L);
+  } else {
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+  }
+
   /** set user agent */
   curl_easy_setopt(curl, CURLOPT_USERAGENT, HttpClient::user_agent);
   /** set callback function */

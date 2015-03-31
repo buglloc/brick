@@ -40,6 +40,7 @@ class HttpClient
     } upload_object;
 
     /** public methods */
+    static void ValidateSsl(bool validate = true);
     // Auth
     static void ClearAuth();
     static void SetAuth(const std::string &user, const std::string &password);
@@ -81,6 +82,7 @@ class HttpClient
        void *userdata);
     static const char* user_agent;
     static std::string user_pass;
+    static bool validate_ssl;
 
     // trim from start
     static inline std::string &ltrim(std::string &s) {

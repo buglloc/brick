@@ -201,6 +201,8 @@ int main(int argc, char* argv[]) {
   LOG_IF(WARNING,
      !CheckLogFileSize(&cef_settings.log_file)) << "Can't check runtie log file size";
 
+  HttpClient::ValidateSsl(!app_settings.ignore_certificate_errors);
+
   // If we have D-BUS - check single running with it (and call App::Present)
   // Otherwise - fallback to EnsureSingleInstance with flock
   CefRefPtr<DBusProtocol> dbus = NULL;
