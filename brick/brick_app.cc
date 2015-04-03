@@ -30,8 +30,8 @@ BrickApp::GetCefSettings(std::string work_dir, AppSettings app_settings) {
   settings.ignore_certificate_errors = app_settings.ignore_certificate_errors;
   settings.log_severity = app_settings.log_severity;
 
-  // HACK: we have to set blue background to avoid white flashes (сan badly impact on history and other popups).
-  settings.background_color = CefColorSetARGB(255, 47, 198, 247);
+  // HACK: we have to set white background to avoid black flashes.
+  settings.background_color = CefColorSetARGB(255, 255, 255, 255);
 
   return settings;
 }
