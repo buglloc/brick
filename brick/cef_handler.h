@@ -12,7 +12,7 @@
 #include "window/browser_window.h"
 #include "event/user_away_event.h"
 #include "event/sleep_event.h"
-#include "status_icon/status_icon.h"
+#include "app_indicator/app_indicator.h"
 
 #include "include/cef_client.h"
 

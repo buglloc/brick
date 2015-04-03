@@ -5,7 +5,7 @@
 #include "../account_manager.h"
 #include "../cef_handler.h"
 #include "../brick_app.h"
-#include "status_icon.h"
+#include "app_indicator.h"
 
 namespace {
 

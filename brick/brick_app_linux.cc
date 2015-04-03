@@ -9,7 +9,7 @@
 
 #include "brick_app.h"
 #include "third-party/json/json.h"
-#include "status_icon/status_icon.h"
+#include "app_indicator/app_indicator.h"
 #include "cef_handler.h"
 #include "cef_app.h"
 #include "window_util.h"
