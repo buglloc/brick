@@ -4,9 +4,9 @@
 
 // ToDo: move defines to separate file?
 
-#define VERSION "0.1.15.29" // IM API version in last part!
+#define VERSION "0.2.1.29" // IM API version in last part!
 #define APP_VERSION "Robin-Brick/" VERSION
-#define CEF_PRODUCT_VERSION APP_VERSION " (BitrixDesktop/3.x compatible) Chrome/39.0.2171.0"
+#define CEF_PRODUCT_VERSION APP_VERSION " (BitrixDesktop/3.x compatible) Chrome/41.0.2272.77"
 #define APP_NAME "Brick"
 #define APP_COMMON_NAME "brick"
 

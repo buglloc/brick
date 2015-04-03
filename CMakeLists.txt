@@ -281,6 +281,8 @@ if(OS_LINUX)
     libffmpegsumo.so
     libcef.so
     libpdf.so
+    natives_blob.bin
+    snapshot_blob.bin
     )
 
   # List of CEF resource files.

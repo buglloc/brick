@@ -13,10 +13,11 @@ namespace {
     const int kPreviewHeight = 512;
 
     void
-    file_dialog_response(GtkDialog *dialog, gint response_id, ClientHandler *client_handler) {
+    OnFileDialogResponse(GtkDialog *dialog, gint response_id, ClientHandler *client_handler) {
       std::vector<CefString> files;
       bool success = false;
       gint mode = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(dialog), "mode"));
+      gint selected_accept_filter = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(dialog), "selected_accept_filter"));
       CefFileDialogCallback *callback = (CefFileDialogCallback *)g_object_get_data(G_OBJECT(dialog), "callback");
 
       if (response_id == GTK_RESPONSE_ACCEPT) {
@@ -43,13 +44,13 @@ namespace {
       gtk_widget_destroy(GTK_WIDGET(dialog));
 
       if (success)
-        callback->Continue(files);
+        callback->Continue(selected_accept_filter, files);
       else
         callback->Cancel();
     }
 
     void
-    update_preview_panel(GtkWidget* chooser, GtkWidget *preview) {
+    OnUpdatePreviewPanel(GtkWidget *chooser, GtkWidget *preview) {
       gchar* filename = gtk_file_chooser_get_preview_filename(GTK_FILE_CHOOSER(chooser));
       if (!filename)
         return;
@@ -89,12 +90,18 @@ ClientHandler::OnTitleChange(CefRefPtr<CefBrowser> browser,
 }
 
 bool
-ClientHandler::OnFileDialog(CefRefPtr<CefBrowser> browser,
-   FileDialogMode mode,
+ClientHandler::OnFileDialog(
+   CefRefPtr<CefBrowser> browser,
+   FileDialogMode mode_type,
    const CefString& title,
-   const CefString& default_file_name,
-   const std::vector<CefString>& accept_types,
+   const CefString& default_file_path,
+   const std::vector<CefString>& accept_filters,
+   int selected_accept_filter,
    CefRefPtr<CefFileDialogCallback> callback) {
+
+  // Remove any modifier flags.
+  FileDialogMode mode =
+     static_cast<FileDialogMode>(mode_type & FILE_DIALOG_TYPE_MASK);
 
   GtkFileChooserAction action;
   const gchar* accept_button;
@@ -107,12 +114,6 @@ ClientHandler::OnFileDialog(CefRefPtr<CefBrowser> browser,
   } else {
     NOTREACHED();
     return false;
-  }
-
-  std::string base_name;
-  if (!default_file_name.empty()) {
-    base_name =
-       basename(const_cast<char*>(default_file_name.ToString().c_str()));
   }
 
   std::string title_str;
@@ -129,6 +130,8 @@ ClientHandler::OnFileDialog(CefRefPtr<CefBrowser> browser,
       case FILE_DIALOG_SAVE:
         title_str = "Save File";
         break;
+      default:
+        break;
     }
   }
 
@@ -143,7 +146,7 @@ ClientHandler::OnFileDialog(CefRefPtr<CefBrowser> browser,
   if (mode == FILE_DIALOG_OPEN_MULTIPLE || mode == FILE_DIALOG_OPEN) {
     GtkWidget *thumbnail = gtk_image_new();
     gtk_file_chooser_set_preview_widget(GTK_FILE_CHOOSER(dialog), thumbnail);
-    g_signal_connect (dialog, "update-preview", G_CALLBACK(update_preview_panel), thumbnail);
+    g_signal_connect (dialog, "update-preview", G_CALLBACK(OnUpdatePreviewPanel), thumbnail);
   }
 
   if (mode == FILE_DIALOG_OPEN_MULTIPLE) {
@@ -153,15 +156,16 @@ ClientHandler::OnFileDialog(CefRefPtr<CefBrowser> browser,
        true);
   }
 
-  if (mode == FILE_DIALOG_SAVE && !base_name.empty()) {
-    gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog),
-       base_name.c_str());
+  if (!default_file_path.empty()) {
+    gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dialog),
+       default_file_path.ToString().c_str());
   }
 
   callback->AddRef();
   g_object_set_data(G_OBJECT(dialog), "mode", GINT_TO_POINTER(mode));
   g_object_set_data(G_OBJECT(dialog), "callback", callback.get());
-  g_signal_connect(G_OBJECT(dialog), "response", G_CALLBACK(file_dialog_response), this);
+  g_object_set_data(G_OBJECT(dialog), "selected_accept_filter", GINT_TO_POINTER(selected_accept_filter));
+  g_signal_connect(G_OBJECT(dialog), "response", G_CALLBACK(OnFileDialogResponse), this);
   gtk_widget_show(dialog);
 
   return true;
