@@ -29,7 +29,7 @@ namespace {
     };
 }
 
-StatusIcon::StatusIcon(std::string icons_dir)
+AppIndicator::AppIndicator(std::string icons_dir)
    : current_icon_ (Icon::DEFAULT),
      idle_icon_ (Icon::DEFAULT),
      icons_folder_ (icons_dir),
@@ -40,26 +40,26 @@ StatusIcon::StatusIcon(std::string icons_dir)
   Init();
 }
 
-StatusIcon::~StatusIcon() {
+AppIndicator::~AppIndicator() {
 }
 
 std::string
-StatusIcon::GetIconPath(Icon icon) {
+AppIndicator::GetIconPath(Icon icon) {
   return icons_folder_ + icon_files_[icon];
 }
 
 std::string
-StatusIcon::GetIconName(Icon icon) {
+AppIndicator::GetIconName(Icon icon) {
   return icon_names_[icon];
 }
 
 void
-StatusIcon::SetBadge(int badge, bool is_important) {
+AppIndicator::SetBadge(int badge, bool is_important) {
   if (badge > 0) {
     if (is_important) {
-        SetIcon(StatusIcon::Icon::FLASH_IMPORTANT);
+        SetIcon(Icon::FLASH_IMPORTANT);
     } else {
-        SetIcon(StatusIcon::Icon::FLASH);
+        SetIcon(Icon::FLASH);
     }
 #ifdef unity
     // Parts of simple Unity integration - let's set badge in launcher!
@@ -80,7 +80,7 @@ StatusIcon::SetBadge(int badge, bool is_important) {
 }
 
 bool
-StatusIcon::OnClick() {
+AppIndicator::OnClick() {
   CefRefPtr<ClientHandler> client_handler = ClientHandler::GetInstance();
   if (!client_handler)
     return false;
@@ -95,30 +95,30 @@ StatusIcon::OnClick() {
 }
 
 bool
-StatusIcon::OnMenuQuit() {
+AppIndicator::OnMenuQuit() {
   CefQuitMessageLoop();
   return true;
 }
 
 bool
-StatusIcon::OnMenuPortalOpen() {
+AppIndicator::OnMenuPortalOpen() {
   return true;
 }
 
 bool
-StatusIcon::OnMenuAbout() {
+AppIndicator::OnMenuAbout() {
   AboutWindow::Instance()->Show();
   return true;
 }
 
 bool
-StatusIcon::OnMenuManageAccount() {
+AppIndicator::OnMenuManageAccount() {
   AccountsWindow::Instance()->Show();
   return true;
 }
 
 bool
-StatusIcon::OnMenuChangeAccount(int id) {
+AppIndicator::OnMenuChangeAccount(int id) {
   CefRefPtr<ClientHandler> client_handler = ClientHandler::GetInstance();
   CefRefPtr<AccountManager> account_manager = client_handler->GetAccountManager();
   if (account_manager->GetCurrentAccount()->GetId() == id)
@@ -132,28 +132,28 @@ StatusIcon::OnMenuChangeAccount(int id) {
 }
 
 void
-StatusIcon::SwitchToIdle() {
+AppIndicator::SwitchToIdle() {
   idle_ = true;
   SetIcon((Icon) idle_icon_);
 }
 
 void
-StatusIcon::UseExtendedStatus(bool use) {
+AppIndicator::UseExtendedStatus(bool use) {
   extended_status_ = use;
 }
 
 void
-StatusIcon::onEvent(AccountListEvent &event) {
+AppIndicator::onEvent(AccountListEvent &event) {
   UpdateAccountsMenu();
 };
 
 void
-StatusIcon::onEvent(AccountSwitchEvent &event) {
+AppIndicator::onEvent(AccountSwitchEvent &event) {
   UpdateAccountsMenu();
 };
 
 void
-StatusIcon::RegisterEventListeners() {
+AppIndicator::RegisterEventListeners() {
   EventBus::AddHandler<AccountListEvent>(*this);
   EventBus::AddHandler<AccountSwitchEvent>(*this);
 }

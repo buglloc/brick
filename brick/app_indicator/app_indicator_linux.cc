@@ -13,14 +13,14 @@ namespace {
     GtkWidget *accounts_menu;
 
     void
-    status_icon_click(GtkWidget *status_icon, StatusIcon *self) {
+    status_icon_click(GtkWidget *status_icon, AppIndicator *self) {
       self->OnClick();
     }
 
 #ifdef unity
 #else
     void
-    status_icon_popup(GtkWidget *status_icon, guint button, guint32 activate_time, StatusIcon *self) {
+    status_icon_popup(GtkWidget *status_icon, guint button, guint32 activate_time, AppIndicator *self) {
       if (self->OnPopup())
         return;
 
@@ -29,22 +29,22 @@ namespace {
     }
 #endif
     void
-    menu_about(GtkMenuItem *item, StatusIcon *self) {
+    menu_about(GtkMenuItem *item, AppIndicator *self) {
       self->OnMenuAbout();
     }
 
     void
-    menu_manage_accounts(GtkMenuItem *item, StatusIcon *self) {
+    menu_manage_accounts(GtkMenuItem *item, AppIndicator *self) {
       self->OnMenuManageAccount();
     }
 
     void
-    menu_quit(GtkMenuItem *item, StatusIcon *self) {
+    menu_quit(GtkMenuItem *item, AppIndicator *self) {
       self->OnMenuQuit();
     }
 
     void
-    menu_change_account(GtkMenuItem *item, StatusIcon *self) {
+    menu_change_account(GtkMenuItem *item, AppIndicator *self) {
       int account_id = GPOINTER_TO_INT(
          g_object_get_data(G_OBJECT(item), "account_id")
       );
@@ -55,7 +55,7 @@ namespace {
 
 
 void
-StatusIcon::Init() {
+AppIndicator::Init() {
 #ifdef unity
   icon_handler_ = app_indicator_new(
           "brick",
@@ -101,7 +101,7 @@ StatusIcon::Init() {
 }
 
 void
-StatusIcon::SetIdleIcon(Icon icon) {
+AppIndicator::SetIdleIcon(Icon icon) {
   if (extended_status_) {
     idle_icon_ = icon;
   } else {
@@ -116,7 +116,7 @@ StatusIcon::SetIdleIcon(Icon icon) {
 }
 
 void
-StatusIcon::SetIcon(Icon icon) {
+AppIndicator::SetIcon(Icon icon) {
   idle_ = icon < Icon::FLASH;
 
   current_icon_ = icon;
@@ -131,7 +131,7 @@ StatusIcon::SetIcon(Icon icon) {
 }
 
 void
-StatusIcon::SetTooltip(const char *tooltip) {
+AppIndicator::SetTooltip(const char *tooltip) {
 #ifdef unity
   app_indicator_set_title(icon_handler_, tooltip);
 #else
@@ -144,7 +144,7 @@ StatusIcon::SetTooltip(const char *tooltip) {
 }
 
 void
-StatusIcon::UpdateAccountsMenu() {
+AppIndicator::UpdateAccountsMenu() {
   GtkWidget *submenu = gtk_menu_new();
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(accounts_menu), submenu);
   GtkWidget *manage_accounts_item = gtk_menu_item_new_with_label("Manage Accounts");

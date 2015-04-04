@@ -79,8 +79,8 @@ public:
 
   CefRefPtr<BrowserWindow> GetMainWindowHandle() const;
 
-  void SetStatusIconHandle(CefRefPtr<StatusIcon> handle);
-  CefRefPtr<StatusIcon> GetStatusIconHandle() const;
+  void SetAppIndicatorHandle(CefRefPtr<AppIndicator> handle);
+  CefRefPtr<AppIndicator> GetAppIndicatorHandle() const;
 
   // Provide access to the single global instance of this object.
   static CefRefPtr<ClientHandler> GetInstance();
@@ -257,7 +257,7 @@ private:
   // The main frame window handle.
   CefRefPtr<BrowserWindow> main_handle_;
 
-  CefRefPtr<StatusIcon> status_icon_handle_;
+  CefRefPtr<AppIndicator> app_indicator_handle_;
 
   CefRefPtr<AccountManager> account_manager_;
 

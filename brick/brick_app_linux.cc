@@ -261,9 +261,9 @@ int main(int argc, char* argv[]) {
   client_handler->SetCacheManager(cache_manager);
 
   // Initialize status icon
-  CefRefPtr<StatusIcon> status_icon(new StatusIcon(app_settings.resource_dir + "/indicators/"));
-  status_icon->UseExtendedStatus(app_settings.extended_status);
-  client_handler->SetStatusIconHandle(status_icon);
+  CefRefPtr<AppIndicator> app_indicator(new AppIndicator(app_settings.resource_dir + "/indicators/"));
+  app_indicator->UseExtendedStatus(app_settings.extended_status);
+  client_handler->SetAppIndicatorHandle(app_indicator);
 
   CefWindowInfo window_info;
   std::string startup_url = account_manager->GetCurrentAccount()->GetBaseUrl();
