@@ -8,7 +8,7 @@ var TAB_B24NET = 2;
 var app = {
   windowCallbacks: {},
   defaultNotifyDuration: 3000,
-  authErrorCodes: {NONE:0, HTTP:1, CAPTCHA:2, OTP:3, AUTH:4, UNKNOWN:5},
+  authErrorCodes: {NONE:0, HTTP:1, CAPTCHA:2, OTP:3, AUTH:4, INVALID_URL:5, UNKNOWN:6},
   setWindowCallback: function(windowId, callback) {
     app.windowCallbacks[windowId] = callback;
   },

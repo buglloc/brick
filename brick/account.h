@@ -17,6 +17,7 @@ class Account : public CefBase {
       CAPTCHA,
       OTP,
       AUTH,
+      INVALID_URL,
       UNKNOWN,
       N_AUTH_ERROR
     };

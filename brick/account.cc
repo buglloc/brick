@@ -182,6 +182,7 @@ Account::Auth(bool renew_password, std::string otp) {
     result.success = false;
     result.error_code = ERROR_CODE::HTTP;
     result.http_error = r.error;
+
   } else if (r.code == 401 ) {
     // Auth failed
     LOG(WARNING) << "Auth failed: " << r.body;
@@ -196,6 +197,15 @@ Account::Auth(bool renew_password, std::string otp) {
 
     result.success = false;
     result.cookies = r.cookies;
+
+  } else if (r.code == 301 ||  r.code == 302 || r.code == 307) {
+    // Some error occurred...
+    LOG(WARNING) << "Auth failed (redirect occurred to url): " << r.headers["Location"];
+    result.error_code = ERROR_CODE::INVALID_URL;
+    result.success = false;
+    result.cookies = r.cookies;
+    result.http_error = "Redirect occurred: " + r.headers["Location"];
+
   } else {
     // Some error occurred...
     LOG(WARNING) << "Auth failed (Application error): " << r.body;

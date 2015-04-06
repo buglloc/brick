@@ -37,6 +37,9 @@
               case app.authErrorCodes['AUTH']:
                 reasonBox.html('Не удалось авторизоваться: не верный логин или пароль.');
                 break;
+              case app.authErrorCodes['INVALID_URL']:
+                reasonBox.text('HTTP error: ' + decodeURIComponent(reason));
+                break;
               default:
                 reasonBox.html('Произошла неизвестная ошибка :-(');
                 break;

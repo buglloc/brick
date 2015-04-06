@@ -112,6 +112,10 @@ namespace {
             case Account::ERROR_CODE::AUTH:
               error_message = "Authentication failed.";
               break;
+            case Account::ERROR_CODE::INVALID_URL:
+              error_message = auth_result.http_error + "\n"
+                 "Please provide correct host name and scheme";
+              break;
             default:
               error_message = "An unknown error occurred :(";
               break;
