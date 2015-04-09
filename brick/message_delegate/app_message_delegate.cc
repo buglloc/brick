@@ -163,7 +163,7 @@ AppMessageDelegate::OnProcessMessageReceived(
 
     if (error == NO_ERROR) {
       std::string text = request_args->GetString(1);
-      ClientHandler::GetInstance()->GetAppIndicatorHandle()->SetTooltip(
+      ClientHandler::GetInstance()->GetIndicatorHandle()->SetTooltip(
          text.c_str()
       );
     }
@@ -171,7 +171,7 @@ AppMessageDelegate::OnProcessMessageReceived(
   } else if (message_name == kMessageSetIdleIndicatorName) {
     // Parameters:
     //  0: int32 - callback id
-    //  1: string - status from AppIndicator::Icon
+    //  1: string - status from BrickIndicator::Icon
 
     if (
        request_args->GetSize() != 2
@@ -184,20 +184,20 @@ AppMessageDelegate::OnProcessMessageReceived(
       std::string status = request_args->GetString(1);
 
       if (status == kIndicatorOnlineName) {
-        ClientHandler::GetInstance()->GetAppIndicatorHandle()->SetIdleIcon(AppIndicator::Icon::ONLINE);
+        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIdleIcon(BrickIndicator::Icon::ONLINE);
       } else if (status == kIndicatorDndName) {
-        ClientHandler::GetInstance()->GetAppIndicatorHandle()->SetIdleIcon(AppIndicator::Icon::DND);
+        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIdleIcon(BrickIndicator::Icon::DND);
       } else if (status == kIndicatorAwayName) {
-        ClientHandler::GetInstance()->GetAppIndicatorHandle()->SetIdleIcon(AppIndicator::Icon::AWAY);
+        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIdleIcon(BrickIndicator::Icon::AWAY);
       } else if (status == kIndicatorOfflineName) {
-        ClientHandler::GetInstance()->GetAppIndicatorHandle()->SetIdleIcon(AppIndicator::Icon::OFFLINE);
+        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIdleIcon(BrickIndicator::Icon::OFFLINE);
       }
     }
 
   } else if (message_name == kMessageSetIndicatorName) {
     // Parameters:
     //  0: int32 - callback id
-    //  1: string - status from AppIndicator::Icon
+    //  1: string - status from BrickIndicator::Icon
 
     if (
        request_args->GetSize() != 2
@@ -210,17 +210,17 @@ AppMessageDelegate::OnProcessMessageReceived(
       std::string status = request_args->GetString(1);
 
       if (status == kIndicatorOnlineName) {
-        ClientHandler::GetInstance()->GetAppIndicatorHandle()->SetIcon(AppIndicator::Icon::ONLINE);
+        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIcon(BrickIndicator::Icon::ONLINE);
       } else if (status == kIndicatorDndName) {
-        ClientHandler::GetInstance()->GetAppIndicatorHandle()->SetIcon(AppIndicator::Icon::DND);
+        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIcon(BrickIndicator::Icon::DND);
       } else if (status == kIndicatorAwayName) {
-        ClientHandler::GetInstance()->GetAppIndicatorHandle()->SetIcon(AppIndicator::Icon::AWAY);
+        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIcon(BrickIndicator::Icon::AWAY);
       } else if (status == kIndicatorOfflineName) {
-        ClientHandler::GetInstance()->GetAppIndicatorHandle()->SetIcon(AppIndicator::Icon::OFFLINE);
+        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIcon(BrickIndicator::Icon::OFFLINE);
       } else if (status == kIndicatorFlashName) {
-        ClientHandler::GetInstance()->GetAppIndicatorHandle()->SetIcon(AppIndicator::Icon::FLASH);
+        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIcon(BrickIndicator::Icon::FLASH);
       } else if (status == kIndicatorFlashImportantName) {
-        ClientHandler::GetInstance()->GetAppIndicatorHandle()->SetIcon(AppIndicator::Icon::FLASH_IMPORTANT);
+        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIcon(BrickIndicator::Icon::FLASH_IMPORTANT);
       }
     }
 
@@ -239,7 +239,7 @@ AppMessageDelegate::OnProcessMessageReceived(
     }
 
     if (error == NO_ERROR) {
-      ClientHandler::GetInstance()->GetAppIndicatorHandle()->SetBadge(
+      ClientHandler::GetInstance()->GetIndicatorHandle()->SetBadge(
                 request_args->GetInt(1),
                 request_args->GetBool(2)
         );

@@ -79,11 +79,11 @@ set(BRICK_EXTENSIONS_SRCS
   message_delegate/app_window_message_delegate.h
   )
 set(BRICK_STATUS_ICON_SRCS
-  app_indicator/app_indicator.cc
-  app_indicator/app_indicator.h
+  indicator/indicator.cc
+  indicator/indicator.h
   )
 set(BRICK_STATUS_ICON_SRCS_LINUX
-  app_indicator/app_indicator_linux.cc
+  indicator/indicator_linux.cc
   )
 set(BRICK_WINDOWS_SRCS
   window/base_window.h

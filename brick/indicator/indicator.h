@@ -20,7 +20,7 @@
 #include "../event/event_handler.h"
 #include "../event/event_bus.h"
 
-class AppIndicator : public CefBase,
+class BrickIndicator : public CefBase,
                    public EventHandler<AccountListEvent>,
                    public EventHandler<AccountSwitchEvent> {
 
@@ -35,8 +35,8 @@ public:
     FLASH_IMPORTANT
   };
 
-  AppIndicator(std::string icons_dir);
-  ~AppIndicator();
+  BrickIndicator(std::string icons_dir);
+  ~BrickIndicator();
   void SetIdleIcon(Icon icon);
   void SetIcon(Icon icon);
   void SetTooltip(const char* text);
@@ -81,7 +81,7 @@ private:
 #endif
 
 #endif
-IMPLEMENT_REFCOUNTING(AppIndicator);
+IMPLEMENT_REFCOUNTING(BrickIndicator);
 };
 
 #endif /* end of BRICK_BASE_STATUS_ICON_H_ */

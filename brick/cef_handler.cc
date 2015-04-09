@@ -30,7 +30,7 @@ namespace {
 ClientHandler::ClientHandler()
     : is_idle_ (false),
       main_handle_ (NULL),
-      app_indicator_handle_(NULL),
+      indicator_handle_(NULL),
       account_manager_ (NULL)
 {
   DCHECK(!g_instance);
@@ -450,21 +450,21 @@ ClientHandler::GetAppSettings() const {
 }
 
 void
-ClientHandler::SetAppIndicatorHandle(CefRefPtr<AppIndicator> handle) {
+ClientHandler::SetIndicatorHandle(CefRefPtr<BrickIndicator> handle) {
   if (!CefCurrentlyOn(TID_UI)) {
     // Execute on the UI thread.
     CefPostTask(TID_UI,
-                base::Bind(&ClientHandler::SetAppIndicatorHandle, this, handle));
+                base::Bind(&ClientHandler::SetIndicatorHandle, this, handle));
     return;
   }
 
-  app_indicator_handle_ = handle;
+  indicator_handle_ = handle;
 }
 
-CefRefPtr<AppIndicator>
-ClientHandler::GetAppIndicatorHandle() const {
+CefRefPtr<BrickIndicator>
+ClientHandler::GetIndicatorHandle() const {
   CEF_REQUIRE_UI_THREAD();
-  return app_indicator_handle_;
+  return indicator_handle_;
 }
 
 CefRefPtr<CefBrowser> ClientHandler::GetBrowser() const {

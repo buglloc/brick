@@ -9,7 +9,7 @@
 
 #include "brick_app.h"
 #include "third-party/json/json.h"
-#include "app_indicator/app_indicator.h"
+#include "indicator/indicator.h"
 #include "cef_handler.h"
 #include "cef_app.h"
 #include "window_util.h"
@@ -261,9 +261,9 @@ int main(int argc, char* argv[]) {
   client_handler->SetCacheManager(cache_manager);
 
   // Initialize status icon
-  CefRefPtr<AppIndicator> app_indicator(new AppIndicator(app_settings.resource_dir + "/indicators/"));
-  app_indicator->UseExtendedStatus(app_settings.extended_status);
-  client_handler->SetAppIndicatorHandle(app_indicator);
+  CefRefPtr<BrickIndicator> brick_indicator(new BrickIndicator(app_settings.resource_dir + "/indicators/"));
+  brick_indicator->UseExtendedStatus(app_settings.extended_status);
+  client_handler->SetIndicatorHandle(brick_indicator);
 
   CefWindowInfo window_info;
   std::string startup_url = account_manager->GetCurrentAccount()->GetBaseUrl();

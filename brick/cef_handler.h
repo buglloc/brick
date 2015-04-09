@@ -12,7 +12,7 @@
 #include "window/browser_window.h"
 #include "event/user_away_event.h"
 #include "event/sleep_event.h"
-#include "app_indicator/app_indicator.h"
+#include "indicator/indicator.h"
 
 #include "include/cef_client.h"
 
@@ -79,8 +79,8 @@ public:
 
   CefRefPtr<BrowserWindow> GetMainWindowHandle() const;
 
-  void SetAppIndicatorHandle(CefRefPtr<AppIndicator> handle);
-  CefRefPtr<AppIndicator> GetAppIndicatorHandle() const;
+  void SetIndicatorHandle(CefRefPtr<BrickIndicator> handle);
+  CefRefPtr<BrickIndicator> GetIndicatorHandle() const;
 
   // Provide access to the single global instance of this object.
   static CefRefPtr<ClientHandler> GetInstance();
@@ -257,7 +257,7 @@ private:
   // The main frame window handle.
   CefRefPtr<BrowserWindow> main_handle_;
 
-  CefRefPtr<AppIndicator> app_indicator_handle_;
+  CefRefPtr<BrickIndicator> indicator_handle_;
 
   CefRefPtr<AccountManager> account_manager_;
 

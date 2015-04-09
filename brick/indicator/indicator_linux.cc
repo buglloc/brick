@@ -5,7 +5,7 @@
 #include "../account_manager.h"
 #include "../cef_handler.h"
 #include "../brick_app.h"
-#include "app_indicator.h"
+#include "indicator.h"
 
 namespace {
 
@@ -13,14 +13,14 @@ namespace {
     GtkWidget *accounts_menu;
 
     void
-    status_icon_click(GtkWidget *status_icon, AppIndicator *self) {
+    status_icon_click(GtkWidget *status_icon, BrickIndicator *self) {
       self->OnClick();
     }
 
 #ifdef unity
 #else
     void
-    status_icon_popup(GtkWidget *status_icon, guint button, guint32 activate_time, AppIndicator *self) {
+    status_icon_popup(GtkWidget *status_icon, guint button, guint32 activate_time, BrickIndicator *self) {
       if (self->OnPopup())
         return;
 
@@ -29,22 +29,22 @@ namespace {
     }
 #endif
     void
-    menu_about(GtkMenuItem *item, AppIndicator *self) {
+    menu_about(GtkMenuItem *item, BrickIndicator *self) {
       self->OnMenuAbout();
     }
 
     void
-    menu_manage_accounts(GtkMenuItem *item, AppIndicator *self) {
+    menu_manage_accounts(GtkMenuItem *item, BrickIndicator *self) {
       self->OnMenuManageAccount();
     }
 
     void
-    menu_quit(GtkMenuItem *item, AppIndicator *self) {
+    menu_quit(GtkMenuItem *item, BrickIndicator *self) {
       self->OnMenuQuit();
     }
 
     void
-    menu_change_account(GtkMenuItem *item, AppIndicator *self) {
+    menu_change_account(GtkMenuItem *item, BrickIndicator *self) {
       int account_id = GPOINTER_TO_INT(
          g_object_get_data(G_OBJECT(item), "account_id")
       );
@@ -55,7 +55,7 @@ namespace {
 
 
 void
-AppIndicator::Init() {
+BrickIndicator::Init() {
 #ifdef unity
   icon_handler_ = app_indicator_new(
           "brick",
@@ -101,7 +101,7 @@ AppIndicator::Init() {
 }
 
 void
-AppIndicator::SetIdleIcon(Icon icon) {
+BrickIndicator::SetIdleIcon(Icon icon) {
   if (extended_status_) {
     idle_icon_ = icon;
   } else {
@@ -116,7 +116,7 @@ AppIndicator::SetIdleIcon(Icon icon) {
 }
 
 void
-AppIndicator::SetIcon(Icon icon) {
+BrickIndicator::SetIcon(Icon icon) {
   idle_ = icon < Icon::FLASH;
 
   current_icon_ = icon;
@@ -131,7 +131,7 @@ AppIndicator::SetIcon(Icon icon) {
 }
 
 void
-AppIndicator::SetTooltip(const char *tooltip) {
+BrickIndicator::SetTooltip(const char *tooltip) {
 #ifdef unity
   app_indicator_set_title(icon_handler_, tooltip);
 #else
@@ -144,7 +144,7 @@ AppIndicator::SetTooltip(const char *tooltip) {
 }
 
 void
-AppIndicator::UpdateAccountsMenu() {
+BrickIndicator::UpdateAccountsMenu() {
   GtkWidget *submenu = gtk_menu_new();
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(accounts_menu), submenu);
   GtkWidget *manage_accounts_item = gtk_menu_item_new_with_label("Manage Accounts");

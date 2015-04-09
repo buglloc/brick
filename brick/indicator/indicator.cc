@@ -29,7 +29,7 @@ namespace {
     };
 }
 
-AppIndicator::AppIndicator(std::string icons_dir)
+BrickIndicator::BrickIndicator(std::string icons_dir)
    : current_icon_ (Icon::DEFAULT),
      idle_icon_ (Icon::DEFAULT),
      icons_folder_ (icons_dir),
@@ -40,21 +40,21 @@ AppIndicator::AppIndicator(std::string icons_dir)
   Init();
 }
 
-AppIndicator::~AppIndicator() {
+BrickIndicator::~BrickIndicator() {
 }
 
 std::string
-AppIndicator::GetIconPath(Icon icon) {
+BrickIndicator::GetIconPath(Icon icon) {
   return icons_folder_ + icon_files_[icon];
 }
 
 std::string
-AppIndicator::GetIconName(Icon icon) {
+BrickIndicator::GetIconName(Icon icon) {
   return icon_names_[icon];
 }
 
 void
-AppIndicator::SetBadge(int badge, bool is_important) {
+BrickIndicator::SetBadge(int badge, bool is_important) {
   if (badge > 0) {
     if (is_important) {
         SetIcon(Icon::FLASH_IMPORTANT);
@@ -80,7 +80,7 @@ AppIndicator::SetBadge(int badge, bool is_important) {
 }
 
 bool
-AppIndicator::OnClick() {
+BrickIndicator::OnClick() {
   CefRefPtr<ClientHandler> client_handler = ClientHandler::GetInstance();
   if (!client_handler)
     return false;
@@ -95,30 +95,30 @@ AppIndicator::OnClick() {
 }
 
 bool
-AppIndicator::OnMenuQuit() {
+BrickIndicator::OnMenuQuit() {
   CefQuitMessageLoop();
   return true;
 }
 
 bool
-AppIndicator::OnMenuPortalOpen() {
+BrickIndicator::OnMenuPortalOpen() {
   return true;
 }
 
 bool
-AppIndicator::OnMenuAbout() {
+BrickIndicator::OnMenuAbout() {
   AboutWindow::Instance()->Show();
   return true;
 }
 
 bool
-AppIndicator::OnMenuManageAccount() {
+BrickIndicator::OnMenuManageAccount() {
   AccountsWindow::Instance()->Show();
   return true;
 }
 
 bool
-AppIndicator::OnMenuChangeAccount(int id) {
+BrickIndicator::OnMenuChangeAccount(int id) {
   CefRefPtr<ClientHandler> client_handler = ClientHandler::GetInstance();
   CefRefPtr<AccountManager> account_manager = client_handler->GetAccountManager();
   if (account_manager->GetCurrentAccount()->GetId() == id)
@@ -132,28 +132,28 @@ AppIndicator::OnMenuChangeAccount(int id) {
 }
 
 void
-AppIndicator::SwitchToIdle() {
+BrickIndicator::SwitchToIdle() {
   idle_ = true;
   SetIcon((Icon) idle_icon_);
 }
 
 void
-AppIndicator::UseExtendedStatus(bool use) {
+BrickIndicator::UseExtendedStatus(bool use) {
   extended_status_ = use;
 }
 
 void
-AppIndicator::onEvent(AccountListEvent &event) {
+BrickIndicator::onEvent(AccountListEvent &event) {
   UpdateAccountsMenu();
 };
 
 void
-AppIndicator::onEvent(AccountSwitchEvent &event) {
+BrickIndicator::onEvent(AccountSwitchEvent &event) {
   UpdateAccountsMenu();
 };
 
 void
-AppIndicator::RegisterEventListeners() {
+BrickIndicator::RegisterEventListeners() {
   EventBus::AddHandler<AccountListEvent>(*this);
   EventBus::AddHandler<AccountSwitchEvent>(*this);
 }
