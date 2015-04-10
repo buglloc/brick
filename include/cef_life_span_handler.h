@@ -77,6 +77,13 @@ class CefLifeSpanHandler : public virtual CefBase {
   }
 
   ///
+  // Called after new internal window created and not mapped for now.
+  ///
+  /*--cef()--*/
+  virtual void OnWindowCreated(CefRefPtr<CefBrowser> browser) {}
+
+
+  ///
   // Called after a new browser is created.
   ///
   /*--cef()--*/
@@ -89,6 +96,12 @@ class CefLifeSpanHandler : public virtual CefBase {
   ///
   /*--cef()--*/
   virtual bool RunModal(CefRefPtr<CefBrowser> browser) { return false; }
+
+  ///
+  // Called before proccessing CloseBrowser
+  ///
+  /*--cef()--*/
+  virtual bool OnCloseBrowser(CefRefPtr<CefBrowser> browser) { return false; }
 
   ///
   // Called when a browser has recieved a request to close. This may result
@@ -129,21 +142,22 @@ class CefLifeSpanHandler : public virtual CefBase {
   // 2.  Application's top-level window receives the close notification and:
   //     A. Calls CefBrowserHost::CloseBrowser(false).
   //     B. Cancels the window close.
-  // 3.  JavaScript 'onbeforeunload' handler executes and shows the close
+  // 3.  Application's OnBrowserClose() handler is called
+  // 4.  JavaScript 'onbeforeunload' handler executes and shows the close
   //     confirmation dialog (which can be overridden via
   //     CefJSDialogHandler::OnBeforeUnloadDialog()).
-  // 4.  User approves the close.
-  // 5.  JavaScript 'onunload' handler executes.
-  // 6.  Application's DoClose() handler is called. Application will:
+  // 5.  User approves the close.
+  // 6.  JavaScript 'onunload' handler executes.
+  // 7.  Application's DoClose() handler is called. Application will:
   //     A. Set a flag to indicate that the next close attempt will be allowed.
   //     B. Return false.
-  // 7.  CEF sends an OS close notification.
-  // 8.  Application's top-level window receives the OS close notification and
+  // 8.  CEF sends an OS close notification.
+  // 9.  Application's top-level window receives the OS close notification and
   //     allows the window to close based on the flag from #6B.
-  // 9.  Browser OS window is destroyed.
-  // 10. Application's CefLifeSpanHandler::OnBeforeClose() handler is called and
+  // 10.  Browser OS window is destroyed.
+  // 11. Application's CefLifeSpanHandler::OnBeforeClose() handler is called and
   //     the browser object is destroyed.
-  // 11. Application exits by calling CefQuitMessageLoop() if no other browsers
+  // 12. Application exits by calling CefQuitMessageLoop() if no other browsers
   //     exist.
   ///
   /*--cef()--*/

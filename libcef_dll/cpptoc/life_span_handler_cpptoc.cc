@@ -117,6 +117,23 @@ int CEF_CALLBACK life_span_handler_on_before_popup(
   return _retval;
 }
 
+void CEF_CALLBACK life_span_handler_on_window_created(
+    struct _cef_life_span_handler_t* self, cef_browser_t* browser) {
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  DCHECK(self);
+  if (!self)
+    return;
+  // Verify param: browser; type: refptr_diff
+  DCHECK(browser);
+  if (!browser)
+    return;
+
+  // Execute
+  CefLifeSpanHandlerCppToC::Get(self)->OnWindowCreated(
+      CefBrowserCToCpp::Wrap(browser));
+}
+
 void CEF_CALLBACK life_span_handler_on_after_created(
     struct _cef_life_span_handler_t* self, cef_browser_t* browser) {
   // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
@@ -148,6 +165,26 @@ int CEF_CALLBACK life_span_handler_run_modal(
 
   // Execute
   bool _retval = CefLifeSpanHandlerCppToC::Get(self)->RunModal(
+      CefBrowserCToCpp::Wrap(browser));
+
+  // Return type: bool
+  return _retval;
+}
+
+int CEF_CALLBACK life_span_handler_on_close_browser(
+    struct _cef_life_span_handler_t* self, cef_browser_t* browser) {
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  DCHECK(self);
+  if (!self)
+    return 0;
+  // Verify param: browser; type: refptr_diff
+  DCHECK(browser);
+  if (!browser)
+    return 0;
+
+  // Execute
+  bool _retval = CefLifeSpanHandlerCppToC::Get(self)->OnCloseBrowser(
       CefBrowserCToCpp::Wrap(browser));
 
   // Return type: bool
@@ -198,8 +235,10 @@ CefLifeSpanHandlerCppToC::CefLifeSpanHandlerCppToC(CefLifeSpanHandler* cls)
     : CefCppToC<CefLifeSpanHandlerCppToC, CefLifeSpanHandler,
         cef_life_span_handler_t>(cls) {
   struct_.struct_.on_before_popup = life_span_handler_on_before_popup;
+  struct_.struct_.on_window_created = life_span_handler_on_window_created;
   struct_.struct_.on_after_created = life_span_handler_on_after_created;
   struct_.struct_.run_modal = life_span_handler_run_modal;
+  struct_.struct_.on_close_browser = life_span_handler_on_close_browser;
   struct_.struct_.do_close = life_span_handler_do_close;
   struct_.struct_.on_before_close = life_span_handler_on_before_close;
 }

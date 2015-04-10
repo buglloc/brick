@@ -124,8 +124,6 @@ set(LIBCEF_CPPTOC_SRCS
 source_group(libcef_dll\\\\cpptoc FILES ${LIBCEF_CPPTOC_SRCS})
 
 set(LIBCEF_CTOCPP_SRCS
-  ctocpp/allow_certificate_error_callback_ctocpp.cc
-  ctocpp/allow_certificate_error_callback_ctocpp.h
   ctocpp/auth_callback_ctocpp.cc
   ctocpp/auth_callback_ctocpp.h
   ctocpp/base_ctocpp.h
@@ -184,8 +182,8 @@ set(LIBCEF_CTOCPP_SRCS
   ctocpp/print_settings_ctocpp.h
   ctocpp/process_message_ctocpp.cc
   ctocpp/process_message_ctocpp.h
-  ctocpp/quota_callback_ctocpp.cc
-  ctocpp/quota_callback_ctocpp.h
+  ctocpp/request_callback_ctocpp.cc
+  ctocpp/request_callback_ctocpp.h
   ctocpp/request_context_ctocpp.cc
   ctocpp/request_context_ctocpp.h
   ctocpp/request_ctocpp.cc
