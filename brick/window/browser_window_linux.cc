@@ -164,3 +164,8 @@ BrowserWindow::SaveRestorePosition(bool save) {
     gdk_window_move(window_handler_, last_x_, last_y_);
   }
 }
+
+void
+BrowserWindow::FlushChanges() {
+  gdk_flush();
+}

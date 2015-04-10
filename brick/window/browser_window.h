@@ -46,6 +46,7 @@ public:
   virtual void ToggleVisibility();
   virtual void Present();
   virtual void SetActive();
+  virtual void FlushChanges();
 
   // Event handlers
   virtual bool OnHide();

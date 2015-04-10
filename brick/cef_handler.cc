@@ -56,9 +56,11 @@ ClientHandler::OnWindowCreated(CefRefPtr<CefBrowser> browser) {
     CefRefPtr<BrowserWindow> window(new BrowserWindow);
     window->WrapNative(browser->GetHost()->GetWindowHandle());
     window->Popupping();
+    window->FlushChanges();
   } else {
     main_handle_ = new BrowserWindow;
     main_handle_->WrapNative(browser->GetHost()->GetWindowHandle());
+    main_handle_->FlushChanges();
   }
 }
 
