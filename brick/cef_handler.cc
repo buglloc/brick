@@ -51,6 +51,18 @@ ClientHandler::GetInstance() {
 }
 
 void
+ClientHandler::OnWindowCreated(CefRefPtr<CefBrowser> browser) {
+  if (browser->IsPopup()) {
+    CefRefPtr<BrowserWindow> window(new BrowserWindow);
+    window->WrapNative(browser->GetHost()->GetWindowHandle());
+    window->Popupping();
+  } else {
+    main_handle_ = new BrowserWindow;
+    main_handle_->WrapNative(browser->GetHost()->GetWindowHandle());
+  }
+}
+
+void
 ClientHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
   CEF_REQUIRE_UI_THREAD();
 
@@ -59,15 +71,9 @@ ClientHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
     // We need to keep the main child window, but not popup windows
     browser_ = browser;
     browser_id_ = browser->GetIdentifier();
-    main_handle_ = new BrowserWindow;
-    main_handle_->WrapNative(browser->GetHost()->GetWindowHandle());
   } else if (browser->IsPopup()) {
     // Add to the list of popup browsers.
 //    popup_browsers_.push_back(browser);
-
-    CefRefPtr<BrowserWindow> window(new BrowserWindow);
-    window->WrapNative(browser->GetHost()->GetWindowHandle());
-    window->Popupping();
 
     // Give focus to the popup browser. Perform asynchronously because the
     // parent window may attempt to keep focus after launching the popup.
@@ -79,17 +85,15 @@ ClientHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
 }
 
 bool
-ClientHandler::DoClose(CefRefPtr<CefBrowser> browser) {
+ClientHandler::OnCloseBrowser(CefRefPtr<CefBrowser> browser) {
   CEF_REQUIRE_UI_THREAD();
 
   if (app_settings_.hide_on_delete && !browser->IsPopup()) {
     // Doesn't close main window
     main_handle_->Hide();
-    // ToDo: Remove!
-    // Browser will losses mostly all event handlers...so we do some ugly hack with reloading here
-    browser->Reload();
     return true;
   }
+
   return false;
 }
 
