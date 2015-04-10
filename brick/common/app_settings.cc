@@ -20,7 +20,7 @@ AppSettings::AppSettings()
 #endif
   auto_away(true),
   external_api(true),
-  hide_on_delete(false),
+  hide_on_delete(true),
   extended_status(true)
 {
 
@@ -53,62 +53,62 @@ AppSettings::UpdateByJson(std::string json) {
 
   if (root.isMember("app_token")
      && root["app_token"].isString()) {
-    this->profile_path = root["app_token"].asString();
+    profile_path = root["app_token"].asString();
   }
 
   if (root.isMember("profile_path")
      && root["profile_path"].isString()) {
-    this->profile_path = root["profile_path"].asString();
+    profile_path = root["profile_path"].asString();
   }
 
   if (root.isMember("cache_path")
      && root["cache_path"].isString()) {
-    this->cache_path = root["cache_path"].asString();
+    cache_path = root["cache_path"].asString();
   }
 
   if (root.isMember("log_file")
      && root["log_file"].isString()) {
-    this->log_file = root["log_file"].asString();
+    log_file = root["log_file"].asString();
   }
 
   if (root.isMember("proxy_server")
      && root["proxy_server"].isString()) {
-    this->proxy_server = root["proxy_server"].asString();
+    proxy_server = root["proxy_server"].asString();
   }
 
   if (root.isMember("ignore_certificate_errors")
      && root["ignore_certificate_errors"].isBool()) {
-    this->ignore_certificate_errors = root["ignore_certificate_errors"].asBool();
+    ignore_certificate_errors = root["ignore_certificate_errors"].asBool();
   }
 
   if (root.isMember("start_minimized")
      && root["start_minimized"].isBool()) {
-    this->start_minimized = root["start_minimized"].asBool();
+    start_minimized = root["start_minimized"].asBool();
   }
 
   if (root.isMember("resource_dir")
      && root["resource_dir"].isString()) {
-    this->resource_dir = root["resource_dir"].asString();
+    resource_dir = root["resource_dir"].asString();
   }
 
   if (root.isMember("auto_away")
      && root["auto_away"].isBool()) {
-    this->auto_away = root["auto_away"].asBool();
+    auto_away = root["auto_away"].asBool();
   }
 
   if (root.isMember("external_api")
      && root["external_api"].isBool()) {
-    this->external_api = root["external_api"].asBool();
+    external_api = root["external_api"].asBool();
   }
 
   if (root.isMember("hide_on_delete")
      && root["hide_on_delete"].isBool()) {
-    this->hide_on_delete = root["hide_on_delete"].asBool();
+    hide_on_delete = root["hide_on_delete"].asBool();
   }
 
   if (root.isMember("extended_status")
      && root["extended_status"].isBool()) {
-    this->extended_status = root["extended_status"].asBool();
+    extended_status = root["extended_status"].asBool();
   }
 
   if (root.isMember("client_scripts")
