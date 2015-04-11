@@ -23,13 +23,16 @@
       (function (app, $) {
         $(document).ready((function (app) {
           app.setIndicator('offline');
-          if (app.getHashValue('login') == 'yes') {
-            app.login(function() {
+          setTimeout(function() {
+            // Delay authorization for visualization purposes
+            if (app.getHashValue('login') == 'yes') {
+              app.login(function() {
+                app.loadPortal();
+              });
+            } else {
               app.loadPortal();
-            });
-          } else {
-            app.loadPortal();
-          }
+            }
+          }, 100);
         }).bind(null, app));
       })(app, $);
     </script>

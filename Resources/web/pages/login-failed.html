@@ -49,7 +49,7 @@
           app.setIndicator('offline');
           $('#reconnect').click(function() {
             $(this).button('loading');
-            app.loadPortal();
+            app.loader(true);
           });
         }).bind(null, window, app));
     </script>

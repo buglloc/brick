@@ -365,7 +365,7 @@ ClientHandler::GetResourceHandler(
       return new CefStreamResourceHandler(mime_type, stream);
   }
 
-  // Never let the internal links to the external world
+  // Never let the internal links walk on the external world
   CefRefPtr<CefStreamReader> stream =
      CefStreamReader::CreateForData(
         static_cast<void*>(const_cast<char*>(kUnknownInternalContent.c_str())),

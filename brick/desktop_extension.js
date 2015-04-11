@@ -64,8 +64,8 @@ var app = {
 
     AppExChangeTooltip(null, text);
   },
-  loader: function() {
-    window.location.href = '/desktop_app/internals/pages/portal-loader';
+  loader: function(login) {
+    window.location.href = '/desktop_app/internals/pages/portal-loader' + (login? '#login=yes': '');
   },
   setIdleIndicator: function(type) {
     native function AppExSetIdleIndicator();
