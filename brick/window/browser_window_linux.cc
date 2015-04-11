@@ -7,21 +7,27 @@
 #include "browser_window.h"
 #include "../brick_app.h"
 
-void
+bool
 BrowserWindow::WrapNative(CefWindowHandle window) {
   if (window_handler_) {
     LOG(ERROR) << "Browser window already have native window. Can't wrap one more window.";
-    return;
+    return false;
+  }
+
+  XFlush(cef_get_xdisplay());
+  window_handler_ = gdk_window_foreign_new(window);
+  if (!window_handler_) {
+    LOG(ERROR) << "Browser window has been destroyed. Can't wrap.";
+    return false;
   }
 
   AddRef();
-  window_handler_ = gdk_window_foreign_new(window);
   g_object_set_data(G_OBJECT(window_handler_), "wrapper", this);
   gdk_window_set_icon_list(window_handler_, window_util::GetDefaultIcons());
   gdk_window_set_events(window_handler_, (GdkEventMask) (
           GDK_STRUCTURE_MASK|GDK_VISIBILITY_NOTIFY_MASK
   ));
-  window_util::SetClassHints(window, (char *)APP_COMMON_NAME, (char *)APP_NAME);
+  return true;
 }
 
 void

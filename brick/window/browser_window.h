@@ -33,7 +33,7 @@ public:
 
   // Platform specific methods
   virtual void OnNativeEvent(BrowserWindowNativeEvent event);
-  virtual void WrapNative(CefWindowHandle window);
+  virtual bool WrapNative(CefWindowHandle window);
   virtual void Show();
   virtual void Hide();
   virtual bool GetHided();

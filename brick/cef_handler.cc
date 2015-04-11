@@ -16,6 +16,7 @@
 #include "resource_util.h"
 #include "platform_util.h"
 #include "window_util.h"
+#include "brick_app.h"
 
 
 namespace {
@@ -52,15 +53,12 @@ ClientHandler::GetInstance() {
 
 void
 ClientHandler::OnWindowCreated(CefRefPtr<CefBrowser> browser) {
+  CefWindowHandle window = browser->GetHost()->GetWindowHandle();
   if (browser->IsPopup()) {
-    CefRefPtr<BrowserWindow> window(new BrowserWindow);
-    window->WrapNative(browser->GetHost()->GetWindowHandle());
-    window->Popupping();
-    window->FlushChanges();
+    window_util::SetClassHints(window, (char *)APP_COMMON_NAME, (char *)APP_NAME);
+    window_util::SetTypeDialog(window);
   } else {
-    main_handle_ = new BrowserWindow;
-    main_handle_->WrapNative(browser->GetHost()->GetWindowHandle());
-    main_handle_->FlushChanges();
+    window_util::SetClassHints(window, (char *)APP_COMMON_NAME, (char *)APP_NAME);
   }
 }
 
@@ -73,10 +71,15 @@ ClientHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
     // We need to keep the main child window, but not popup windows
     browser_ = browser;
     browser_id_ = browser->GetIdentifier();
+    main_handle_ = new BrowserWindow;
+    main_handle_->WrapNative(browser->GetHost()->GetWindowHandle());
   } else if (browser->IsPopup()) {
     // Add to the list of popup browsers.
-//    popup_browsers_.push_back(browser);
+    // popup_browsers_.push_back(browser);
 
+    CefRefPtr<BrowserWindow> window(new BrowserWindow);
+    window->WrapNative(browser->GetHost()->GetWindowHandle());
+    window->Popupping();
     // Give focus to the popup browser. Perform asynchronously because the
     // parent window may attempt to keep focus after launching the popup.
     CefPostTask(TID_UI,

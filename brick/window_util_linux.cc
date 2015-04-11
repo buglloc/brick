@@ -299,4 +299,11 @@ namespace window_util {
 
       return (BrowserWindow*) g_object_get_data(object, "wrapper");
     }
+
+    void
+    FlushChanges() {
+      ::XDisplay *display = cef_get_xdisplay();
+
+      XFlush(display);
+    }
 }

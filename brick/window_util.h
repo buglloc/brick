@@ -33,6 +33,8 @@ namespace window_util {
   void InitHooks();
   void InitWindow(CefWindowHandle handle);
 
+  void FlushChanges();
+
 #if defined(__linux__)
   GList* GetDefaultIcons();
   void SetDefaultIcons(GList* icons);
