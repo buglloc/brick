@@ -430,8 +430,13 @@ BXDesktopSystem.IsB24net = function IsB24net() {
   return false;
 };
 
-BXDesktopSystem.Login = function Login(f) {
-    app.login();
+BXDesktopSystem.Login = function Login(params) {
+  var success = null;
+  if (params !== void(0) && params.success !== void(0)) {
+    success = params.success;
+  }
+
+  app.login(success);
 };
 
 BXDesktopSystem.LoginForm = function(f) {
