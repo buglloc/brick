@@ -1,5 +1,6 @@
 .idea
 Debug/*.so
+Debug/*.bin
 Debug/chrome-sandbox
 CMakeCache.txt
 CMakeFiles
