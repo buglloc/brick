@@ -121,7 +121,7 @@
 # Shared configuration.
 #
 
-cmake_minimum_required(VERSION 2.8.12.2)
+cmake_minimum_required(VERSION 2.8.7)
 
 # Only generate Debug and Release configuration types.
 set(CMAKE_CONFIGURATION_TYPES Debug Release)
@@ -202,9 +202,8 @@ if(OS_LINUX)
   # -fno-rtti                       = Disable real-time type information
   # -fno-threadsafe-statics         = Don't generate thread-safe statics
   # -fvisibility-inlines-hidden     = Give hidden visibility to inlined class member functions
-  # -std=gnu++11                    = Use the C++11 language standard including GNU extensions
   # -Wsign-compare                  = Warn about mixed signed/unsigned type comparisons
-  set(CEF_CXX_COMPILER_FLAGS      "-fno-threadsafe-statics -fvisibility-inlines-hidden -std=gnu++11 -Wsign-compare")
+  set(CEF_CXX_COMPILER_FLAGS      "-fno-threadsafe-statics -fvisibility-inlines-hidden -Wsign-compare")
   # -O0                             = Disable optimizations
   # -g                              = Generate debug information
   set(CEF_COMPILER_FLAGS_DEBUG    "-O0 -g")
@@ -235,6 +234,18 @@ if(OS_LINUX)
   CHECK_C_COMPILER_FLAG(-Wno-unused-local-typedefs COMPILER_SUPPORTS_NO_UNUSED_LOCAL_TYPEDEFS)
   if(COMPILER_SUPPORTS_NO_UNUSED_LOCAL_TYPEDEFS)
     set(CEF_C_COMPILER_FLAGS      "${CEF_C_COMPILER_FLAGS} -Wno-unused-local-typedefs")
+  endif()
+
+  # gnu++11/gnu++0x                 = Use the C++11 or C++0x language standard including GNU extensions
+  CHECK_CXX_COMPILER_FLAG(-std=gnu++11 COMPILER_SUPPORTS_CXX11)
+  CHECK_CXX_COMPILER_FLAG(-std=gnu++0x COMPILER_SUPPORTS_CXX0X)
+  if(COMPILER_SUPPORTS_CXX11)
+    set(CEF_CXX_COMPILER_FLAGS "${CEF_CXX_COMPILER_FLAGS} -std=gnu++11")
+  elseif(COMPILER_SUPPORTS_CXX0X)
+    set(CEF_CXX_COMPILER_FLAGS "${CEF_CXX_COMPILER_FLAGS} -std=gnu++0x")
+  else()
+    message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
+    return()
   endif()
 
   # -Wno-literal-suffix             = Don't warn about invalid suffixes on literals

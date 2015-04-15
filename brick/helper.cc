@@ -205,16 +205,20 @@ namespace helper {
 
     std::string
     BaseDir(const std::string& source) {
-      if (source.size() <= 1) //Make sure it's possible to check the last character.
-      {
+      if (source.size() <= 1) {
+        //Make sure it's possible to check the last character.
         return source;
       }
 
-      std::string result = source;
-      if (*(result.rbegin() + 1) == '/') //Remove trailing slash if it exists.
+      std::string result;
+      if (*(source.rbegin() + 1) == '/')
       {
-        result.pop_back();
+        //Remove trailing slash if it exists.
+        result = source.substr(0, source.length() - 1);
+      } else {
+        result = source;
       }
+
       size_t pos = result.find_last_of('/');
       if (pos == std::string::npos)
         return source;

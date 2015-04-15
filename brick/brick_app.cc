@@ -42,7 +42,7 @@ BrickApp::GetSystemConfig() {
   if (file.empty())
     return "";
 
-  std::ifstream ifs(file);
+  std::ifstream ifs(file.c_str());
   std::string content(
      (std::istreambuf_iterator<char>(ifs) ),
      (std::istreambuf_iterator<char>()    )
@@ -57,7 +57,7 @@ BrickApp::GetUserConfig() {
   if (file.empty())
     return "";
 
-  std::ifstream ifs(file);
+  std::ifstream ifs(file.c_str());
   std::string content(
      (std::istreambuf_iterator<char>(ifs) ),
      (std::istreambuf_iterator<char>()    )
