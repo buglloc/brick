@@ -515,8 +515,7 @@ ClientHandler::SwitchAccount(int id) {
 }
 
 bool
-ClientHandler::SendJSEvent(CefRefPtr<CefBrowser> browser, const CefString& name, const CefString& data)
-{
+ClientHandler::SendJSEvent(CefRefPtr<CefBrowser> browser, const CefString& name, const CefString& data) {
   CefRefPtr<CefProcessMessage> message = CefProcessMessage::Create("dispatchEvent");
   message->GetArgumentList()->SetString(0, name);
   if (!data.empty())

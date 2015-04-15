@@ -40,7 +40,7 @@
 #
 # The below requirements must be met to build this CEF binary distribution.
 #
-# - CMake version 2.8.12.2 or newer.
+# - CMake version 2.8.7 or newer.
 #
 # - Linux requirements:
 #   Currently supported distributions include Debian Wheezy, Ubuntu Precise, and

@@ -189,13 +189,11 @@ namespace helper {
     }
 
     unsigned int
-    HashString(const std::string& str)
-    {
+    HashString(const std::string& str) {
       // Currently based on FNV-1 with 32 bit prime
       const unsigned int fnv_prime = 0x811C9DC5;
       unsigned int hash = 0;
-      for(std::size_t i = 0; i < str.length(); i++)
-      {
+      for(std::size_t i = 0; i < str.length(); i++) {
         hash *= fnv_prime;
         hash ^= str[i];
       }
@@ -211,8 +209,7 @@ namespace helper {
       }
 
       std::string result;
-      if (*(source.rbegin() + 1) == '/')
-      {
+      if (*(source.rbegin() + 1) == '/') {
         //Remove trailing slash if it exists.
         result = source.substr(0, source.length() - 1);
       } else {

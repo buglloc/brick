@@ -28,8 +28,7 @@ AboutWindow::Init() {
   GtkBuilder *builder = gtk_builder_new ();
   GError* error = NULL;
 
-  if (!gtk_builder_add_from_string(builder, &_binary_window_about_glade_start, (gsize)&_binary_window_about_glade_size, &error))
-  {
+  if (!gtk_builder_add_from_string(builder, &_binary_window_about_glade_start, (gsize)&_binary_window_about_glade_size, &error)) {
     LOG(WARNING) << "Failed to build aboud window: " << error->message;
     g_error_free (error);
   }

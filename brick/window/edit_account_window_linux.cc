@@ -160,8 +160,7 @@ EditAccountWindow::Init(CefRefPtr<Account> account, bool switch_on_save) {
   GtkBuilder *builder = gtk_builder_new ();
   GError* error = NULL;
 
-  if (!gtk_builder_add_from_string(builder, &_binary_window_edit_account_glade_start, (gsize)&_binary_window_edit_account_glade_size, &error))
-  {
+  if (!gtk_builder_add_from_string(builder, &_binary_window_edit_account_glade_start, (gsize)&_binary_window_edit_account_glade_size, &error)) {
     LOG(WARNING) << "Failed to build account edditting window: " << error->message;
     g_error_free (error);
   }
