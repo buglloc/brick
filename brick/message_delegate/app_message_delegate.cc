@@ -20,6 +20,7 @@ namespace {
     const char kMessageIndicatorBadgeName[]   = "IndicatorBadgee";
     const char kMessageShowNotificationName[] = "ShowNotification";
     const char kMessageAddAccountName[]       = "AddAccount";
+    const char kMessageAddPageName[]          = "AddPage";
 
     const char kCurrentPortalId[] = "current_portal";
 
@@ -301,9 +302,31 @@ AppMessageDelegate::OnProcessMessageReceived(
       window->Init(CefRefPtr<Account> (new Account), request_args->GetBool(1));
       window->Show();
     };
-  }
 
-  else {
+  } else if (message_name == kMessageAddPageName) {
+    // Parameters:
+    // 0: int32 - callback id
+    // 1: string - page type
+    // 2: string - html content
+
+    if (
+       request_args->GetSize() != 3
+       || request_args->GetType(1) != VTYPE_STRING
+       || request_args->GetType(2) != VTYPE_STRING
+       ) {
+      error = ERR_INVALID_PARAMS;
+    }
+
+    if (error == NO_ERROR) {
+      CefString url = ClientHandler::GetInstance()->AddRuntimePage(
+         request_args->GetString(1),
+         request_args->GetString(2)
+      );
+
+      response_args->SetString(2, url);
+    };
+
+  } else {
     return false;
   }
 

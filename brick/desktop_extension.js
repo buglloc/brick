@@ -104,6 +104,29 @@ var app = {
 
     AppExHideNotification(null);  
   },
+  addPage: function(type, content, callback) {
+    native function AppExAddPage();
+
+    AppExAddPage(callback, type, content);
+  },
+  openTopmostWindow: function(content, callback) {
+    app.addPage('topmost', content, function(response, url) {
+      if (!url) {
+        console.error('Can\'t add internal page for topmost window');
+        return;
+      }
+
+      var newWindow = window.open(
+          url,
+          'topmost',
+          'resizable=no'
+      );
+
+      if (callback) {
+        callback(newWindow);
+      }
+    });
+  },
   openWindow: function(name, callback) {
     var windowId = 'window' + Math.random();
     var windowHandle = window.open(
@@ -306,9 +329,6 @@ BXDesktopWindow.ExecuteCommand = function(cmd, params) {
     case 'html.load':
       window.document.write(params);
       break;
-    case 'topmost.show.html':
-      implementMe('BXDesktopWindow.ExecuteCommand(topmost.show.html, "html content")');
-      break;
     default: 
       implementMe('BXDesktopWindow.ExecuteCommand', arguments);
   }
@@ -360,6 +380,13 @@ BXDesktopSystem.ExecuteCommand = function(command, params) {
       break;
     case 'browse':
       app.browse(params);
+      break;
+    case 'topmost.show.html':
+      console.log('BXDesktopSystem.ExecuteCommand(\'topmost.show.html\', ..) is temporary disabled.')
+      break;
+      app.openTopmostWindow(params, function (newWindow) {
+        BXWindows.push(newWindow);
+      });
       break;
     default:
      implementMe('BXDesktopSystem.ExecuteCommand', arguments);

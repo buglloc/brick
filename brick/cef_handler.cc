@@ -23,6 +23,7 @@ namespace {
 
     CefRefPtr<ClientHandler> g_instance = NULL;
     const char kInterceptionPath[] = "/desktop_app/internals/";
+    const char kRuntimePagePath[] = "/desktop_app/internals/runtime_pages/";
     const char kInjectedJsPath[] = "/desktop_app/internals/injected_js/";
     std::string kUnknownInternalContent = "Failed to load resource";
 
@@ -32,7 +33,8 @@ ClientHandler::ClientHandler()
     : is_idle_ (false),
       main_handle_ (NULL),
       indicator_handle_(NULL),
-      account_manager_ (NULL)
+      account_manager_ (NULL),
+      last_runtime_page_ (0)
 {
   DCHECK(!g_instance);
   g_instance = this;
@@ -358,6 +360,18 @@ ClientHandler::GetResourceHandler(
         file_name = app_settings_.client_scripts[file_name];
         stream = GetBinaryFileReader(file_name);
       }
+
+    } else if (file_name.find(kRuntimePagePath) == 0 ) {
+      // Special logic for runtime pages
+      file_name = file_name.substr(strlen(kRuntimePagePath));
+      if (runtime_page_map_.count(file_name)) {
+        std::string content = runtime_page_map_[file_name];
+        stream = CefStreamReader::CreateForData(
+            static_cast<void*>(const_cast<char*>(content.c_str())),
+            content.size()
+        );
+      }
+
     } else {
       file_name = file_name.substr(strlen(kInterceptionPath) - 1);
       // Load the resource from file.
@@ -368,6 +382,7 @@ ClientHandler::GetResourceHandler(
       return new CefStreamResourceHandler(mime_type, stream);
   }
 
+  LOG(WARNING) << "Intercepted resource \"" << url << "\" was not found.";
   // Never let the internal links walk on the external world
   CefRefPtr<CefStreamReader> stream =
      CefStreamReader::CreateForData(
@@ -506,6 +521,8 @@ ClientHandler::IsAllowedUrl(std::string url) {
 void
 ClientHandler::SwitchAccount(int id) {
   CloseAllPopups(true);
+  last_runtime_page_ = 0;
+  runtime_page_map_.clear();
   // ToDo: delete host/domain cookies here!!!
   account_manager_->SwitchAccount(id);
   browser_->GetMainFrame()->LoadURL(
@@ -557,6 +574,23 @@ void
 ClientHandler::RegisterSystemEventListeners() {
   EventBus::AddHandler<UserAwayEvent>(*this);
   EventBus::AddHandler<SleepEvent>(*this);
+}
+
+std::string
+ClientHandler::AddRuntimePage(const std::string& type, const std::string& content) {
+  for(size_t i = 0; i < type.size(); ++i) {
+    const char c = type[i];
+    if (!isalpha(c) && !isdigit(c) && c != '-') {
+      return NULL;
+    }
+  }
+
+  std::string url = kRuntimePagePath;
+  std::string pageId = type + "/" + std::to_string(++last_runtime_page_) + ".html";
+  url.append(pageId);
+  runtime_page_map_[pageId] = content;
+
+  return url;
 }
 
 // static

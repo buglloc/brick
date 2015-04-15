@@ -222,6 +222,8 @@ public:
   virtual void onEvent(UserAwayEvent &event) OVERRIDE;
   virtual void onEvent(SleepEvent &event) OVERRIDE;
 
+  std::string AddRuntimePage(const std::string& type, const std::string& content);
+
 protected:
   // Create all of ProcessMessageDelegate objects.
   static void CreateProcessMessageDelegates(
@@ -266,6 +268,10 @@ private:
   CefRefPtr<CacheManager> cache_manager_;
 
   AppSettings app_settings_;
+
+  typedef std::map<std::string, std::string> RuntimePageMap;
+  RuntimePageMap runtime_page_map_;
+  int32 last_runtime_page_;
 
   // Include the default reference counting implementation.
 IMPLEMENT_REFCOUNTING(ClientHandler);
