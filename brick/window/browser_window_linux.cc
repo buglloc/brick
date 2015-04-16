@@ -178,8 +178,7 @@ BrowserWindow::FlushChanges() {
 
 void
 BrowserWindow::MoveResize(Position position, int width, int height) {
-  int x = 0;
-  int y = 0;
+  int x, y;
 
   switch(position) {
     case Position::NORTH_WEST:
@@ -217,6 +216,11 @@ BrowserWindow::MoveResize(Position position, int width, int height) {
     case Position::SOUTH_EAST:
       x = gdk_screen_width() - width - BROWSER_WINDOW_PADDING;
       y = gdk_screen_height() - height - BROWSER_WINDOW_PADDING;
+      break;
+    default:
+      x = BROWSER_WINDOW_PADDING;
+      y = BROWSER_WINDOW_PADDING;
+      LOG(WARNING) << "Unknown window position: " << position << ", used NORTH_WEST";
       break;
   }
 

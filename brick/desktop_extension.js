@@ -121,7 +121,7 @@ var app = {
     AppExAddPage(callback, type, content);
   },
   openTopmostWindow: function(content, callback) {
-    console.log(content);
+
     app.addPage('topmost', content, function(response, url) {
       if (!url) {
         console.error('Can\'t add internal page for topmost window');
