@@ -4,6 +4,17 @@ var TAB_CP = 1;
 var TAB_B24NET = 2;
 /*---------- Fake globals ---------*/
 
+/*------ Ugly desktop globals ---------*/
+// Window position :'(
+var STP_LEFT = 0;
+var STP_RIGHT = 1;
+var STP_CENTER = 2;
+var STP_TOP = 3;
+var STP_BOTTOM = 4;
+var STP_VCENTER = 5;
+var STP_FRONT = 6;
+/*------ Ugly desktop globals ---------*/
+
 /*---------- App extension ---------*/
 var app = {
   windowCallbacks: {},
@@ -110,6 +121,7 @@ var app = {
     AppExAddPage(callback, type, content);
   },
   openTopmostWindow: function(content, callback) {
+    console.log(content);
     app.addPage('topmost', content, function(response, url) {
       if (!url) {
         console.error('Can\'t add internal page for topmost window');
@@ -181,6 +193,7 @@ var app = {
 var appWindow = {
   width: 0,
   height: 0,
+  positions: {NorthWest: 0, North: 1, NorthEast: 2, West: 3, Center: 4, East: 5, SouthWest: 6, South: 7, SouthEast: 8},
   setSize: function(width, height) {
     native function AppWindowExSetSize();
 
@@ -216,6 +229,21 @@ var appWindow = {
       null,
       parseInt(width),
       parseInt(height)
+    );
+  },
+  moveResize: function(position, width, height) {
+    native function AppWindowExMoveResize();
+
+    if (width == this.width && height == this.height)
+      return;
+
+    this.width = width;
+    this.height = height;
+    AppWindowExMoveResize(
+        null,
+        parseInt(position),
+        parseInt(width),
+        parseInt(height)
     );
   },
   setResizable: function(isResizable) {
@@ -294,6 +322,15 @@ BXDesktopWindow.SetProperty = function(name,value) {
       break;
     case 'minClientSize':
       appWindow.setMinClientSize(value['Width'], value['Height']);
+      break;
+    case 'position':
+      var position = translateOldPosition(value['X'], value['Y']);
+      if (position === null) {
+        console.error('Unknown position: ' + value['X'] + 'x' + value['Y']);
+        break;
+      }
+
+      appWindow.moveResize(position, value['Width'], value['Height']);
       break;
     case 'resizable':
       appWindow.setResizable(value);
@@ -630,6 +667,30 @@ function qualifyUrl(url) {
   var a = document.createElement('a');
   a.href = url;
   return a.href;
+}
+
+function translateOldPosition(x, y) {
+  if (x == STP_LEFT && y == STP_TOP) {
+    return appWindow.positions.NorthWest;
+  } else if (x == STP_CENTER && y == STP_TOP) {
+    return appWindow.positions.North;
+  } else if (x == STP_RIGHT && y == STP_TOP) {
+    return appWindow.positions.NorthEast;
+  } else if (x == STP_LEFT && y == STP_VCENTER) {
+    return appWindow.positions.West;
+  } else if (x == STP_CENTER && y == STP_VCENTER) {
+    return appWindow.positions.Center;
+  } else if (x == STP_RIGHT && y == STP_VCENTER) {
+    return appWindow.positions.East;
+  } else if (x == STP_LEFT && y == STP_BOTTOM) {
+    return appWindow.positions.SouthWest;
+  } else if (x == STP_CENTER && y == STP_BOTTOM) {
+    return appWindow.positions.South;
+  } else if (x == STP_RIGHT && y == STP_BOTTOM) {
+    return appWindow.positions.SouthEast;
+  }
+
+  return null;
 }
 
 /*---------- Helpers ---------*/

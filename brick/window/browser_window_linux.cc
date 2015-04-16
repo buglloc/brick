@@ -175,3 +175,50 @@ void
 BrowserWindow::FlushChanges() {
   gdk_flush();
 }
+
+void
+BrowserWindow::MoveResize(Position position, int width, int height) {
+  int x = 0;
+  int y = 0;
+
+  switch(position) {
+    case Position::NORTH_WEST:
+      x = BROWSER_WINDOW_PADDING;
+      y = BROWSER_WINDOW_PADDING;
+      break;
+    case Position::NORTH:
+      x = (gdk_screen_width() - width) / 2;
+      y = BROWSER_WINDOW_PADDING;
+      break;
+    case Position::NORTH_EAST:
+      x = gdk_screen_width() - width - BROWSER_WINDOW_PADDING;
+      y = BROWSER_WINDOW_PADDING;
+      break;
+    case Position::WEST:
+      x = BROWSER_WINDOW_PADDING;
+      y = (gdk_screen_height() - height) / 2;
+      break;
+    case Position::CENTER:
+      x = (gdk_screen_width() - width) / 2;
+      y = (gdk_screen_height() - height) / 2;
+      break;
+    case Position::EAST:
+      x = gdk_screen_width() - width - BROWSER_WINDOW_PADDING;
+      y = (gdk_screen_height() - height) / 2;
+      break;
+    case Position::SOUTH_WEST:
+      x = BROWSER_WINDOW_PADDING;
+      y = gdk_screen_height() - height - BROWSER_WINDOW_PADDING;
+      break;
+    case Position::SOUTH:
+      x = (gdk_screen_width() - width) / 2;
+      y = gdk_screen_height() - height - BROWSER_WINDOW_PADDING;
+      break;
+    case Position::SOUTH_EAST:
+      x = gdk_screen_width() - width - BROWSER_WINDOW_PADDING;
+      y = gdk_screen_height() - height - BROWSER_WINDOW_PADDING;
+      break;
+  }
+
+  gdk_window_move_resize(window_handler_, x, y, width, height);
+}

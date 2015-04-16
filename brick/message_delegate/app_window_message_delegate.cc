@@ -8,10 +8,12 @@ namespace {
     const char kMessageSetSizeName[]             = "SetSize";
     const char kMessageSetClientSizeName[]       = "SetClientSize";
     const char kMessageSetMinClientSizeName[]    = "SetMinClientSize";
+    const char kMessageMoveResizeName[]          = "MoveResize";
     const char kMessageFixName[]                 = "FixSize";
     const char kMessageHideName[]                = "Hide";
     const char kMessageShowName[]                = "Show";
-    const char kMessageCenterName[]                = "Center";
+    const char kMessageShowMainName[]            = "ShowMain";
+    const char kMessageCenterName[]              = "Center";
     const char kMessageOpenDeveloperToolsName[]  = "OpenDeveloperTools";
 
 
@@ -99,6 +101,41 @@ AppWindowMessageDelegate::OnProcessMessageReceived(
          request_args->GetInt(2)
       );
     }
+
+  } else if(message_name == kMessageMoveResizeName) {
+
+    // Parameters:
+    //  0: int32 - callback id
+    //  1: int - position
+    //  2: int - width
+    //  3: int - height
+    if (
+       request_args->GetSize() != 4
+       || request_args->GetType(1) != VTYPE_INT
+       || request_args->GetType(2) != VTYPE_INT
+       || request_args->GetType(3) != VTYPE_INT
+       ) {
+      error = ERR_INVALID_PARAMS;
+    }
+
+    if (error == NO_ERROR) {
+      int requestedPosition = request_args->GetInt(1);
+      if (
+         requestedPosition >= BrowserWindow::Position::NORTH_WEST
+         && requestedPosition <= BrowserWindow::Position::SOUTH_EAST
+         ) {
+
+        window->MoveResize(
+           (BrowserWindow::Position) requestedPosition,
+           request_args->GetInt(2),
+           request_args->GetInt(3)
+        );
+      } else {
+        error = ERR_INVALID_PARAMS;
+      }
+
+    }
+
   } else if (message_name == kMessageFixName) {
 
     // Parameters:
@@ -125,6 +162,9 @@ AppWindowMessageDelegate::OnProcessMessageReceived(
 
   } else if (message_name == kMessageShowName) {
     window->Show();
+
+  } else if (message_name == kMessageShowMainName) {
+    ClientHandler::GetInstance()->GetMainWindowHandle()->Present();
 
   } else if (message_name == kMessageCenterName) {
     // ToDo: implement!

@@ -12,6 +12,8 @@
 
 #endif
 
+#define BROWSER_WINDOW_PADDING 10;
+
 #include <include/cef_base.h>
 #include <include/base/cef_lock.h>
 #include <include/internal/cef_linux.h>
@@ -31,6 +33,18 @@ public:
 
   BrowserWindowHandle GetHandler();
 
+  typedef enum {
+    NORTH_WEST = 0,
+    NORTH,
+    NORTH_EAST,
+    WEST,
+    CENTER,
+    EAST,
+    SOUTH_WEST,
+    SOUTH,
+    SOUTH_EAST
+  } Position;
+
   // Platform specific methods
   virtual void OnNativeEvent(BrowserWindowNativeEvent event);
   virtual bool WrapNative(CefWindowHandle window);
@@ -47,6 +61,7 @@ public:
   virtual void Present();
   virtual void SetActive();
   virtual void FlushChanges();
+  virtual void MoveResize(Position position, int width, int height);
 
   // Event handlers
   virtual bool OnHide();
