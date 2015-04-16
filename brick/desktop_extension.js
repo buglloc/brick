@@ -144,7 +144,8 @@ var app = {
     var windowHandle = window.open(
         '/desktop_app/internals/pages/empty?#name=' + name + '&id=' + windowId,
         name,
-        'width=300,height=300,resizable=no'
+        // default popup sizes from Bitrix im.js
+        'width=567,height=335,resizable=no'
     );
 
     app.setWindowCallback(windowId, callback);
