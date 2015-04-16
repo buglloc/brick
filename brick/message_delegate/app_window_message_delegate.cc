@@ -125,11 +125,16 @@ AppWindowMessageDelegate::OnProcessMessageReceived(
          && requestedPosition <= BrowserWindow::Position::SOUTH_EAST
          ) {
 
+        int width = request_args->GetInt(2);
+        int height = request_args->GetInt(3);
+
         window->MoveResize(
            (BrowserWindow::Position) requestedPosition,
-           request_args->GetInt(2),
-           request_args->GetInt(3)
+           width,
+           height
         );
+        window->FrozeSize(width, height);
+
       } else {
         error = ERR_INVALID_PARAMS;
       }
