@@ -222,7 +222,7 @@ public:
   virtual void onEvent(UserAwayEvent &event) OVERRIDE;
   virtual void onEvent(SleepEvent &event) OVERRIDE;
 
-  std::string AddRuntimePage(const std::string& type, const std::string& content);
+  std::string AddRuntimePage(const std::string& content);
 
 protected:
   // Create all of ProcessMessageDelegate objects.

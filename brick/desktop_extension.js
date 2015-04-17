@@ -115,14 +115,14 @@ var app = {
 
     AppExHideNotification(null);  
   },
-  addPage: function(type, content, callback) {
+  addPage: function(content, callback) {
     native function AppExAddPage();
 
-    AppExAddPage(callback, type, content);
+    AppExAddPage(callback, content);
   },
   openTopmostWindow: function(content, callback) {
 
-    app.addPage('topmost', content, function(response, url) {
+    app.addPage(content, function(response, url) {
       if (!url) {
         console.error('Can\'t add internal page for topmost window');
         return;
@@ -131,7 +131,7 @@ var app = {
       var newWindow = window.open(
           url,
           'topmost',
-          'resizable=no'
+          'width=1,height=1,resizable=no'
       );
 
       if (callback) {
@@ -420,10 +420,14 @@ BXDesktopSystem.ExecuteCommand = function(command, params) {
       app.browse(params);
       break;
     case 'topmost.show.html':
-      console.log('BXDesktopSystem.ExecuteCommand(\'topmost.show.html\', ..) is temporary disabled.')
+      console.log('BXDesktopSystem.ExecuteCommand(\'topmost.show.html\', ..) is temporary disabled.');
       break;
       app.openTopmostWindow(params, function (newWindow) {
         BXWindows.push(newWindow);
+        if (BXIM !== void 0 && BXIM.desktop !== void 0) {
+          // Ugly hack for the official app logic (doesn't like asynchronous API)
+          BXIM.desktop.topmostWindow = newWindow;
+        }
       });
       break;
     default:

@@ -574,16 +574,9 @@ ClientHandler::RegisterSystemEventListeners() {
 }
 
 std::string
-ClientHandler::AddRuntimePage(const std::string& type, const std::string& content) {
-  for(size_t i = 0; i < type.size(); ++i) {
-    const char c = type[i];
-    if (!isalpha(c) && !isdigit(c) && c != '-') {
-      return NULL;
-    }
-  }
-
+ClientHandler::AddRuntimePage(const std::string& content) {
   std::string url = kRuntimePagePath;
-  std::string pageId = type + "/" + std::to_string(++last_runtime_page_) + ".html";
+  std::string pageId = std::to_string(++last_runtime_page_) + ".html";
   url.append(pageId);
   runtime_page_map_[pageId] = content;
 
