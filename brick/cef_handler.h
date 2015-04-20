@@ -9,6 +9,7 @@
 #include <map>
 #include <set>
 #include "common/app_settings.h"
+#include "window/window_features.h"
 #include "window/browser_window.h"
 #include "event/user_away_event.h"
 #include "event/sleep_event.h"
@@ -272,6 +273,8 @@ private:
   typedef std::map<std::string, std::string> RuntimePageMap;
   RuntimePageMap runtime_page_map_;
   int32 last_runtime_page_;
+
+  CefRefPtr<WindowFeatures> last_popup_features_;
 
   // Include the default reference counting implementation.
 IMPLEMENT_REFCOUNTING(ClientHandler);

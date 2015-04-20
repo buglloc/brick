@@ -81,7 +81,12 @@ ClientHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
 
     CefRefPtr<BrowserWindow> window(new BrowserWindow);
     window->WrapNative(browser->GetHost()->GetWindowHandle());
-    window->Popupping();
+    if (last_popup_features_.get()) {
+      if (last_popup_features_->topmost)
+        window->SetKeepAbove(true);
+    }
+    last_popup_features_ = NULL;
+
     // Give focus to the popup browser. Perform asynchronously because the
     // parent window may attempt to keep focus after launching the popup.
     CefPostTask(TID_UI,
@@ -314,6 +319,8 @@ ClientHandler::OnBeforePopup(CefRefPtr<CefBrowser> browser,
 
   windowInfo.width = (unsigned int) popupFeatures.width;
   windowInfo.height = (unsigned int) popupFeatures.height;
+  // ToDo: R&D, too ugly hack to catch popup features in OnWindowCreated
+  last_popup_features_ = new WindowFeatures(popupFeatures);
 
   return false;
 }

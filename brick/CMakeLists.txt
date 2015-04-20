@@ -96,6 +96,8 @@ set(BRICK_WINDOWS_SRCS
   window/edit_account_window.h
   window/browser_window.h
   window/browser_window.cc
+  window/window_features.h
+  window/window_features.cc
   )
 set(BRICK_WINDOWS_SRCS_LINUX
   window/base_window_linux.cc

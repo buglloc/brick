@@ -226,3 +226,13 @@ BrowserWindow::MoveResize(Position position, int width, int height) {
 
   gdk_window_move_resize(window_handler_, x, y, width, height);
 }
+
+void
+BrowserWindow::SetKeepAbove(bool above) {
+  gdk_window_set_keep_above(window_handler_, above);
+}
+
+void
+BrowserWindow::SetKeepBelow(bool below) {
+  gdk_window_set_keep_below(window_handler_, below);
+}
