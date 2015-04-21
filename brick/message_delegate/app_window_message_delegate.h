@@ -17,7 +17,7 @@ public:
   // Create message delegates that run in the browser process
   static void CreateProcessMessageDelegates(ClientHandler::ProcessMessageDelegateSet& delegates);
 
-IMPLEMENT_REFCOUNTING(ProcessMessageDelegate);
+IMPLEMENT_REFCOUNTING(AppWindowMessageDelegate);
 };
 
 #endif // BRICK_APP_MESSAGE_DELEGATE_H_
