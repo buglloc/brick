@@ -1,6 +1,6 @@
-#include "brick/window_util.h"
 #include "app_window_message_delegate.h"
-#include "brick/v8_handler.h"
+#include "../window_util.h"
+#include "../helper.h"
 
 
 namespace {
@@ -59,6 +59,10 @@ AppWindowMessageDelegate::OnProcessMessageReceived(
   message_name = message_name.substr(strlen(kNameSpace));
   CefWindowHandle cef_window = browser->GetHost()->GetWindowHandle();
   BrowserWindow *window = window_util::LookupBrowserWindow(cef_window);
+
+#ifndef NDEBUG
+  LOG(INFO) << "AppWindow message for window " << cef_window << ":" << message_name << helper::DumpList(request_args);
+#endif
 
   if(message_name == kMessageSetSizeName || message_name == kMessageSetClientSizeName) {
 

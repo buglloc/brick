@@ -1,4 +1,5 @@
 #include <include/cef_url.h>
+#include <sstream>
 #include "helper.h"
 
 namespace helper {
@@ -119,6 +120,54 @@ namespace helper {
 
       for (int i = 0; i < arg_length; ++i)
         SetListValue(target, i, source);
+    }
+
+    std::string
+    DumpListValue(CefRefPtr<CefListValue> list, int index) {
+      std::string result;
+      switch (list->GetType(index)) {
+        case VTYPE_LIST:
+          result += DumpList(list->GetList(index));
+          break;
+        case VTYPE_BOOL:
+          result += (list->GetBool(index) ? "true" : "false");
+          break;
+        case VTYPE_DOUBLE:
+          result += std::to_string(list->GetDouble(index));
+          break;
+        case VTYPE_INT:
+          result += std::to_string(list->GetInt(index));
+          break;
+        case VTYPE_STRING:
+          result += '"';
+          result += list->GetString(index);
+          result += '"';
+          break;
+        case VTYPE_NULL:
+          result += "null";
+          break;
+        default:
+          result += "unknown";
+      }
+
+      return result;
+    }
+
+    std::string
+    DumpList(CefRefPtr<CefListValue> list) {
+      int arg_length = list->GetSize();
+      if (arg_length == 0)
+        return "";
+
+      std::stringstream result;
+      result << "(";
+      for (int i = 0; i < arg_length; ++i) {
+        result << DumpListValue(list, i);
+        if (i + 1 < arg_length)
+          result << ", ";
+      }
+      result << ")";
+      return result.str();
     }
 
     std::string

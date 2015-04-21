@@ -73,6 +73,10 @@ AppMessageDelegate::OnProcessMessageReceived(
 
   message_name = message_name.substr(strlen(kNameSpace));
 
+#ifndef NDEBUG
+  LOG(INFO) << "App message: " << message_name << helper::DumpList(request_args);
+#endif
+
   if (message_name == kMessageLoginName) {
     // Parameters:
     //  0: int32 - callback id
