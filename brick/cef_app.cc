@@ -152,7 +152,7 @@ std::string ClientApp::GetExtensionJSSource() {
   unsigned long size = (unsigned long)&_binary_desktop_extension_js_size;
 
   std::string content(p, size);
-  return helper::string_replace(
+  return helper::stringReplace(
      content, "#VERSION#", VERSION
   );
 }

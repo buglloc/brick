@@ -3,7 +3,8 @@
 
 namespace helper {
     // Transfer a V8 value to a List index.
-    void SetListValue(CefRefPtr<CefListValue> list, int index,
+    void
+    SetListValue(CefRefPtr<CefListValue> list, int index,
        CefRefPtr<CefV8Value> value) {
       if (value->IsArray()) {
         CefRefPtr<CefListValue> new_list = CefListValue::Create();
@@ -20,8 +21,9 @@ namespace helper {
       }
     }
 
-// Transfer a V8 array to a List.
-    void SetList(CefRefPtr<CefV8Value> source, CefRefPtr<CefListValue> target) {
+    // Transfer a V8 array to a List.
+    void
+    SetList(CefRefPtr<CefV8Value> source, CefRefPtr<CefListValue> target) {
       ASSERT(source->IsArray());
 
       int arg_length = source->GetArrayLength();
@@ -35,7 +37,8 @@ namespace helper {
         SetListValue(target, i, source->GetValue(i));
     }
 
-    CefRefPtr<CefV8Value> ListValueToV8Value(CefRefPtr<CefListValue> value, int index) {
+    CefRefPtr<CefV8Value>
+    ListValueToV8Value(CefRefPtr<CefListValue> value, int index) {
       CefRefPtr<CefV8Value> new_value;
 
       CefValueType type = value->GetType(index);
@@ -67,8 +70,12 @@ namespace helper {
     }
 
     // Transfer a List value to a V8 array index.
-    void SetListValue(CefRefPtr<CefV8Value> list, int index,
+    void
+    SetListValue(
+       CefRefPtr<CefV8Value> list,
+       int index,
        CefRefPtr<CefListValue> value) {
+
       CefRefPtr<CefV8Value> new_value;
 
       CefValueType type = value->GetType(index);
@@ -102,7 +109,8 @@ namespace helper {
     }
 
     // Transfer a List to a V8 array.
-    void SetList(CefRefPtr<CefListValue> source, CefRefPtr<CefV8Value> target) {
+    void
+    SetList(CefRefPtr<CefListValue> source, CefRefPtr<CefV8Value> target) {
       ASSERT(target->IsArray());
 
       int arg_length = source->GetSize();
@@ -113,7 +121,8 @@ namespace helper {
         SetListValue(target, i, source);
     }
 
-    std::string string_replace(std::string src, std::string const& target, std::string const& repl) {
+    std::string
+    stringReplace(std::string src, std::string const &target, std::string const &repl) {
       // handle error situations/trivial cases
 
       if (!target.length()) {

@@ -22,7 +22,7 @@ namespace helper {
     void SetListValue(CefRefPtr<CefListValue> list, int index, CefRefPtr<CefV8Value> value);
     void SetListValue(CefRefPtr<CefV8Value> list, int index, CefRefPtr<CefListValue> value);
     CefRefPtr<CefV8Value> ListValueToV8Value(CefRefPtr<CefListValue> value, int index);
-    std::string string_replace(std::string src,std::string const& target,std::string const& repl);
+    std::string stringReplace(std::string src, std::string const &target, std::string const &repl);
     bool ParseUrl(const std::string& url, std::string* file_name, std::string* mime_type);
     std::string BaseDir(const std::string& path);
     std::string GetFileExtension(const std::string& path);
