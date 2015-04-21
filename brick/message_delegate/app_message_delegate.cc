@@ -50,6 +50,7 @@ AppMessageDelegate::OnProcessMessageReceived(
   CefRefPtr<CefListValue> request_args = message->GetArgumentList();
   int32 callbackId = -1;
   int32 error = NO_ERROR;
+  bool invoke_callback = true;
   CefRefPtr<CefProcessMessage> response =
      CefProcessMessage::Create("invokeCallback");
   CefRefPtr<CefListValue> response_args = response->GetArgumentList();
@@ -81,18 +82,12 @@ AppMessageDelegate::OnProcessMessageReceived(
     }
 
     if (error == NO_ERROR) {
-      CefRefPtr<Account> account = ClientHandler::GetInstance()->GetAccountManager()->GetCurrentAccount();
-      Account::AuthResult auth_result = account->Auth();
-      // Save app password if success?
-
-      if (auth_result.success) {
-        SetCookies(CefCookieManager::GetGlobalManager(), account->GetBaseUrl(), auth_result.cookies, account->IsSecure());
-        response_args->SetBool(2, true);
-      } else {
-        response_args->SetBool(2, false);
-        response_args->SetInt(3, auth_result.error_code);
-        response_args->SetString(4, auth_result.http_error);
-      }
+      Login(
+         browser,
+         response,
+         ClientHandler::GetInstance()->GetAccountManager()->GetCurrentAccount()
+      );
+      invoke_callback = false;
     }
 
   } else if (message_name == kMessageNavigateName) {
@@ -327,7 +322,7 @@ AppMessageDelegate::OnProcessMessageReceived(
     return false;
   }
 
-  if (callbackId != -1) {
+  if (invoke_callback && callbackId != -1) {
     response_args->SetInt(1, error);
 
     // Send response
@@ -343,6 +338,37 @@ AppMessageDelegate::CreateProcessMessageDelegates(ClientHandler::ProcessMessageD
   delegates.insert(new AppMessageDelegate);
 }
 
+
+void
+AppMessageDelegate::Login(
+   CefRefPtr<CefBrowser> browser,
+   CefRefPtr<CefProcessMessage> response,
+   CefRefPtr<Account> account) {
+
+  if (!CefCurrentlyOn(TID_CACHE)) {
+    // Execute on the IO thread.
+    CefPostTask(TID_CACHE, base::Bind(&AppMessageDelegate::Login, browser, response, account));
+    return;
+  }
+
+  CefRefPtr<CefListValue> response_args = response->GetArgumentList();
+  Account::AuthResult auth_result = account->Auth();
+  // Save app password if success?
+
+  if (auth_result.success) {
+    SetCookies(CefCookieManager::GetGlobalManager(), account->GetBaseUrl(), auth_result.cookies, account->IsSecure());
+    response_args->SetBool(2, true);
+  } else {
+    response_args->SetBool(2, false);
+    response_args->SetInt(3, auth_result.error_code);
+    response_args->SetString(4, auth_result.http_error);
+  }
+
+  response_args->SetInt(1, NO_ERROR);
+
+  // Send response
+  browser->SendProcessMessage(PID_RENDERER, response);
+}
 
 void
 AppMessageDelegate::SetCookies(CefRefPtr<CefCookieManager> manager,
