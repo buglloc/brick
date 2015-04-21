@@ -100,13 +100,18 @@ bool
 ClientHandler::OnCloseBrowser(CefRefPtr<CefBrowser> browser) {
   CEF_REQUIRE_UI_THREAD();
 
-  if (app_settings_.hide_on_delete && !browser->IsPopup()) {
+  bool handled = false;
+  if (browser->IsPopup()) {
+    CefWindowHandle cef_window = browser->GetHost()->GetWindowHandle();
+    BrowserWindow *window = window_util::LookupBrowserWindow(cef_window);
+    handled = !window->IsClosable();
+  } else if (app_settings_.hide_on_delete) {
     // Doesn't close main window
     main_handle_->Hide();
-    return true;
+    handled = true;
   }
 
-  return false;
+  return handled;
 }
 
 void

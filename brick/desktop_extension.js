@@ -258,7 +258,7 @@ var appWindow = {
   setClosable: function(isClosable) {
     native function AppWindowExSetClosable();
 
-    AppWindowExSetClosable(null, isClosable || true);
+    AppWindowExSetClosable(null, !!isClosable);
   },
   showMain: function() {
     native function AppWindowExShowMain();

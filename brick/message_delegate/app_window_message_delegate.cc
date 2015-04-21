@@ -14,6 +14,7 @@ namespace {
     const char kMessageShowName[]                = "Show";
     const char kMessageShowMainName[]            = "ShowMain";
     const char kMessageCenterName[]              = "Center";
+    const char kMessageSetClosableName[]         = "SetClosable";
     const char kMessageOpenDeveloperToolsName[]  = "OpenDeveloperTools";
 
 
@@ -60,9 +61,9 @@ AppWindowMessageDelegate::OnProcessMessageReceived(
   CefWindowHandle cef_window = browser->GetHost()->GetWindowHandle();
   BrowserWindow *window = window_util::LookupBrowserWindow(cef_window);
 
-#ifndef NDEBUG
+//#ifndef NDEBUG
   LOG(INFO) << "AppWindow message for window " << cef_window << ":" << message_name << helper::DumpList(request_args);
-#endif
+//#endif
 
   if(message_name == kMessageSetSizeName || message_name == kMessageSetClientSizeName) {
 
@@ -177,6 +178,23 @@ AppWindowMessageDelegate::OnProcessMessageReceived(
 
   } else if (message_name == kMessageCenterName) {
     // ToDo: implement!
+
+  } else if (message_name == kMessageSetClosableName) {
+    // Parameters:
+    //  0: int32 - callback id
+    //  1: bool - closable
+
+    if (
+       request_args->GetSize() != 2
+       || request_args->GetType(1) != VTYPE_BOOL
+       ) {
+      error = ERR_INVALID_PARAMS;
+    }
+
+    if (error == NO_ERROR) {
+      window->SetClosable(request_args->GetBool(1));
+    }
+
 
   } else if (message_name == kMessageOpenDeveloperToolsName) {
     ClientHandler::GetInstance()->ShowDevTools(browser, CefPoint());

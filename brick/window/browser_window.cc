@@ -21,3 +21,13 @@ BrowserWindow::OnShow() {
   hided_ = false;
   return false;
 }
+
+void
+BrowserWindow::SetClosable(bool closable) {
+  closable_ = closable;
+}
+
+bool
+BrowserWindow::IsClosable() {
+  return closable_;
+}

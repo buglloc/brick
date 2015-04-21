@@ -28,6 +28,7 @@ public:
                  focused_(true),
                  visible_(true),
                  resizable_(true),
+                 closable_(true),
                  last_x_(0),
                  last_y_(0) {};
 
@@ -70,6 +71,8 @@ public:
   virtual bool OnShow();
 
   // Shared methods
+  virtual void SetClosable(bool closable);
+  virtual bool IsClosable();
 //  virtual bool SetFocus(bool focused);
 //  virtual bool HasFocus();
 
@@ -80,6 +83,7 @@ protected:
   bool focused_;
   bool visible_;
   bool resizable_;
+  bool closable_;
   int last_x_;
   int last_y_;
 
