@@ -535,6 +535,7 @@ set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CEF_LINKER_FLAGS_RELEASE} ${CEF_SHARED_
 #
 
 add_subdirectory(libcef_dll)
+add_subdirectory(third-party/libsodium)
 add_subdirectory(brick)
 
 #
