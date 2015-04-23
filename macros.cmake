@@ -45,6 +45,36 @@ macro(SET_CEF_TARGET_OUT_DIR)
   endif()
 endmacro()
 
+macro(COPY_AND_INSTALL_FILES target file_list source_dir target_dir)
+  foreach(FILENAME ${file_list})
+    set(source_file ${CMAKE_SOURCE_DIR}/${source_dir}/${FILENAME})
+    set(target_file ${target_dir}/${FILENAME})
+    if(IS_DIRECTORY ${source_file})
+      add_custom_command(
+        TARGET ${target}
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory "${source_file}" "${CEF_TARGET_OUT_DIR}/${target_file}"
+        VERBATIM
+        )
+      install(
+        DIRECTORY "${source_file}"
+        DESTINATION "${CMAKE_INSTALL_PREFIX}/${target_dir}"
+      )
+    else()
+      add_custom_command(
+        TARGET ${target}
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${source_file}" "${CEF_TARGET_OUT_DIR}/${target_file}"
+        VERBATIM
+        )
+      install(
+        FILES "${source_file}"
+        DESTINATION "${CMAKE_INSTALL_PREFIX}/${target_dir}"
+      )
+    endif()
+  endforeach()
+endmacro()
+
 # Copy a list of files from one directory to another. Relative files paths are maintained.
 macro(COPY_FILES target file_list source_dir target_dir)
   foreach(FILENAME ${file_list})
@@ -81,6 +111,27 @@ macro(RENAME_DIRECTORY target source_dir target_dir)
     )
 endmacro()
 
+macro(INSTALL_SYMLINK filepath target_dir)
+    get_filename_component(symname "${filepath}" NAME)
+
+    if (BINARY_PACKAGING_MODE)
+        install(FILES "${filepath}" DESTINATION "${target_dir}/${symname}")
+    else ()
+        # scripting the symlink installation at install time should work
+        # for CMake 2.6.x and 2.8.x
+        install(CODE "
+            if (\"\$ENV{DESTDIR}\" STREQUAL \"\")
+                execute_process(COMMAND \"${CMAKE_COMMAND}\" -E create_symlink
+                                \"${filepath}\"
+                                \"${target_dir}/${symname}\")
+            else ()
+                execute_process(COMMAND \"${CMAKE_COMMAND}\" -E create_symlink
+                                \"${filepath}\"
+                                \"${target_dir}/${symname}\")
+            endif ()
+        ")
+    endif ()
+endmacro()
 
 #
 # Linux macros.

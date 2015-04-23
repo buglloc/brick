@@ -225,18 +225,47 @@ add_executable(${CEF_TARGET} ${BRICK_SRCS} ${BRICK_EMBED_FILES})
 add_dependencies(${CEF_TARGET} libcef_dll_wrapper)
 add_dependencies(${CEF_TARGET} sodium)
 target_link_libraries(${CEF_TARGET} libcef_lib libcef_dll_wrapper sodium ${CEF_STANDARD_LIBS})
+install(
+    TARGETS
+        brick
+    RUNTIME DESTINATION
+        ${CMAKE_INSTALL_PREFIX}/bin
+)
 
 # Set rpath so that libraries can be placed next to the executable.
 set_target_properties(${CEF_TARGET} PROPERTIES INSTALL_RPATH "$ORIGIN")
 set_target_properties(${CEF_TARGET} PROPERTIES BUILD_WITH_INSTALL_RPATH TRUE)
-set_target_properties(${CEF_TARGET} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CEF_TARGET_OUT_DIR}/bin)
+set_target_properties(${CEF_TARGET} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CEF_TARGET_OUT_DIR}/bin")
 
 # Copy binary and resource files to the target output directory.
-COPY_FILES("${CEF_TARGET}" "${CEF_BINARY_FILES}" "${CEF_BINARY_DIR}" "${CEF_TARGET_OUT_DIR}/bin")
-COPY_FILES("${CEF_TARGET}" "${CEF_RESOURCE_FILES}" "${CEF_RESOURCE_DIR}" "${CEF_TARGET_OUT_DIR}/resources/cef")
-COPY_FILES("${CEF_TARGET}" "${BRICK_RESOURCES}" "${CEF_RESOURCE_DIR}" "${CEF_TARGET_OUT_DIR}/resources")
+COPY_AND_INSTALL_FILES("${CEF_TARGET}" "${CEF_BINARY_FILES}" "${CEF_BINARY_DIR}" "bin")
+COPY_AND_INSTALL_FILES("${CEF_TARGET}" "${CEF_RESOURCE_FILES}" "${CEF_RESOURCE_DIR}" "resources/cef")
+COPY_AND_INSTALL_FILES("${CEF_TARGET}" "${BRICK_RESOURCES}" "${CEF_RESOURCE_DIR}" "resources")
 # Hack for ICU
-COPY_FILES("${CEF_TARGET}" "icudtl.dat" "${CEF_RESOURCE_DIR}" "${CEF_TARGET_OUT_DIR}/bin")
+COPY_AND_INSTALL_FILES("${CEF_TARGET}" "icudtl.dat" "${CEF_RESOURCE_DIR}" "bin")
 
 # Set SUID permissions on the chrome-sandbox target.
 SET_LINUX_SUID_PERMISSIONS("${CEF_TARGET}" "${CEF_TARGET_OUT_DIR}/bin/chrome-sandbox")
+
+# Additional install rules
+install(
+  FILES "${CMAKE_SOURCE_DIR}/${CEF_RESOURCE_DIR}/install/brick/brick"
+  DESTINATION "${CMAKE_INSTALL_PREFIX}"
+)
+install(
+  FILES "${CMAKE_SOURCE_DIR}/${CEF_RESOURCE_DIR}/install/brick/brick.desktop"
+  DESTINATION "${CMAKE_INSTALL_PREFIX}"
+)
+install(
+  DIRECTORY "${CMAKE_SOURCE_DIR}/${CEF_RESOURCE_DIR}/install/usr"
+  DESTINATION "/"
+)
+# Create link to executable in /usr/bin
+INSTALL_SYMLINK("${CMAKE_INSTALL_PREFIX}/bin/brick" "/usr/bin")
+
+# Set suid flag for chromium purposes
+install(
+  FILES "${CMAKE_SOURCE_DIR}/${CEF_BINARY_DIR}/chrome-sandbox"
+  PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE SETUID
+  DESTINATION "bin"
+)

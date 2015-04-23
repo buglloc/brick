@@ -127,8 +127,16 @@ cmake_minimum_required(VERSION 2.8.7)
 set(CMAKE_CONFIGURATION_TYPES Debug Release)
 
 set(CMAKE_CURRENT_BINARY_DIR "${source_dir}/$<CONFIGURATION>")
+
+# Determine the target installation directory.
+if(NOT CMAKE_INSTALL_PREFIX)
+  SET(CMAKE_INSTALL_PREFIX "/opt/brick" CACHE PATH "Install path prefix" FORCE)
+else(NOT CMAKE_INSTALL_PREFIX)
+  MESSAGE(STATUS "CMAKE_INSTALL_PREFIX already set to: ${CMAKE_INSTALL_PREFIX}")
+endif()
+
 # Project name.
-project(cef)
+project("brick")
 
 # Use folders in the resulting project files.
 set_property(GLOBAL PROPERTY OS_FOLDERS ON)
@@ -277,14 +285,14 @@ if(OS_LINUX)
   set(CEF_STANDARD_LIBS "X11")
 
   # CEF directory paths.
-  set(CEF_RESOURCE_DIR        "${CMAKE_CURRENT_SOURCE_DIR}/Resources")
-  set(CEF_BINARY_DIR          "${CMAKE_CURRENT_SOURCE_DIR}/${CMAKE_BUILD_TYPE}")
-  set(CEF_BINARY_DIR_DEBUG    "${CMAKE_CURRENT_SOURCE_DIR}/Debug")
-  set(CEF_BINARY_DIR_RELEASE  "${CMAKE_CURRENT_SOURCE_DIR}/Release")
+  set(CEF_RESOURCE_DIR        "Resources")
+  set(CEF_BINARY_DIR          "${CMAKE_BUILD_TYPE}")
+  set(CEF_BINARY_DIR_DEBUG    "Debug")
+  set(CEF_BINARY_DIR_RELEASE  "Release")
 
   # CEF library paths.
-  set(CEF_LIB_DEBUG   "${CEF_BINARY_DIR_DEBUG}/libcef.so")
-  set(CEF_LIB_RELEASE "${CEF_BINARY_DIR_RELEASE}/libcef.so")
+  set(CEF_LIB_DEBUG   "${CMAKE_CURRENT_SOURCE_DIR}/${CEF_BINARY_DIR_DEBUG}/libcef.so")
+  set(CEF_LIB_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/${CEF_BINARY_DIR_RELEASE}/libcef.so")
 
   # List of CEF binary files.
   set(CEF_BINARY_FILES
@@ -375,13 +383,13 @@ if(OS_MACOSX)
   endif()
 
   # CEF directory paths.
-  set(CEF_BINARY_DIR          "${CMAKE_CURRENT_SOURCE_DIR}/$<CONFIGURATION>")
-  set(CEF_BINARY_DIR_DEBUG    "${CMAKE_CURRENT_SOURCE_DIR}/Debug")
-  set(CEF_BINARY_DIR_RELEASE  "${CMAKE_CURRENT_SOURCE_DIR}/Release")
+  set(CEF_BINARY_DIR          "$<CONFIGURATION>")
+  set(CEF_BINARY_DIR_DEBUG    "Debug")
+  set(CEF_BINARY_DIR_RELEASE  "Release")
 
   # CEF library paths.
-  set(CEF_LIB_DEBUG   "${CEF_BINARY_DIR_DEBUG}/Chromium Embedded Framework.framework/Chromium Embedded Framework")
-  set(CEF_LIB_RELEASE "${CEF_BINARY_DIR_RELEASE}/Chromium Embedded Framework.framework/Chromium Embedded Framework")
+  set(CEF_LIB_DEBUG   "${CMAKE_CURRENT_SOURCE_DIR}/${CEF_BINARY_DIR_DEBUG}/Chromium Embedded Framework.framework/Chromium Embedded Framework")
+  set(CEF_LIB_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/${CEF_BINARY_DIR_RELEASE}/Chromium Embedded Framework.framework/Chromium Embedded Framework")
 endif()
 
 
@@ -434,14 +442,14 @@ if(OS_WINDOWS)
   set(CEF_STANDARD_LIBS "comctl32.lib" "rpcrt4.lib" "shlwapi.lib")
 
   # CEF directory paths.
-  set(CEF_RESOURCE_DIR        "${CMAKE_CURRENT_SOURCE_DIR}/Resources")
-  set(CEF_BINARY_DIR          "${CMAKE_CURRENT_SOURCE_DIR}/$<CONFIGURATION>")
-  set(CEF_BINARY_DIR_DEBUG    "${CMAKE_CURRENT_SOURCE_DIR}/Debug")
-  set(CEF_BINARY_DIR_RELEASE  "${CMAKE_CURRENT_SOURCE_DIR}/Release")
+  set(CEF_RESOURCE_DIR        "Resources")
+  set(CEF_BINARY_DIR          "$<CONFIGURATION>")
+  set(CEF_BINARY_DIR_DEBUG    "Debug")
+  set(CEF_BINARY_DIR_RELEASE  "Release")
 
   # CEF library paths.
-  set(CEF_LIB_DEBUG   "${CEF_BINARY_DIR_DEBUG}/libcef.lib")
-  set(CEF_LIB_RELEASE "${CEF_BINARY_DIR_RELEASE}/libcef.lib")
+  set(CEF_LIB_DEBUG   "${CMAKE_CURRENT_SOURCE_DIR}/${CEF_BINARY_DIR_DEBUG}/libcef.lib")
+  set(CEF_LIB_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/${CEF_BINARY_DIR_RELEASE}/libcef.lib")
 
   # List of CEF binary files.
   set(CEF_BINARY_FILES
@@ -546,6 +554,7 @@ message(STATUS "*** CONFIGURATION SETTINGS ***")
 message(STATUS "Generator:                    ${CMAKE_GENERATOR}")
 message(STATUS "Platform:                     ${CMAKE_SYSTEM_NAME}")
 message(STATUS "Project architecture:         ${PROJECT_ARCH}")
+message(STATUS "Install prefix:               ${CMAKE_INSTALL_PREFIX}")
 
 if(${CMAKE_GENERATOR} STREQUAL "Ninja" OR ${CMAKE_GENERATOR} STREQUAL "Unix Makefiles")
   message(STATUS "Build type:                   ${CMAKE_BUILD_TYPE}")

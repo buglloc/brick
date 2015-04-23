@@ -1,0 +1,6 @@
+?package(brick):needs="x11" \
+  section="Network" \
+  hints="Instant Messanger" \
+  title="Brick" \
+  icon="/usr/share/icons/hicolor/256x256/brick.png" \
+  command="/usr/bin/brick"

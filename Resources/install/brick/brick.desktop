@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Brick
+Type=Application
+Categories=Network;InstantMessaging;
+Exec=brick
+Icon=brick
+Terminal=false
