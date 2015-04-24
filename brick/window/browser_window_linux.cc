@@ -141,7 +141,7 @@ BrowserWindow::ToggleVisibility() {
      || (gdk_window_get_state(window_handler_) & (GDK_WINDOW_STATE_ICONIFIED|GDK_WINDOW_STATE_WITHDRAWN))
   );
 
-  if (is_hided) {
+  if (is_hided || !IsActive()) {
     Present();
   } else {
     Hide();
@@ -153,6 +153,18 @@ BrowserWindow::SetActive() {
   gdk_window_focus(window_handler_,
     gdk_x11_display_get_user_time(gdk_window_get_display(window_handler_))
   );
+}
+
+bool
+BrowserWindow::IsActive() {
+  GdkWindow *active_window = gdk_screen_get_active_window(
+     gdk_window_get_screen(window_handler_)
+  );
+
+  if (active_window == NULL)
+    return true;
+
+  return (GDK_WINDOW_XID(window_handler_) == GDK_WINDOW_XID(active_window));
 }
 
 void

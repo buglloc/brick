@@ -61,6 +61,7 @@ public:
   virtual void ToggleVisibility();
   virtual void Present();
   virtual void SetActive();
+  virtual bool IsActive();
   virtual void FlushChanges();
   virtual void MoveResize(Position position, int width, int height);
   virtual void Stick();
