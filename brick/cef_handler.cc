@@ -23,8 +23,8 @@ namespace {
 
     CefRefPtr<ClientHandler> g_instance = NULL;
     const char kInterceptionPath[] = "/desktop_app/internals/";
-    const char kRuntimePagePath[] = "/desktop_app/internals/runtime_pages/";
-    const char kInjectedJsPath[] = "/desktop_app/internals/injected_js/";
+    const char kTemporaryPagePath[] = "/desktop_app/internals/temp-pages/";
+    const char kInjectedJsPath[] = "/desktop_app/internals/injected-js/";
     std::string kUnknownInternalContent = "Failed to load resource";
 
 } // namespace
@@ -34,7 +34,7 @@ ClientHandler::ClientHandler()
       main_handle_ (NULL),
       indicator_handle_(NULL),
       account_manager_ (NULL),
-      last_runtime_page_ (0)
+      last_temporary_page_(0)
 {
   DCHECK(!g_instance);
   g_instance = this;
@@ -370,11 +370,12 @@ ClientHandler::GetResourceHandler(
         stream = GetBinaryFileReader(file_name);
       }
 
-    } else if (file_name.find(kRuntimePagePath) == 0 ) {
+    } else if (file_name.find(kTemporaryPagePath) == 0 ) {
       // Special logic for runtime pages
-      file_name = file_name.substr(strlen(kRuntimePagePath));
-      if (runtime_page_map_.count(file_name)) {
-        std::string content = runtime_page_map_[file_name];
+      file_name = file_name.substr(strlen(kTemporaryPagePath));
+      if (temporary_page_map_.count(file_name)) {
+        std::string content = temporary_page_map_[file_name];
+        temporary_page_map_.erase(file_name);
         stream = CefStreamReader::CreateForData(
             static_cast<void*>(const_cast<char*>(content.c_str())),
             content.size()
@@ -530,8 +531,8 @@ ClientHandler::IsAllowedUrl(std::string url) {
 void
 ClientHandler::SwitchAccount(int id) {
   CloseAllPopups(true);
-  last_runtime_page_ = 0;
-  runtime_page_map_.clear();
+  last_temporary_page_ = 0;
+  temporary_page_map_.clear();
   // ToDo: delete host/domain cookies here!!!
   account_manager_->SwitchAccount(id);
   browser_->GetMainFrame()->LoadURL(
@@ -586,11 +587,11 @@ ClientHandler::RegisterSystemEventListeners() {
 }
 
 std::string
-ClientHandler::AddRuntimePage(const std::string& content) {
-  std::string url = kRuntimePagePath;
-  std::string pageId = std::to_string(++last_runtime_page_) + ".html";
+ClientHandler::AddTemporaryPage(const std::string& content) {
+  std::string url = kTemporaryPagePath;
+  std::string pageId = std::to_string(++last_temporary_page_) + ".html";
   url.append(pageId);
-  runtime_page_map_[pageId] = content;
+  temporary_page_map_[pageId] = content;
 
   return url;
 }

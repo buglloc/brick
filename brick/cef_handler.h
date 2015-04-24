@@ -223,7 +223,7 @@ public:
   virtual void onEvent(UserAwayEvent &event) OVERRIDE;
   virtual void onEvent(SleepEvent &event) OVERRIDE;
 
-  std::string AddRuntimePage(const std::string& content);
+  std::string AddTemporaryPage(const std::string& content);
 
 protected:
   // Create all of ProcessMessageDelegate objects.
@@ -270,9 +270,9 @@ private:
 
   AppSettings app_settings_;
 
-  typedef std::map<std::string, std::string> RuntimePageMap;
-  RuntimePageMap runtime_page_map_;
-  int32 last_runtime_page_;
+  typedef std::map<std::string, std::string> TemporaryPageMap;
+  TemporaryPageMap temporary_page_map_;
+  int32 last_temporary_page_;
 
   CefRefPtr<WindowFeatures> last_popup_features_;
 

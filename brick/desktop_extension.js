@@ -115,14 +115,14 @@ var app = {
 
     AppExHideNotification(null);  
   },
-  addPage: function(content, callback) {
-    native function AppExAddPage();
+  addTemporaryPage: function(content, callback) {
+    native function AppExAddTemporaryPage();
 
-    AppExAddPage(callback, content);
+    AppExAddTemporaryPage(callback, content);
   },
   openTopmostWindow: function(content, callback) {
 
-    app.addPage(content, function(response, url) {
+    app.addTemporaryPage(content, function(response, url) {
       if (!url) {
         console.error('Can\'t add internal page for topmost window');
         return;

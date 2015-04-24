@@ -20,7 +20,7 @@ namespace {
     const char kMessageIndicatorBadgeName[]   = "IndicatorBadgee";
     const char kMessageShowNotificationName[] = "ShowNotification";
     const char kMessageAddAccountName[]       = "AddAccount";
-    const char kMessageAddPageName[]          = "AddPage";
+    const char kMessageAddTemporaryPageName[] = "AddTemporaryPage";
 
     const char kCurrentPortalId[] = "current_portal";
 
@@ -302,7 +302,7 @@ AppMessageDelegate::OnProcessMessageReceived(
       window->Show();
     };
 
-  } else if (message_name == kMessageAddPageName) {
+  } else if (message_name == kMessageAddTemporaryPageName) {
     // Parameters:
     // 0: int32 - callback id
     // 1: string - html content
@@ -315,7 +315,7 @@ AppMessageDelegate::OnProcessMessageReceived(
     }
 
     if (error == NO_ERROR) {
-      CefString url = ClientHandler::GetInstance()->AddRuntimePage(
+      CefString url = ClientHandler::GetInstance()->AddTemporaryPage(
          request_args->GetString(1)
       );
 
