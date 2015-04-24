@@ -58,7 +58,7 @@ macro(COPY_AND_INSTALL_FILES target file_list source_dir target_dir)
         )
       install(
         DIRECTORY "${source_file}"
-        DESTINATION "${CMAKE_INSTALL_PREFIX}/${target_dir}"
+        DESTINATION "${CMAKE_INSTALL_PREFIX}/${BRICK_INSTALL_DIR}/${target_dir}"
       )
     else()
       add_custom_command(
@@ -69,7 +69,7 @@ macro(COPY_AND_INSTALL_FILES target file_list source_dir target_dir)
         )
       install(
         FILES "${source_file}"
-        DESTINATION "${CMAKE_INSTALL_PREFIX}/${target_dir}"
+        DESTINATION "${CMAKE_INSTALL_PREFIX}/${BRICK_INSTALL_DIR}/${target_dir}"
       )
     endif()
   endforeach()
