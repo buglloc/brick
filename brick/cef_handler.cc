@@ -83,7 +83,7 @@ ClientHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
     window->WrapNative(browser->GetHost()->GetWindowHandle());
     if (last_popup_features_.get()) {
       if (last_popup_features_->topmost)
-        window->SetKeepAbove(true);
+        window->Stick();
     }
     last_popup_features_ = NULL;
 

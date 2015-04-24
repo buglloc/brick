@@ -63,8 +63,8 @@ public:
   virtual void SetActive();
   virtual void FlushChanges();
   virtual void MoveResize(Position position, int width, int height);
-  virtual void SetKeepAbove(bool above = true);
-  virtual void SetKeepBelow(bool below = true);
+  virtual void Stick();
+  virtual void UnStick();
 
   // Event handlers
   virtual bool OnHide();

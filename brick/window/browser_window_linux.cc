@@ -228,11 +228,14 @@ BrowserWindow::MoveResize(Position position, int width, int height) {
 }
 
 void
-BrowserWindow::SetKeepAbove(bool above) {
-  gdk_window_set_keep_above(window_handler_, above);
+BrowserWindow::Stick() {
+  gdk_window_set_keep_above(window_handler_, true);
+  gdk_window_stick(window_handler_);
+  LOG(WARNING) << "!!";
 }
 
 void
-BrowserWindow::SetKeepBelow(bool below) {
-  gdk_window_set_keep_below(window_handler_, below);
+BrowserWindow::UnStick() {
+  gdk_window_set_keep_above(window_handler_, false);
+  gdk_window_unstick(window_handler_);
 }
