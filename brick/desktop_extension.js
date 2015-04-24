@@ -420,13 +420,14 @@ BXDesktopSystem.ExecuteCommand = function(command, params) {
       app.browse(params);
       break;
     case 'topmost.show.html':
-      console.log('BXDesktopSystem.ExecuteCommand(\'topmost.show.html\', ..) is temporary disabled.');
-      break;
       app.openTopmostWindow(params, function (newWindow) {
         BXWindows.push(newWindow);
+        // Ugly hack for the official app logic (doesn't like asynchronous API) :'(
         if (BXIM !== void 0 && BXIM.desktop !== void 0) {
-          // Ugly hack for the official app logic (doesn't like asynchronous API)
           BXIM.desktop.topmostWindow = newWindow;
+        }
+        if (BX !== void 0 && BX.desktop !== void 0) {
+          BX.desktop.topmostWindow = newWindow;
         }
       });
       break;

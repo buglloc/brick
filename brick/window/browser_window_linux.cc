@@ -231,7 +231,6 @@ void
 BrowserWindow::Stick() {
   gdk_window_set_keep_above(window_handler_, true);
   gdk_window_stick(window_handler_);
-  LOG(WARNING) << "!!";
 }
 
 void
