@@ -130,7 +130,7 @@ set(CMAKE_CURRENT_BINARY_DIR "${source_dir}/$<CONFIGURATION>")
 
 # Determine the target installation directory.
 if(NOT CMAKE_INSTALL_PREFIX)
-  SET(CMAKE_INSTALL_PREFIX "/opt/brick" CACHE PATH "Install path prefix" FORCE)
+  SET(CMAKE_INSTALL_PREFIX "/" CACHE PATH "Install path prefix" FORCE)
 else(NOT CMAKE_INSTALL_PREFIX)
   MESSAGE(STATUS "CMAKE_INSTALL_PREFIX already set to: ${CMAKE_INSTALL_PREFIX}")
 endif()
