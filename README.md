@@ -40,13 +40,10 @@ git clone --recursive https://github.com/buglloc/brick.git
 mkdir build && cd build
 cmake ../brick
 make
-
-# Now Brick binary placed in ./brick/Release. Need to set SUID flag for chrome-sandbox
-sudo chown root.root brick/Release/bin/chrome-sandbox
-sudo chmod 4755 brick/Release/bin/chrome-sandbox
+sudo make install
 
 # And run it!
-./brick/Release/bin/brick
+brick
 ```
 
 ##  Contributing
