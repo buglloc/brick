@@ -131,7 +131,7 @@ var app = {
       var newWindow = window.open(
           url,
           'topmost',
-          'width=1,height=1,resizable=no'
+          'width=1,height=1,resizable=no,topmost'
       );
 
       if (callback) {
