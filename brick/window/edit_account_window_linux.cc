@@ -39,7 +39,7 @@ namespace {
 
       gtk_window_set_title(GTK_WINDOW(dialog), "Two-step authentication");
       gtk_message_dialog_set_markup(GTK_MESSAGE_DIALOG(dialog),
-         "Two-step authentication enabled.\nPlease enter your one-time password:");
+         "Two-step authentication has been activated.\nPlease enter your one-time password:");
 
       GtkWidget* content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
       GtkWidget* text_box = gtk_entry_new();
@@ -102,22 +102,22 @@ namespace {
               error_message = "HTTP error: " + auth_result.http_error;
               break;
             case Account::ERROR_CODE::CAPTCHA:
-              error_message = "You have exceeded the maximum number of login attempts.\n"
-                 "Please log in <b>browser</b> first";
+              error_message = "You’ve exceeded the maximum number of login attempts allowed.\n"
+                 "Please, authorize in your <b>browser</b> first";
               break;
             case Account::ERROR_CODE::OTP:
               ShowOtpDialog(self);
               return;
               break;
             case Account::ERROR_CODE::AUTH:
-              error_message = "Authentication failed.";
+              error_message = "Authorization error, wrong login or password";
               break;
             case Account::ERROR_CODE::INVALID_URL:
               error_message = auth_result.http_error + "\n"
-                 "Please provide correct host name and scheme";
+                 "Please, provide correct host name and scheme";
               break;
             default:
-              error_message = "An unknown error occurred :(";
+              error_message = "I’m sorry, unknown error :(";
               break;
           }
         }
