@@ -24,13 +24,14 @@ class BrowserWindow : public CefBase {
 
 public:
   BrowserWindow() : window_handler_(NULL),
-                 hided_(false),
-                 focused_(true),
-                 visible_(true),
-                 resizable_(true),
-                 closable_(true),
-                 last_x_(-1),
-                 last_y_(-1) {};
+                 hided_ (false),
+                 focused_ (true),
+                 visible_ (true),
+                 resizable_ (true),
+                 closable_ (true),
+                 restore_last_position_ (false),
+                 last_x_ (0),
+                 last_y_ (0) {};
 
   BrowserWindowHandle GetHandler();
 
@@ -85,6 +86,7 @@ protected:
   bool visible_;
   bool resizable_;
   bool closable_;
+  bool restore_last_position_;
   int last_x_;
   int last_y_;
 

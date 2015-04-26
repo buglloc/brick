@@ -174,11 +174,14 @@ BrowserWindow::SaveRestorePosition(bool save) {
     gdk_window_get_frame_extents(window_handler_, &extents);
     last_x_ = extents.x;
     last_y_ = extents.y;
+    restore_last_position_ = true;
   } else if (
-     last_x_ >= 0 && last_x_ < (gdk_screen_width() - 60)
+     restore_last_position_
+     && last_x_ >= 0 && last_x_ < (gdk_screen_width() - 60)
      && last_y_ >= 0 && last_y_ < (gdk_screen_height() - 60)
      ) {
 
+    restore_last_position_ = false;
     gdk_window_move(window_handler_, last_x_, last_y_);
   }
 }
