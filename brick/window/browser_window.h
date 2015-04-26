@@ -29,8 +29,8 @@ public:
                  visible_(true),
                  resizable_(true),
                  closable_(true),
-                 last_x_(0),
-                 last_y_(0) {};
+                 last_x_(-1),
+                 last_y_(-1) {};
 
   BrowserWindowHandle GetHandler();
 
