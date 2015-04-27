@@ -420,7 +420,9 @@ BXDesktopSystem.ExecuteCommand = function(command, params) {
       BrickApp.browse(params);
       break;
     case 'topmost.show.html':
-      BrickApp.openTopmostWindow(params, function (newWindow) {
+      // Fast&Ugly hack for non UTF-8 portals. Strange but they may set not UTF-8 encoding for the UTF-8 content
+      var html = params.replace(/text\/html;\s?charset=[a-zA-Z0-9-]+/, 'text/html;charset=UTF-8');
+      BrickApp.openTopmostWindow(html, function (newWindow) {
         BXWindows.push(newWindow);
         // Ugly hack for the official app logic (doesn't like asynchronous API) :'(
         if (BXIM !== void 0 && BXIM.desktop !== void 0) {
