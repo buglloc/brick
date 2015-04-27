@@ -1,5 +1,6 @@
 #include <unistd.h>
 #include <brick/httpclient/httpclient.h>
+#include <include/cef_url.h>
 #include "account.h"
 #include "httpclient/httpclient.h"
 #include "include/base/cef_logging.h"
@@ -204,7 +205,11 @@ Account::Auth(bool renew_password, std::string otp) {
     result.error_code = ERROR_CODE::INVALID_URL;
     result.success = false;
     result.cookies = r.cookies;
-    result.http_error = "Redirect occurred: " + r.headers["Location"];
+    result.http_error = "Redirect occurred: ";
+    CefURLParts redirect_parts;
+    if (CefParseURL(r.headers["Location"], redirect_parts)) {
+     result.http_error +=  CefString(&redirect_parts.origin);
+    }
 
   } else {
     // Some error occurred...
