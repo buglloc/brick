@@ -16,20 +16,20 @@ var STP_FRONT = 6;
 /*------ Ugly desktop globals ---------*/
 
 /*---------- App extension ---------*/
-var app = {
+var BrickApp = {
   windowCallbacks: {},
   defaultNotifyDuration: 3000,
   authErrorCodes: {NONE:0, HTTP:1, CAPTCHA:2, OTP:3, AUTH:4, INVALID_URL:5, UNKNOWN:6},
   setWindowCallback: function(windowId, callback) {
-    app.windowCallbacks[windowId] = callback;
+    BrickApp.windowCallbacks[windowId] = callback;
   },
   getWindowCallback: function(windowId, callback) {
     var result = null;
-  if (!app.windowCallbacks[windowId]) {
-      console.error('app.getWindowCallback: undefined windowId, windowId: ' + windowId);
+  if (!BrickApp.windowCallbacks[windowId]) {
+      console.error('BrickApp.getWindowCallback: undefined windowId, windowId: ' + windowId);
     } else {
-      result = app.windowCallbacks[windowId];
-      delete app.windowCallbacks[windowId];
+      result = BrickApp.windowCallbacks[windowId];
+      delete BrickApp.windowCallbacks[windowId];
     }
 
     return result;
@@ -63,7 +63,7 @@ var app = {
     AppExNavigate(null, url);
   },
   loadPortal: function() {
-    app.navigate('current_portal');
+    BrickApp.navigate('current_portal');
   },
   browse: function(url) {
     native function AppExBrowse();
@@ -122,7 +122,7 @@ var app = {
   },
   openTopmostWindow: function(content, callback) {
 
-    app.addTemporaryPage(content, function(response, url) {
+    BrickApp.addTemporaryPage(content, function(response, url) {
       if (!url) {
         console.error('Can\'t add internal page for topmost window');
         return;
@@ -148,7 +148,7 @@ var app = {
         'width=567,height=335,resizable=no'
     );
 
-    app.setWindowCallback(windowId, callback);
+    BrickApp.setWindowCallback(windowId, callback);
     return windowHandle;
   },
   getOption: function(name, defaultValue) {
@@ -191,7 +191,7 @@ var app = {
 /*---------- App extension ---------*/
 
 /*---------- AppWindow extension ---------*/
-var appWindow = {
+var BrickWindow = {
   width: 0,
   height: 0,
   positions: {NorthWest: 0, North: 1, NorthEast: 2, West: 3, Center: 4, East: 5, SouthWest: 6, South: 7, SouthEast: 8},
@@ -297,15 +297,15 @@ var BXDesktopSystem = BXDesktopSystem || {};
 var BXWindows = BXWindows || [];
 
 BXDesktopWindow.GetProperty = function(name) {
-    var result = null;
-    switch (name) {
-        case 'isForeground':
-            result = true;
-            break;
-        default:
-          implementMe('BXDesktopWindow.GetProperty', arguments);
-            break;
-    }
+  var result = null;
+  switch (name) {
+    case 'isForeground':
+      result = true;
+      break;
+    default:
+      BrickHelper.implementMe('BXDesktopWindow.GetProperty', arguments);
+      break;
+  }
   return result;
 };
 
@@ -316,31 +316,31 @@ BXDesktopWindow.SetProperty = function(name,value) {
       break;
     case 'Size':
     case 'size':
-      appWindow.setSize(value['Width'], value['Height']);
+      BrickWindow.setSize(value['Width'], value['Height']);
       break;
     case 'clientSize':
-      appWindow.setClientSize(value['Width'], value['Height']);
+      BrickWindow.setClientSize(value['Width'], value['Height']);
       break;
     case 'minClientSize':
-      appWindow.setMinClientSize(value['Width'], value['Height']);
+      BrickWindow.setMinClientSize(value['Width'], value['Height']);
       break;
     case 'position':
-      var position = translateOldPosition(value['X'], value['Y']);
+      var position = BrickHelper.translateOldPosition(value['X'], value['Y']);
       if (position === null) {
         console.error('Unknown position: ' + value['X'] + 'x' + value['Y']);
         break;
       }
 
-      appWindow.moveResize(position, value['Width'], value['Height']);
+      BrickWindow.moveResize(position, value['Width'], value['Height']);
       break;
     case 'resizable':
-      appWindow.setResizable(value);
+      BrickWindow.setResizable(value);
       break;
     case 'closable':
-      appWindow.setClosable(value);
+      BrickWindow.setClosable(value);
       break;
     default:
-    implementMe('BXDesktopWindow.SetProperty', arguments);
+      BrickHelper.implementMe('BXDesktopWindow.SetProperty', arguments);
   }
 };
 
@@ -348,32 +348,32 @@ BXDesktopWindow.ExecuteCommand = function(cmd, params) {
   switch (cmd) {
     case 'show':
     if(!opener)
-        appWindow.showMain();
+        BrickWindow.showMain();
       else
-        appWindow.show();
+        BrickWindow.show();
       break;
     case 'show.main':
-      appWindow.showMain();
+      BrickWindow.showMain();
       break;
     case 'hide':
-      appWindow.hide();
+      BrickWindow.hide();
       break;
     case 'close':
-      appWindow.close();
+      BrickWindow.close();
       break;
     case 'center':
-      appWindow.center();
+      BrickWindow.center();
       break;
     case 'html.load':
       window.document.write(params);
       break;
-    default: 
-      implementMe('BXDesktopWindow.ExecuteCommand', arguments);
+    default:
+      BrickHelper.implementMe('BXDesktopWindow.ExecuteCommand', arguments);
   }
 };
 
 BXDesktopSystem.SetProperty = function(name, value) {
-  implementMe('BXDesktopSystem.SetProperty', arguments);
+  BrickHelper.implementMe('BXDesktopSystem.SetProperty', arguments);
 };
 
 BXDesktopSystem.ParseNotificationHtml = function(html) {
@@ -391,7 +391,7 @@ BXDesktopSystem.ParseNotificationHtml = function(html) {
 
   var iconUri = null;
   if (icon !== null) {
-    iconUri = qualifyUrl(icon.getAttribute('src'));
+    iconUri = BrickHelper.qualifyUrl(icon.getAttribute('src'));
   }
 
   return {
@@ -406,21 +406,21 @@ BXDesktopSystem.ParseNotificationHtml = function(html) {
 BXDesktopSystem.ExecuteCommand = function(command, params) {
   switch (command) {
     case 'tooltip.change':
-       app.changeTooltip(params);
+       BrickApp.changeTooltip(params);
        break;
     case 'notification.show.html':
       var parsed = this.ParseNotificationHtml(params);
-      app.showNotification(
+      BrickApp.showNotification(
         parsed.title,
         parsed.text,
         parsed.icon
       );
       break;
     case 'browse':
-      app.browse(params);
+      BrickApp.browse(params);
       break;
     case 'topmost.show.html':
-      app.openTopmostWindow(params, function (newWindow) {
+      BrickApp.openTopmostWindow(params, function (newWindow) {
         BXWindows.push(newWindow);
         // Ugly hack for the official app logic (doesn't like asynchronous API) :'(
         if (BXIM !== void 0 && BXIM.desktop !== void 0) {
@@ -432,16 +432,16 @@ BXDesktopSystem.ExecuteCommand = function(command, params) {
       });
       break;
     default:
-     implementMe('BXDesktopSystem.ExecuteCommand', arguments);
+      BrickHelper.implementMe('BXDesktopSystem.ExecuteCommand', arguments);
   }
 };
 
 BXDesktopSystem.QuerySettings = function(name, def) {
-  return app.getOption(name, def);
+  return BrickApp.getOption(name, def);
 };
 
 BXDesktopSystem.StoreSettings = function(name, value) {
-  return app.setOption(name, value);
+  return BrickApp.setOption(name, value);
 };
 
 BXDesktopSystem.LogInfo = function LogInfo(value) {
@@ -476,12 +476,12 @@ BXDesktopSystem.GetProperty = function GetProperty(property) {
     case 'version':
       return '#VERSION#';
     default:
-    implementMe('BXDesktopSystem.GetProperty', arguments);
+      BrickHelper.implementMe('BXDesktopSystem.GetProperty', arguments);
   }
 };
 
 BXDesktopSystem.SetIconStatus = function(status) {
-    app.setIdleIndicator(status);
+    BrickApp.setIdleIndicator(status);
 };
 
 BXDesktopSystem.FlashIcon = function(flag) {
@@ -493,7 +493,7 @@ BXDesktopSystem.SetTabBadge = function(index, counter) {
 };
 
 BXDesktopSystem.SetIconBadge = function(badge, important) {
-  app.setIndicatorBadge(badge, important);
+  BrickApp.setIndicatorBadge(badge, important);
 };
 
 BXDesktopSystem.IsB24net = function IsB24net() {
@@ -506,15 +506,15 @@ BXDesktopSystem.Login = function Login(params) {
     success = params.success;
   }
 
-  app.login(success);
+  BrickApp.login(success);
 };
 
 BXDesktopSystem.LoginForm = function(f) {
-  implementMe('BXDesktopSystem.LoginForm', arguments);
+  BrickHelper.implementMe('BXDesktopSystem.LoginForm', arguments);
 };
 
 BXDesktopSystem.Logout = function(src) {
-  implementMe('BXDesktopSystem.Logout', arguments);
+  BrickHelper.implementMe('BXDesktopSystem.Logout', arguments);
 };
 
 BXDesktopSystem.GetMainWindow = function() {
@@ -528,35 +528,35 @@ BXDesktopSystem.GetMainWindow = function() {
 };
 
 BXDesktopSystem.OpenLogsFolder = function() {
-  implementMe('BXDesktopSystem.OpenLogsFolder', arguments);
+  BrickHelper.implementMe('BXDesktopSystem.OpenLogsFolder', arguments);
 };
 
 BXDesktopWindow.AddTrayMenuItem = function(obj) {
-  implementMe('BXDesktopWindow.AddTrayMenuItem', arguments);
+  BrickHelper.implementMe('BXDesktopWindow.AddTrayMenuItem', arguments);
 };
 
 BXDesktopWindow.EndTrayMenuItem = function() {
-  implementMe('BXDesktopWindow.EndTrayMenuItem', arguments);
+  BrickHelper.implementMe('BXDesktopWindow.EndTrayMenuItem', arguments);
 };
 
 BXDesktopWindow.ExecuteTrayMenuItem = function(id) {
-  implementMe('BXDesktopWindow.ExecuteTrayMenuItem', arguments);
+  BrickHelper.implementMe('BXDesktopWindow.ExecuteTrayMenuItem', arguments);
 };
 
 BXDesktopSystem.BindSound = function(msg,url) {
-  implementMe('BXDesktopSystem.BindSound', arguments);
+  BrickHelper.implementMe('BXDesktopSystem.BindSound', arguments);
 };
 
 BXDesktopSystem.PlaySound = function(sound) {
-  implementMe('BXDesktopSystem.PlaySound', arguments);
+  BrickHelper.implementMe('BXDesktopSystem.PlaySound', arguments);
 };
 
 BXDesktopSystem.GetWindow = function(name, callback) {
-  BXWindows.push(app.openWindow(name, callback));
+  BXWindows.push(BrickApp.openWindow(name, callback));
 };
 
 BXDesktopWindow.OpenDeveloperTools = function() {
-  appWindow.openDeveloperTools();
+  BrickWindow.openDeveloperTools();
 };
 
 BXDesktopSystem.CheckDebugBuild = function CheckDebugBuild() {
@@ -564,7 +564,7 @@ BXDesktopSystem.CheckDebugBuild = function CheckDebugBuild() {
 };
 
 BXDesktopSystem.PreventShutdown = function() {
-  implementMe('BXDesktopSystem.PreventShutdown', arguments);
+  BrickHelper.implementMe('BXDesktopSystem.PreventShutdown', arguments);
 };
 
 BXDesktopSystem.ReportStorageNotification = function ReportStorageNotification(command, params) {
@@ -572,7 +572,7 @@ BXDesktopSystem.ReportStorageNotification = function ReportStorageNotification(c
 };
 
 BXDesktopSystem.Shutdown = function() {
-  implementMe('BXDesktopSystem.Shutdown', arguments);
+  BrickHelper.implementMe('BXDesktopSystem.Shutdown', arguments);
 };
 
 BXDesktopSystem.ShowTab = function(index) {
@@ -580,15 +580,15 @@ BXDesktopSystem.ShowTab = function(index) {
 };
 
 BXDesktopSystem.HideTab = function(index) {
-  implementMe('BXDesktopSystem.HideTab', arguments);
+  BrickHelper.implementMe('BXDesktopSystem.HideTab', arguments);
 };
 
 BXDesktopSystem.SetActiveTabNumber = function(index) {
-  implementMe('BXDesktopSystem.SetActiveTabNumber', arguments);
+  BrickHelper.implementMe('BXDesktopSystem.SetActiveTabNumber', arguments);
 };
 
 BXDesktopSystem.SetActiveTabI = function(index) {
-  implementMe('BXDesktopSystem.SetActiveTabI', arguments);
+  BrickHelper.implementMe('BXDesktopSystem.SetActiveTabI', arguments);
 };
 
 BXDesktopSystem.ActiveTab = function ActiveTab() {
@@ -604,101 +604,95 @@ BXDesktopSystem.SetActiveTab = function SetActiveTab() {
 };
 
 BXDesktopSystem.Navigate = function(index, url) {
-  app.navigate(url);
+  BrickApp.navigate(url);
 };
 
 BXDesktopSystem.GetWorkArea = function() {
-  implementMe('BXDesktopSystem.GetWorkArea', arguments);
+  BrickHelper.implementMe('BXDesktopSystem.GetWorkArea', arguments);
 };
 /*---------- Original API ---------*/
 
 /*---------- Helpers ---------*/
-function buildFunctionCall(name, arguments) {
-  var preparedArgs = [].map.call(
-    arguments,
-    function prepareArguments(item) {
-      switch (typeof(item)) {
-        case 'object':
-          return JSON.stringify(item);
-        case 'null':
-        case 'undefined':  
-          return 'null';
-        default:
-          return '' + item
-      }
+var BrickHelper = {
+  buildFunctionCall: function(name, arguments) {
+    var preparedArgs = [].map.call(
+        arguments,
+        function prepareArguments(item) {
+          switch (typeof(item)) {
+            case 'object':
+              return JSON.stringify(item);
+            case 'null':
+            case 'undefined':
+              return 'null';
+            default:
+              return '' + item
+          }
+        }
+    );
+
+    preparedArgs = preparedArgs.join(', ');
+
+    if (name)
+      return name + '(' + preparedArgs + ')';
+    else
+      return preparedArgs;
+  },
+  responseLogger: function() {
+    console.log('callback response: ' + this.buildFunctionCall(null, arguments));
+  },
+  methodLogger: function(method) {
+    var args = [].slice.call(arguments);
+    var response = this.buildFunctionCall(
+        args.shift(),
+        args
+    );
+
+    console.log('Method response: ' + response);
+  },
+  doNothing: function() {
+
+  },
+  encodeUtf8: function(text) {
+    return unescape(encodeURIComponent(text));
+  },
+  decodeUtf8: function() {
+    return decodeURIComponent(escape(text));
+  },
+  implementMe: function(name, args) {
+    console.error('Implement me: ' + this.buildFunctionCall(name, args));
+  },
+  qualifyUrl: function(url) {
+    if (/^https?:\/\//.test(url))
+      return url;
+
+    var a = document.createElement('a');
+    a.href = url;
+    return a.href;
+  },
+  translateOldPosition: function(x, y) {
+    if (x == STP_LEFT && y == STP_TOP) {
+      return BrickWindow.positions.NorthWest;
+    } else if (x == STP_CENTER && y == STP_TOP) {
+      return BrickWindow.positions.North;
+    } else if (x == STP_RIGHT && y == STP_TOP) {
+      return BrickWindow.positions.NorthEast;
+    } else if (x == STP_LEFT && y == STP_VCENTER) {
+      return BrickWindow.positions.West;
+    } else if (x == STP_CENTER && y == STP_VCENTER) {
+      return BrickWindow.positions.Center;
+    } else if (x == STP_RIGHT && y == STP_VCENTER) {
+      return BrickWindow.positions.East;
+    } else if (x == STP_LEFT && y == STP_BOTTOM) {
+      return BrickWindow.positions.SouthWest;
+    } else if (x == STP_CENTER && y == STP_BOTTOM) {
+      return BrickWindow.positions.South;
+    } else if (x == STP_RIGHT && y == STP_BOTTOM) {
+      return BrickWindow.positions.SouthEast;
     }
-  );
 
-  preparedArgs = preparedArgs.join(', ');
-
-  if (name)
-    return name + '(' + preparedArgs + ')';
-  else
-    return preparedArgs;
-}
-
-function responseLogger() {
-  console.log('callback response: ' + buildFunctionCall(null, arguments));
-}
-
-function methodLogger(method) {
-  var args = [].slice.call(arguments);
-  var response = buildFunctionCall(
-    args.shift(),
-    args
-  );
-
-  console.log('Method response: ' + response);
-}
-
-function doNothing() {
-}
-
-function encode_utf8(text) {
-  return decodeURIComponent(encodeURIComponent(text));
-}
-
-function decode_utf8(text) {
-  return decodeURIComponent(encodeUriComponent(text));
-}
-
-function implementMe(name, args) {
-  console.error('Implement me: ' + buildFunctionCall(name, args));
-}
-
-function qualifyUrl(url) {
-  if (/^https?:\/\//.test(url))
-    return url;
-
-  var a = document.createElement('a');
-  a.href = url;
-  return a.href;
-}
-
-function translateOldPosition(x, y) {
-  if (x == STP_LEFT && y == STP_TOP) {
-    return appWindow.positions.NorthWest;
-  } else if (x == STP_CENTER && y == STP_TOP) {
-    return appWindow.positions.North;
-  } else if (x == STP_RIGHT && y == STP_TOP) {
-    return appWindow.positions.NorthEast;
-  } else if (x == STP_LEFT && y == STP_VCENTER) {
-    return appWindow.positions.West;
-  } else if (x == STP_CENTER && y == STP_VCENTER) {
-    return appWindow.positions.Center;
-  } else if (x == STP_RIGHT && y == STP_VCENTER) {
-    return appWindow.positions.East;
-  } else if (x == STP_LEFT && y == STP_BOTTOM) {
-    return appWindow.positions.SouthWest;
-  } else if (x == STP_CENTER && y == STP_BOTTOM) {
-    return appWindow.positions.South;
-  } else if (x == STP_RIGHT && y == STP_BOTTOM) {
-    return appWindow.positions.SouthEast;
+    return null;
   }
-
-  return null;
-}
-
+};
 /*---------- Helpers ---------*/
 
 /*---------- Disk API ---------*/

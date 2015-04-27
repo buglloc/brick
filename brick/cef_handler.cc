@@ -175,7 +175,7 @@ ClientHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser,
 
   // ToDo: Use CefV8Value::ExecuteFunction? Maybe something like SendJSEvent...
   if (!app_settings_.client_scripts.empty()) {
-    injected_js.append("if (typeof BX != 'undefined' && app.loadScripts !== void 0) app.loadScripts([");
+    injected_js.append("if (typeof BX != 'undefined' && BrickApp.loadScripts !== void 0) BrickApp.loadScripts([");
     std::string url;
     auto it = app_settings_.client_scripts.begin();
     for (; it != app_settings_.client_scripts.end(); ++it) {
