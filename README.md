@@ -13,7 +13,7 @@ Project is currently under (rather) heavy development, so stay tuned, more featu
 
 ## How to install and run Brick
 
-### PPA
+### PPA for Ubuntu
 You can install Brick from PPA [buglloc/brick](https://launchpad.net/~buglloc/+archive/ubuntu/brick):
 ```bash
 sudo add-apt-repository ppa:buglloc/brick
@@ -24,6 +24,13 @@ sudo apt-get install brick-unity
 # Otherwise
 sudo apt-get install brick
 ```
+
+### AUR for Arch Linux
+You can install Brick from AUR [https://aur.archlinux.org/packages/brick/](https://aur.archlinux.org/packages/brick/):
+```bash
+yaourt brick
+```
+Brick for Unity doesn't supported so far. May be later:)
 
 ### Build manualy
 Or you can build Brick from sources:
