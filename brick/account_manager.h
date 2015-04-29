@@ -8,29 +8,28 @@
 #include "account.h"
 
 class AccountManager : public CefBase {
-  public:
-    typedef std::map<int, CefRefPtr<Account>> accounts_map;
+public:
+  typedef std::map<int, CefRefPtr<Account>> accounts_map;
 
-    AccountManager();
-    ~AccountManager();
+  AccountManager();
+  ~AccountManager();
 
-    void Init(std::string config_path);
-    accounts_map* GetAccounts();
-    bool AddAccount(const CefRefPtr<Account> account);
-    bool DeleteAccount(int id);
-    bool SwitchAccount(int id);
-    bool Commit();
-    CefRefPtr<Account> GetCurrentAccount();
-    CefRefPtr<Account> GetById(int id);
+  void Init(std::string config_path);
+  accounts_map* GetAccounts();
+  bool AddAccount(const CefRefPtr<Account> account);
+  bool DeleteAccount(int id);
+  bool SwitchAccount(int id);
+  bool Commit();
+  CefRefPtr<Account> GetCurrentAccount();
+  CefRefPtr<Account> GetById(int id);
 
-  protected:
-    bool initialized_;
-    std::string config_path_;
-    accounts_map accounts_;
-    CefRefPtr<Account> current_account_;
-    int last_id_;
+protected:
+  bool initialized_;
+  std::string config_path_;
+  accounts_map accounts_;
+  CefRefPtr<Account> current_account_;
+  int last_id_;
 
-  // Include the default reference counting implementation.
   IMPLEMENT_REFCOUNTING(AccountManager);
 };
 #endif /* end of BRICK_ACCOUNT_MANAGER_H_ */

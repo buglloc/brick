@@ -6,7 +6,7 @@
 
 namespace {
     const char fake_id = -1;
-
+    const char kDefaultAppUrl[] = "/desktop_app/";
 }
 
 Account::Account() {
@@ -142,7 +142,7 @@ Account::GenBaseUrl() {
   return (
      (secure_ ? "https://" : "http://" )
       + domain_
-      + "/desktop_app/" // ToDo: Need option here?
+      + kDefaultAppUrl // ToDo: Need option here?
   );
 }
 
