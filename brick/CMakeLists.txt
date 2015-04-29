@@ -52,6 +52,8 @@ set(BRICK_SRCS
   api_error.h
   cache_manager.h
   cache_manager.cc
+  cookie_cleaner.h
+  cookie_cleaner.cc
   )
 set(BRICK_COMMON_SRCS
   common/app_settings.cc

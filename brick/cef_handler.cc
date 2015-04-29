@@ -17,6 +17,7 @@
 #include "platform_util.h"
 #include "window_util.h"
 #include "brick_app.h"
+#include "cookie_cleaner.h"
 
 
 namespace {
@@ -535,9 +536,14 @@ ClientHandler::IsAllowedUrl(std::string url) {
 void
 ClientHandler::SwitchAccount(int id) {
   CloseAllPopups(true);
+  // Clear cookies
+  CefRefPtr<CookieCleaner> cleaner(new CookieCleaner);
+  cleaner->SetTargetDomain(account_manager_->GetCurrentAccount()->GetDomain());
+  CefRefPtr<CefCookieManager> manager = CefCookieManager::GetGlobalManager();
+  manager->VisitAllCookies(cleaner);
+
   last_temporary_page_ = 0;
   temporary_page_map_.clear();
-  // ToDo: delete host/domain cookies here!!!
   account_manager_->SwitchAccount(id);
   browser_->GetMainFrame()->LoadURL(
      account_manager_->GetCurrentAccount()->GetBaseUrl() + "internals/pages/portal-loader#login=yes"
