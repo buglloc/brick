@@ -74,11 +74,20 @@ namespace window_util {
     }
 
     void
-    SetTypeDialog(CefWindowHandle handle) {
+    ConfigureAsDialog(CefWindowHandle handle) {
       ::XDisplay *display = cef_get_xdisplay();
 
       Atom type = XInternAtom(display, "_NET_WM_WINDOW_TYPE", False);
       Atom value = XInternAtom(display, "_NET_WM_WINDOW_TYPE_DIALOG", False);
+      XChangeProperty(display, handle, type, XA_ATOM, 32, PropModeReplace, reinterpret_cast<unsigned char *>(&value), 1);
+    }
+
+    void
+    ConfigureAsTopmost(CefWindowHandle handle) {
+      ::XDisplay *display = cef_get_xdisplay();
+
+      Atom type = XInternAtom(display, "_NET_WM_WINDOW_TYPE", False);
+      Atom value = XInternAtom(display, "_NET_WM_WINDOW_TYPE_UTILITY", False);
       XChangeProperty(display, handle, type, XA_ATOM, 32, PropModeReplace, reinterpret_cast<unsigned char *>(&value), 1);
     }
 
@@ -142,7 +151,7 @@ namespace window_util {
 
     void
     InitAsPopup(CefWindowHandle handle) {
-      SetTypeDialog(handle);
+      ConfigureAsDialog(handle);
     }
 
     void

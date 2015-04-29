@@ -58,7 +58,11 @@ ClientHandler::OnWindowCreated(CefRefPtr<CefBrowser> browser) {
   CefWindowHandle window = browser->GetHost()->GetWindowHandle();
   if (browser->IsPopup()) {
     window_util::SetClassHints(window, (char *)APP_COMMON_NAME, (char *)APP_NAME);
-    window_util::SetTypeDialog(window);
+    if (last_popup_features_.get() && last_popup_features_->topmost) {
+      window_util::ConfigureAsTopmost(window);
+    } else {
+      window_util::ConfigureAsDialog(window);
+    }
   } else {
     window_util::SetClassHints(window, (char *)APP_COMMON_NAME, (char *)APP_NAME);
   }

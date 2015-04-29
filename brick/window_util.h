@@ -23,7 +23,8 @@ namespace window_util {
   void Hide(CefWindowHandle handle);
   void Show(CefWindowHandle handle);
 
-  void SetTypeDialog(CefWindowHandle handle);
+  void ConfigureAsDialog(CefWindowHandle handle);
+  void ConfigureAsTopmost(CefWindowHandle handle);
   void InitAsPopup(CefWindowHandle handle);
 
   void SetClassHints(CefWindowHandle handle, char *res_name, char *res_class);
