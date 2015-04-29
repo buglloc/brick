@@ -7,7 +7,7 @@ Project is currently under (rather) heavy development, so stay tuned, more featu
 
 ## Some screenshots
 
-![Chat](/doc/chat.png?raw=true)
+![Chat](/doc/chat.png?raw=true&v=2)
 ![Video](/doc/video.png?raw=true)
 ![Notify](/doc/notify.png?raw=true)
 
