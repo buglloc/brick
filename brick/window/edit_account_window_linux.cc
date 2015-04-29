@@ -61,6 +61,8 @@ namespace {
          gtk_entry_get_text(self->window_objects_.login_entry);
       const gchar* password =
          gtk_entry_get_text(GTK_ENTRY(self->window_objects_.password_entry));
+      const gboolean renew =
+         gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(self->window_objects_.use_app_password));
 
       GtkWidget* otp_widget = static_cast<GtkWidget*>(
          g_object_get_data(G_OBJECT(widget), kOtpPromptId));
@@ -93,7 +95,7 @@ namespace {
            password
         );
 
-        Account::AuthResult auth_result = check_account->Auth(true, otp);
+        Account::AuthResult auth_result = check_account->Auth((bool) renew, otp);
         if (!auth_result.success) {
           show_error = true;
 
@@ -143,7 +145,8 @@ namespace {
          secure,
          std::string(domain),
          std::string(login),
-         check_account->GetPassword() // Server may update user password while login
+         check_account->GetPassword(), // Server may update user password while login,
+         (bool) renew
       );
     }
 
@@ -173,6 +176,7 @@ EditAccountWindow::Init(CefRefPtr<Account> account, bool switch_on_save) {
   window_objects_.domain_entry = GTK_ENTRY(gtk_builder_get_object(builder, "domain_entry"));
   window_objects_.login_entry = GTK_ENTRY(gtk_builder_get_object(builder, "login_entry"));
   window_objects_.password_entry = GTK_ENTRY(gtk_builder_get_object(builder, "password_entry"));
+  window_objects_.use_app_password = GTK_CHECK_BUTTON(gtk_builder_get_object(builder, "use_app_password"));
 
   g_signal_connect(gtk_builder_get_object(builder, "save_button"), "clicked", G_CALLBACK(OnSave), this);
   g_signal_connect(gtk_builder_get_object(builder, "cancel_button"), "clicked", G_CALLBACK(OnCancel), this);
@@ -198,5 +202,10 @@ EditAccountWindow::Init(CefRefPtr<Account> account, bool switch_on_save) {
   gtk_combo_box_set_active(
      window_objects_.protocol_chooser,
      account->IsSecure()? 0: 1
+  );
+
+  gtk_toggle_button_set_active(
+     GTK_TOGGLE_BUTTON(window_objects_.use_app_password),
+     account->IsAppPasswordUsed()
   );
 }

@@ -10,7 +10,7 @@ class EditAccountWindow : public BaseWindow {
 public:
   EditAccountWindow() {};
   virtual ~EditAccountWindow() {};
-  void Save(bool secure, std::string domain, std::string login, std::string password);
+  void Save(bool secure, std::string domain, std::string login, std::string password, bool use_app_password = true);
 
 
   // Platform specific methods
@@ -26,6 +26,7 @@ public:
     GtkEntry                 *domain_entry;
     GtkEntry                 *login_entry;
     GtkEntry                 *password_entry;
+    GtkCheckButton           *use_app_password;
   } window_objects_;
 #else
   struct WindowObjects

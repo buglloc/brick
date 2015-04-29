@@ -41,6 +41,7 @@ class Account : public CefBase {
     std::string GetLabel();
     bool IsExisted();
     bool IsSecure();
+    bool IsAppPasswordUsed();
     bool CheckBaseUrl(std::string url);
 
     void Set(bool secure, std::string domain, std::string login, std::string password);
@@ -48,6 +49,7 @@ class Account : public CefBase {
     void SetPassword(std::string password);
     void SetDomain(std::string domain);
     void SetSecure(bool is_secure);
+    void SetUseAppPassword(bool use);
     void SetId(int id);
 
     std::string GenLabel();
@@ -63,6 +65,7 @@ class Account : public CefBase {
     std::string base_url_;
     std::string label_;
     bool secure_;
+    bool use_app_password_;
 
     std::string TryParseApplicationPassword(std::string body);
     std::string GetOsMark();

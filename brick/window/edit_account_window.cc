@@ -12,7 +12,8 @@ EditAccountWindow::Save(
    bool secure,
    std::string domain,
    std::string login,
-   std::string password) {
+   std::string password,
+   bool use_app_password) {
 
   CefRefPtr<Account> account = window_objects_.account;
   bool commit_needed = false;
@@ -35,14 +36,17 @@ EditAccountWindow::Save(
     }
 
     if (account->GetPassword() != password) {
+      account->SetUseAppPassword(use_app_password);
       account->SetPassword(password);
       commit_needed = true;
     }
+
   } else {
     commit_needed = true;
     account->SetSecure(secure);
     account->SetLogin(login);
     account->SetDomain(domain);
+    account->SetUseAppPassword(use_app_password);
     account->SetPassword(password);
     ClientHandler::GetInstance()->GetAccountManager()->AddAccount(account);
   }

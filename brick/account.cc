@@ -1,5 +1,4 @@
 #include <unistd.h>
-#include <brick/httpclient/httpclient.h>
 #include <include/cef_url.h>
 #include "account.h"
 #include "httpclient/httpclient.h"
@@ -18,6 +17,7 @@ Account::Account() {
   secure_ = true;
   label_ = "";
   base_url_ = "";
+  use_app_password_ = true;
 }
 
 Account::~Account() {
@@ -31,6 +31,11 @@ Account::IsExisted() {
 bool
 Account::IsSecure() {
   return secure_;
+}
+
+bool
+Account::IsAppPasswordUsed() {
+  return use_app_password_;
 }
 
 int
@@ -110,6 +115,11 @@ void
 Account::SetSecure(bool is_secure) {
   secure_ = is_secure;
   base_url_ = GenBaseUrl();
+}
+
+void
+Account::SetUseAppPassword(bool use) {
+  use_app_password_ = use;
 }
 
 void

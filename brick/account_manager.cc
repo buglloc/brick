@@ -80,6 +80,7 @@ AccountManager::Commit() {
     json_account["login"] = account->GetLogin();
     json_account["password"] = account->GetPassword();
     json_account["default"] = account == current_account_;
+    json_account["use_app_password"] = account->IsAppPasswordUsed();
     json_accounts.append(json_account);
   }
   json["accounts"] = json_accounts;
@@ -126,6 +127,7 @@ AccountManager::Init(std::string config_path) {
       account->SetPassword(accounts[i].get("password", "").asString());
       account->SetSecure(accounts[i].get("secure", false).asBool());
       account->SetDomain(accounts[i].get("domain", "").asString());
+      account->SetUseAppPassword(accounts[i].get("use_app_password", true).asBool());
 
       AddAccount(account);
       if (accounts[i].get("default", false).asBool()) {
