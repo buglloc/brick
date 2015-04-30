@@ -175,6 +175,14 @@ var BrickApp = {
 
     AppExAddAccount(null, isSwitchNeeded);
   },
+  editAccount: function(isSwitchNeeded) {
+    native function AppExEditAccount();
+
+    if (isSwitchNeeded !== true)
+      isSwitchNeeded = false;
+
+    AppExEditAccount(null, isSwitchNeeded);
+  },
   loadScript: function(url) {
     var script = document.createElement('script');
     script.src = url;

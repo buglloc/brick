@@ -20,6 +20,7 @@ namespace {
     const char kMessageIndicatorBadgeName[]   = "IndicatorBadgee";
     const char kMessageShowNotificationName[] = "ShowNotification";
     const char kMessageAddAccountName[]       = "AddAccount";
+    const char kMessageEditAccountName[]      = "EditAccount";
     const char kMessageAddTemporaryPageName[] = "AddTemporaryPage";
 
     const char kCurrentPortalId[] = "current_portal";
@@ -299,6 +300,27 @@ AppMessageDelegate::OnProcessMessageReceived(
     if (error == NO_ERROR) {
       EditAccountWindow *window(new EditAccountWindow);
       window->Init(CefRefPtr<Account> (new Account), request_args->GetBool(1));
+      window->Show();
+    };
+
+  } else if (message_name == kMessageEditAccountName) {
+    // Parameters:
+    // 0: int32 - callback id
+    // 1: bool - switch after add
+
+    if (
+       request_args->GetSize() != 2
+       || request_args->GetType(1) != VTYPE_BOOL
+       ) {
+      error = ERR_INVALID_PARAMS;
+    }
+
+    if (error == NO_ERROR) {
+      EditAccountWindow *window(new EditAccountWindow);
+      window->Init(
+         ClientHandler::GetInstance()->GetAccountManager()->GetCurrentAccount(),
+         request_args->GetBool(1)
+      );
       window->Show();
     };
 

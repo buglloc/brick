@@ -13,6 +13,7 @@
       <h2 class="form-signin-heading">Authorization failed :(</h2>
       <div data-role="reason-box"></div>
       <button class="btn btn-lg btn-primary btn-block" data-loading-text="Trying..." id="reconnect">Try again</button>
+      <button class="btn btn-lg btn-primary btn-block" id="edit-account">Edit credentials</button>
     </div>
   </div>
     <script>
@@ -50,6 +51,9 @@
           $('#reconnect').click(function() {
             $(this).button('loading');
             app.loader(true);
+          });
+          $('#edit-account').click(function() {
+            app.editAccount(true);
           });
         }).bind(null, window, BrickApp));
     </script>
