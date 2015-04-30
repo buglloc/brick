@@ -1,12 +1,17 @@
 #include <include/cef_url.h>
 #include <sstream>
 #include "helper.h"
+#include <include/base/cef_logging.h>
 
 namespace helper {
+
     // Transfer a V8 value to a List index.
     void
-    SetListValue(CefRefPtr<CefListValue> list, int index,
+    SetListValue(
+       CefRefPtr<CefListValue> list,
+       int index,
        CefRefPtr<CefV8Value> value) {
+
       if (value->IsArray()) {
         CefRefPtr<CefListValue> new_list = CefListValue::Create();
         SetList(value, new_list);
@@ -19,6 +24,10 @@ namespace helper {
         list->SetInt(index, value->GetIntValue());
       } else if (value->IsDouble()) {
         list->SetDouble(index, value->GetDoubleValue());
+      } else if (value->IsNull()) {
+        list->SetNull(index);
+      } else {
+        LOG(WARNING) << "Unknown CEF list value type";
       }
     }
 
@@ -97,6 +106,9 @@ namespace helper {
           break;
         case VTYPE_STRING:
           new_value = CefV8Value::CreateString(value->GetString(index));
+          break;
+        case VTYPE_NULL:
+          new_value = CefV8Value::CreateNull();
           break;
         default:
           break;

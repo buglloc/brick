@@ -96,7 +96,11 @@ BrickIndicator::OnClick() {
 
 bool
 BrickIndicator::OnMenuQuit() {
-  CefQuitMessageLoop();
+  CefRefPtr<ClientHandler> client_handler = ClientHandler::GetInstance();
+  if (!client_handler)
+    return false;
+
+  client_handler->Shutdown(false);
   return true;
 }
 

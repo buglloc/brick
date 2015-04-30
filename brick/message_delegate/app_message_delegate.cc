@@ -22,6 +22,8 @@ namespace {
     const char kMessageAddAccountName[]       = "AddAccount";
     const char kMessageEditAccountName[]      = "EditAccount";
     const char kMessageAddTemporaryPageName[] = "AddTemporaryPage";
+    const char kMessagePreventShutdownName[]  = "PreventShutdown";
+    const char kMessageShutdownName[]         = "Shutdown";
 
     const char kCurrentPortalId[] = "current_portal";
 
@@ -344,9 +346,37 @@ AppMessageDelegate::OnProcessMessageReceived(
       response_args->SetString(2, url);
     };
 
+  } else if (message_name == kMessagePreventShutdownName) {
+    // Parameters:
+    // 0: int32 - callback id
+
+    if (request_args->GetSize() != 1) {
+      error = ERR_INVALID_PARAMS;
+    }
+
+    if (error == NO_ERROR) {
+      ClientHandler::GetInstance()->PreventShutdown();
+    };
+
+  } else if (message_name == kMessageShutdownName) {
+    // Parameters:
+    // 0: int32 - callback id
+
+    if (request_args->GetSize() != 1) {
+      error = ERR_INVALID_PARAMS;
+    }
+
+    if (error == NO_ERROR) {
+      ClientHandler::GetInstance()->Shutdown(true);
+    };
+
   } else {
     return false;
   }
+
+#ifndef NDEBUG
+  LOG_IF(INFO, error != NO_ERROR) << "Error while processing app message: " << error << request_args->GetSize();
+#endif
 
   if (invoke_callback && callbackId != -1) {
     response_args->SetInt(1, error);

@@ -225,6 +225,10 @@ public:
 
   std::string AddTemporaryPage(const std::string& content);
 
+  bool InShutdownState();
+  void Shutdown(bool force);
+  void PreventShutdown();
+
 protected:
   // Create all of ProcessMessageDelegate objects.
   static void CreateProcessMessageDelegates(
@@ -275,6 +279,10 @@ private:
   int32 last_temporary_page_;
 
   CefRefPtr<WindowFeatures> last_popup_features_;
+  bool in_shutdown_state_;
+#ifdef __linux__
+  guint shutdown_timer_id_;
+#endif
 
   // Include the default reference counting implementation.
 IMPLEMENT_REFCOUNTING(ClientHandler);

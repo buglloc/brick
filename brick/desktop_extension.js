@@ -194,6 +194,16 @@ var BrickApp = {
   },
   loadScripts: function(urls) {
     urls.forEach(this.loadScript.bind(this));
+  },
+  preventShutdown: function() {
+    native function AppExPreventShutdown();
+
+    AppExPreventShutdown(null);
+  },
+  shutdown: function() {
+    native function AppExShutdown();
+
+    AppExShutdown(null);
   }
 };
 /*---------- App extension ---------*/
@@ -574,15 +584,15 @@ BXDesktopSystem.CheckDebugBuild = function CheckDebugBuild() {
 };
 
 BXDesktopSystem.PreventShutdown = function() {
-  BrickHelper.implementMe('BXDesktopSystem.PreventShutdown', arguments);
+  BrickApp.preventShutdown();
+};
+
+BXDesktopSystem.Shutdown = function() {
+  BrickApp.shutdown();
 };
 
 BXDesktopSystem.ReportStorageNotification = function ReportStorageNotification(command, params) {
   return null;
-};
-
-BXDesktopSystem.Shutdown = function() {
-  BrickHelper.implementMe('BXDesktopSystem.Shutdown', arguments);
 };
 
 BXDesktopSystem.ShowTab = function(index) {

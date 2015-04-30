@@ -35,7 +35,11 @@ ClientHandler::ClientHandler()
       main_handle_ (NULL),
       indicator_handle_(NULL),
       account_manager_ (NULL),
-      last_temporary_page_(0)
+      last_temporary_page_(0),
+      in_shutdown_state_ (false),
+#ifdef __linux__
+      shutdown_timer_id_ (0)
+#endif
 {
   DCHECK(!g_instance);
   g_instance = this;
@@ -172,11 +176,17 @@ ClientHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser,
     return; // We need only successful loaded main frame
 
   std::string injected_js = R"js((function(window) {
+       window.addEventListener('BXExitApplication', function (e) {
+          if (window.BX === void 0 || window.BX.desktop === void 0)
+            window.BrickApp.shutdown();
+
+       }, false);
+
        var event = document.createEvent('UIEvents');
        event.initUIEvent('resize', true, false, window, 0);
        window.dispatchEvent(event);
      })(window);
-  )js";
+  ;;)js";
 
   // ToDo: Use CefV8Value::ExecuteFunction? Maybe something like SendJSEvent...
   if (!app_settings_.client_scripts.empty()) {
@@ -588,6 +598,11 @@ ClientHandler::onEvent(SleepEvent &event) {
     SendJSEvent(browser, "BXWakeAction");
   }
 
+}
+
+bool
+ClientHandler::InShutdownState() {
+  return in_shutdown_state_;
 }
 
 void

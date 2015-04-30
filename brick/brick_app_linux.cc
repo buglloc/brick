@@ -168,7 +168,12 @@ BrickApp::GetCacheHome() {
 
 void
 TerminationSignalHandler(int signatl) {
-  CefQuitMessageLoop();
+  CefRefPtr<ClientHandler> handler = ClientHandler::GetInstance();
+  if (handler) {
+    handler->Shutdown(false);
+  } else {
+    CefQuitMessageLoop();
+  }
 }
 
 int main(int argc, char* argv[]) {

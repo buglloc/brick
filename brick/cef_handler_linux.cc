@@ -2,10 +2,12 @@
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 
+#include <include/cef_app.h>
 #include "cef_handler.h"
 
 #include "include/wrapper/cef_helpers.h"
 #include "window_util.h"
+#include "brick_app.h"
 #include "brick_app.h"
 
 namespace {
@@ -66,6 +68,17 @@ namespace {
 
       gtk_file_chooser_set_preview_widget_active(GTK_FILE_CHOOSER(chooser),
          pixbuf != NULL);
+    }
+
+    gboolean
+    DoShutdown(gpointer data) {
+      ClientHandler *self = reinterpret_cast<ClientHandler*>(data);
+      if (self->InShutdownState()) {
+        self->CloseAllBrowsers(true);
+      }
+
+      // Run only once
+      return true;
     }
 }
 
@@ -169,4 +182,26 @@ ClientHandler::OnFileDialog(
   gtk_widget_show(dialog);
 
   return true;
+}
+
+void
+ClientHandler::Shutdown(bool force) {
+  if (force) {
+    CloseAllBrowsers(true);
+  } else if (!InShutdownState()) {
+    in_shutdown_state_ = true;
+    shutdown_timer_id_ = gtk_timeout_add(BRICK_SHUTDOWN_TIMEOUT, DoShutdown, this);
+    // Send event to JS APP
+    SendJSEvent(GetBrowser(), "BXExitApplication");
+  }
+}
+
+
+void
+ClientHandler::PreventShutdown() {
+  if (!InShutdownState())
+    return;
+
+  in_shutdown_state_ = false;
+  gtk_timeout_remove(shutdown_timer_id_);
 }

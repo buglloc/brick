@@ -41,6 +41,8 @@ V8Handler::Execute(
     // The first argument is the message id
     cef_app_->AddCallback(messageId, CefV8Context::GetCurrentContext(), arguments[0]);
     helper::SetListValue(message_args, 0, CefV8Value::CreateInt(messageId));
+  } else {
+    helper::SetListValue(message_args, 0, CefV8Value::CreateNull());
   }
 
   // Pass the rest of the arguments
