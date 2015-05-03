@@ -343,9 +343,16 @@ ClientHandler::OnBeforePopup(CefRefPtr<CefBrowser> browser,
 
   windowInfo.width = (unsigned int) popupFeatures.width;
   windowInfo.height = (unsigned int) popupFeatures.height;
+
+  // Calculate window placement
+  if (!windowInfo.x && !windowInfo.y) {
+    CefRect screen_rect = window_util::GetDefaultScreenRect();
+    windowInfo.x = screen_rect.x + (screen_rect.width - windowInfo.width) / 2;
+    windowInfo.y = screen_rect.y + (screen_rect.height - windowInfo.height) / 2;
+  }
+
   // ToDo: R&D, too ugly hack to catch popup features in OnWindowCreated
   last_popup_features_ = new WindowFeatures(popupFeatures);
-
   return false;
 }
 

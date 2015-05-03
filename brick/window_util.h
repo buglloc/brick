@@ -34,6 +34,8 @@ namespace window_util {
   void InitHooks();
   void InitWindow(CefWindowHandle handle);
 
+  CefRect GetDefaultScreenRect();
+
   void FlushChanges();
 
 #if defined(__linux__)

@@ -315,4 +315,17 @@ namespace window_util {
 
       XFlush(display);
     }
+
+    CefRect
+    GetDefaultScreenRect() {
+      GdkRectangle monitor_rect;
+      gdk_screen_get_monitor_geometry(gdk_screen_get_default(), 0, &monitor_rect);
+
+      return CefRect(
+         monitor_rect.x,
+         monitor_rect.y,
+         monitor_rect.width,
+         monitor_rect.height
+      );
+    }
 }
