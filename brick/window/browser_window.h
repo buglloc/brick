@@ -67,6 +67,7 @@ public:
   virtual void MoveResize(Position position, int width, int height);
   virtual void Stick();
   virtual void UnStick();
+  CefRect GetScreenRect();
 
   // Event handlers
   virtual bool OnHide();

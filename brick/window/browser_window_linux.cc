@@ -193,48 +193,50 @@ BrowserWindow::FlushChanges() {
 
 void
 BrowserWindow::MoveResize(Position position, int width, int height) {
-  int x, y;
+  CefRect screen_rect = GetScreenRect();
+  int x = screen_rect.x;
+  int y = screen_rect.y;
 
   switch(position) {
     case Position::NORTH_WEST:
-      x = BROWSER_WINDOW_PADDING;
-      y = BROWSER_WINDOW_PADDING;
+      x += BROWSER_WINDOW_PADDING;
+      y += BROWSER_WINDOW_PADDING;
       break;
     case Position::NORTH:
-      x = (gdk_screen_width() - width) / 2;
-      y = BROWSER_WINDOW_PADDING;
+      x += (screen_rect.width - width) / 2;
+      y += BROWSER_WINDOW_PADDING;
       break;
     case Position::NORTH_EAST:
-      x = gdk_screen_width() - width - BROWSER_WINDOW_PADDING;
-      y = BROWSER_WINDOW_PADDING;
+      x += screen_rect.width - width - BROWSER_WINDOW_PADDING;
+      y += BROWSER_WINDOW_PADDING;
       break;
     case Position::WEST:
-      x = BROWSER_WINDOW_PADDING;
-      y = (gdk_screen_height() - height) / 2;
+      x += BROWSER_WINDOW_PADDING;
+      y += (screen_rect.height - height) / 2;
       break;
     case Position::CENTER:
-      x = (gdk_screen_width() - width) / 2;
-      y = (gdk_screen_height() - height) / 2;
+      x += (screen_rect.width - width) / 2;
+      y += (screen_rect.height - height) / 2;
       break;
     case Position::EAST:
-      x = gdk_screen_width() - width - BROWSER_WINDOW_PADDING;
-      y = (gdk_screen_height() - height) / 2;
+      x += screen_rect.width - width - BROWSER_WINDOW_PADDING;
+      y += (screen_rect.height - height) / 2;
       break;
     case Position::SOUTH_WEST:
-      x = BROWSER_WINDOW_PADDING;
-      y = gdk_screen_height() - height - BROWSER_WINDOW_PADDING;
+      x += BROWSER_WINDOW_PADDING;
+      y += screen_rect.height - height - BROWSER_WINDOW_PADDING;
       break;
     case Position::SOUTH:
-      x = (gdk_screen_width() - width) / 2;
-      y = gdk_screen_height() - height - BROWSER_WINDOW_PADDING;
+      x += (screen_rect.width - width) / 2;
+      y += screen_rect.height - height - BROWSER_WINDOW_PADDING;
       break;
     case Position::SOUTH_EAST:
-      x = gdk_screen_width() - width - BROWSER_WINDOW_PADDING;
-      y = gdk_screen_height() - height - BROWSER_WINDOW_PADDING;
+      x += screen_rect.width - width - BROWSER_WINDOW_PADDING;
+      y += screen_rect.height - height - BROWSER_WINDOW_PADDING;
       break;
     default:
-      x = BROWSER_WINDOW_PADDING;
-      y = BROWSER_WINDOW_PADDING;
+      x += BROWSER_WINDOW_PADDING;
+      y += BROWSER_WINDOW_PADDING;
       LOG(WARNING) << "Unknown window position: " << position << ", used NORTH_WEST";
       break;
   }
@@ -252,4 +254,21 @@ void
 BrowserWindow::UnStick() {
   gdk_window_set_keep_above(window_handler_, false);
   gdk_window_unstick(window_handler_);
+}
+
+CefRect
+BrowserWindow::GetScreenRect() {
+  GdkRectangle monitor_rect;
+  gint monitor_id = gdk_screen_get_monitor_at_window(
+     gdk_window_get_screen(window_handler_),
+     window_handler_
+  );
+  gdk_screen_get_monitor_geometry(gdk_window_get_screen(window_handler_), monitor_id, &monitor_rect);
+
+  return CefRect(
+     monitor_rect.x,
+     monitor_rect.y,
+     monitor_rect.width,
+     monitor_rect.height
+  );
 }
