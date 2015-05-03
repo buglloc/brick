@@ -204,6 +204,10 @@ AppWindowMessageDelegate::OnProcessMessageReceived(
     return false;
   }
 
+#ifndef NDEBUG
+  LOG_IF(INFO, error != NO_ERROR) << "Error while processing app window message: " << error;
+#endif
+
   if (callbackId != -1) {
     response_args->SetInt(1, error);
 

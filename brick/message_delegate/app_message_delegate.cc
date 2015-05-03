@@ -375,7 +375,7 @@ AppMessageDelegate::OnProcessMessageReceived(
   }
 
 #ifndef NDEBUG
-  LOG_IF(INFO, error != NO_ERROR) << "Error while processing app message: " << error << request_args->GetSize();
+  LOG_IF(INFO, error != NO_ERROR) << "Error while processing app message: " << error;
 #endif
 
   if (invoke_callback && callbackId != -1) {
