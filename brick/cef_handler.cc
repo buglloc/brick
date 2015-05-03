@@ -118,6 +118,10 @@ ClientHandler::OnCloseBrowser(CefRefPtr<CefBrowser> browser) {
     // Doesn't close main window
     main_handle_->Hide();
     handled = true;
+  } else {
+    // Shutdown application
+    Shutdown(false);
+    handled = true;
   }
 
   return handled;
