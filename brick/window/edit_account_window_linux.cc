@@ -108,6 +108,14 @@ namespace {
                  "Please, authorize in your <b>browser</b> first";
               break;
             case Account::ERROR_CODE::OTP:
+              // If we have OTP auth error - turn on App Passwords
+              if (!renew) {
+                gtk_toggle_button_set_active(
+                  GTK_TOGGLE_BUTTON(self->window_objects_.use_app_password),
+                  true
+                );
+              }
+
               ShowOtpDialog(self);
               return;
               break;
