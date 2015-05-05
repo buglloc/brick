@@ -1,13 +1,10 @@
-#include "external_message_delegate.h"
+// Copyright (c) 2015 The Brick Authors.
 
-ExternalMessageDelegate::ExternalMessageDelegate(std::string message_namespace)
-  : message_namespace_(message_namespace) {
-
-};
+#include "brick/external_interface/external_message_delegate.h"
 
 bool
 ExternalMessageDelegate::OnMessageReceived(
-   CefRefPtr<CefProcessMessage> message) {
+    CefRefPtr<CefProcessMessage> message) {
 
   return false;
 }

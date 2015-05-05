@@ -1,18 +1,20 @@
-#include <fstream>
-#include "include/base/cef_logging.h"
+// Copyright (c) 2015 The Brick Authors.
 
-#include <third-party/json/json.h>
+#include "brick/account_manager.h"
+
 #include <sys/stat.h>
-#include "event/account_list_event.h"
-#include "event/event_bus.h"
-#include "event/account_switch_event.h"
-#include "account_manager.h"
+#include <fstream>
+
+#include "third-party/json/json.h"
+#include "include/base/cef_logging.h"
+#include "brick/event/account_list_event.h"
+#include "brick/event/event_bus.h"
+#include "brick/event/account_switch_event.h"
 
 AccountManager::AccountManager()
-   : initialized_(false),
+    : initialized_(false),
      current_account_(NULL),
-     last_id_(0)
-{
+     last_id_(0) {
 }
 
 AccountManager::~AccountManager() {
@@ -83,6 +85,7 @@ AccountManager::Commit() {
     json_account["use_app_password"] = account->IsAppPasswordUsed();
     json_accounts.append(json_account);
   }
+
   json["accounts"] = json_accounts;
 
   std::ofstream ofs(config_path_);
@@ -121,7 +124,7 @@ AccountManager::Init(std::string config_path) {
     }
 
     const Json::Value accounts = json["accounts"];
-    for(unsigned int i=0; i < accounts.size(); ++i) {
+    for(unsigned int i = 0; i < accounts.size(); ++i) {
       CefRefPtr<Account> account(new Account);
       account->SetLogin(accounts[i].get("login", "").asString());
       account->SetPassword(accounts[i].get("password", "").asString());

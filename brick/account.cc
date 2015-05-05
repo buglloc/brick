@@ -1,8 +1,13 @@
+// Copyright (c) 2015 The Brick Authors.
+
+#include "brick/account.h"
+
 #include <unistd.h>
-#include <include/cef_url.h>
-#include "account.h"
-#include "httpclient/httpclient.h"
+#include "include/cef_url.h"
 #include "include/base/cef_logging.h"
+
+#include "brick/httpclient/httpclient.h"
+
 
 namespace {
     const char fake_id = -1;
@@ -124,10 +129,10 @@ Account::SetUseAppPassword(bool use) {
 
 void
 Account::Set(
-   bool secure,
-   std::string domain,
-   std::string login,
-   std::string password) {
+    bool secure,
+    std::string domain,
+    std::string login,
+    std::string password) {
 
   secure_ = secure;
   domain_ = domain;
@@ -142,7 +147,7 @@ Account::GenBaseUrl() {
   return (
      (secure_ ? "https://" : "http://" )
       + domain_
-      + kDefaultAppUrl // ToDo: Need option here?
+      + kDefaultAppUrl  // ToDo: Need option here?
   );
 }
 

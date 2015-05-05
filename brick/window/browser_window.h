@@ -1,8 +1,11 @@
-#ifndef BRICK_BROWSER_WINDOW_H_
-#define BRICK_BROWSER_WINDOW_H_
+// Copyright (c) 2015 The Brick Authors.
+
+#ifndef BRICK_WINDOW_BROWSER_WINDOW_H_
+#define BRICK_WINDOW_BROWSER_WINDOW_H_
 #pragma once
 
 
+#include <string>
 #if defined(__linux__)
 // The Linux client uses GTK instead of the underlying platform type (X11).
 #include <gdk/gdkx.h>
@@ -14,15 +17,15 @@
 
 #define BROWSER_WINDOW_PADDING 10;
 
-#include <include/cef_base.h>
-#include <include/base/cef_lock.h>
-#include <include/internal/cef_linux.h>
+#include "include/cef_base.h"
+#include "include/base/cef_lock.h"
+#include "include/internal/cef_linux.h"
 
-#include <include/base/cef_logging.h>
+#include "include/base/cef_logging.h"
 
 class BrowserWindow : public CefBase {
 
-public:
+ public:
   BrowserWindow() : window_handler_(NULL),
                  hided_ (false),
                  focused_ (true),
@@ -31,7 +34,8 @@ public:
                  closable_ (true),
                  restore_last_position_ (false),
                  last_x_ (0),
-                 last_y_ (0) {};
+                 last_y_ (0) {
+  }
 
   BrowserWindowHandle GetHandler();
 
@@ -79,7 +83,7 @@ public:
 //  virtual bool SetFocus(bool focused);
 //  virtual bool HasFocus();
 
-protected:
+ protected:
   void SaveRestorePosition(bool save = false);
   BrowserWindowHandle window_handler_;
   bool hided_;
@@ -94,4 +98,4 @@ protected:
 IMPLEMENT_REFCOUNTING(BrowserWindow);
 };
 
-#endif /* end of BRICK_BROWSER_WINDOW_H_ */
+#endif  // BRICK_WINDOW_BROWSER_WINDOW_H_

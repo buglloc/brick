@@ -1,37 +1,40 @@
-#include "app_window_message_delegate.h"
-#include "../window_util.h"
-#include "../helper.h"
+// Copyright (c) 2015 The Brick Authors.
+
+#include "brick/message_delegate/app_window_message_delegate.h"
+
+#include <string>
+
+#include "brick/window_util.h"
+#include "brick/helper.h"
 
 
 namespace {
-    const char kNameSpace[]                      = "AppWindowEx";
-    const char kMessageSetSizeName[]             = "SetSize";
-    const char kMessageSetClientSizeName[]       = "SetClientSize";
-    const char kMessageSetMinClientSizeName[]    = "SetMinClientSize";
-    const char kMessageMoveResizeName[]          = "MoveResize";
-    const char kMessageFixName[]                 = "FixSize";
-    const char kMessageHideName[]                = "Hide";
-    const char kMessageShowName[]                = "Show";
-    const char kMessageShowMainName[]            = "ShowMain";
-    const char kMessageCenterName[]              = "Center";
-    const char kMessageSetClosableName[]         = "SetClosable";
-    const char kMessageOpenDeveloperToolsName[]  = "OpenDeveloperTools";
+  const char kNameSpace[]                      = "AppWindowEx";
+  const char kMessageSetSizeName[]             = "SetSize";
+  const char kMessageSetClientSizeName[]       = "SetClientSize";
+  const char kMessageSetMinClientSizeName[]    = "SetMinClientSize";
+  const char kMessageMoveResizeName[]          = "MoveResize";
+  const char kMessageFixName[]                 = "FixSize";
+  const char kMessageHideName[]                = "Hide";
+  const char kMessageShowName[]                = "Show";
+  const char kMessageShowMainName[]            = "ShowMain";
+  const char kMessageCenterName[]              = "Center";
+  const char kMessageSetClosableName[]         = "SetClosable";
+  const char kMessageOpenDeveloperToolsName[]  = "OpenDeveloperTools";
 
-
-} // namespace
+}  // namespace
 
 AppWindowMessageDelegate::AppWindowMessageDelegate()
-   : ProcessMessageDelegate (kNameSpace)
-{
+    : ProcessMessageDelegate(kNameSpace) {
 }
 
 
 bool
 AppWindowMessageDelegate::OnProcessMessageReceived(
-   CefRefPtr<ClientHandler> handler,
-   CefRefPtr<CefBrowser> browser,
-   CefProcessId source_process,
-   CefRefPtr<CefProcessMessage> message) {
+    CefRefPtr<ClientHandler> handler,
+    CefRefPtr<CefBrowser> browser,
+    CefProcessId source_process,
+    CefRefPtr<CefProcessMessage> message) {
 
   std::string message_name = message->GetName();
   CefRefPtr<CefListValue> request_args = message->GetArgumentList();
@@ -65,7 +68,7 @@ AppWindowMessageDelegate::OnProcessMessageReceived(
   LOG(INFO) << "AppWindow message for window " << cef_window << ":" << message_name << helper::DumpList(request_args);
 #endif
 
-  if(message_name == kMessageSetSizeName || message_name == kMessageSetClientSizeName) {
+  if (message_name == kMessageSetSizeName || message_name == kMessageSetClientSizeName) {
 
     // Parameters:
     //  0: int32 - callback id
@@ -86,7 +89,7 @@ AppWindowMessageDelegate::OnProcessMessageReceived(
       );
     }
 
-  } else if(message_name == kMessageSetMinClientSizeName) {
+  } else if (message_name == kMessageSetMinClientSizeName) {
 
     // Parameters:
     //  0: int32 - callback id
@@ -107,7 +110,7 @@ AppWindowMessageDelegate::OnProcessMessageReceived(
       );
     }
 
-  } else if(message_name == kMessageMoveResizeName) {
+  } else if (message_name == kMessageMoveResizeName) {
 
     // Parameters:
     //  0: int32 - callback id
@@ -220,6 +223,6 @@ AppWindowMessageDelegate::OnProcessMessageReceived(
 
 
 void
-AppWindowMessageDelegate::CreateProcessMessageDelegates(ClientHandler::ProcessMessageDelegateSet& delegates) {
-  delegates.insert(new AppWindowMessageDelegate);
+AppWindowMessageDelegate::CreateProcessMessageDelegates(ClientHandler::ProcessMessageDelegateSet* delegates) {
+  delegates->insert(new AppWindowMessageDelegate);
 }

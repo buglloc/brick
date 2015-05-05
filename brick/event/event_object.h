@@ -1,10 +1,13 @@
-#ifndef _BRICK_EVENT_OBJECT_H_
-#define _BRICK_EVENT_OBJECT_H_
+// Copyright (c) 2015 The Brick Authors.
 
-#include <include/cef_base.h>
+#ifndef BRICK_EVENT_EVENT_OBJECT_H_
+#define BRICK_EVENT_EVENT_OBJECT_H_
+#pragma once
+
+#include "include/cef_base.h"
 
 class EventObject : public CefBase {
-public:
+ public:
 	/**
 	 * Default empty constructor
 	 */
@@ -14,7 +17,7 @@ public:
 	/**
 	 * Empty virtual destructor
 	 */
-	virtual ~EventObject() {	}
+  virtual ~EventObject() { }
 
 
 	/**
@@ -26,4 +29,4 @@ public:
   IMPLEMENT_REFCOUNTING(EventObject);
 };
 
-#endif /* _BRICK_EVENT_OBJECT_H_ */
+#endif  // BRICK_EVENT_EVENT_OBJECT_H_

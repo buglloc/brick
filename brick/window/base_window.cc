@@ -1,4 +1,6 @@
-#include "base_window.h"
+// Copyright (c) 2015 The Brick Authors.
+
+#include "brick/window/base_window.h"
 
 ClientWindowHandle
 BaseWindow::GetHandler() {

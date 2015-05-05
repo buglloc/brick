@@ -1,20 +1,22 @@
-#include "../cef_handler.h"
-#include "app_window_message_delegate.h"
+// Copyright (c) 2015 The Brick Authors.
 
+#include "brick/external_interface/app_window_message_delegate.h"
+
+#include <string>
+
+#include "brick/client_handler.h"
 
 namespace {
-    const char kNameSpace[]                      = "AppWindowInterface";
-    const char kMessageToggleVisibilityName[]    = "ToggleVisibility";
-    const char kMessageHideName[]                = "Hide";
-    const char kMessagePresentName[]             = "Present";
+  const char kNameSpace[]                      = "AppWindowInterface";
+  const char kMessageToggleVisibilityName[]    = "ToggleVisibility";
+  const char kMessageHideName[]                = "Hide";
+  const char kMessagePresentName[]             = "Present";
 
-
-} // namespace
+}  // namespace
 
 ExternalAppWindowMessageDelegate::ExternalAppWindowMessageDelegate()
-   : ExternalMessageDelegate (kNameSpace)
-{
-}
+    : ExternalMessageDelegate(kNameSpace)
+{ }
 
 bool
 ExternalAppWindowMessageDelegate::OnMessageReceived(CefRefPtr<CefProcessMessage> message) {
@@ -26,10 +28,10 @@ ExternalAppWindowMessageDelegate::OnMessageReceived(CefRefPtr<CefProcessMessage>
 
   BrowserWindow *window = ClientHandler::GetInstance()->GetMainWindowHandle();
 
-  if(message_name == kMessageToggleVisibilityName) {
+  if (message_name == kMessageToggleVisibilityName) {
     window->ToggleVisibility();
 
-  } else if(message_name == kMessageHideName) {
+  } else if (message_name == kMessageHideName) {
     window->Hide();
 
   } else if (message_name == kMessagePresentName) {

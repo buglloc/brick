@@ -1,16 +1,18 @@
-#include <include/base/cef_bind.h>
-#include "include/wrapper/cef_closure_task.h"
-#include "cef_handler.h"
-#include "helper.h"
+// Copyright (c) 2015 The Brick Authors.
 
-#include "v8_handler.h"
+#include "include/base/cef_bind.h"
+#include "include/wrapper/cef_closure_task.h"
+#include "brick/client_handler.h"
+#include "brick/helper.h"
+
+#include "brick/v8_handler.h"
 
 bool
 V8Handler::Execute(
-   const CefString &name, CefRefPtr<CefV8Value> object,
-   const CefV8ValueList &arguments,
-   CefRefPtr<CefV8Value> &retval,
-   CefString &exception) {
+    const CefString &name, CefRefPtr<CefV8Value> object,
+    const CefV8ValueList &arguments,
+    CefRefPtr<CefV8Value> &retval,
+    CefString &exception) {
 
   // Pass all messages to the browser process
   CefRefPtr<CefBrowser> browser =

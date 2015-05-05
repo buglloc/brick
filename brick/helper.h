@@ -1,8 +1,12 @@
-#ifndef CEF_DESKTOP_HELPER_H_
-#define CEF_DESKTOP_HELPER_H_
+// Copyright (c) 2015 The Brick Authors.
+
+#ifndef BRICK_HELPER_H_
+#define BRICK_HELPER_H_
 #pragma once
 
-#include <include/cef_v8.h>
+#include <string>
+
+#include "include/cef_v8.h"
 #include <assert.h>  // NOLINT(build/include_order)
 
 #ifndef NDEBUG
@@ -29,6 +33,6 @@ namespace helper {
     std::string BaseDir(const std::string& path);
     std::string GetFileExtension(const std::string& path);
     unsigned int HashString(const std::string& str);
-}
+}  // namespace helper
 
-#endif  // CEF_DESKTOP_HELPER_H_
+#endif  // BRICK_HELPER_H_

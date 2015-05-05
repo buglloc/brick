@@ -1,4 +1,6 @@
-#include "about_window.h"
+// Copyright (c) 2015 The Brick Authors.
+
+#include "brick/window/about_window.h"
 
 // static
 AboutWindow*

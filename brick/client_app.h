@@ -1,22 +1,25 @@
-// Copyright (c) 2013 The Chromium Embedded Framework Authors. All rights
-// reserved. Use of this source code is governed by a BSD-style license that
-// can be found in the LICENSE file.
+// Copyright (c) 2015 The Brick Authors.
 
-#ifndef CEF_TESTS_CEFSIMPLE_SIMPLE_APP_H_
-#define CEF_TESTS_CEFSIMPLE_SIMPLE_APP_H_
+#ifndef BRICK_CLIENT_APP_H_
+#define BRICK_CLIENT_APP_H_
+#pragma once
 
 #include <set>
-#include <include/cef_request_handler.h>
+#include <map>
+#include <utility>
+#include <string>
+#include <vector>
 
+#include "include/cef_request_handler.h"
 #include "include/cef_app.h"
-#include "brick_app.h"
+#include "brick/brick_app.h"
 
 class ClientApp : public CefApp,
                   public CefBrowserProcessHandler,
                   public CefRenderProcessHandler {
  public:
   class RenderDelegate : public virtual CefBase {
-  public:
+   public:
     virtual void OnRenderThreadCreated(CefRefPtr<ClientApp> app,
        CefRefPtr<CefListValue> extra_info) {}
 
@@ -137,4 +140,4 @@ class ClientApp : public CefApp,
   IMPLEMENT_REFCOUNTING(ClientApp);
 };
 
-#endif  // CEF_TESTS_CEFSIMPLE_SIMPLE_APP_H_
+#endif  // BRICK_CLIENT_APP_H_

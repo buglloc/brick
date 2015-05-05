@@ -1,10 +1,15 @@
-#ifndef BRICK_APP_SETTINGS_H_
-#define BRICK_APP_SETTINGS_H_
+// Copyright (c) 2015 The Brick Authors.
+
+#ifndef BRICK_COMMON_APP_SETTINGS_H_
+#define BRICK_COMMON_APP_SETTINGS_H_
 #pragma once
 
 #include <set>
+#include <map>
+#include <string>
+
 #include "brick/account.h"
-#include <include/internal/cef_types_wrappers.h>
+#include "include/internal/cef_types_wrappers.h"
 
 struct AppSettings {
   typedef std::map<std::string, std::string> client_scripts_map;
@@ -27,9 +32,8 @@ struct AppSettings {
   static AppSettings InitByJson(std::string json);
 
   AppSettings();
-  ~AppSettings();
   void UpdateByJson(std::string json);
   std::string DumpJson();
 };
 
-#endif // BRICK_APP_SETTINGS_H_
+#endif  // BRICK_COMMON_APP_SETTINGS_H_

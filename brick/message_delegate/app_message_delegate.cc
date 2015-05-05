@@ -1,53 +1,54 @@
-#include <include/base/cef_bind.h>
-#include <brick/window/edit_account_window.h>
+// Copyright (c) 2015 The Brick Authors.
+
+#include "brick/message_delegate/app_message_delegate.h"
+
 #include <error.h>
+
+#include "include/base/cef_bind.h"
+#include "include/wrapper/cef_closure_task.h"
+#include "brick/window/edit_account_window.h"
 #include "brick/helper.h"
 #include "brick/notification.h"
 #include "brick/platform_util.h"
-#include "app_message_delegate.h"
-#include "brick/v8_handler.h"
-#include "include/wrapper/cef_closure_task.h"
-
 
 namespace {
-    const char kNameSpace[]                   = "AppEx";
-    const char kMessageLoginName[]            = "Login";
-    const char kMessageNavigateName[]         = "Navigate";
-    const char kMessageBrowseName[]           = "Browse";
-    const char kMessageChangeTooltipName[]    = "ChangeTooltip";
-    const char kMessageSetIndicatorName[]     = "SetIndicator";
-    const char kMessageSetIdleIndicatorName[] = "SetIdleIndicator";
-    const char kMessageIndicatorBadgeName[]   = "IndicatorBadgee";
-    const char kMessageShowNotificationName[] = "ShowNotification";
-    const char kMessageAddAccountName[]       = "AddAccount";
-    const char kMessageEditAccountName[]      = "EditAccount";
-    const char kMessageAddTemporaryPageName[] = "AddTemporaryPage";
-    const char kMessagePreventShutdownName[]  = "PreventShutdown";
-    const char kMessageShutdownName[]         = "Shutdown";
+  const char kNameSpace[]                   = "AppEx";
+  const char kMessageLoginName[]            = "Login";
+  const char kMessageNavigateName[]         = "Navigate";
+  const char kMessageBrowseName[]           = "Browse";
+  const char kMessageChangeTooltipName[]    = "ChangeTooltip";
+  const char kMessageSetIndicatorName[]     = "SetIndicator";
+  const char kMessageSetIdleIndicatorName[] = "SetIdleIndicator";
+  const char kMessageIndicatorBadgeName[]   = "IndicatorBadgee";
+  const char kMessageShowNotificationName[] = "ShowNotification";
+  const char kMessageAddAccountName[]       = "AddAccount";
+  const char kMessageEditAccountName[]      = "EditAccount";
+  const char kMessageAddTemporaryPageName[] = "AddTemporaryPage";
+  const char kMessagePreventShutdownName[]  = "PreventShutdown";
+  const char kMessageShutdownName[]         = "Shutdown";
 
-    const char kCurrentPortalId[] = "current_portal";
+  const char kCurrentPortalId[] = "current_portal";
 
-    const char kIndicatorOnlineName[]         = "online";
-    const char kIndicatorDndName[]            = "dnd";
-    const char kIndicatorAwayName[]           = "away";
-    const char kIndicatorOfflineName[]        = "offline";
-    const char kIndicatorFlashName[]          = "flash";
-    const char kIndicatorFlashImportantName[] = "flash_important";
+  const char kIndicatorOnlineName[]         = "online";
+  const char kIndicatorDndName[]            = "dnd";
+  const char kIndicatorAwayName[]           = "away";
+  const char kIndicatorOfflineName[]        = "offline";
+  const char kIndicatorFlashName[]          = "flash";
+  const char kIndicatorFlashImportantName[] = "flash_important";
 
-} // namespace
+}  // namespace
 
 AppMessageDelegate::AppMessageDelegate()
-   : ProcessMessageDelegate (kNameSpace)
-{
+    : ProcessMessageDelegate (kNameSpace) {
 }
 
 
 bool
 AppMessageDelegate::OnProcessMessageReceived(
-   CefRefPtr<ClientHandler> handler,
-   CefRefPtr<CefBrowser> browser,
-   CefProcessId source_process,
-   CefRefPtr<CefProcessMessage> message) {
+    CefRefPtr<ClientHandler> handler,
+    CefRefPtr<CefBrowser> browser,
+    CefProcessId source_process,
+    CefRefPtr<CefProcessMessage> message) {
 
   std::string message_name = message->GetName();
   CefRefPtr<CefListValue> request_args = message->GetArgumentList();
@@ -285,7 +286,7 @@ AppMessageDelegate::OnProcessMessageReceived(
         LOG(WARNING) << "Trying to show forbidden icon: " << icon_url;
         error = ERR_INVALID_URL;
       }
-    };
+    }
 
   } else if (message_name == kMessageAddAccountName) {
     // Parameters:
@@ -303,7 +304,7 @@ AppMessageDelegate::OnProcessMessageReceived(
       EditAccountWindow *window(new EditAccountWindow);
       window->Init(CefRefPtr<Account> (new Account), request_args->GetBool(1));
       window->Show();
-    };
+    }
 
   } else if (message_name == kMessageEditAccountName) {
     // Parameters:
@@ -324,7 +325,7 @@ AppMessageDelegate::OnProcessMessageReceived(
          request_args->GetBool(1)
       );
       window->Show();
-    };
+    }
 
   } else if (message_name == kMessageAddTemporaryPageName) {
     // Parameters:
@@ -344,7 +345,7 @@ AppMessageDelegate::OnProcessMessageReceived(
       );
 
       response_args->SetString(2, url);
-    };
+    }
 
   } else if (message_name == kMessagePreventShutdownName) {
     // Parameters:
@@ -356,7 +357,7 @@ AppMessageDelegate::OnProcessMessageReceived(
 
     if (error == NO_ERROR) {
       ClientHandler::GetInstance()->PreventShutdown();
-    };
+    }
 
   } else if (message_name == kMessageShutdownName) {
     // Parameters:
@@ -368,7 +369,7 @@ AppMessageDelegate::OnProcessMessageReceived(
 
     if (error == NO_ERROR) {
       ClientHandler::GetInstance()->Shutdown(true);
-    };
+    }
 
   } else {
     return false;
@@ -390,16 +391,16 @@ AppMessageDelegate::OnProcessMessageReceived(
 
 
 void
-AppMessageDelegate::CreateProcessMessageDelegates(ClientHandler::ProcessMessageDelegateSet& delegates) {
-  delegates.insert(new AppMessageDelegate);
+AppMessageDelegate::CreateProcessMessageDelegates(ClientHandler::ProcessMessageDelegateSet *delegates) {
+  delegates->insert(new AppMessageDelegate);
 }
 
 
 void
 AppMessageDelegate::Login(
-   CefRefPtr<CefBrowser> browser,
-   CefRefPtr<CefProcessMessage> response,
-   CefRefPtr<Account> account) {
+    CefRefPtr<CefBrowser> browser,
+    CefRefPtr<CefProcessMessage> response,
+    CefRefPtr<Account> account) {
 
   if (!CefCurrentlyOn(TID_CACHE)) {
     // Execute on the IO thread.

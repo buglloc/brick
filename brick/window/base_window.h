@@ -1,5 +1,7 @@
-#ifndef BRICK_BASE_WINDOW_H_
-#define BRICK_BASE_WINDOW_H_
+// Copyright (c) 2015 The Brick Authors.
+
+#ifndef BRICK_WINDOW_BASE_WINDOW_H_
+#define BRICK_WINDOW_BASE_WINDOW_H_
 #pragma once
 
 
@@ -11,14 +13,13 @@
 #define ClientWindowHandle CefWindowHandle
 #endif
 
-#include <include/cef_base.h>
-#include <include/base/cef_lock.h>
-#include <include/internal/cef_linux.h>
+#include "include/cef_base.h"
+#include "include/base/cef_lock.h"
 
 
 class BaseWindow : public CefBase {
 
-public:
+ public:
   enum STATE {
     STATE_NORMAL = 0,
     STATE_MINIMIZED,
@@ -30,7 +31,9 @@ public:
 
   BaseWindow() : window_handler_(NULL),
                  hided_(true),
-                 focused_(false) {};
+                 focused_(false) {
+  }
+
   ClientWindowHandle GetHandler();
 
   // Platform specific methods
@@ -67,7 +70,7 @@ public:
   virtual bool SetFocus(bool focused);
   virtual bool HasFocus();
 
-protected:
+ protected:
   ClientWindowHandle window_handler_;
   bool hided_;
   bool focused_;
@@ -75,4 +78,4 @@ protected:
 IMPLEMENT_REFCOUNTING(BaseWindow);
 };
 
-#endif /* end of BRICK_BASE_WINDOW_H_ */
+#endif  // BRICK_WINDOW_BASE_WINDOW_H_

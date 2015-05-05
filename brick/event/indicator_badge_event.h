@@ -1,19 +1,22 @@
-#ifndef _BRICK_INDICATOR_BADGE_EVENT_H_
-#define _BRICK_INDICATOR_BADGE_EVENT_H_
+// Copyright (c) 2015 The Brick Authors.
 
-#include "event.h"
+#ifndef BRICK_EVENT_INDICATOR_BADGE_EVENT_H_
+#define BRICK_EVENT_INDICATOR_BADGE_EVENT_H_
+#pragma once
+
 #include <string>
 
-class IndicatorBadgeEvent : public Event
-{
-public:
+#include "brick/event/event.h"
+
+class IndicatorBadgeEvent : public Event {
+ public:
   IndicatorBadgeEvent(const EventSender* sender, int badge, bool important) :
      Event(sender),
      badge_(badge),
      important_(important) {
   }
 
-  IndicatorBadgeEvent(int badge, bool important) :
+  explicit IndicatorBadgeEvent(int badge, bool important) :
      Event(nullptr),
      badge_(badge),
      important_(important) {
@@ -21,19 +24,19 @@ public:
 
   virtual ~IndicatorBadgeEvent() { }
 
-  int getBadge() {
+  int getBadge() const {
     return badge_;
   }
 
-  bool isImportant() {
+  bool isImportant() const {
     return important_;
   }
 
-private:
+ private:
   int badge_;
   bool important_;
 
 IMPLEMENT_REFCOUNTING(IndicatorBadgeEvent);
 };
 
-#endif /* _BRICK_INDICATOR_BADGE_EVENT_H_ */
+#endif  // BRICK_EVENT_INDICATOR_BADGE_EVENT_H_

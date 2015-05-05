@@ -1,15 +1,19 @@
-#ifndef BRICK_EDIT_ACCOUNT_WINDOW_H_
-#define BRICK_EDIT_ACCOUNT_WINDOW_H_
+// Copyright (c) 2015 The Brick Authors.
+
+#ifndef BRICK_WINDOW_EDIT_ACCOUNT_WINDOW_H_
+#define BRICK_WINDOW_EDIT_ACCOUNT_WINDOW_H_
 #pragma once
 
-#include "base_window.h"
-#include "../account.h"
+#include <string>
+
+#include "brick/window/base_window.h"
+#include "brick/account.h"
 
 class EditAccountWindow : public BaseWindow {
 
-public:
-  EditAccountWindow() {};
-  virtual ~EditAccountWindow() {};
+ public:
+  EditAccountWindow() {}
+  virtual ~EditAccountWindow() {}
   void Save(bool secure, std::string domain, std::string login, std::string password, bool use_app_password = true);
 
 
@@ -17,8 +21,7 @@ public:
   void Init() OVERRIDE;
   void Init(CefRefPtr<Account> account, bool switch_on_save = false);
 #if defined(__linux__)
-  struct WindowObjects
-  {
+  struct WindowObjects {
     ClientWindowHandle        window;
     CefRefPtr<Account>        account;
     bool                      switch_on_save;
@@ -29,8 +32,7 @@ public:
     GtkCheckButton           *use_app_password;
   } window_objects_;
 #else
-  struct WindowObjects
-  {
+  struct WindowObjects {
     ClientWindowHandle        window;
     CefRefPtr<Account>        account;
     bool                      switch_on_save;
@@ -41,4 +43,4 @@ public:
 IMPLEMENT_REFCOUNTING(EditAccountWindow);
 };
 
-#endif /* end of BRICK_EDIT_ACCOUNT_WINDOW_H_ */
+#endif  // BRICK_WINDOW_EDIT_ACCOUNT_WINDOW_H_

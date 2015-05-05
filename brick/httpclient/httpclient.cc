@@ -107,8 +107,8 @@ HttpClient::PostForm(const std::string &url, form_map *form)
  */
 HttpClient::response
 HttpClient::Post(const std::string &url,
-   const std::string &ctype,
-   const std::string &data)
+    const std::string &ctype,
+    const std::string &data)
 {
   /** create return struct */
   HttpClient::response ret = {};
@@ -165,8 +165,8 @@ HttpClient::Post(const std::string &url,
  */
 HttpClient::response
 HttpClient::Put(const std::string &url,
-   const std::string &ctype,
-   const std::string &data)
+    const std::string &ctype,
+    const std::string &data)
 {
   /** create return struct */
   HttpClient::response ret = {};
@@ -282,9 +282,9 @@ HttpClient::Del(const std::string &url)
  */
 size_t
 HttpClient::WriteCallback(void *data,
-   size_t size,
-   size_t nmemb,
-   void *userdata)
+    size_t size,
+    size_t nmemb,
+    void *userdata)
 {
   HttpClient::response* r;
   r = reinterpret_cast<HttpClient::response*>(userdata);
@@ -305,9 +305,9 @@ HttpClient::WriteCallback(void *data,
 */
 size_t
 HttpClient::WriteFileCallback(void *data,
-   size_t size,
-   size_t nmemb,
-   std::ofstream *output)
+    size_t size,
+    size_t nmemb,
+    std::ofstream *output)
 {
   output->write(reinterpret_cast<char*>(data), size*nmemb);
   return size*nmemb;
@@ -324,9 +324,9 @@ HttpClient::WriteFileCallback(void *data,
  */
 size_t
 HttpClient::HeaderCallback(void *data,
-   size_t size,
-   size_t nmemb,
-   void *userdata)
+    size_t size,
+    size_t nmemb,
+    void *userdata)
 {
   HttpClient::response* r;
   r = reinterpret_cast<HttpClient::response*>(userdata);
@@ -366,9 +366,9 @@ HttpClient::HeaderCallback(void *data,
  */
 size_t
 HttpClient::ReadCallback(void *data,
-   size_t size,
-   size_t nmemb,
-   void *userdata)
+    size_t size,
+    size_t nmemb,
+    void *userdata)
 {
   /** get upload struct */
   HttpClient::upload_object* u;
@@ -520,9 +520,9 @@ HttpClient::InitCurl(CURL *curl, HttpClient::response *ret) {
 
 bool
 HttpClient::Download(
-   const std::string& url,
-   const std::string& path,
-   const std::string& valid_type) {
+    const std::string& url,
+    const std::string& path,
+    const std::string& valid_type) {
 
   // ToDo: limit file size?
   CURL *curl = NULL;

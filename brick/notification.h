@@ -1,15 +1,17 @@
+// Copyright (c) 2015 The Brick Authors.
+
 #ifndef BRICK_NOTIFICATION_H_
 #define BRICK_NOTIFICATION_H_
 #pragma once
+
 #include <string>
 
 class Notification {
-
-public:
+ public:
   static void Notify(const std::string title, std::string body, std::string icon, int delay);
   static void Hide();
 
-private:
+ private:
   static std::string TryGetIcon(std::string icon, bool &need_download);
   static std::string GetDefaultIcon();
 };

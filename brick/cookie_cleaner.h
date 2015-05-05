@@ -1,20 +1,25 @@
-#ifndef BRICK_COOKIE_CLEANER_H
-#define BRICK_COOKIE_CLEANER_H
+// Copyright (c) 2015 The Brick Authors.
 
-#include <include/cef_cookie.h>
+#ifndef BRICK_COOKIE_CLEANER_H_
+#define BRICK_COOKIE_CLEANER_H_
+#pragma once
+
+#include <string>
+
+#include "include/cef_cookie.h"
 
 class CookieCleaner : public CefCookieVisitor {
-public:
+ public:
 
-  CookieCleaner() : target_domain_ ("") {};
+  CookieCleaner() : target_domain_ ("") {}
 
   bool Visit(const CefCookie& cookie, int count, int total, bool& deleteCookie) OVERRIDE;
   void SetTargetDomain(std::string domain);
 
-protected:
+ protected:
   std::string target_domain_;
 
   IMPLEMENT_REFCOUNTING(CookieCleaner);
 };
 
-#endif //BRICK_COOKIE_CLEANER_H
+#endif  // BRICK_COOKIE_CLEANER_H_

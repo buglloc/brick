@@ -1,8 +1,11 @@
-#include <fstream>
-#include "brick_app.h"
-#include "helper.h"
-#include "platform_util.h"
+// Copyright (c) 2015 The Brick Authors.
 
+#include "brick/brick_app.h"
+
+#include <fstream>
+
+#include "brick/helper.h"
+#include "brick/platform_util.h"
 
 CefBrowserSettings
 BrickApp::GetBrowserSettings(std::string work_dir, AppSettings app_settings) {

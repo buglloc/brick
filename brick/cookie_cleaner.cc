@@ -1,11 +1,13 @@
-#include "cookie_cleaner.h"
+// Copyright (c) 2015 The Brick Authors.
+
+#include "brick/cookie_cleaner.h"
 
 bool
 CookieCleaner::Visit(
-   const CefCookie& cookie,
-   int count,
-   int total,
-   bool& deleteCookie) {
+    const CefCookie& cookie,
+    int count,
+    int total,
+    bool& deleteCookie) {
 
   if (target_domain_.empty()) {
     deleteCookie = true;

@@ -1,18 +1,20 @@
-#ifndef BRICK_ACCOUNTS_WINDOW_H_
-#define BRICK_ACCOUNTS_WINDOW_H_
+// Copyright (c) 2015 The Brick Authors.
+
+#ifndef BRICK_WINDOW_ACCOUNTS_WINDOW_H_
+#define BRICK_WINDOW_ACCOUNTS_WINDOW_H_
 #pragma once
 
+#include <string>
 
-#include "base_window.h"
-#include "edit_account_window.h"
-#include "../account_manager.h"
+#include "brick/window/base_window.h"
+#include "brick/window/edit_account_window.h"
+#include "brick/account_manager.h"
 
 class AccountsWindow : public BaseWindow {
 
-public:
-
-  AccountsWindow() {};
-  virtual ~AccountsWindow() {};
+ public:
+  AccountsWindow() {}
+  virtual ~AccountsWindow() {}
   static AccountsWindow* Instance();
   void ReloadAccounts();
 
@@ -27,8 +29,7 @@ public:
     N_COLUMN
   };
 #if defined(__linux__)
-  struct WindowObjects
-  {
+  struct WindowObjects {
     ClientWindowHandle           window;
     CefRefPtr<AccountManager>    account_manager;
     CefRefPtr<EditAccountWindow> edit_account_window;
@@ -36,18 +37,17 @@ public:
     GtkListStore                *accounts_store;
   } window_objects_;
 #else
-  struct WindowObjects
-  {
+  struct WindowObjects {
     ClientWindowHandle           window;
     CefRefPtr<AccountManager>    account_manager;
     CefRefPtr<EditAccountWindow> edit_account_window;
   } window_objects_;
 #endif
 
-private:
+ private:
   static AccountsWindow* instance_;
 
 IMPLEMENT_REFCOUNTING(AccountsWindow);
 };
 
-#endif /* end of BRICK_ACCOUNTS_WINDOW_H_ */
+#endif  // BRICK_WINDOW_ACCOUNTS_WINDOW_H_

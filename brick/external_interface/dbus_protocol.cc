@@ -1,191 +1,193 @@
-#include <gio/gio.h>
-#include <include/base/cef_logging.h>
-#include <include/wrapper/cef_helpers.h>
+// Copyright (c) 2015 The Brick Authors.
 
-#include "../event/event_bus.h"
-#include "../event/sleep_event.h"
+#include <gio/gio.h>
+
+#include "include/base/cef_logging.h"
+#include "include/wrapper/cef_helpers.h"
+#include "brick/event/event_bus.h"
+#include "brick/event/sleep_event.h"
 #ifdef unity
-#include "../event/user_away_event.h"
+#include "brick/event/user_away_event.h"
 #endif
-#include "dbus_protocol.h"
-#include "app_message_delegate.h"
-#include "app_window_message_delegate.h"
+#include "brick/external_interface/dbus_protocol.h"
+#include "brick/external_interface/app_message_delegate.h"
+#include "brick/external_interface/app_window_message_delegate.h"
 
 namespace {
 
-    const char kOwnName[] = "org.brick.Brick";
-    const char kAppInterface[] = "org.brick.Brick.AppInterface";
-    const char kAppPath[] = "/org/brick/Brick/App";
-    const char kAppWindowInterface[] = "org.brick.Brick.AppWindowInterface";
-    const char kAppWindowPath[] = "/org/brick/Brick/AppWindow";
+  const char kOwnName[] = "org.brick.Brick";
+  const char kAppInterface[] = "org.brick.Brick.AppInterface";
+  const char kAppPath[] = "/org/brick/Brick/App";
+  const char kAppWindowInterface[] = "org.brick.Brick.AppWindowInterface";
+  const char kAppWindowPath[] = "/org/brick/Brick/AppWindow";
 
-    const gchar introspection_xml[] =
-       R"xml(<node>
-            <interface name='org.brick.Brick.AppInterface'>
-              <method name='UserAway' />
-              <method name='UserPresent' />
-              <method name='ShowAddAccountDialog'>
-                 <arg type='b' name='switch_on_save' direction='in'/>
-              </method>
-              <method name='ShowAccountsDialog' />
-              <method name='Quit' />
-              <signal name='IndicatorTooltipChanged'>
-                <arg type='s' name='text'/>
-              </signal>
-              <signal name='IndicatorStateChanged'>
-                <arg type='s' name='state'/>
-              </signal>
-              <signal name='IndicatorBadgeChanged'>
-                <arg type='i' name='badge'/>
-                <arg type='b' name='important'/>
-              </signal>
-            </interface>
-            <interface name='org.brick.Brick.AppWindowInterface'>
-              <method name='Hide' />
-              <method name='Present' />
-              <method name='ToggleVisibility' />
-            </interface>
-          </node>
-       )xml";
+  const gchar introspection_xml[] =
+     R"xml(<node>
+          <interface name='org.brick.Brick.AppInterface'>
+            <method name='UserAway' />
+            <method name='UserPresent' />
+            <method name='ShowAddAccountDialog'>
+               <arg type='b' name='switch_on_save' direction='in'/>
+            </method>
+            <method name='ShowAccountsDialog' />
+            <method name='Quit' />
+            <signal name='IndicatorTooltipChanged'>
+              <arg type='s' name='text'/>
+            </signal>
+            <signal name='IndicatorStateChanged'>
+              <arg type='s' name='state'/>
+            </signal>
+            <signal name='IndicatorBadgeChanged'>
+              <arg type='i' name='badge'/>
+              <arg type='b' name='important'/>
+            </signal>
+          </interface>
+          <interface name='org.brick.Brick.AppWindowInterface'>
+            <method name='Hide' />
+            <method name='Present' />
+            <method name='ToggleVisibility' />
+          </interface>
+        </node>
+     )xml";
 
-    void
-    handle_method_call(GDBusConnection *conn,
-       const gchar *sender,
-       const gchar *object_path,
-       const gchar *interface_name,
-       const gchar *method_name,
-       GVariant *parameters,
-       GDBusMethodInvocation *invocation,
-       gpointer user_data) {
+  void
+  handle_method_call(GDBusConnection *conn,
+     const gchar *sender,
+     const gchar *object_path,
+     const gchar *interface_name,
+     const gchar *method_name,
+     GVariant *parameters,
+     GDBusMethodInvocation *invocation,
+     gpointer user_data) {
 
-      LOG(INFO) << "Bus method " << interface_name << "::" << method_name << " called";
+    LOG(INFO) << "Bus method " << interface_name << "::" << method_name << " called";
 
-      DBusProtocol *self = (DBusProtocol *) user_data;
-      CefRefPtr<CefProcessMessage> message =
-         CefProcessMessage::Create(method_name);
-      CefRefPtr<CefListValue> message_args = message->GetArgumentList();
-      // ToDo: callback needed?
-      message_args->SetNull(0);
+    DBusProtocol *self = reinterpret_cast<DBusProtocol *>(user_data);
+    CefRefPtr<CefProcessMessage> message =
+       CefProcessMessage::Create(method_name);
+    CefRefPtr<CefListValue> message_args = message->GetArgumentList();
+    // ToDo: callback needed?
+    message_args->SetNull(0);
 
-      if (!g_strcmp0(method_name, "ShowAddAccountDialog")) {
-        bool switch_on_save;
-        g_variant_get(parameters, "(b)", &switch_on_save);
-        message_args->SetBool(1, switch_on_save);
-      }
-
-      self->Handle(
-         std::string(interface_name),
-         message
-      );
-
-      g_dbus_method_invocation_return_value(invocation, g_variant_new("()"));
+    if (!g_strcmp0(method_name, "ShowAddAccountDialog")) {
+      bool switch_on_save;
+      g_variant_get(parameters, "(b)", &switch_on_save);
+      message_args->SetBool(1, switch_on_save);
     }
 
-    GVariant *
-    handle_get_property(GDBusConnection *conn,
-       const gchar *sender,
-       const gchar *object_path,
-       const gchar *interface_name,
-       const gchar *property_name,
-       GError **error,
-       gpointer user_data) {
+    self->Handle(
+       std::string(interface_name),
+       message
+    );
 
-      return NULL;
-    }
+    g_dbus_method_invocation_return_value(invocation, g_variant_new("()"));
+  }
 
-    gboolean
-    handle_set_property(GDBusConnection *conn,
-       const gchar *sender,
-       const gchar *object_path,
-       const gchar *interface_name,
-       const gchar *property_name,
-       GVariant *value,
-       GError **error,
-       gpointer user_data) {
+  GVariant *
+  handle_get_property(GDBusConnection *conn,
+     const gchar *sender,
+     const gchar *object_path,
+     const gchar *interface_name,
+     const gchar *property_name,
+     GError **error,
+     gpointer user_data) {
 
-      return FALSE;
-    }
+    return NULL;
+  }
 
-    const GDBusInterfaceVTable interface_vtable = {
-       &handle_method_call,
-       &handle_get_property,
-       &handle_set_property
-    };
+  gboolean
+  handle_set_property(GDBusConnection *conn,
+     const gchar *sender,
+     const gchar *object_path,
+     const gchar *interface_name,
+     const gchar *property_name,
+     GVariant *value,
+     GError **error,
+     gpointer user_data) {
 
-    void
-    on_bus_acquired(GDBusConnection *connection, const gchar *name, DBusProtocol *self) {
-      LOG(INFO) << "Acquired the bus " << name;
+    return FALSE;
+  }
 
-      GDBusNodeInfo *introspection_data = g_dbus_node_info_new_for_xml(introspection_xml, NULL);
-      g_assert(introspection_data);
+  const GDBusInterfaceVTable interface_vtable = {
+     &handle_method_call,
+     &handle_get_property,
+     &handle_set_property
+  };
 
-      GDBusInterfaceInfo *interface_app = g_dbus_node_info_lookup_interface(introspection_data, kAppInterface);
-      g_assert(interface_app);
-      g_dbus_connection_register_object(
-         connection,
-         kAppPath,
-         interface_app,
-         &interface_vtable,
-         self,
-         NULL,
-         NULL
-      );
+  void
+  on_bus_acquired(GDBusConnection *connection, const gchar *name, DBusProtocol *self) {
+    LOG(INFO) << "Acquired the bus " << name;
 
-      GDBusInterfaceInfo *interface_app_window = g_dbus_node_info_lookup_interface(introspection_data, kAppWindowInterface);
-      g_assert(interface_app_window);
-      g_dbus_connection_register_object(
-         connection,
-         kAppWindowPath,
-         interface_app_window,
-         &interface_vtable,
-         self,
-         NULL,
-         NULL
-      );
-    }
+    GDBusNodeInfo *introspection_data = g_dbus_node_info_new_for_xml(introspection_xml, NULL);
+    g_assert(introspection_data);
 
-    void on_sleep(GDBusConnection *connection,
-       const gchar *sender_name,
-       const gchar *object_path,
-       const gchar *interface_name,
-       const gchar *signal_name,
-       GVariant *parameters,
-       gpointer user_data) {
+    GDBusInterfaceInfo *interface_app = g_dbus_node_info_lookup_interface(introspection_data, kAppInterface);
+    g_assert(interface_app);
+    g_dbus_connection_register_object(
+       connection,
+       kAppPath,
+       interface_app,
+       &interface_vtable,
+       self,
+       NULL,
+       NULL
+    );
 
-      bool is_sleep;
-      g_variant_get(parameters, "(b)", &is_sleep);
-      SleepEvent e(is_sleep);
-      EventBus::FireEvent(e);
+    GDBusInterfaceInfo *interface_app_window = g_dbus_node_info_lookup_interface(introspection_data, kAppWindowInterface);
+    g_assert(interface_app_window);
+    g_dbus_connection_register_object(
+       connection,
+       kAppWindowPath,
+       interface_app_window,
+       &interface_vtable,
+       self,
+       NULL,
+       NULL
+    );
+  }
 
-    }
+  void on_sleep(GDBusConnection *connection,
+     const gchar *sender_name,
+     const gchar *object_path,
+     const gchar *interface_name,
+     const gchar *signal_name,
+     GVariant *parameters,
+     gpointer user_data) {
+
+    bool is_sleep;
+    g_variant_get(parameters, "(b)", &is_sleep);
+    SleepEvent e(is_sleep);
+    EventBus::FireEvent(e);
+
+  }
 
 #ifdef unity
-    void on_locked(GDBusConnection *connection,
-       const gchar *sender_name,
-       const gchar *object_path,
-       const gchar *interface_name,
-       const gchar *signal_name,
-       GVariant *parameters,
-       gpointer user_data) {
+  void on_locked(GDBusConnection *connection,
+     const gchar *sender_name,
+     const gchar *object_path,
+     const gchar *interface_name,
+     const gchar *signal_name,
+     GVariant *parameters,
+     gpointer user_data) {
 
-      UserAwayEvent e(true, true);
-      EventBus::FireEvent(e);
-    }
+    UserAwayEvent e(true, true);
+    EventBus::FireEvent(e);
+  }
 
-    void on_unlocked(GDBusConnection *connection,
-       const gchar *sender_name,
-       const gchar *object_path,
-       const gchar *interface_name,
-       const gchar *signal_name,
-       GVariant *parameters,
-       gpointer user_data) {
+  void on_unlocked(GDBusConnection *connection,
+     const gchar *sender_name,
+     const gchar *object_path,
+     const gchar *interface_name,
+     const gchar *signal_name,
+     GVariant *parameters,
+     gpointer user_data) {
 
-      UserAwayEvent e(false, true);
-      EventBus::FireEvent(e);
-    }
+    UserAwayEvent e(false, true);
+    EventBus::FireEvent(e);
+  }
 #endif
 
-} // namespace
+}  // namespace
 
 bool
 DBusProtocol::Init() {
@@ -206,15 +208,15 @@ DBusProtocol::Init() {
     return false;
   }
 
-  GVariant *result = g_dbus_connection_call_sync (session_bus_,
+  GVariant *result = g_dbus_connection_call_sync(session_bus_,
      "org.freedesktop.DBus",
      "/org/freedesktop/DBus",
      "org.freedesktop.DBus",
      "RequestName",
-     g_variant_new ("(su)",
+     g_variant_new("(su)",
         kOwnName,
         G_BUS_NAME_OWNER_FLAGS_NONE),
-     G_VARIANT_TYPE ("(u)"),
+     G_VARIANT_TYPE("(u)"),
      G_DBUS_CALL_FLAGS_NONE,
      -1, NULL, &error);
 
@@ -249,13 +251,13 @@ DBusProtocol::isSingleInstance() {
 void
 DBusProtocol::BringAnotherInstance() {
   GError *error = NULL;
-  GVariant *result = g_dbus_connection_call_sync (session_bus_,
+  GVariant *result = g_dbus_connection_call_sync(session_bus_,
      "org.brick.Brick",
      "/org/brick/Brick/AppWindow",
      "org.brick.Brick.AppWindowInterface",
      "Present",
-     g_variant_new ("()"),
-     G_VARIANT_TYPE ("()"),
+     g_variant_new("()"),
+     G_VARIANT_TYPE("()"),
      G_DBUS_CALL_FLAGS_NONE,
      -1, NULL, &error);
 
@@ -350,71 +352,71 @@ DBusProtocol::RegisterEventListeners() {
 }
 
 void
-DBusProtocol::onEvent(AccountListEvent &event) {
+DBusProtocol::onEvent(const AccountListEvent& event) {
   LOG(WARNING) << "D-BUS implement me: AccountListEvent";
-};
+}
 
 void
-DBusProtocol::onEvent(AccountSwitchEvent &event) {
+DBusProtocol::onEvent(const AccountSwitchEvent &event) {
   LOG(WARNING) << "D-BUS implement me: AccountSwitchEvent";
-};
+}
 
 void
-DBusProtocol::onEvent(IndicatorBadgeEvent &event) {
+DBusProtocol::onEvent(const IndicatorBadgeEvent& event) {
   GError *error = NULL;
   gboolean result;
 
-  result = g_dbus_connection_emit_signal (
+  result = g_dbus_connection_emit_signal(
      session_bus_,
      NULL,
      kAppPath,
      kAppInterface,
      "IndicatorBadgeChanged",
-     g_variant_new ("(ib)", event.getBadge(), event.isImportant()),
+     g_variant_new("(ib)", event.getBadge(), event.isImportant()),
      &error);
 
   if (!result) {
     LOG(ERROR) << "Failed to emit IndicatorBadgeChanged signal: " << error->message;
-    g_error_free (error);
+    g_error_free(error);
   }
-};
+}
 
 void
-DBusProtocol::onEvent(IndicatorStateEvent &event) {
+DBusProtocol::onEvent(const IndicatorStateEvent& event) {
   GError *error = NULL;
   gboolean result;
 
-  result = g_dbus_connection_emit_signal (
+  result = g_dbus_connection_emit_signal(
      session_bus_,
      NULL,
      kAppPath,
      kAppInterface,
      "IndicatorStateChanged",
-     g_variant_new ("(s)", event.getState().c_str()),
+     g_variant_new("(s)", event.getState().c_str()),
      &error);
 
   if (!result) {
     LOG(ERROR) << "Failed to emit IndicatorStateChanged signal: " << error->message;
-    g_error_free (error);
+    g_error_free(error);
   }
-};
+}
 
 void
-DBusProtocol::onEvent(IndicatorTooltipEvent &event) {
+DBusProtocol::onEvent(const IndicatorTooltipEvent& event) {
   GError *error = NULL;
   gboolean result;
 
-  result = g_dbus_connection_emit_signal (
+  result = g_dbus_connection_emit_signal(
      session_bus_,
      NULL,
      kAppPath,
      kAppInterface,
      "IndicatorTooltipChanged",
-     g_variant_new ("(s)", event.getTooltip().c_str()),
+     g_variant_new("(s)", event.getTooltip().c_str()),
      &error);
 
   if (!result) {
     LOG(ERROR) << "Failed to emit IndicatorTooltipChanged signal: " << error->message;
-    g_error_free (error);
+    g_error_free(error);
   }
-};
+}

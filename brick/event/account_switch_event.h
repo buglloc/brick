@@ -1,20 +1,22 @@
-#ifndef _BRICK_SWITCH_EVENT_H_
-#define _BRICK_SWITCH_EVENT_H_
+// Copyright (c) 2015 The Brick Authors.
 
-#include "event.h"
+#ifndef BRICK_EVENT_ACCOUNT_SWITCH_EVENT_H_
+#define BRICK_EVENT_ACCOUNT_SWITCH_EVENT_H_
+#pragma once
 
 #include <string>
-#include "../account.h"
 
-class AccountSwitchEvent : public Event
-{
-public:
+#include "brick/event/event.h"
+#include "brick/account.h"
+
+class AccountSwitchEvent : public Event {
+ public:
   AccountSwitchEvent(const EventSender* sender, const Account *account) :
      Event(sender),
      account_(account) {
   }
 
-  AccountSwitchEvent(const Account *account) :
+  explicit AccountSwitchEvent(const Account *account) :
      Event(nullptr),
      account_(account) {
   }
@@ -25,10 +27,10 @@ public:
     return account_;
   }
 
-private:
+ private:
   const Account *account_;
 
 IMPLEMENT_REFCOUNTING(AccountSwitchEvent);
 };
 
-#endif /* _BRICK_SWITCH_EVENT_H_ */
+#endif  // BRICK_EVENT_ACCOUNT_SWITCH_EVENT_H_

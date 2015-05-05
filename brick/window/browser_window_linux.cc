@@ -1,11 +1,14 @@
+// Copyright (c) 2015 The Brick Authors.
+
+#include "brick/window/browser_window.h"
 
 #include <gdk/gdk.h>
 #include <gdk/gdkx.h>
-#include <include/base/cef_logging.h>
 
-#include "../window_util.h"
-#include "browser_window.h"
-#include "../brick_app.h"
+#include "include/base/cef_logging.h"
+#include "brick/window_util.h"
+#include "brick/brick_app.h"
+
 
 bool
 BrowserWindow::WrapNative(CefWindowHandle window) {

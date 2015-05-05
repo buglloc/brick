@@ -1,10 +1,13 @@
-#include <include/cef_app.h>
+// Copyright (c) 2015 The Brick Authors.
 
+#include "brick/indicator/indicator.h"
 
-#include "../cef_handler.h"
-#include "../window/about_window.h"
-#include "../window/accounts_window.h"
-#include "../event/indicator_badge_event.h"
+#include "include/cef_app.h"
+
+#include "brick/client_handler.h"
+#include "brick/window/about_window.h"
+#include "brick/window/accounts_window.h"
+#include "brick/event/indicator_badge_event.h"
 
 namespace {
 
@@ -27,20 +30,18 @@ namespace {
        "flash.svg",
        "flash-important.svg"
     };
-}
+
+}  // namespace
 
 BrickIndicator::BrickIndicator(std::string icons_dir)
-   : current_icon_ (Icon::DEFAULT),
-     idle_icon_ (Icon::DEFAULT),
-     icons_folder_ (icons_dir),
-     idle_ (true),
-     extended_status_ (true),
-     icon_handler_ (NULL)
-{
-  Init();
-}
+    : current_icon_(Icon::DEFAULT),
+     idle_icon_(Icon::DEFAULT),
+     icons_folder_(icons_dir),
+     idle_(true),
+     extended_status_(true),
+     icon_handler_(NULL) {
 
-BrickIndicator::~BrickIndicator() {
+  Init();
 }
 
 std::string
@@ -126,7 +127,7 @@ BrickIndicator::OnMenuChangeAccount(int id) {
   CefRefPtr<ClientHandler> client_handler = ClientHandler::GetInstance();
   CefRefPtr<AccountManager> account_manager = client_handler->GetAccountManager();
   if (account_manager->GetCurrentAccount()->GetId() == id)
-    return true; // Selected current account
+    return true;  // Selected current account
 
   SetIdleIcon(Icon::DEFAULT);
   SetIcon(Icon::DEFAULT);
@@ -147,14 +148,14 @@ BrickIndicator::UseExtendedStatus(bool use) {
 }
 
 void
-BrickIndicator::onEvent(AccountListEvent &event) {
+BrickIndicator::onEvent(const AccountListEvent& event) {
   UpdateAccountsMenu();
-};
+}
 
 void
-BrickIndicator::onEvent(AccountSwitchEvent &event) {
+BrickIndicator::onEvent(const AccountSwitchEvent& event) {
   UpdateAccountsMenu();
-};
+}
 
 void
 BrickIndicator::RegisterEventListeners() {

@@ -1,10 +1,12 @@
-#ifndef BRICK_APP_H_
-#define BRICK_APP_H_
+// Copyright (c) 2015 The Brick Authors.
+
+#ifndef BRICK_BRICK_APP_H_
+#define BRICK_BRICK_APP_H_
 #pragma once
 
 // ToDo: move defines to separate file?
 
-#define VERSION "0.1.20.29" // IM API version in last part!
+#define VERSION "0.1.20.29"  // IM API version in last part!
 #define APP_VERSION "Robin-Brick/" VERSION
 #define CEF_PRODUCT_VERSION APP_VERSION " (BitrixDesktop/3.x compatible) Chrome/41.0.2272.104"
 #define APP_NAME "Brick"
@@ -14,13 +16,13 @@
 #define IDLE_CHECK_INTERVAL 4000L
 #define BRICK_SHUTDOWN_TIMEOUT 2000L
 
-#include <include/internal/cef_types_wrappers.h>
-
-#include "common/app_settings.h"
+#include <string>
+#include "include/internal/cef_types_wrappers.h"
+#include "brick/common/app_settings.h"
 
 class BrickApp : public CefBase {
 
-public:
+ public:
   static CefBrowserSettings GetBrowserSettings(std::string work_dir, AppSettings app_settings);
   static CefSettings GetCefSettings(std::string work_dir, AppSettings app_settings);
   static std::string GetUserConfig();
@@ -35,4 +37,4 @@ public:
   IMPLEMENT_REFCOUNTING(BrickApp);
 };
 
-#endif // BRICK_APP_H_
+#endif  // BRICK_BRICK_APP_H_

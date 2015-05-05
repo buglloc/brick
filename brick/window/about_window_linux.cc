@@ -1,27 +1,31 @@
+// Copyright (c) 2015 The Brick Authors.
+
+#include "brick/window/about_window.h"
+
+#include <gtk/gtk.h>
 #include <error.h>
-#include <include/base/cef_logging.h>
-#include "about_window.h"
-#include "gtk/gtk.h"
-#include "../brick_app.h"
+
+#include "include/base/cef_logging.h"
+#include "brick/brick_app.h"
 
 extern char _binary_window_about_glade_start;
 extern char _binary_window_about_glade_size;
 
 namespace {
-    const char kComment[]  = "Simple Bitrix messenger client\nVersion " APP_VERSION;
+  const char kComment[]  = "Simple Bitrix messenger client\nVersion " APP_VERSION;
 
-    bool
-    on_delete_event(GtkDialog *dialog, gpointer data, AboutWindow *self) {
-       self->Hide();
-       return true;
-    }
+  bool
+  on_delete_event(GtkDialog *dialog, gpointer data, AboutWindow *self) {
+     self->Hide();
+     return true;
+  }
 
-    void
-    on_response(GtkDialog *dialog, gint response_id, AboutWindow *self) {
-       self->Hide();
-    }
+  void
+  on_response(GtkDialog *dialog, gint response_id, AboutWindow *self) {
+     self->Hide();
+  }
 
-} // namespace
+}  // namespace
 
 void
 AboutWindow::Init() {

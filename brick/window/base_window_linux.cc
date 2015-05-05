@@ -1,4 +1,6 @@
-#include "base_window.h"
+// Copyright (c) 2015 The Brick Authors.
+
+#include "brick/window/base_window.h"
 
 void
 BaseWindow::Minimize() {
@@ -68,7 +70,7 @@ BaseWindow::Resize(int width, int height) {
 
 const char*
 BaseWindow::GetTitle() {
-  char* title = (char*) gtk_window_get_title(GTK_WINDOW(window_handler_));
+  const char* title = gtk_window_get_title(GTK_WINDOW(window_handler_));
   if (title == NULL)
     return "";
 

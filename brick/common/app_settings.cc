@@ -1,8 +1,11 @@
-#include "app_settings.h"
-#include "../platform_util.h"
-#include "../helper.h"
+// Copyright (c) 2015 The Brick Authors.
+
+#include "brick/common/app_settings.h"
+#include <string>
+#include "brick/platform_util.h"
+#include "brick/helper.h"
 #include "third-party/json/json.h"
-#include <include/base/cef_logging.h>
+#include "include/base/cef_logging.h"
 
 AppSettings::AppSettings()
 : app_token(""),
@@ -22,13 +25,7 @@ AppSettings::AppSettings()
   external_api(true),
   hide_on_delete(true),
   extended_status(true)
-{
-
-}
-
-AppSettings::~AppSettings() {
-
-}
+{ }
 
 AppSettings
 AppSettings::InitByJson(std::string json) {
@@ -45,8 +42,13 @@ AppSettings::UpdateByJson(std::string json) {
 
   bool parsingSuccessful = reader.parse(json, root);
   if (!parsingSuccessful) {
-#if 0 // Turn off error message while we haven't any configuration file by default
-      fprintf(stderr, "Failed to parse configuration: %s", reader.getFormattedErrorMessages().c_str());
+#if 0
+// Turn off error message while we haven't any configuration file by default
+    fprintf(
+      stderr,
+      "Failed to parse configuration: %s",
+      reader.getFormattedErrorMessages().c_str()
+    );
 #endif
     return;
   }
@@ -113,7 +115,7 @@ AppSettings::UpdateByJson(std::string json) {
 
   if (root.isMember("client_scripts")
      && root["client_scripts"].isArray()) {
-    for(unsigned int i=0; i < root["client_scripts"].size(); ++i) {
+    for (unsigned int i = 0; i < root["client_scripts"].size(); ++i) {
       const Json::Value script = root["client_scripts"][i];
 
       if (!script.isString()) {

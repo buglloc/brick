@@ -1,14 +1,12 @@
-// Copyright (c) 2013 The Chromium Embedded Framework Authors. All rights
-// reserved. Use of this source code is governed by a BSD-style license that
-// can be found in the LICENSE file.
+// Copyright (c) 2015 The Brick Authors.
 
-#include "cef_app.h"
+#include "brick/client_app.h"
 
-#include "cef_handler.h"
-#include "v8_handler.h"
 #include "include/wrapper/cef_helpers.h"
-#include "helper.h"
-#include "platform_util.h"
+#include "brick/client_handler.h"
+#include "brick/v8_handler.h"
+#include "brick/helper.h"
+#include "brick/platform_util.h"
 
 extern char _binary_desktop_extension_js_start;
 extern char _binary_desktop_extension_js_size;
@@ -18,7 +16,7 @@ ClientApp::ClientApp() {
 }
 
 void ClientApp::OnRegisterCustomSchemes(
-   CefRefPtr<CefSchemeRegistrar> registrar) {
+    CefRefPtr<CefSchemeRegistrar> registrar) {
   // Default schemes that support cookies.
   cookieable_schemes_.push_back("http");
   cookieable_schemes_.push_back("https");
@@ -40,11 +38,11 @@ void ClientApp::OnWebKitInitialized() {
 }
 
 bool ClientApp::OnProcessMessageReceived(
-   CefRefPtr<CefBrowser> browser,
-   CefProcessId source_process,
-   CefRefPtr<CefProcessMessage> message) {
-  ASSERT(source_process == PID_BROWSER);
+    CefRefPtr<CefBrowser> browser,
+    CefProcessId source_process,
+    CefRefPtr<CefProcessMessage> message) {
 
+  ASSERT(source_process == PID_BROWSER);
   bool handled = false;
 
   // Execute delegate callbacks.
@@ -71,8 +69,8 @@ bool ClientApp::OnProcessMessageReceived(
       // which can lead to bad things. If the browser instance has been deleted, don't
       // invoke this callback.
       if (context->GetBrowser()) {
-        for (size_t i = 1; i < messageArgs->GetSize(); i++) {
-          arguments.push_back(helper::ListValueToV8Value(messageArgs, (int) i));
+        for (unsigned int i = 1; i < messageArgs->GetSize(); i++) {
+          arguments.push_back(helper::ListValueToV8Value(messageArgs, i));
         }
 
         callbackFunction->ExecuteFunction(NULL, arguments);
@@ -116,13 +114,13 @@ bool ClientApp::OnProcessMessageReceived(
 
 
 bool ClientApp::OnBeforeNavigation(CefRefPtr<CefBrowser> browser,
-   CefRefPtr<CefFrame> frame,
-   CefRefPtr<CefRequest> request,
-   NavigationType navigation_type,
-   bool is_redirect) {
+    CefRefPtr<CefFrame> frame,
+    CefRefPtr<CefRequest> request,
+    NavigationType navigation_type,
+    bool is_redirect) {
 
   if (is_redirect)
-    return true; // Disable redirects at all
+    return true;  // Disable redirects at all
 
   if (navigation_type == NAVIGATION_LINK_CLICKED) {
     // We have single page app, so we open all links and redirects in external browser

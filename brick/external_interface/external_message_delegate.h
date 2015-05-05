@@ -1,12 +1,18 @@
-#ifndef BRICK_EXTERNAL_MESSAGE_DELEGATE_H_
-#define BRICK_EXTERNAL_MESSAGE_DELEGATE_H_
+// Copyright (c) 2015 The Brick Authors.
 
-#include <include/cef_base.h>
-#include <include/cef_process_message.h>
-#include "../api_error.h"
+#ifndef BRICK_EXTERNAL_INTERFACE_EXTERNAL_MESSAGE_DELEGATE_H_
+#define BRICK_EXTERNAL_INTERFACE_EXTERNAL_MESSAGE_DELEGATE_H_
+
+#include <string>
+
+#include "include/cef_base.h"
+#include "include/cef_process_message.h"
+#include "brick/api_error.h"
+
 class ExternalMessageDelegate : public virtual CefBase {
-public:
-  ExternalMessageDelegate(std::string message_namespace);
+ public:
+  explicit ExternalMessageDelegate(std::string message_namespace)
+      : message_namespace_(message_namespace) { }
 
   // Called when a message is received. Return true if the message was
   // handled and should not be passed on to other handlers.
@@ -16,10 +22,10 @@ public:
 
   virtual bool IsAcceptedNamespace(std::string namespace_name);
 
-protected:
+ protected:
   std::string message_namespace_;
 
   IMPLEMENT_REFCOUNTING(ExternalMessageDelegate);
 };
 
-#endif // BRICK_EXTERNAL_MESSAGE_DELEGATE_H_
+#endif  // BRICK_EXTERNAL_INTERFACE_EXTERNAL_MESSAGE_DELEGATE_H_

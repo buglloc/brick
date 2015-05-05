@@ -1,26 +1,27 @@
-// Copyright (c) 2013 The Chromium Embedded Framework Authors. All rights
-// reserved. Use of this source code is governed by a BSD-style license that
-// can be found in the LICENSE file.
+// Copyright (c) 2015 The Brick Authors.
 
-#ifndef CEF_TESTS_CEFSIMPLE_SIMPLE_HANDLER_H_
-#define CEF_TESTS_CEFSIMPLE_SIMPLE_HANDLER_H_
+#ifndef BRICK_CLIENT_HANDLER_H_
+#define BRICK_CLIENT_HANDLER_H_
+#pragma once
 
+#include <string>
+#include <vector>
 #include <list>
 #include <map>
 #include <set>
-#include "common/app_settings.h"
-#include "window/window_features.h"
-#include "window/browser_window.h"
-#include "event/user_away_event.h"
-#include "event/sleep_event.h"
-#include "indicator/indicator.h"
+#include "brick/common/app_settings.h"
+#include "brick/window/window_features.h"
+#include "brick/window/browser_window.h"
+#include "brick/event/user_away_event.h"
+#include "brick/event/sleep_event.h"
+#include "brick/indicator/indicator.h"
 
 #include "include/cef_client.h"
 
-#include "cache_manager.h"
-#include "command_callbacks.h"
-#include "account_manager.h"
-#include "api_error.h"
+#include "brick/cache_manager.h"
+#include "brick/command_callbacks.h"
+#include "brick/account_manager.h"
+#include "brick/api_error.h"
 
 
 class ClientHandler : public CefClient,
@@ -32,13 +33,13 @@ class ClientHandler : public CefClient,
                       public CefRequestHandler,
                       public EventHandler<UserAwayEvent>,
                       public EventHandler<SleepEvent> {
-public:
+ public:
   // Interface for process message delegates. Do not perform work in the
   // RenderDelegate constructor.
   class ProcessMessageDelegate : public virtual CefBase {
-  public:
-    ProcessMessageDelegate(const char* message_namespace)
-       : message_namespace_(message_namespace) {};
+   public:
+    explicit ProcessMessageDelegate(const char* message_namespace)
+       : message_namespace_(message_namespace) {}
 
     // Called when a process message is received. Return true if the message was
     // handled and should not be passed on to other handlers.
@@ -58,7 +59,7 @@ public:
          && message_name.find(message_namespace_) == 0);
     }
 
-  protected:
+   protected:
     const char* message_namespace_;
 
   };
@@ -220,8 +221,8 @@ public:
 
   // System event handlers
   void RegisterSystemEventListeners();
-  virtual void onEvent(UserAwayEvent &event) OVERRIDE;
-  virtual void onEvent(SleepEvent &event) OVERRIDE;
+  virtual void onEvent(const UserAwayEvent& event) OVERRIDE;
+  virtual void onEvent(const SleepEvent& event) OVERRIDE;
 
   std::string AddTemporaryPage(const std::string& content);
 
@@ -229,12 +230,12 @@ public:
   void Shutdown(bool force);
   void PreventShutdown();
 
-protected:
+ protected:
   // Create all of ProcessMessageDelegate objects.
   static void CreateProcessMessageDelegates(
-     ProcessMessageDelegateSet &delegates);
+     ProcessMessageDelegateSet *delegates);
 
-private:
+ private:
   // List of existing browser windows. Only accessed on the CEF UI thread.
   typedef std::list<CefRefPtr<CefBrowser> > BrowserList;
   BrowserList browser_list_;
@@ -288,4 +289,4 @@ private:
 IMPLEMENT_REFCOUNTING(ClientHandler);
 };
 
-#endif  // CEF_TESTS_CEFSIMPLE_SIMPLE_HANDLER_H_
+#endif  // BRICK_CLIENT_HANDLER_H_

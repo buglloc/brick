@@ -1,50 +1,46 @@
-// Copyright (c) 2013 The Chromium Embedded Framework Authors. All rights
-// reserved. Use of this source code is governed by a BSD-style license that
-// can be found in the LICENSE file.
+// Copyright (c) 2015 The Brick Authors.
 
-#include "cef_handler.h"
-
+#include "brick/client_handler.h"
 
 #include "include/base/cef_bind.h"
 #include "include/cef_app.h"
 #include "include/wrapper/cef_closure_task.h"
 #include "include/wrapper/cef_helpers.h"
 #include "include/wrapper/cef_stream_resource_handler.h"
-#include "message_delegate/app_message_delegate.h"
-#include "message_delegate/app_window_message_delegate.h"
-#include "helper.h"
-#include "resource_util.h"
-#include "platform_util.h"
-#include "window_util.h"
-#include "brick_app.h"
-#include "cookie_cleaner.h"
-
+#include "brick/message_delegate/app_message_delegate.h"
+#include "brick/message_delegate/app_window_message_delegate.h"
+#include "brick/helper.h"
+#include "brick/resource_util.h"
+#include "brick/platform_util.h"
+#include "brick/window_util.h"
+#include "brick/brick_app.h"
+#include "brick/cookie_cleaner.h"
 
 namespace {
 
-    CefRefPtr<ClientHandler> g_instance = NULL;
-    const char kInterceptionPath[] = "/desktop_app/internals/";
-    const char kTemporaryPagePath[] = "/desktop_app/internals/temp-pages/";
-    const char kInjectedJsPath[] = "/desktop_app/internals/injected-js/";
-    std::string kUnknownInternalContent = "Failed to load resource";
+  CefRefPtr<ClientHandler> g_instance = NULL;
+  const char kInterceptionPath[] = "/desktop_app/internals/";
+  const char kTemporaryPagePath[] = "/desktop_app/internals/temp-pages/";
+  const char kInjectedJsPath[] = "/desktop_app/internals/injected-js/";
+  std::string kUnknownInternalContent = "Failed to load resource";
 
-} // namespace
+}  // namespace
 
 ClientHandler::ClientHandler()
-    : is_idle_ (false),
-      main_handle_ (NULL),
+    : is_idle_(false),
+      main_handle_(NULL),
       indicator_handle_(NULL),
-      account_manager_ (NULL),
+      account_manager_(NULL),
       last_temporary_page_(0),
-      in_shutdown_state_ (false),
+      in_shutdown_state_(false),
 #ifdef __linux__
-      shutdown_timer_id_ (0)
+      shutdown_timer_id_(0)
 #endif
 {
   DCHECK(!g_instance);
   g_instance = this;
   callbackId = 0;
-  CreateProcessMessageDelegates(process_message_delegates_);
+  CreateProcessMessageDelegates(&process_message_delegates_);
   RegisterSystemEventListeners();
 }
 
@@ -62,14 +58,14 @@ void
 ClientHandler::OnWindowCreated(CefRefPtr<CefBrowser> browser) {
   CefWindowHandle window = browser->GetHost()->GetWindowHandle();
   if (browser->IsPopup()) {
-    window_util::SetClassHints(window, (char *)APP_COMMON_NAME, (char *)APP_NAME);
+    window_util::InitWindow(window, false);
     if (last_popup_features_.get() && last_popup_features_->topmost) {
       window_util::ConfigureAsTopmost(window);
     } else {
       window_util::ConfigureAsDialog(window);
     }
   } else {
-    window_util::SetClassHints(window, (char *)APP_COMMON_NAME, (char *)APP_NAME);
+    window_util::InitWindow(window, true);
   }
 }
 
@@ -173,11 +169,11 @@ ClientHandler::OnLoadError(CefRefPtr<CefBrowser> browser,
 
 void
 ClientHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser,
-   CefRefPtr<CefFrame> frame,
-   int httpStatusCode) {
+    CefRefPtr<CefFrame> frame,
+    int httpStatusCode) {
 
   if (httpStatusCode != 200 || !frame->IsMain())
-    return; // We need only successful loaded main frame
+    return;  // We need only successful loaded main frame
 
   std::string injected_js = R"js((function(window) {
        window.addEventListener('BXExitApplication', function (e) {
@@ -253,10 +249,10 @@ ClientHandler::CloseAllPopups(bool force_close) {
 
 void
 ClientHandler::OnBeforeContextMenu(
-   CefRefPtr<CefBrowser> browser,
-   CefRefPtr<CefFrame> frame,
-   CefRefPtr<CefContextMenuParams> params,
-   CefRefPtr<CefMenuModel> model) {
+    CefRefPtr<CefBrowser> browser,
+    CefRefPtr<CefFrame> frame,
+    CefRefPtr<CefContextMenuParams> params,
+    CefRefPtr<CefMenuModel> model) {
   CEF_REQUIRE_UI_THREAD();
 
   if ((params->GetTypeFlags() & (CM_TYPEFLAG_PAGE | CM_TYPEFLAG_FRAME)) != 0) {
@@ -276,11 +272,11 @@ ClientHandler::OnBeforeContextMenu(
 
 bool
 ClientHandler::OnContextMenuCommand(
-   CefRefPtr<CefBrowser> browser,
-   CefRefPtr<CefFrame> frame,
-   CefRefPtr<CefContextMenuParams> params,
-   int command_id,
-   EventFlags event_flags) {
+    CefRefPtr<CefBrowser> browser,
+    CefRefPtr<CefFrame> frame,
+    CefRefPtr<CefContextMenuParams> params,
+    int command_id,
+    EventFlags event_flags) {
   CEF_REQUIRE_UI_THREAD();
 
 #ifndef NDEBUG
@@ -305,7 +301,7 @@ ClientHandler::OnContextMenuCommand(
 
 void
 ClientHandler::ShowDevTools(CefRefPtr<CefBrowser> browser,
-   const CefPoint& inspect_element_at) {
+    const CefPoint& inspect_element_at) {
   CefWindowInfo windowInfo;
   CefBrowserSettings settings;
 
@@ -325,14 +321,14 @@ ClientHandler::CloseDevTools(CefRefPtr<CefBrowser> browser) {
 
 bool
 ClientHandler::OnBeforePopup(CefRefPtr<CefBrowser> browser,
-   CefRefPtr<CefFrame> frame,
-   const CefString& target_url,
-   const CefString& target_frame_name,
-   const CefPopupFeatures& popupFeatures,
-   CefWindowInfo& windowInfo,
-   CefRefPtr<CefClient>& client,
-   CefBrowserSettings& settings,
-   bool* no_javascript_access) {
+    CefRefPtr<CefFrame> frame,
+    const CefString& target_url,
+    const CefString& target_frame_name,
+    const CefPopupFeatures& popupFeatures,
+    CefWindowInfo& windowInfo,
+    CefRefPtr<CefClient>& client,
+    CefBrowserSettings& settings,
+    bool* no_javascript_access) {
   CEF_REQUIRE_IO_THREAD();
 
   std::string url = target_url;
@@ -358,9 +354,9 @@ ClientHandler::OnBeforePopup(CefRefPtr<CefBrowser> browser,
 
 bool
 ClientHandler::OnBeforeBrowse(CefRefPtr<CefBrowser> browser,
-   CefRefPtr<CefFrame> frame,
-   CefRefPtr<CefRequest> request,
-   bool is_redirect) {
+    CefRefPtr<CefFrame> frame,
+    CefRefPtr<CefRequest> request,
+    bool is_redirect) {
 
   std::string url = request->GetURL();
   if (!IsAllowedUrl(url)) {
@@ -373,9 +369,9 @@ ClientHandler::OnBeforeBrowse(CefRefPtr<CefBrowser> browser,
 
 CefRefPtr<CefResourceHandler>
 ClientHandler::GetResourceHandler(
-   CefRefPtr<CefBrowser> browser,
-   CefRefPtr<CefFrame> frame,
-   CefRefPtr<CefRequest> request) {
+    CefRefPtr<CefBrowser> browser,
+    CefRefPtr<CefFrame> frame,
+    CefRefPtr<CefRequest> request) {
   CEF_REQUIRE_IO_THREAD();
 
   std::string url = request->GetURL();
@@ -431,9 +427,9 @@ ClientHandler::GetResourceHandler(
 
 bool
 ClientHandler::OnProcessMessageReceived(
-   CefRefPtr<CefBrowser> browser,
-   CefProcessId source_process,
-   CefRefPtr<CefProcessMessage> message) {
+    CefRefPtr<CefBrowser> browser,
+    CefProcessId source_process,
+    CefRefPtr<CefProcessMessage> message) {
   bool handled = false;
 
   if (message->GetName() == "executeCommandCallback") {
@@ -501,7 +497,7 @@ ClientHandler::GetCacheManager() const {
 
 void
 ClientHandler::SetAppSettings(AppSettings settings) {
- app_settings_ = settings;
+  app_settings_ = settings;
 }
 
 AppSettings
@@ -585,7 +581,7 @@ ClientHandler::SendJSEvent(CefRefPtr<CefBrowser> browser, const CefString& name,
 }
 
 void
-ClientHandler::onEvent(UserAwayEvent &event) {
+ClientHandler::onEvent(const UserAwayEvent& event) {
   is_idle_ = event.isAway();
   if (event.isManual())
     idle_pending_ = false;
@@ -598,7 +594,7 @@ ClientHandler::onEvent(UserAwayEvent &event) {
 }
 
 void
-ClientHandler::onEvent(SleepEvent &event) {
+ClientHandler::onEvent(const SleepEvent& event) {
   CefRefPtr<CefBrowser> browser = GetBrowser();
   if (!browser)
     return;
@@ -634,7 +630,7 @@ ClientHandler::AddTemporaryPage(const std::string& content) {
 
 // static
 void
-ClientHandler::CreateProcessMessageDelegates(ProcessMessageDelegateSet& delegates) {
+ClientHandler::CreateProcessMessageDelegates(ProcessMessageDelegateSet *delegates) {
   AppMessageDelegate::CreateProcessMessageDelegates(delegates);
   AppWindowMessageDelegate::CreateProcessMessageDelegates(delegates);
 }

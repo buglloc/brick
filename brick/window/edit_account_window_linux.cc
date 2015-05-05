@@ -1,169 +1,172 @@
-#include <include/base/cef_logging.h>
-#include <brick/cef_handler.h>
-#include "edit_account_window.h"
+// Copyright (c) 2015 The Brick Authors.
+
+#include "include/base/cef_logging.h"
+#include "brick/client_handler.h"
+#include "brick/window/edit_account_window.h"
 
 extern char _binary_window_edit_account_glade_start;
 extern char _binary_window_edit_account_glade_size;
 
 namespace {
-    // Forward declaration
-    void OnSave(GtkWidget *widget, EditAccountWindow *self);
-    void OnOtpDialogResponse(GtkDialog *dialog, gint response_id, EditAccountWindow *self);
-    void ShowOtpDialog(EditAccountWindow *self);
 
-    const char kOtpPromptId[] = "otp_prompt_text";
+  // Forward declaration
+  void OnSave(GtkWidget *widget, EditAccountWindow *self);
+  void OnOtpDialogResponse(GtkDialog *dialog, gint response_id, EditAccountWindow *self);
+  void ShowOtpDialog(EditAccountWindow *self);
 
-    void
-    OnOtpDialogResponse(GtkDialog *dialog, gint response_id, EditAccountWindow *self) {
-      switch (response_id) {
-        case GTK_RESPONSE_OK:
-          OnSave(GTK_WIDGET(dialog), self);
-        case GTK_RESPONSE_CANCEL:
-        case GTK_RESPONSE_DELETE_EVENT:
-          gtk_widget_destroy(GTK_WIDGET(dialog));
-          break;
-        default:
-          NOTREACHED();
+  const char kOtpPromptId[] = "otp_prompt_text";
+
+  void
+  OnOtpDialogResponse(GtkDialog *dialog, gint response_id, EditAccountWindow *self) {
+    switch (response_id) {
+      case GTK_RESPONSE_OK:
+        OnSave(GTK_WIDGET(dialog), self);
+      case GTK_RESPONSE_CANCEL:
+      case GTK_RESPONSE_DELETE_EVENT:
+        gtk_widget_destroy(GTK_WIDGET(dialog));
+        break;
+      default:
+        NOTREACHED();
+    }
+  }
+
+  void
+  ShowOtpDialog(EditAccountWindow *self) {
+    GtkWidget *dialog = gtk_message_dialog_new_with_markup(
+       GTK_WINDOW(self->window_objects_.window),
+       GTK_DIALOG_DESTROY_WITH_PARENT,
+       GTK_MESSAGE_OTHER,
+       GTK_BUTTONS_OK_CANCEL,
+       NULL
+    );
+
+    gtk_window_set_title(GTK_WINDOW(dialog), "Two-step authentication");
+    gtk_message_dialog_set_markup(GTK_MESSAGE_DIALOG(dialog),
+       "Two-step authentication has been activated.\nPlease enter your one-time password:");
+
+    GtkWidget* content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+    GtkWidget* text_box = gtk_entry_new();
+    gtk_box_pack_start(GTK_BOX(content_area), text_box, true, true, 0);
+    g_object_set_data(G_OBJECT(dialog), kOtpPromptId, text_box);
+    gtk_entry_set_activates_default(GTK_ENTRY(text_box), true);
+
+    g_signal_connect(dialog, "response", G_CALLBACK(OnOtpDialogResponse), self);
+    gtk_widget_show_all(GTK_WIDGET(dialog));
+  }
+
+  void
+  OnSave(GtkWidget *widget, EditAccountWindow *self) {
+    bool secure =
+       gtk_combo_box_get_active(self->window_objects_.protocol_chooser) == 0;
+    const gchar* domain =
+      gtk_entry_get_text(self->window_objects_.domain_entry);
+    const gchar* login =
+       gtk_entry_get_text(self->window_objects_.login_entry);
+    const gchar* password =
+       gtk_entry_get_text(GTK_ENTRY(self->window_objects_.password_entry));
+    const bool renew = static_cast<bool>(
+       gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(self->window_objects_.use_app_password)));
+
+    GtkWidget* otp_widget = static_cast<GtkWidget*>(
+       g_object_get_data(G_OBJECT(widget), kOtpPromptId));
+
+    const gchar* otp = "";
+    if (otp_widget) {
+      otp = gtk_entry_get_text(GTK_ENTRY(otp_widget));
+    }
+
+    CefRefPtr<Account> check_account(new Account);
+    bool show_error = false;
+    std::string error_message;
+
+    if (!strlen(domain)) {
+      show_error = true;
+      error_message = "Empty domain";
+    } else if (!strlen(login)) {
+      show_error = true;
+      error_message = "Empty login";
+    } else if (!strlen(password)) {
+      show_error = true;
+      error_message = "Empty password";
+    }
+
+    if (!show_error) {
+      check_account->Set(
+         secure,
+         domain,
+         login,
+         password
+      );
+
+      Account::AuthResult auth_result = check_account->Auth(renew, otp);
+      if (!auth_result.success) {
+        show_error = true;
+
+        switch (auth_result.error_code) {
+          case Account::ERROR_CODE::HTTP:
+            error_message = "HTTP error: " + auth_result.http_error;
+            break;
+          case Account::ERROR_CODE::CAPTCHA:
+            error_message = "You’ve exceeded the maximum number of login attempts allowed.\n"
+               "Please, authorize in your <b>browser</b> first";
+            break;
+          case Account::ERROR_CODE::OTP:
+            // If we have OTP auth error - turn on App Passwords
+            if (!renew) {
+              gtk_toggle_button_set_active(
+                GTK_TOGGLE_BUTTON(self->window_objects_.use_app_password),
+                true
+              );
+            }
+
+            ShowOtpDialog(self);
+            return;
+            break;
+          case Account::ERROR_CODE::AUTH:
+            error_message = "Authorization error, wrong login or password";
+            break;
+          case Account::ERROR_CODE::INVALID_URL:
+            error_message = auth_result.http_error + "\n"
+               "Please, provide correct host name and scheme";
+            break;
+          default:
+            error_message = "I’m sorry, unknown error :(";
+            break;
+        }
       }
     }
 
-    void
-    ShowOtpDialog(EditAccountWindow *self) {
+    if (show_error) {
       GtkWidget *dialog = gtk_message_dialog_new_with_markup(
          GTK_WINDOW(self->window_objects_.window),
          GTK_DIALOG_DESTROY_WITH_PARENT,
-         GTK_MESSAGE_OTHER,
-         GTK_BUTTONS_OK_CANCEL,
+         GTK_MESSAGE_ERROR,
+         GTK_BUTTONS_CLOSE,
          NULL
       );
 
-      gtk_window_set_title(GTK_WINDOW(dialog), "Two-step authentication");
       gtk_message_dialog_set_markup(GTK_MESSAGE_DIALOG(dialog),
-         "Two-step authentication has been activated.\nPlease enter your one-time password:");
-
-      GtkWidget* content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
-      GtkWidget* text_box = gtk_entry_new();
-      gtk_box_pack_start(GTK_BOX(content_area), text_box, true, true, 0);
-      g_object_set_data(G_OBJECT(dialog), kOtpPromptId, text_box);
-      gtk_entry_set_activates_default(GTK_ENTRY(text_box), true);
-
-      g_signal_connect(dialog, "response", G_CALLBACK(OnOtpDialogResponse), self);
-      gtk_widget_show_all(GTK_WIDGET(dialog));
+         error_message.c_str());
+      gtk_dialog_run(GTK_DIALOG(dialog));
+      gtk_widget_destroy(dialog);
+      return;
     }
 
-    void
-    OnSave(GtkWidget *widget, EditAccountWindow *self) {
-      bool secure =
-         gtk_combo_box_get_active(self->window_objects_.protocol_chooser) == 0;
-      const gchar* domain =
-        gtk_entry_get_text(self->window_objects_.domain_entry);
-      const gchar* login =
-         gtk_entry_get_text(self->window_objects_.login_entry);
-      const gchar* password =
-         gtk_entry_get_text(GTK_ENTRY(self->window_objects_.password_entry));
-      const gboolean renew =
-         gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(self->window_objects_.use_app_password));
+    self->Save(
+       secure,
+       std::string(domain),
+       std::string(login),
+       check_account->GetPassword(),  // Server may update user password while login,
+       renew
+    );
+  }
 
-      GtkWidget* otp_widget = static_cast<GtkWidget*>(
-         g_object_get_data(G_OBJECT(widget), kOtpPromptId));
+  void
+  OnCancel(GtkWidget *widget, EditAccountWindow *self) {
+    self->Close();
+  }
 
-      const gchar* otp = "";
-      if (otp_widget) {
-        otp = gtk_entry_get_text(GTK_ENTRY(otp_widget));
-      }
-
-      CefRefPtr<Account> check_account(new Account);
-      bool show_error = false;
-      std::string error_message;
-
-      if (!strlen(domain)) {
-        show_error = true;
-        error_message = "Empty domain";
-      } else if (!strlen(login)) {
-        show_error = true;
-        error_message = "Empty login";
-      } else if (!strlen(password)) {
-        show_error = true;
-        error_message = "Empty password";
-      }
-
-      if (!show_error) {
-        check_account->Set(
-           secure,
-           domain,
-           login,
-           password
-        );
-
-        Account::AuthResult auth_result = check_account->Auth((bool) renew, otp);
-        if (!auth_result.success) {
-          show_error = true;
-
-          switch (auth_result.error_code) {
-            case Account::ERROR_CODE::HTTP:
-              error_message = "HTTP error: " + auth_result.http_error;
-              break;
-            case Account::ERROR_CODE::CAPTCHA:
-              error_message = "You’ve exceeded the maximum number of login attempts allowed.\n"
-                 "Please, authorize in your <b>browser</b> first";
-              break;
-            case Account::ERROR_CODE::OTP:
-              // If we have OTP auth error - turn on App Passwords
-              if (!renew) {
-                gtk_toggle_button_set_active(
-                  GTK_TOGGLE_BUTTON(self->window_objects_.use_app_password),
-                  true
-                );
-              }
-
-              ShowOtpDialog(self);
-              return;
-              break;
-            case Account::ERROR_CODE::AUTH:
-              error_message = "Authorization error, wrong login or password";
-              break;
-            case Account::ERROR_CODE::INVALID_URL:
-              error_message = auth_result.http_error + "\n"
-                 "Please, provide correct host name and scheme";
-              break;
-            default:
-              error_message = "I’m sorry, unknown error :(";
-              break;
-          }
-        }
-      }
-
-      if (show_error) {
-        GtkWidget *dialog = gtk_message_dialog_new_with_markup(
-           GTK_WINDOW(self->window_objects_.window),
-           GTK_DIALOG_DESTROY_WITH_PARENT,
-           GTK_MESSAGE_ERROR,
-           GTK_BUTTONS_CLOSE,
-           NULL
-        );
-
-        gtk_message_dialog_set_markup(GTK_MESSAGE_DIALOG(dialog),
-           error_message.c_str());
-        gtk_dialog_run(GTK_DIALOG(dialog));
-        gtk_widget_destroy(dialog);
-        return;
-      }
-
-      self->Save(
-         secure,
-         std::string(domain),
-         std::string(login),
-         check_account->GetPassword(), // Server may update user password while login,
-         (bool) renew
-      );
-    }
-
-    void
-    OnCancel(GtkWidget *widget, EditAccountWindow *self) {
-      self->Close();
-    }
-
-} // namespace
+}  // namespace
 
 
 void

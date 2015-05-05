@@ -1,33 +1,35 @@
-#ifndef _BRICK_INDICATOR_STATE_EVENT_H_
-#define _BRICK_INDICATOR_STATE_EVENT_H_
+// Copyright (c) 2015 The Brick Authors.
+
+#ifndef BRICK_EVENT_INDICATOR_STATE_EVENT_H_
+#define BRICK_EVENT_INDICATOR_STATE_EVENT_H_
+#pragma once
 
 #include <string>
-#include "event.h"
 
+#include "brick/event/event.h"
 
-class IndicatorStateEvent : public Event
-{
-public:
+class IndicatorStateEvent : public Event {
+ public:
   IndicatorStateEvent(const EventSender* sender, const std::string state) :
      Event(sender),
      state_(state) {
   }
 
-  IndicatorStateEvent(const std::string state) :
+  explicit IndicatorStateEvent(const std::string state) :
      Event(nullptr),
      state_(state) {
   }
 
   virtual ~IndicatorStateEvent() { }
 
-  const std::string getState() {
+  const std::string getState() const {
     return state_;
   }
 
-private:
+ private:
   const std::string state_;
 
 IMPLEMENT_REFCOUNTING(IndicatorStateEvent);
 };
 
-#endif /* _BRICK_INDICATOR_STATE_EVENT_H_ */
+#endif  // BRICK_EVENT_INDICATOR_STATE_EVENT_H_

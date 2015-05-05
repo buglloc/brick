@@ -1,15 +1,17 @@
+// Copyright (c) 2015 The Brick Authors.
+
 #ifndef BRICK_ACCOUNT_H_
 #define BRICK_ACCOUNT_H_
 #pragma once
 
 #include <string>
-#include <include/cef_base.h>
-#include "httpclient/httpclient.h"
+
+#include "include/cef_base.h"
+#include "brick/httpclient/httpclient.h"
 
 class Account : public CefBase {
 
-public:
-
+ public:
   enum ERROR_CODE {
   // Must be synced with desktop_extension.js!
     NONE = 0,
@@ -22,8 +24,7 @@ public:
     N_AUTH_ERROR
   };
 
-  typedef struct
-  {
+  typedef struct {
     bool success;
     ERROR_CODE error_code;
     std::string http_error;
@@ -57,7 +58,7 @@ public:
 
   AuthResult Auth(bool renew_password = false, std::string otp = "");
 
-protected:
+ protected:
   int id_;
   std::string login_;
   std::string password_;
@@ -73,4 +74,4 @@ protected:
   IMPLEMENT_REFCOUNTING(Account);
 };
 
-#endif // BRICK_ACCOUNT_H_
+#endif  // BRICK_ACCOUNT_H_

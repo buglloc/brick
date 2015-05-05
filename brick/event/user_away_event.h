@@ -1,18 +1,20 @@
-#ifndef _BRICK_USER_AWAY_EVENT_H_
-#define _BRICK_USER_AWAY_EVENT_H_
+// Copyright (c) 2015 The Brick Authors.
 
-#include "event.h"
+#ifndef BRICK_EVENT_USER_AWAY_EVENT_H_
+#define BRICK_EVENT_USER_AWAY_EVENT_H_
+#pragma once
 
-class UserAwayEvent : public Event
-{
-public:
-  UserAwayEvent(const EventSender* sender, bool is_away, bool manual=false) :
+#include "brick/event/event.h"
+
+class UserAwayEvent : public Event {
+ public:
+  UserAwayEvent(const EventSender* sender, bool is_away, bool manual = false) :
      Event(sender),
      away_(is_away),
      manual_(manual) {
   }
 
-  UserAwayEvent(bool is_away, bool manual=false) :
+  explicit UserAwayEvent(bool is_away, bool manual = false) :
      Event(nullptr),
      away_(is_away),
      manual_(manual) {
@@ -20,19 +22,19 @@ public:
 
   virtual ~UserAwayEvent() { }
 
-  bool isAway() {
+  bool isAway() const {
     return away_;
   }
 
-  bool isManual() {
+  bool isManual() const {
     return manual_;
   }
 
-private:
+ private:
   bool away_;
   bool manual_;
 
 IMPLEMENT_REFCOUNTING(UserAwayEvent);
 };
 
-#endif /* _BRICK_USER_AWAY_EVENT_H_ */
+#endif  // BRICK_EVENT_USER_AWAY_EVENT_H_

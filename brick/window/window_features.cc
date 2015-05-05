@@ -1,4 +1,6 @@
-#include "window_features.h"
+// Copyright (c) 2015 The Brick Authors.
+
+#include "brick/window/window_features.h"
 
 WindowFeatures::WindowFeatures(const CefPopupFeatures& popupFeatures) {
   this->width = popupFeatures.width;
@@ -10,7 +12,8 @@ WindowFeatures::WindowFeatures(const CefPopupFeatures& popupFeatures) {
 
   if (popupFeatures.additionalFeatures) {
     CefString feature;
-    for(int i=0; i < cef_string_list_size(popupFeatures.additionalFeatures); i++) {
+    int size = cef_string_list_size(popupFeatures.additionalFeatures);
+    for (int i = 0; i < size; i++) {
       cef_string_list_value(popupFeatures.additionalFeatures, i, feature.GetWritableStruct());
       if (feature == "topmost") {
         this->topmost = true;

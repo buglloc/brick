@@ -1,4 +1,6 @@
-#include "accounts_window.h"
+// Copyright (c) 2015 The Brick Authors.
+
+#include "brick/window/accounts_window.h"
 
 void
 AccountsWindow::ReloadAccounts() {

@@ -1,3 +1,4 @@
+// Copyright (c) 2015 The Brick Authors.
 
 /*---------- Fake globals ---------*/
 var TAB_CP = 1;

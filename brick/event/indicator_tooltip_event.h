@@ -1,34 +1,35 @@
-#ifndef _BRICK_INDICATOR_TOOLTIP_EVENT_H_
-#define _BRICK_INDICATOR_TOOLTIP_EVENT_H_
+// Copyright (c) 2015 The Brick Authors.
 
+#ifndef BRICK_EVENT_INDICATOR_TOOLTIP_EVENT_H_
+#define BRICK_EVENT_INDICATOR_TOOLTIP_EVENT_H_
+#pragma once
 
 #include <string>
-#include "event.h"
 
+#include "brick/event/event.h"
 
-class IndicatorTooltipEvent : public Event
-{
-public:
+class IndicatorTooltipEvent : public Event {
+ public:
   IndicatorTooltipEvent(const EventSender* sender, const std::string tooltip) :
      Event(sender),
      tooltip_(tooltip) {
   }
 
-  IndicatorTooltipEvent(const std::string tooltip) :
+  explicit IndicatorTooltipEvent(const std::string tooltip) :
      Event(nullptr),
      tooltip_(tooltip) {
   }
 
   virtual ~IndicatorTooltipEvent() { }
 
-  const std::string getTooltip() {
+  const std::string getTooltip() const {
     return tooltip_;
   }
 
-private:
+ private:
   const std::string tooltip_;
 
 IMPLEMENT_REFCOUNTING(IndicatorTooltipEvent);
 };
 
-#endif /* _BRICK_INDICATOR_TOOLTIP_EVENT_H_ */
+#endif  // BRICK_EVENT_INDICATOR_TOOLTIP_EVENT_H_

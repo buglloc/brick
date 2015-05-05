@@ -1,16 +1,16 @@
-#ifndef _BRICK_EVENT_HANDLER_REGISTRATION_H_
-#define _BRICK_EVENT_HANDLER_REGISTRATION_H_
+// Copyright (c) 2015 The Brick Authors.
 
-#include "event_object.h"
+#ifndef BRICK_EVENT_HANDLER_REGISTRATION_H_
+#define BRICK_EVENT_HANDLER_REGISTRATION_H_
+#pragma once
 
-/**
- * Interface that that allows event handlers to be removed from the EventBus
- */
+#include "brick/event/event_object.h"
+
 class HandlerRegistration : public EventObject {
-public:
-	virtual ~HandlerRegistration() { }
+ public:
+  virtual ~HandlerRegistration() { }
 
-	virtual void removeHandler() = 0;
+  virtual void removeHandler() = 0;
 };
 
-#endif /* _BRICK_EVENT_HANDLER_REGISTRATION_H_ */
+#endif  // BRICK_EVENT_HANDLER_REGISTRATION_H_

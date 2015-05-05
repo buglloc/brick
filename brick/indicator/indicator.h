@@ -1,5 +1,7 @@
-#ifndef BRICK_BASE_STATUS_ICON_H_
-#define BRICK_BASE_STATUS_ICON_H_
+// Copyright (c) 2015 The Brick Authors.
+
+#ifndef BRICK_INDICATOR_INDICATOR_H_
+#define BRICK_INDICATOR_INDICATOR_H_
 #pragma once
 
 #if defined(__linux__)
@@ -14,17 +16,17 @@
 #endif
 
 #include <string>
-#include <include/cef_base.h>
-#include "../event/account_switch_event.h"
-#include "../event/account_list_event.h"
-#include "../event/event_handler.h"
-#include "../event/event_bus.h"
+#include "include/cef_base.h"
+#include "brick/event/account_switch_event.h"
+#include "brick/event/account_list_event.h"
+#include "brick/event/event_handler.h"
+#include "brick/event/event_bus.h"
 
 class BrickIndicator : public CefBase,
                    public EventHandler<AccountListEvent>,
                    public EventHandler<AccountSwitchEvent> {
 
-public:
+ public:
   enum Icon {
     DEFAULT = 0,
     OFFLINE,
@@ -35,8 +37,8 @@ public:
     FLASH_IMPORTANT
   };
 
-  BrickIndicator(std::string icons_dir);
-  ~BrickIndicator();
+  explicit BrickIndicator(std::string icons_dir);
+
   void SetIdleIcon(Icon icon);
   void SetIcon(Icon icon);
   void SetTooltip(const char* text);
@@ -48,7 +50,7 @@ public:
 
   // Event handlers
   bool OnClick();
-  bool OnPopup() {return false;};
+  bool OnPopup() { return false; }
   bool OnMenuQuit();
   bool OnMenuPortalOpen();
   bool OnMenuAbout();
@@ -56,16 +58,16 @@ public:
   bool OnMenuChangeAccount(int id);
 
   // System events handler
-  virtual void onEvent(AccountListEvent &event) OVERRIDE;
-  virtual void onEvent(AccountSwitchEvent &event) OVERRIDE;
+  virtual void onEvent(const AccountListEvent& event) OVERRIDE;
+  virtual void onEvent(const AccountSwitchEvent& event) OVERRIDE;
 
-protected:
+ protected:
   void RegisterEventListeners();
   std::string GetIconPath(Icon icon);
   std::string GetIconName(Icon icon);
   void SwitchToIdle();
 
-private:
+ private:
   Icon current_icon_;
   Icon idle_icon_;
   std::string icons_folder_;
@@ -84,4 +86,4 @@ private:
 IMPLEMENT_REFCOUNTING(BrickIndicator);
 };
 
-#endif /* end of BRICK_BASE_STATUS_ICON_H_ */
+#endif  // BRICK_INDICATOR_INDICATOR_H_

@@ -1,91 +1,90 @@
-// Copyright (c) 2014 The Chromium Embedded Framework Authors. All rights
-// reserved. Use of this source code is governed by a BSD-style license that
-// can be found in the LICENSE file.
+// Copyright (c) 2015 The Brick Authors.
 
-#include <include/cef_app.h>
-#include "cef_handler.h"
+#include "brick/client_handler.h"
 
+#include "include/cef_app.h"
 #include "include/wrapper/cef_helpers.h"
-#include "window_util.h"
-#include "brick_app.h"
-#include "brick_app.h"
+#include "brick/window_util.h"
+#include "brick/brick_app.h"
 
 namespace {
-    const int kPreviewWidth = 256;
-    const int kPreviewHeight = 512;
+  const int kPreviewWidth = 256;
+  const int kPreviewHeight = 512;
 
-    void
-    OnFileDialogResponse(GtkDialog *dialog, gint response_id, ClientHandler *client_handler) {
-      std::vector<CefString> files;
-      bool success = false;
-      gint mode = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(dialog), "mode"));
-      gint selected_accept_filter = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(dialog), "selected_accept_filter"));
-      CefFileDialogCallback *callback = (CefFileDialogCallback *)g_object_get_data(G_OBJECT(dialog), "callback");
+  void
+  OnFileDialogResponse(GtkDialog *dialog, gint response_id, ClientHandler *client_handler) {
+    std::vector<CefString> files;
+    bool success = false;
+    gint mode = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(dialog), "mode"));
+    gint selected_accept_filter = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(dialog), "selected_accept_filter"));
+    CefFileDialogCallback *callback = reinterpret_cast<CefFileDialogCallback *>(
+        g_object_get_data(G_OBJECT(dialog), "callback")
+    );
 
-      if (response_id == GTK_RESPONSE_ACCEPT) {
-        if (mode == FILE_DIALOG_OPEN || mode == FILE_DIALOG_SAVE) {
-          char* filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-          files.push_back(std::string(filename));
-          success = true;
-        } else if (mode == FILE_DIALOG_OPEN_MULTIPLE) {
-          GSList* filenames =
-             gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(dialog));
-          if (filenames) {
-            for (GSList* iter = filenames; iter != NULL;
-                 iter = g_slist_next(iter)) {
-              std::string path(static_cast<char*>(iter->data));
-              g_free(iter->data);
-              files.push_back(path);
-            }
-            g_slist_free(filenames);
-            success = true;
+    if (response_id == GTK_RESPONSE_ACCEPT) {
+      if (mode == FILE_DIALOG_OPEN || mode == FILE_DIALOG_SAVE) {
+        char* filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+        files.push_back(std::string(filename));
+        success = true;
+      } else if (mode == FILE_DIALOG_OPEN_MULTIPLE) {
+        GSList* filenames =
+           gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(dialog));
+        if (filenames) {
+          for (GSList* iter = filenames; iter != NULL;
+               iter = g_slist_next(iter)) {
+            std::string path(static_cast<char*>(iter->data));
+            g_free(iter->data);
+            files.push_back(path);
           }
+          g_slist_free(filenames);
+          success = true;
         }
       }
-
-      gtk_widget_destroy(GTK_WIDGET(dialog));
-
-      if (success)
-        callback->Continue(selected_accept_filter, files);
-      else
-        callback->Cancel();
     }
 
-    void
-    OnUpdatePreviewPanel(GtkWidget *chooser, GtkWidget *preview) {
-      gchar* filename = gtk_file_chooser_get_preview_filename(GTK_FILE_CHOOSER(chooser));
-      if (!filename)
-        return;
+    gtk_widget_destroy(GTK_WIDGET(dialog));
 
-      // This will preserve the image's aspect ratio.
-      GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file_at_size(filename, kPreviewWidth, kPreviewHeight, NULL);
-      g_free(filename);
+    if (success)
+      callback->Continue(selected_accept_filter, files);
+    else
+      callback->Cancel();
+  }
 
-      if (pixbuf) {
-        gtk_image_set_from_pixbuf(GTK_IMAGE(preview), pixbuf);
-        g_object_unref(pixbuf);
-      }
+  void
+  OnUpdatePreviewPanel(GtkWidget *chooser, GtkWidget *preview) {
+    gchar* filename = gtk_file_chooser_get_preview_filename(GTK_FILE_CHOOSER(chooser));
+    if (!filename)
+      return;
 
-      gtk_file_chooser_set_preview_widget_active(GTK_FILE_CHOOSER(chooser),
-         pixbuf != NULL);
+    // This will preserve the image's aspect ratio.
+    GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file_at_size(filename, kPreviewWidth, kPreviewHeight, NULL);
+    g_free(filename);
+
+    if (pixbuf) {
+      gtk_image_set_from_pixbuf(GTK_IMAGE(preview), pixbuf);
+      g_object_unref(pixbuf);
     }
 
-    gboolean
-    DoShutdown(gpointer data) {
-      ClientHandler *self = reinterpret_cast<ClientHandler*>(data);
-      if (self->InShutdownState()) {
-        self->CloseAllBrowsers(true);
-      }
+    gtk_file_chooser_set_preview_widget_active(GTK_FILE_CHOOSER(chooser),
+       pixbuf != NULL);
+  }
 
-      // Run only once
-      return true;
+  gboolean
+  DoShutdown(gpointer data) {
+    ClientHandler *self = reinterpret_cast<ClientHandler*>(data);
+    if (self->InShutdownState()) {
+      self->CloseAllBrowsers(true);
     }
-}
+
+    // Run only once
+    return true;
+  }
+}  // namespace
 
 void
 ClientHandler::OnTitleChange(CefRefPtr<CefBrowser> browser,
                                   const CefString& title) {
-    CEF_REQUIRE_UI_THREAD();
+  CEF_REQUIRE_UI_THREAD();
 
   BrowserWindow *window = window_util::LookupBrowserWindow(
      browser->GetHost()->GetWindowHandle()
@@ -104,13 +103,13 @@ ClientHandler::OnTitleChange(CefRefPtr<CefBrowser> browser,
 
 bool
 ClientHandler::OnFileDialog(
-   CefRefPtr<CefBrowser> browser,
-   FileDialogMode mode_type,
-   const CefString& title,
-   const CefString& default_file_path,
-   const std::vector<CefString>& accept_filters,
-   int selected_accept_filter,
-   CefRefPtr<CefFileDialogCallback> callback) {
+    CefRefPtr<CefBrowser> browser,
+    FileDialogMode mode_type,
+    const CefString& title,
+    const CefString& default_file_path,
+    const std::vector<CefString>& accept_filters,
+    int selected_accept_filter,
+    CefRefPtr<CefFileDialogCallback> callback) {
 
   // Remove any modifier flags.
   FileDialogMode mode =

@@ -1,13 +1,15 @@
-#ifndef _BRICK_ACCOUNT_LIST_EVENT_EVENT_H_
-#define _BRICK_ACCOUNT_LIST_EVENT_EVENT_H_
+// Copyright (c) 2015 The Brick Authors.
 
-#include "event.h"
-#include "../account.h"
+#ifndef BRICK_EVENT_ACCOUNT_LIST_EVENT_H_
+#define BRICK_EVENT_ACCOUNT_LIST_EVENT_H_
+#pragma once
 
-class AccountListEvent : public Event
-{
-public:
-  AccountListEvent(const EventSender* sender) :
+#include "brick/event/event.h"
+#include "brick/account.h"
+
+class AccountListEvent : public Event {
+ public:
+  explicit AccountListEvent(const EventSender* sender) :
      Event(sender) {
   }
 
@@ -20,4 +22,4 @@ public:
 IMPLEMENT_REFCOUNTING(AccountListEvent);
 };
 
-#endif /* _BRICK_ACCOUNT_LIST_EVENT_EVENT_H_ */
+#endif  // BRICK_EVENT_ACCOUNT_LIST_EVENT_H_

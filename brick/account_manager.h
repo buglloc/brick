@@ -1,14 +1,18 @@
+// Copyright (c) 2015 The Brick Authors.
+
 #ifndef BRICK_ACCOUNT_MANAGER_H_
 #define BRICK_ACCOUNT_MANAGER_H_
 #pragma once
 
 #include <map>
-#include <include/cef_base.h>
-#include "event/event_sender.h"
-#include "account.h"
+#include <string>
+
+#include "include/cef_base.h"
+#include "brick/event/event_sender.h"
+#include "brick/account.h"
 
 class AccountManager : public CefBase {
-public:
+ public:
   typedef std::map<int, CefRefPtr<Account>> accounts_map;
 
   AccountManager();
@@ -23,7 +27,7 @@ public:
   CefRefPtr<Account> GetCurrentAccount();
   CefRefPtr<Account> GetById(int id);
 
-protected:
+ protected:
   bool initialized_;
   std::string config_path_;
   accounts_map accounts_;
@@ -32,4 +36,4 @@ protected:
 
   IMPLEMENT_REFCOUNTING(AccountManager);
 };
-#endif /* end of BRICK_ACCOUNT_MANAGER_H_ */
+#endif  // BRICK_ACCOUNT_MANAGER_H_

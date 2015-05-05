@@ -1,57 +1,61 @@
+// Copyright (c) 2015 The Brick Authors.
+
+#include "brick/indicator/indicator.h"
+
 #include <gtk/gtk.h>
-#include <include/base/cef_logging.h>
-#include "../event/indicator_state_event.h"
-#include "../event/indicator_tooltip_event.h"
-#include "../account_manager.h"
-#include "../cef_handler.h"
-#include "../brick_app.h"
-#include "indicator.h"
+
+#include "include/base/cef_logging.h"
+#include "brick/event/indicator_state_event.h"
+#include "brick/event/indicator_tooltip_event.h"
+#include "brick/account_manager.h"
+#include "brick/client_handler.h"
+#include "brick/brick_app.h"
 
 namespace {
 
-    GtkWidget *menu;
-    GtkWidget *accounts_menu;
+  GtkWidget *menu;
+  GtkWidget *accounts_menu;
 
-    void
-    status_icon_click(GtkWidget *status_icon, BrickIndicator *self) {
-      self->OnClick();
-    }
+  void
+  status_icon_click(GtkWidget *status_icon, BrickIndicator *self) {
+    self->OnClick();
+  }
 
 #ifdef unity
 #else
-    void
-    status_icon_popup(GtkWidget *status_icon, guint button, guint32 activate_time, BrickIndicator *self) {
-      if (self->OnPopup())
-        return;
+  void
+  status_icon_popup(GtkWidget *status_icon, guint button, guint32 activate_time, BrickIndicator *self) {
+    if (self->OnPopup())
+      return;
 
-      gtk_widget_show_all(menu);
-      gtk_menu_popup (GTK_MENU(menu), NULL, NULL, NULL, status_icon, button, activate_time);
-    }
+    gtk_widget_show_all(menu);
+    gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, status_icon, button, activate_time);
+  }
 #endif
-    void
-    menu_about(GtkMenuItem *item, BrickIndicator *self) {
-      self->OnMenuAbout();
-    }
+  void
+  menu_about(GtkMenuItem *item, BrickIndicator *self) {
+    self->OnMenuAbout();
+  }
 
-    void
-    menu_manage_accounts(GtkMenuItem *item, BrickIndicator *self) {
-      self->OnMenuManageAccount();
-    }
+  void
+  menu_manage_accounts(GtkMenuItem *item, BrickIndicator *self) {
+    self->OnMenuManageAccount();
+  }
 
-    void
-    menu_quit(GtkMenuItem *item, BrickIndicator *self) {
-      self->OnMenuQuit();
-    }
+  void
+  menu_quit(GtkMenuItem *item, BrickIndicator *self) {
+    self->OnMenuQuit();
+  }
 
-    void
-    menu_change_account(GtkMenuItem *item, BrickIndicator *self) {
-      int account_id = GPOINTER_TO_INT(
-         g_object_get_data(G_OBJECT(item), "account_id")
-      );
-      self->OnMenuChangeAccount(account_id);
-    }
+  void
+  menu_change_account(GtkMenuItem *item, BrickIndicator *self) {
+    int account_id = GPOINTER_TO_INT(
+       g_object_get_data(G_OBJECT(item), "account_id")
+    );
+    self->OnMenuChangeAccount(account_id);
+  }
 
-} // namespace
+}  // namespace
 
 
 void
@@ -71,17 +75,17 @@ BrickIndicator::Init() {
 
   // Create popup menu
   menu = gtk_menu_new();
-  GtkWidget * show_item = gtk_menu_item_new_with_label ("Show/Hide");
+  GtkWidget * show_item = gtk_menu_item_new_with_label("Show/Hide");
   g_signal_connect(G_OBJECT(show_item), "activate", G_CALLBACK(status_icon_click), NULL);
   gtk_menu_append(GTK_MENU(menu), show_item);
   gtk_menu_append(GTK_MENU(menu), gtk_separator_menu_item_new());
   accounts_menu = gtk_menu_item_new_with_label("Accounts");
   gtk_menu_append(GTK_MENU(menu), accounts_menu);
   gtk_menu_append(GTK_MENU(menu), gtk_separator_menu_item_new());
-  GtkWidget * about_item = gtk_menu_item_new_with_label ("About");
+  GtkWidget * about_item = gtk_menu_item_new_with_label("About");
   g_signal_connect(G_OBJECT(about_item), "activate", G_CALLBACK(menu_about), NULL);
   gtk_menu_append(GTK_MENU(menu), about_item);
-  GtkWidget * quit_item = gtk_menu_item_new_with_label ("Quit");
+  GtkWidget * quit_item = gtk_menu_item_new_with_label("Quit");
   g_signal_connect(G_OBJECT(quit_item), "activate", G_CALLBACK(menu_quit), NULL);
   gtk_menu_append(GTK_MENU(menu), quit_item);
 
@@ -89,7 +93,7 @@ BrickIndicator::Init() {
   RegisterEventListeners();
 
 #ifdef unity
-  app_indicator_set_status (icon_handler_, APP_INDICATOR_STATUS_ACTIVE);
+  app_indicator_set_status(icon_handler_, APP_INDICATOR_STATUS_ACTIVE);
   gtk_widget_show_all(menu);
   app_indicator_set_menu(icon_handler_, GTK_MENU(menu));
   app_indicator_set_secondary_activate_target(icon_handler_, show_item);

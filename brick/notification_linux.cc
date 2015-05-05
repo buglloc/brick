@@ -1,61 +1,64 @@
-#include <unistd.h>
-#include <string>
-#include <libnotify/notify.h>
-#include <include/base/cef_logging.h>
-#include "include/wrapper/cef_closure_task.h"
-#include <include/base/cef_bind.h>
+// Copyright (c) 2015 The Brick Authors.
 
-#include "notification.h"
-#include "httpclient/httpclient.h"
-#include "cef_handler.h"
-#include "platform_util.h"
+#include "brick/notification.h"
+
+#include <unistd.h>
+#include <libnotify/notify.h>
+#include <string>
+
+#include "include/base/cef_logging.h"
+#include "include/wrapper/cef_closure_task.h"
+#include "include/base/cef_bind.h"
+#include "brick/httpclient/httpclient.h"
+#include "brick/client_handler.h"
+#include "brick/platform_util.h"
 
 namespace {
-    NotifyNotification *notification = NULL;
-    int last_id = 0;
+  NotifyNotification *notification = NULL;
+  int last_id = 0;
 
-    void
-    UpdateIconById(int id, std::string icon_path) {
-      if (!CefCurrentlyOn(TID_UI)) {
-        CefPostTask(TID_UI, base::Bind(UpdateIconById, id, icon_path));
-        return;
-      }
-
-      if (notification == NULL)
-        return;
-
-      if (id < last_id)
-        return;
-
-      g_object_set(G_OBJECT(notification), "icon-name", icon_path.c_str(), NULL);
-
-      // We must show notification again to update icon :-(
-      // ToDo: Research!
-      if (!notify_notification_show (notification, NULL)) {
-        LOG(WARNING) << "Failed to resend notification";
-      }
+  void
+  UpdateIconById(int id, std::string icon_path) {
+    if (!CefCurrentlyOn(TID_UI)) {
+      CefPostTask(TID_UI, base::Bind(UpdateIconById, id, icon_path));
+      return;
     }
 
-    void
-    AsyncDownloadIcon(int id, std::string url, std::string cache_path) {
-      if (!CefCurrentlyOn(TID_CACHE)) {
-        CefPostTask(TID_CACHE, base::Bind(AsyncDownloadIcon, id, url, cache_path));
-        return;
-      }
+    if (notification == NULL)
+      return;
 
-      if (HttpClient::Download(url, cache_path, "image/")) {
-        UpdateIconById(id, cache_path);
-      } else {
-        LOG(WARNING) << "Can't download notification icon '" << url << "' to file '" << cache_path << "'";
-      }
+    if (id < last_id)
+      return;
+
+    g_object_set(G_OBJECT(notification), "icon-name", icon_path.c_str(), NULL);
+
+    // We must show notification again to update icon :-(
+    // ToDo: Research!
+    if (!notify_notification_show (notification, NULL)) {
+      LOG(WARNING) << "Failed to resend notification";
+    }
+  }
+
+  void
+  AsyncDownloadIcon(int id, std::string url, std::string cache_path) {
+    if (!CefCurrentlyOn(TID_CACHE)) {
+      CefPostTask(TID_CACHE, base::Bind(AsyncDownloadIcon, id, url, cache_path));
+      return;
     }
 
-    void
-    CloseNotificationCb(NotifyNotification *notify) {
-      notification = NULL;
+    if (HttpClient::Download(url, cache_path, "image/")) {
+      UpdateIconById(id, cache_path);
+    } else {
+      LOG(WARNING) << "Can't download notification icon '" << url << "' to file '" << cache_path << "'";
     }
+  }
 
-} //namespace
+  void
+  CloseNotificationCb(NotifyNotification *notify) {
+    notification = NULL;
+  }
+
+}  // namespace
 
 void
 Notification::Notify(const std::string title, std::string body, std::string icon, int delay) {

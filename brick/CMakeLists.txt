@@ -36,11 +36,10 @@ endif()
 set(BRICK_SRCS
   brick_app.cc
   brick_app.h
-  cef_app.cc
-  cef_app.h
-  cef_handler.cc
-  cef_handler.h
-  command_callbacks.cc
+  client_app.cc
+  client_app.h
+  client_handler.cc
+  client_handler.h
   command_callbacks.h
   helper.h
   helper.cc
@@ -66,7 +65,7 @@ set(BRICK_COMMON_SRCS
   account.h
   )
 set(BRICK_SRCS_LINUX
-  cef_handler_linux.cc
+  client_handler_linux.cc
   brick_app_linux.cc
   window_util_linux.cc
   notification_linux.cc

@@ -1,14 +1,16 @@
-#ifndef BRICK_WINDOW_FEATURES_H_
-#define BRICK_WINDOW_FEATURES_H_
+// Copyright (c) 2015 The Brick Authors.
+
+#ifndef BRICK_WINDOW_WINDOW_FEATURES_H_
+#define BRICK_WINDOW_WINDOW_FEATURES_H_
 #pragma once
 
-#include <include/internal/cef_types_wrappers.h>
-#include <include/cef_base.h>
+#include "include/internal/cef_types_wrappers.h"
+#include "include/cef_base.h"
 
 class WindowFeatures : public CefBase {
 
-public:
-  WindowFeatures(const CefPopupFeatures& popupFeatures);
+ public:
+  explicit WindowFeatures(const CefPopupFeatures& popupFeatures);
 
   int x;
   int y;
@@ -20,4 +22,5 @@ public:
 IMPLEMENT_REFCOUNTING(WindowFeatures);
 };
 
-#endif /* end of BRICK_WINDOW_FEATURES_H_ */
+#endif  // BRICK_WINDOW_WINDOW_FEATURES_H_
+

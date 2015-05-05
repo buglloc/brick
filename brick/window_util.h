@@ -1,13 +1,16 @@
+// Copyright (c) 2015 The Brick Authors.
+
 #ifndef BRICK_WINDOW_UTIL_H_
 #define BRICK_WINDOW_UTIL_H_
 #pragma once
 
-#include <include/internal/cef_linux.h>
+#include <string>
 #if defined(__linux__)
 #include <glib.h>
 #else
 #endif
 
+#include "include/internal/cef_linux.h"
 #include "window/browser_window.h"
 
 namespace window_util {
@@ -32,7 +35,7 @@ namespace window_util {
   CefWindowHandle GetLeaderWindow();
 
   void InitHooks();
-  void InitWindow(CefWindowHandle handle);
+  void InitWindow(CefWindowHandle handle, bool is_leader);
 
   CefRect GetDefaultScreenRect();
 
@@ -47,5 +50,5 @@ namespace window_util {
   BrowserWindow* LookupBrowserWindow(CefWindowHandle native_window);
   BrowserWindow* LookupBrowserWindow(GdkEvent* event);
 
-}
+}  // namespace window_util
 #endif  // BRICK_WINDOW_UTIL_H_

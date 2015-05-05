@@ -1,30 +1,33 @@
-#ifndef _BRICK_STATUS_BADGE_EVENT_H_
-#define _BRICK_STATUS_BADGE_EVENT_H_
+// Copyright (c) 2015 The Brick Authors.
 
-#include "event.h"
+#ifndef BRICK_EVENT_SLEEP_EVENT_H_
+#define BRICK_EVENT_SLEEP_EVENT_H_
+#pragma once
 
-class SleepEvent : public Event
-{
-public:
+#include "brick/event/event.h"
+
+class SleepEvent : public Event {
+ public:
   SleepEvent(const EventSender* sender, bool is_sleep) :
      Event(sender),
      sleep_(is_sleep) {
   }
 
-  SleepEvent(bool is_sleep) :
+  explicit SleepEvent(bool is_sleep) :
      Event(nullptr),
      sleep_(is_sleep) {
   }
 
   virtual ~SleepEvent() { }
 
-  bool isSleep() {
+  bool isSleep() const {
     return sleep_;
   }
 
-private:
+ private:
   bool sleep_;
+
 IMPLEMENT_REFCOUNTING(SleepEvent);
 };
 
-#endif /* _BRICK_STATUS_BADGE_EVENT_H_ */
+#endif  // BRICK_EVENT_SLEEP_EVENT_H_

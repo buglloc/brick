@@ -1,4 +1,6 @@
-#include "browser_window.h"
+// Copyright (c) 2015 The Brick Authors.
+
+#include "brick/window/browser_window.h"
 
 BrowserWindowHandle
 BrowserWindow::GetHandler() {

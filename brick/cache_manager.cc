@@ -1,37 +1,40 @@
-#include <include/cef_url.h>
-#include "cache_manager.h"
-#include "brick_app.h"
-#include "helper.h"
+// Copyright (c) 2015 The Brick Authors.
+
 #include <ftw.h>
 #include <unistd.h>
 
+#include "include/cef_url.h"
+#include "brick/cache_manager.h"
+#include "brick/brick_app.h"
+#include "brick/helper.h"
+
 namespace {
-    time_t old_file_time;
+  time_t old_file_time;
 
-    const std::string cache_dir_[] = {
-       "other",
-       "buddy"
-    };
+  const std::string cache_dir_[] = {
+     "other",
+     "buddy"
+  };
 
-    int
-    RemoveOldFile(const char *path, const struct stat *sb, int type) {
-      if (type == FTW_F) {
-        struct stat stat_data;
-        if (stat(path, &stat_data) != -1) {
-          if (stat_data.st_atim.tv_sec < old_file_time)
-            unlink(path);
-        }
+  int
+  RemoveOldFile(const char *path, const struct stat *sb, int type) {
+    if (type == FTW_F) {
+      struct stat stat_data;
+      if (stat(path, &stat_data) != -1) {
+        if (stat_data.st_atim.tv_sec < old_file_time)
+          unlink(path);
       }
-
-      // tell ftw to continue
-      return 0;
     }
-}
+
+    // tell ftw to continue
+    return 0;
+  }
+}  // namespace
 
 CacheManager::CacheManager()
-   : cache_path_("") {
+    : cache_path_("") {
 
-};
+}
 
 void
 CacheManager::Init(const std::string& path) {

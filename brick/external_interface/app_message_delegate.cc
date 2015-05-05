@@ -1,35 +1,39 @@
-#include <include/cef_app.h>
-#include "../window/accounts_window.h"
-#include "../window/edit_account_window.h"
-#include "../cef_handler.h"
-#include "app_message_delegate.h"
+// Copyright (c) 2015 The Brick Authors.
+
+#include "brick/external_interface/app_message_delegate.h"
+
+#include <string>
+
+#include "include/cef_app.h"
+#include "brick/window/accounts_window.h"
+#include "brick/window/edit_account_window.h"
+#include "brick/client_handler.h"
 
 
 namespace {
-    const char kNameSpace[]                       = "AppInterface";
-    const char kMessageShowAddAccountDialogName[] = "ShowAddAccountDialog";
-    const char kMessageShowAccountsDialogName[]   = "ShowAccountsDialog";
-    const char kMessageUserAwayName[]   = "UserAway";
-    const char kMessageUserPresentName[]   = "UserPresent";
-    const char kMessageQuitName[]   = "Quit";
+  const char kNameSpace[]                       = "AppInterface";
+  const char kMessageShowAddAccountDialogName[] = "ShowAddAccountDialog";
+  const char kMessageShowAccountsDialogName[]   = "ShowAccountsDialog";
+  const char kMessageUserAwayName[]             = "UserAway";
+  const char kMessageUserPresentName[]          = "UserPresent";
+  const char kMessageQuitName[]                 = "Quit";
 
-
-} // namespace
+}  // namespace
 
 ExternalAppMessageDelegate::ExternalAppMessageDelegate()
-   : ExternalMessageDelegate (kNameSpace)
-{
-}
+    : ExternalMessageDelegate(kNameSpace)
+{ }
 
 bool
-ExternalAppMessageDelegate::OnMessageReceived(CefRefPtr<CefProcessMessage> message) {
+ExternalAppMessageDelegate::OnMessageReceived(
+    CefRefPtr<CefProcessMessage> message) {
 
   std::string message_name = message->GetName();
   CefRefPtr<CefListValue> request_args = message->GetArgumentList();
 //  int32 callbackId = -1;
   int32 error = NO_ERROR;
 
-  if(message_name == kMessageShowAddAccountDialogName) {
+  if (message_name == kMessageShowAddAccountDialogName) {
     // Parameters:
     // 0: int32 - callback id
     // 1: bool - switch after add
@@ -45,9 +49,9 @@ ExternalAppMessageDelegate::OnMessageReceived(CefRefPtr<CefProcessMessage> messa
       EditAccountWindow *window(new EditAccountWindow);
       window->Init(CefRefPtr<Account> (new Account), request_args->GetBool(1));
       window->Show();
-    };
+    }
 
-  } else if(message_name == kMessageShowAccountsDialogName) {
+  } else if (message_name == kMessageShowAccountsDialogName) {
     AccountsWindow::Instance()->Show();
 
   } else if (message_name == kMessageQuitName) {
