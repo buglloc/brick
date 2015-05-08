@@ -2,6 +2,7 @@
 
 #include <ftw.h>
 #include <unistd.h>
+#include <sys/time.h>
 
 #include "include/cef_url.h"
 #include "brick/cache_manager.h"
