@@ -9,22 +9,20 @@
 #include "include/base/cef_logging.h"
 #include "include/wrapper/cef_closure_task.h"
 #include "include/base/cef_bind.h"
-#include "brick/httpclient/httpclient.h"
 #include "brick/client_handler.h"
 #include "brick/platform_util.h"
+#include "brick/avatar_client.h"
 
 namespace {
   NotifyNotification *notification = NULL;
   int last_id = 0;
 
   void
-  UpdateIconById(int id, std::string icon_path) {
-    if (!CefCurrentlyOn(TID_UI)) {
-      CefPostTask(TID_UI, base::Bind(UpdateIconById, id, icon_path));
-      return;
-    }
-
+  UpdateIcon(int id, std::string icon_path, bool success) {
     if (notification == NULL)
+      return;
+
+    if (!success)
       return;
 
     if (id < last_id)
@@ -40,17 +38,17 @@ namespace {
   }
 
   void
-  AsyncDownloadIcon(int id, std::string url, std::string cache_path) {
-    if (!CefCurrentlyOn(TID_CACHE)) {
-      CefPostTask(TID_CACHE, base::Bind(AsyncDownloadIcon, id, url, cache_path));
+  AsyncDownloadIcon(int id, const std::string& url, const std::string& path) {
+    if (!CefCurrentlyOn(TID_UI)) {
+      CefPostTask(TID_UI, base::Bind(AsyncDownloadIcon, id, url, path));
       return;
     }
 
-    if (HttpClient::Download(url, cache_path, "image/")) {
-      UpdateIconById(id, cache_path);
-    } else {
-      LOG(WARNING) << "Can't download notification icon '" << url << "' to file '" << cache_path << "'";
-    }
+    AvatarClient::CreateRequest(
+        base::Bind(UpdateIcon, id, path),
+        url,
+        path
+    );
   }
 
   void
