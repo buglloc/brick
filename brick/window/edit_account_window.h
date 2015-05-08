@@ -14,8 +14,14 @@ class EditAccountWindow : public BaseWindow {
  public:
   EditAccountWindow() {}
   virtual ~EditAccountWindow() {}
-  void Save(bool secure, std::string domain, std::string login, std::string password, bool use_app_password = true);
 
+  void Save(bool secure,
+            const std::string& domain,
+            const std::string& login,
+            const std::string& password,
+            bool use_app_password);
+
+  void OnAuthComplete(const CefRefPtr<Account> account, const Account::AuthResult auth_result);
 
   // Platform specific methods
   void Init() OVERRIDE;

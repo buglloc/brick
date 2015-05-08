@@ -25,7 +25,7 @@
 
             switch (errorCode) {
               case app.authErrorCodes['HTTP']:
-                reasonBox.text('HTTP error: ' + decodeURIComponent(reason));
+                reasonBox.text('Failed due to http-errors (' + decodeURIComponent(reason) + ')');
                 break;
               case app.authErrorCodes['CAPTCHA']:
                 reasonBox.html('You’ve exceeded the maximum number of login attempts allowed.<br>' +

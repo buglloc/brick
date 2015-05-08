@@ -13,9 +13,9 @@ EditAccountWindow::Init() {
 void
 EditAccountWindow::Save(
     bool secure,
-    std::string domain,
-    std::string login,
-    std::string password,
+    const std::string& domain,
+    const std::string& login,
+    const std::string& password,
     bool use_app_password) {
 
   CefRefPtr<Account> account = window_objects_.account;

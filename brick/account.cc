@@ -3,19 +3,21 @@
 #include "brick/account.h"
 
 #include <unistd.h>
+
 #include "include/cef_url.h"
-#include "include/base/cef_logging.h"
-
-#include "brick/httpclient/httpclient.h"
-
+#include "include/base/cef_bind.h"
+#include "include/wrapper/cef_closure_task.h"
+#include "brick/auth_client.h"
+#include "brick/request_helper.h"
 
 namespace {
-    const char fake_id = -1;
-    const char kDefaultAppUrl[] = "/desktop_app/";
+  const char kFakeId = -1;
+  const int kAuthTimeout = 6;
+  const char kDefaultAppUrl[] = "/desktop_app/";
 }
 
 Account::Account() {
-  id_ = fake_id;
+  id_ = kFakeId;
   login_ = "";
   password_ = "";
   domain_ = "";
@@ -26,11 +28,12 @@ Account::Account() {
 }
 
 Account::~Account() {
+  CancelAuthPending();
 }
 
 bool
 Account::IsExisted() {
-  return id_ != fake_id;
+  return id_ != kFakeId;
 }
 
 bool
@@ -77,8 +80,18 @@ Account::GetPassword() {
 }
 
 std::string
+Account::GetOrigin() {
+  return (secure_ ? "https://" : "http://" ) + domain_;
+}
+
+std::string
 Account::GetBaseUrl() {
   return base_url_;
+}
+
+std::string
+Account::GetAuthUrl() {
+  return base_url_ + "login/";
 }
 
 std::string
@@ -144,120 +157,95 @@ Account::Set(
 
 std::string
 Account::GenBaseUrl() {
-  return (
-     (secure_ ? "https://" : "http://" )
-      + domain_
-      + kDefaultAppUrl  // ToDo: Need option here?
-  );
+  // ToDo: Need option here?
+  return (GetOrigin() + kDefaultAppUrl);
 }
 
-Account::AuthResult
-Account::Auth(bool renew_password, std::string otp) {
-  AuthResult result;
-  HttpClient::form_map form;
-  // ToDo: use new authentication IM protocol
-//  form["json"] = "y"; // New versions of IM must return result in json format
-  if (renew_password) {
-    // New versions of IM must generate application password
-    form["renew_password"] = "y";
+void
+Account::Auth(bool renew_password, const AuthCallback& callback, std::string otp) {
+  CEF_REQUIRE_UI_THREAD();
+
+  CancelAuthPending();
+
+  callback_ = callback;
+  urlrequest_ = AuthClient::CreateRequest(
+      base::Bind(&Account::OnAuthComplete, this),
+      this,
+      otp,
+      renew_password);
+
+  // Cancel auth request after timeout
+  CefPostDelayedTask(
+      TID_UI,
+      base::Bind(&Account::OnAuthTimedOut, this, urlrequest_.get()),
+      kAuthTimeout * 1000);
+}
+
+void
+Account::OnAuthComplete(const AuthResult auth_result, const std::string& new_password) {
+  CEF_REQUIRE_UI_THREAD();
+
+  if (!new_password.empty() && password_ != new_password) {
+    password_ = new_password;
   }
 
-  form["action"] = "login";
-  form["login"] = login_;
-  form["password"] = password_;
-  form["otp"] = otp;
+  callback_.Run(this, auth_result);
+  callback_.Reset();
+  urlrequest_ = NULL;
+}
 
-  form["user_os_mark"] = GetOsMark();
+void
+Account::CancelAuthPending() {
+  CEF_REQUIRE_UI_THREAD();
 
-  HttpClient::response r = HttpClient::PostForm(
-     base_url_ + "/login/", &form
-  );
+  if (!urlrequest_.get())
+    return;
 
-  if (r.code == 200) {
-    // Auth successful
-    if (r.body.find("success: true") != std::string::npos) {
-      // Maybe server returns application password?
-      std::string new_password = TryParseApplicationPassword(r.body);
-      if (password_ != new_password) {
-        LOG_IF(WARNING, !renew_password) << "Unexpected password update";
-        password_ = new_password;
-      }
+  // Don't execute the callback when we explicitly cancel the request.
+  static_cast<AuthClient*>(urlrequest_->GetClient().get())->Detach();
 
-      result.success = true;
-      result.error_code = ERROR_CODE::NONE;
-      result.cookies = r.cookies;
-    } else {
-      // Probably application fatal occurred
-      result.success = false;
-      result.error_code = ERROR_CODE::UNKNOWN;
-    }
+  urlrequest_->Cancel();
+  urlrequest_ = NULL;
 
-  } else if (r.code == -1 ) {
-    // http query failed
-    LOG(WARNING) << "Auth failed (HTTP error): " << r.error;
-    result.success = false;
-    result.error_code = ERROR_CODE::HTTP;
-    result.http_error = r.error;
+  LOG(WARNING) << "Auth failed (canceled)";
 
-  } else if (r.code == 401 ) {
-    // Auth failed
-    LOG(WARNING) << "Auth failed: " << r.body;
-    if (r.body.find("needOtp:") != std::string::npos) {
-      // ToDo: implement OTP authorization
-      result.error_code = ERROR_CODE::OTP;
-    } else if (r.body.find("captchaCode:") != std::string::npos) {
-      result.error_code = ERROR_CODE::CAPTCHA;
-    } else {
-      result.error_code = ERROR_CODE::AUTH;
-    }
+  if (!callback_.is_null()) {
+    // Must always execute |callback_| before deleting it.
 
-    result.success = false;
-    result.cookies = r.cookies;
+    AuthResult auth_result;
+    auth_result.success = false;
+    auth_result.error_code = ERROR_CODE::HTTP;
+    auth_result.http_error = "ERR_CANCELED";
 
-  } else if (r.code == 301 ||  r.code == 302 || r.code == 307) {
-    // Some error occurred...
-    LOG(WARNING) << "Auth failed (redirect occurred to url): " << r.headers["Location"];
-    result.error_code = ERROR_CODE::INVALID_URL;
-    result.success = false;
-    result.cookies = r.cookies;
-    result.http_error = "Redirect occurred: ";
-    CefURLParts redirect_parts;
-    if (CefParseURL(r.headers["Location"], redirect_parts)) {
-     result.http_error +=  CefString(&redirect_parts.origin);
-    }
-
-  } else {
-    // Some error occurred...
-    LOG(WARNING) << "Auth failed (Application error): " << r.body;
-    result.error_code = ERROR_CODE::UNKNOWN;
-    result.success = false;
-    result.cookies = r.cookies;
+    callback_.Run(this, auth_result);
+    callback_.Reset();
   }
-
-  return result;
 }
 
-std::string
-Account::TryParseApplicationPassword(std::string body) {
-  std::string password;
-  size_t pos = body.find("appPassword: '");
-  if (pos == std::string::npos)
-    return password_;
+void
+Account::OnAuthTimedOut(const CefURLRequest *urlrequest) {
+  CEF_REQUIRE_UI_THREAD();
 
-  pos += sizeof("appPassword: '");
-  password = body.substr(
-     pos - 1,
-     body.find("'", pos + 1) - pos + 1
-  );
+  if (!urlrequest_.get() || urlrequest_.get() != urlrequest)
+    return;
 
-  return password;
-}
+  // Don't execute the callback when we explicitly cancel the request.
+  static_cast<AuthClient*>(urlrequest_->GetClient().get())->Detach();
 
-std::string
-Account::GetOsMark() {
-  // ToDo: use app_token!
-  char hostname[1024];
-  gethostname(hostname, 1024);
+  urlrequest_->Cancel();
+  urlrequest_ = NULL;
 
-  return std::string(hostname);
+  LOG(WARNING) << "Auth failed (timeout of " << kAuthTimeout << "s reached)";
+
+  if (!callback_.is_null()) {
+    // Must always execute |callback_| before deleting it.
+
+    AuthResult auth_result;
+    auth_result.success = false;
+    auth_result.error_code = ERROR_CODE::HTTP;
+    auth_result.http_error = request_helper::GetErrorString(ERR_TIMED_OUT);
+
+    callback_.Run(this, auth_result);
+    callback_.Reset();
+  }
 }

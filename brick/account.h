@@ -6,8 +6,10 @@
 
 #include <string>
 
+#include "include/cef_urlrequest.h"
 #include "include/cef_base.h"
-#include "brick/httpclient/httpclient.h"
+#include "include/base/cef_callback.h"
+#include "brick/request_helper.h"
 
 class Account : public CefBase {
 
@@ -28,8 +30,10 @@ class Account : public CefBase {
     bool success;
     ERROR_CODE error_code;
     std::string http_error;
-    HttpClient::cookie_map cookies;
+    request_helper::CookiesMap cookies;
   } AuthResult;
+
+  typedef base::Callback<void(const CefRefPtr<Account>, AuthResult)> AuthCallback;
 
   Account();
   ~Account();
@@ -38,8 +42,10 @@ class Account : public CefBase {
   std::string GetLogin();
   std::string GetPassword();
   std::string GetDomain();
-  std::string GetBaseUrl();
   std::string GetLabel();
+  std::string GetOrigin();
+  std::string GetBaseUrl();
+  std::string GetAuthUrl();
   bool IsExisted();
   bool IsSecure();
   bool IsAppPasswordUsed();
@@ -56,7 +62,10 @@ class Account : public CefBase {
   std::string GenLabel();
   std::string GenBaseUrl();
 
-  AuthResult Auth(bool renew_password = false, std::string otp = "");
+  void Auth(bool renew_password, const AuthCallback& callback, std::string otp = "");
+  void OnAuthComplete(const AuthResult auth_result, const std::string& new_password);
+  void OnAuthTimedOut(const CefURLRequest *urlrequest);
+  void CancelAuthPending();
 
  protected:
   int id_;
@@ -67,9 +76,8 @@ class Account : public CefBase {
   std::string label_;
   bool secure_;
   bool use_app_password_;
-
-  std::string TryParseApplicationPassword(std::string body);
-  std::string GetOsMark();
+  AuthCallback callback_;
+  CefRefPtr<CefURLRequest> urlrequest_;
 
   IMPLEMENT_REFCOUNTING(Account);
 };

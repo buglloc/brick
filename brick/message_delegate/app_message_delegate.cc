@@ -90,10 +90,10 @@ AppMessageDelegate::OnProcessMessageReceived(
     }
 
     if (error == NO_ERROR) {
-      Login(
-         browser,
-         response,
-         ClientHandler::GetInstance()->GetAccountManager()->GetCurrentAccount()
+      CefRefPtr<Account> account = ClientHandler::GetInstance()->GetAccountManager()->GetCurrentAccount();
+      account->Auth(
+          false,
+          base::Bind(&AppMessageDelegate::OnAfterLogin, this, browser, response)
       );
       invoke_callback = false;
     }
@@ -397,23 +397,16 @@ AppMessageDelegate::CreateProcessMessageDelegates(ClientHandler::ProcessMessageD
 
 
 void
-AppMessageDelegate::Login(
+AppMessageDelegate::OnAfterLogin(
     CefRefPtr<CefBrowser> browser,
     CefRefPtr<CefProcessMessage> response,
-    CefRefPtr<Account> account) {
-
-  if (!CefCurrentlyOn(TID_CACHE)) {
-    // Execute on the IO thread.
-    CefPostTask(TID_CACHE, base::Bind(&AppMessageDelegate::Login, browser, response, account));
-    return;
-  }
+    CefRefPtr<Account> account,
+    Account::AuthResult auth_result) {
 
   CefRefPtr<CefListValue> response_args = response->GetArgumentList();
-  Account::AuthResult auth_result = account->Auth();
-  // Save app password if success?
 
   if (auth_result.success) {
-    SetCookies(CefCookieManager::GetGlobalManager(), account->GetBaseUrl(), auth_result.cookies, account->IsSecure());
+    SetCookies(CefCookieManager::GetGlobalManager(), account->GetOrigin(), auth_result.cookies, account->IsSecure());
     response_args->SetBool(2, true);
   } else {
     response_args->SetBool(2, false);
@@ -428,37 +421,24 @@ AppMessageDelegate::Login(
 }
 
 void
-AppMessageDelegate::SetCookies(CefRefPtr<CefCookieManager> manager,
-                              const CefString &url,
-                              HttpClient::cookie_map cookies,
-                              bool is_secure) {
+AppMessageDelegate::SetCookies(
+    CefRefPtr<CefCookieManager> manager,
+    const CefString &url,
+    request_helper::CookiesMap cookies,
+    bool is_secure) {
+
   if (!CefCurrentlyOn(TID_IO)) {
     // Execute on the IO thread.
-    CefPostTask(TID_IO, base::Bind(&AppMessageDelegate::SetCookies, manager, url, cookies, is_secure));
+    CefPostTask(TID_IO, base::Bind(&AppMessageDelegate::SetCookies, this, manager, url, cookies, is_secure));
     return;
   }
 
-  for (HttpClient::cookie_map::iterator value=cookies.begin(); value != cookies.end(); ++value) {
+  for (auto it = cookies.begin(); it != cookies.end(); ++it) {
     CefCookie cookie;
-    CefString(&cookie.name) = value->first;
-    CefString(&cookie.value) = value->second;
+    CefString(&cookie.name) = it->first;
+    CefString(&cookie.value) = it->second;
     cookie.secure = is_secure;
     cookie.httponly = true;
     manager->SetCookie(url, cookie);
   }
-}
-
-
-CefString
-AppMessageDelegate::ParseAuthSessid(std::string body) {
-  std::string sessId;
-  size_t pos = body.find("sessionId: '") + sizeof("sessionId: '");
-  sessId = body.substr(
-     pos - 1,
-     body.find("'", pos + 1) - pos + 1
-  );
-
-  CefString result;
-  result.FromASCII(sessId.c_str());
-  return result;
 }

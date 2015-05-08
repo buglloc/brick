@@ -1,5 +1,6 @@
 // Copyright (c) 2015 The Brick Authors.
 
+#include <brick/auth_client.h>
 #include "include/base/cef_logging.h"
 #include "brick/client_handler.h"
 #include "brick/window/edit_account_window.h"
@@ -15,6 +16,7 @@ namespace {
   void ShowOtpDialog(EditAccountWindow *self);
 
   const char kOtpPromptId[] = "otp_prompt_text";
+  const char kBitrix24DomainMark[] = ".bitrix24.";
 
   void
   OnOtpDialogResponse(GtkDialog *dialog, gint response_id, EditAccountWindow *self) {
@@ -55,6 +57,22 @@ namespace {
   }
 
   void
+  ShowError(EditAccountWindow *self, const gchar *text) {
+    GtkWidget *dialog = gtk_message_dialog_new_with_markup(
+        GTK_WINDOW(self->window_objects_.window),
+        GTK_DIALOG_DESTROY_WITH_PARENT,
+        GTK_MESSAGE_OTHER,
+        GTK_BUTTONS_OK_CANCEL,
+        NULL
+    );
+
+    gtk_window_set_title(GTK_WINDOW(dialog), "Authorization failed");
+    gtk_message_dialog_set_markup(GTK_MESSAGE_DIALOG(dialog), text);
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
+  }
+
+  void
   OnSave(GtkWidget *widget, EditAccountWindow *self) {
     bool secure =
        gtk_combo_box_get_active(self->window_objects_.protocol_chooser) == 0;
@@ -64,7 +82,7 @@ namespace {
        gtk_entry_get_text(self->window_objects_.login_entry);
     const gchar* password =
        gtk_entry_get_text(GTK_ENTRY(self->window_objects_.password_entry));
-    const bool renew = static_cast<bool>(
+    bool renew = static_cast<bool>(
        gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(self->window_objects_.use_app_password)));
 
     GtkWidget* otp_widget = static_cast<GtkWidget*>(
@@ -73,92 +91,44 @@ namespace {
     const gchar* otp = "";
     if (otp_widget) {
       otp = gtk_entry_get_text(GTK_ENTRY(otp_widget));
-    }
 
-    CefRefPtr<Account> check_account(new Account);
-    bool show_error = false;
-    std::string error_message;
-
-    if (!strlen(domain)) {
-      show_error = true;
-      error_message = "Empty domain";
-    } else if (!strlen(login)) {
-      show_error = true;
-      error_message = "Empty login";
-    } else if (!strlen(password)) {
-      show_error = true;
-      error_message = "Empty password";
-    }
-
-    if (!show_error) {
-      check_account->Set(
-         secure,
-         domain,
-         login,
-         password
-      );
-
-      Account::AuthResult auth_result = check_account->Auth(renew, otp);
-      if (!auth_result.success) {
-        show_error = true;
-
-        switch (auth_result.error_code) {
-          case Account::ERROR_CODE::HTTP:
-            error_message = "HTTP error: " + auth_result.http_error;
-            break;
-          case Account::ERROR_CODE::CAPTCHA:
-            error_message = "You’ve exceeded the maximum number of login attempts allowed.\n"
-               "Please, authorize in your <b>browser</b> first";
-            break;
-          case Account::ERROR_CODE::OTP:
-            // If we have OTP auth error - turn on App Passwords
-            if (!renew) {
-              gtk_toggle_button_set_active(
-                GTK_TOGGLE_BUTTON(self->window_objects_.use_app_password),
-                true
-              );
-            }
-
-            ShowOtpDialog(self);
-            return;
-            break;
-          case Account::ERROR_CODE::AUTH:
-            error_message = "Authorization error, wrong login or password";
-            break;
-          case Account::ERROR_CODE::INVALID_URL:
-            error_message = auth_result.http_error + "\n"
-               "Please, provide correct host name and scheme";
-            break;
-          default:
-            error_message = "I’m sorry, unknown error :(";
-            break;
-        }
+      if (!renew) {
+        renew = true;
+        // If we have OTP - turn on App Password
+        gtk_toggle_button_set_active(
+            GTK_TOGGLE_BUTTON(self->window_objects_.use_app_password),
+            true
+        );
       }
     }
 
-    if (show_error) {
-      GtkWidget *dialog = gtk_message_dialog_new_with_markup(
-         GTK_WINDOW(self->window_objects_.window),
-         GTK_DIALOG_DESTROY_WITH_PARENT,
-         GTK_MESSAGE_ERROR,
-         GTK_BUTTONS_CLOSE,
-         NULL
+    if (!secure && strstr(domain, kBitrix24DomainMark)) {
+      // If we have OTP - turn on App Password
+      secure = true;
+      gtk_combo_box_set_active(
+          self->window_objects_.protocol_chooser,
+          0
       );
-
-      gtk_message_dialog_set_markup(GTK_MESSAGE_DIALOG(dialog),
-         error_message.c_str());
-      gtk_dialog_run(GTK_DIALOG(dialog));
-      gtk_widget_destroy(dialog);
-      return;
     }
 
-    self->Save(
-       secure,
-       std::string(domain),
-       std::string(login),
-       check_account->GetPassword(),  // Server may update user password while login,
-       renew
-    );
+    if (!strlen(domain)) {
+      ShowError(self, "Empty domain");
+    } else if (!strlen(login)) {
+      ShowError(self, "Empty login");
+    } else if (!strlen(password)) {
+      ShowError(self, "Empty password");
+    } else {
+      CefRefPtr<Account> tmp_account(new Account);
+      tmp_account->Set(
+          secure,
+          domain,
+          login,
+          password
+      );
+      tmp_account->SetUseAppPassword(renew);
+
+      tmp_account->Auth(renew, base::Bind(&EditAccountWindow::OnAuthComplete, self), otp);
+    }
   }
 
   void
@@ -219,4 +189,46 @@ EditAccountWindow::Init(CefRefPtr<Account> account, bool switch_on_save) {
      GTK_TOGGLE_BUTTON(window_objects_.use_app_password),
      account->IsAppPasswordUsed()
   );
+}
+
+void
+EditAccountWindow::OnAuthComplete(const CefRefPtr<Account> account, const Account::AuthResult auth_result) {
+
+  if (auth_result.success) {
+    Save(
+        account->IsSecure(),
+        account->GetDomain(),
+        account->GetLogin(),
+        account->GetPassword(),  // Server may update user password while login,
+        account->IsAppPasswordUsed()
+    );
+  } else {
+    std::string error_message;
+
+    switch (auth_result.error_code) {
+      case Account::ERROR_CODE::HTTP:
+        error_message = "Failed due to http-errors (" + auth_result.http_error + ")";
+        break;
+      case Account::ERROR_CODE::CAPTCHA:
+        error_message = "You’ve exceeded the maximum number of login attempts allowed.\n"
+            "Please, authorize in your <b>browser</b> first";
+        break;
+      case Account::ERROR_CODE::OTP:
+        ShowOtpDialog(this);
+        return;
+        break;
+      case Account::ERROR_CODE::AUTH:
+        error_message = "Authorization error, wrong login or password";
+        break;
+      case Account::ERROR_CODE::INVALID_URL:
+        error_message = auth_result.http_error + "\n"
+            "Please, provide correct host name and scheme";
+        break;
+      default:
+        error_message = "I’m sorry, unknown error :(";
+        break;
+    }
+
+    ShowError(this, error_message.c_str());
+  }
 }
