@@ -53,6 +53,12 @@ set(BRICK_SRCS
   cache_manager.cc
   cookie_cleaner.h
   cookie_cleaner.cc
+  auth_client.h
+  auth_client.cc
+  request_helper.h
+  request_helper.cc
+  avatar_client.h
+  avatar_client.cc
   )
 set(BRICK_COMMON_SRCS
   common/app_settings.cc
@@ -137,10 +143,6 @@ set(BRICK_EVENT_SYSTEM
   event/sleep_event.h
   event/user_away_event.h
   )
-set(BRICK_HTTPCLIENT_SRCS
-  httpclient/httpclient.cc
-  httpclient/httpclient.h
-  )
 
 APPEND_PLATFORM_SOURCES(BRICK_SRCS)
 APPEND_PLATFORM_SOURCES(BRICK_STATUS_ICON_SRCS)
@@ -157,7 +159,6 @@ set(BRICK_SRCS
   ${BRICK_EXTENSIONS_SRCS}
   ${BRICK_STATUS_ICON_SRCS}
   ${BRICK_WINDOWS_SRCS}
-  ${BRICK_HTTPCLIENT_SRCS}
   ${BRICK_JSON_SRCS}
   ${BRICK_EXTERNAL_INTERFACE}
   ${BRICK_EVENT_SYSTEM}
@@ -218,7 +219,7 @@ foreach(FILENAME ${BRICK_EMBED_FILES})
 endforeach(FILENAME)
 
 
-FIND_LINUX_LIBRARIES("gmodule-2.0 gtk+-2.0 gthread-2.0 libcurl libnotify xscrnsaver")
+FIND_LINUX_LIBRARIES("gmodule-2.0 gtk+-2.0 gthread-2.0 libnotify xscrnsaver")
 if (UNITY)
   FIND_LINUX_LIBRARIES("unity appindicator-0.1")
 endif()
