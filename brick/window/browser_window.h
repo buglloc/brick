@@ -9,6 +9,7 @@
 #if defined(__linux__)
 // The Linux client uses GTK instead of the underlying platform type (X11).
 #include <gdk/gdkx.h>
+#undef Status   // Definition conflicts with cef_urlrequest.h
 #define BrowserWindowHandle GdkWindow*
 #define BrowserWindowNativeEvent GdkEvent*
 #else
