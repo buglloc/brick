@@ -22,6 +22,9 @@ class EditAccountWindow : public BaseWindow {
             bool use_app_password);
 
   void OnAuthComplete(const CefRefPtr<Account> account, const Account::AuthResult auth_result);
+  void CancelAuthPending();
+  void OnSaveStarted();
+  void OnSaveEnded();
 
   // Platform specific methods
   void Init() OVERRIDE;
@@ -30,17 +33,21 @@ class EditAccountWindow : public BaseWindow {
   struct WindowObjects {
     ClientWindowHandle        window;
     CefRefPtr<Account>        account;
+    CefRefPtr<Account>        auth_account;
     bool                      switch_on_save;
     GtkComboBox              *protocol_chooser;
     GtkEntry                 *domain_entry;
     GtkEntry                 *login_entry;
     GtkEntry                 *password_entry;
     GtkCheckButton           *use_app_password;
+    GtkButton                *save_button;
+    GtkButton                *cancel_button;
   } window_objects_;
 #else
   struct WindowObjects {
     ClientWindowHandle        window;
     CefRefPtr<Account>        account;
+    CefRefPtr<Account>        auth_account;
     bool                      switch_on_save;
   } window_objects_;
 #endif

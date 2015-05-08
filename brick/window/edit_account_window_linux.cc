@@ -33,6 +33,12 @@ namespace {
   }
 
   void
+  OnErrorDialogResponse(GtkDialog *dialog, gint response_id, EditAccountWindow *self) {
+    self->OnSaveEnded();
+    gtk_widget_destroy(GTK_WIDGET(dialog));
+  }
+
+  void
   ShowOtpDialog(EditAccountWindow *self) {
     GtkWidget *dialog = gtk_message_dialog_new_with_markup(
        GTK_WINDOW(self->window_objects_.window),
@@ -68,8 +74,8 @@ namespace {
 
     gtk_window_set_title(GTK_WINDOW(dialog), "Authorization failed");
     gtk_message_dialog_set_markup(GTK_MESSAGE_DIALOG(dialog), text);
-    gtk_dialog_run(GTK_DIALOG(dialog));
-    gtk_widget_destroy(dialog);
+    gtk_widget_show_all(GTK_WIDGET(dialog));
+    g_signal_connect(dialog, "response", G_CALLBACK(OnErrorDialogResponse), self);
   }
 
   void
@@ -103,7 +109,7 @@ namespace {
     }
 
     if (!secure && strstr(domain, kBitrix24DomainMark)) {
-      // If we have OTP - turn on App Password
+      // If we add Bitrix24 account always set secure protocol
       secure = true;
       gtk_combo_box_set_active(
           self->window_objects_.protocol_chooser,
@@ -118,22 +124,32 @@ namespace {
     } else if (!strlen(password)) {
       ShowError(self, "Empty password");
     } else {
-      CefRefPtr<Account> tmp_account(new Account);
-      tmp_account->Set(
+      self->OnSaveStarted();
+      self->window_objects_.auth_account = new Account;
+      self->window_objects_.auth_account->Set(
           secure,
           domain,
           login,
-          password
+          password,
+          renew
       );
-      tmp_account->SetUseAppPassword(renew);
 
-      tmp_account->Auth(renew, base::Bind(&EditAccountWindow::OnAuthComplete, self), otp);
+      self->window_objects_.auth_account->Auth(renew, base::Bind(&EditAccountWindow::OnAuthComplete, self), otp);
     }
   }
 
   void
   OnCancel(GtkWidget *widget, EditAccountWindow *self) {
     self->Close();
+    self->CancelAuthPending();
+  }
+
+  bool
+  OnDelete(GtkWidget* widget, EditAccountWindow *self) {
+    self->CancelAuthPending();
+
+    // Allow the close.
+    return FALSE;
   }
 
 }  // namespace
@@ -158,9 +174,12 @@ EditAccountWindow::Init(CefRefPtr<Account> account, bool switch_on_save) {
   window_objects_.login_entry = GTK_ENTRY(gtk_builder_get_object(builder, "login_entry"));
   window_objects_.password_entry = GTK_ENTRY(gtk_builder_get_object(builder, "password_entry"));
   window_objects_.use_app_password = GTK_CHECK_BUTTON(gtk_builder_get_object(builder, "use_app_password"));
+  window_objects_.save_button = GTK_BUTTON(gtk_builder_get_object(builder, "save_button"));
+  window_objects_.cancel_button = GTK_BUTTON(gtk_builder_get_object(builder, "cancel_button"));
 
-  g_signal_connect(gtk_builder_get_object(builder, "save_button"), "clicked", G_CALLBACK(OnSave), this);
-  g_signal_connect(gtk_builder_get_object(builder, "cancel_button"), "clicked", G_CALLBACK(OnCancel), this);
+  g_signal_connect(GTK_OBJECT(window_objects_.window), "delete_event", G_CALLBACK(OnDelete), this);
+  g_signal_connect(window_objects_.save_button, "clicked", G_CALLBACK(OnSave), this);
+  g_signal_connect(window_objects_.cancel_button, "clicked", G_CALLBACK(OnCancel), this);
 
 
   g_object_unref(builder);
@@ -193,8 +212,8 @@ EditAccountWindow::Init(CefRefPtr<Account> account, bool switch_on_save) {
 
 void
 EditAccountWindow::OnAuthComplete(const CefRefPtr<Account> account, const Account::AuthResult auth_result) {
-
   if (auth_result.success) {
+    OnSaveEnded();
     Save(
         account->IsSecure(),
         account->GetDomain(),
@@ -231,4 +250,21 @@ EditAccountWindow::OnAuthComplete(const CefRefPtr<Account> account, const Accoun
 
     ShowError(this, error_message.c_str());
   }
+}
+
+void
+EditAccountWindow::CancelAuthPending() {
+  if (!window_objects_.auth_account.get())
+    return;
+
+  window_objects_.auth_account->CancelAuthPending(false);
+  window_objects_.auth_account = NULL;
+}
+
+void EditAccountWindow::OnSaveStarted() {
+  gtk_widget_set_sensitive(GTK_WIDGET(window_objects_.save_button), false);
+}
+
+void EditAccountWindow::OnSaveEnded() {
+  gtk_widget_set_sensitive(GTK_WIDGET(window_objects_.save_button), true);
 }
