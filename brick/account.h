@@ -51,7 +51,7 @@ class Account : public CefBase {
   bool IsAppPasswordUsed();
   bool CheckBaseUrl(std::string url);
 
-  void Set(bool secure, std::string domain, std::string login, std::string password);
+  void Set(bool secure, std::string domain, std::string login, std::string password, bool use_app_password);
   void SetLogin(std::string login);
   void SetPassword(std::string password);
   void SetDomain(std::string domain);
@@ -65,7 +65,7 @@ class Account : public CefBase {
   void Auth(bool renew_password, const AuthCallback& callback, std::string otp = "");
   void OnAuthComplete(const AuthResult auth_result, const std::string& new_password);
   void OnAuthTimedOut(const CefURLRequest *urlrequest);
-  void CancelAuthPending();
+  void CancelAuthPending(bool call_callback);
 
  protected:
   int id_;

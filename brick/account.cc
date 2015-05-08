@@ -28,7 +28,7 @@ Account::Account() {
 }
 
 Account::~Account() {
-  CancelAuthPending();
+  CancelAuthPending(false);
 }
 
 bool
@@ -145,7 +145,8 @@ Account::Set(
     bool secure,
     std::string domain,
     std::string login,
-    std::string password) {
+    std::string password,
+    bool use_app_password) {
 
   secure_ = secure;
   domain_ = domain;
@@ -153,6 +154,7 @@ Account::Set(
   password_ = password;
   label_ = GenLabel();
   base_url_ = GenBaseUrl();
+  use_app_password_ = use_app_password;
 }
 
 std::string
@@ -165,7 +167,7 @@ void
 Account::Auth(bool renew_password, const AuthCallback& callback, std::string otp) {
   CEF_REQUIRE_UI_THREAD();
 
-  CancelAuthPending();
+  CancelAuthPending(false);
 
   callback_ = callback;
   urlrequest_ = AuthClient::CreateRequest(
@@ -195,7 +197,7 @@ Account::OnAuthComplete(const AuthResult auth_result, const std::string& new_pas
 }
 
 void
-Account::CancelAuthPending() {
+Account::CancelAuthPending(bool call_callback) {
   CEF_REQUIRE_UI_THREAD();
 
   if (!urlrequest_.get())
@@ -210,14 +212,15 @@ Account::CancelAuthPending() {
   LOG(WARNING) << "Auth failed (canceled)";
 
   if (!callback_.is_null()) {
-    // Must always execute |callback_| before deleting it.
+    if (call_callback) {
+      AuthResult auth_result;
+      auth_result.success = false;
+      auth_result.error_code = ERROR_CODE::HTTP;
+      auth_result.http_error = "ERR_CANCELED";
 
-    AuthResult auth_result;
-    auth_result.success = false;
-    auth_result.error_code = ERROR_CODE::HTTP;
-    auth_result.http_error = "ERR_CANCELED";
+      callback_.Run(this, auth_result);
+    }
 
-    callback_.Run(this, auth_result);
     callback_.Reset();
   }
 }
@@ -238,8 +241,6 @@ Account::OnAuthTimedOut(const CefURLRequest *urlrequest) {
   LOG(WARNING) << "Auth failed (timeout of " << kAuthTimeout << "s reached)";
 
   if (!callback_.is_null()) {
-    // Must always execute |callback_| before deleting it.
-
     AuthResult auth_result;
     auth_result.success = false;
     auth_result.error_code = ERROR_CODE::HTTP;
