@@ -491,11 +491,12 @@ BXDesktopWindow.DispatchCustomEvent = function(name, params) {
 };
 
 BXDesktopSystem.GetProperty = function GetProperty(property) {
+  var version = '#VERSION#'.split('~')[0];
   switch (property) {
     case 'versionParts':
-      return '#VERSION#'.split('.');
+      return version.split('.');
     case 'version':
-      return '#VERSION#';
+      return version;
     default:
       BrickHelper.implementMe('BXDesktopSystem.GetProperty', arguments);
   }
