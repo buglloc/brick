@@ -4,6 +4,7 @@
 
 #include "third-party/json/json.h"
 #include "brick/auth_client.h"
+#include "account.h"
 
 namespace {
 
@@ -55,27 +56,28 @@ AuthClient::OnRequestComplete(CefRefPtr<CefURLRequest> request) {
     LOG(WARNING) << "Auth request was canceled, probably SSL or redirect error occurred";
     result.success = false;
     result.error_code = Account::ERROR_CODE::HTTP;
-    result.http_error = "ERR_CANCELED";
+    result.http_error = request_helper::GetErrorString(ERR_CONNECTION_FAILED);
+    finished = true;
+  };
+
+  if (!finished
+      && (request->GetRequestStatus() == UR_FAILED
+          || request->GetRequestError() != ERR_NONE)) {
+
+    std::string error = request_helper::GetErrorString(request->GetRequestError());
+
+    LOG(WARNING) << "Auth request was failed: " << error;
+    result.success = false;
+    result.error_code = Account::ERROR_CODE::HTTP;
+    result.http_error = error;
     finished = true;
   };
 
   if (!finished && request->GetRequestStatus() != UR_SUCCESS) {
     LOG(WARNING) << "Unexpected request status: " << request->GetRequestStatus();
     result.success = false;
-    result.error_code = Account::ERROR_CODE::UNKNOWN;
-    result.http_error = "ERR_UNEXPECTED_STATUS";
-    finished = true;
-  }
-
-  if (!finished && request->GetRequestError() != ERR_NONE) {
-    // http query failed
-    std::string error = request_helper::GetErrorString(request->GetRequestError());
-    error += "/" +  std::to_string(request->GetRequestError());
-
-    LOG(WARNING) << "Auth failed (HTTP error): " << error;
-    result.success = false;
     result.error_code = Account::ERROR_CODE::HTTP;
-    result.http_error = error;
+    result.http_error = request_helper::GetErrorString(ERR_UNEXPECTED);
     finished = true;
   }
 

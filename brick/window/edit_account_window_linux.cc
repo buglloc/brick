@@ -226,7 +226,7 @@ EditAccountWindow::OnAuthComplete(const CefRefPtr<Account> account, const Accoun
 
     switch (auth_result.error_code) {
       case Account::ERROR_CODE::HTTP:
-        error_message = "Failed due to http-errors (" + auth_result.http_error + ")";
+        error_message = auth_result.http_error;
         break;
       case Account::ERROR_CODE::CAPTCHA:
         error_message = "You’ve exceeded the maximum number of login attempts allowed.\n"
