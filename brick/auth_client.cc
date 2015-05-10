@@ -52,7 +52,7 @@ AuthClient::OnRequestComplete(CefRefPtr<CefURLRequest> request) {
   CefRefPtr<CefResponse> response = request->GetResponse();
 
   if (!finished && request->GetRequestStatus() == UR_CANCELED) {
-    // CEF was pragmatically cancel our request. It may be certificate error or redirect or something other...
+    // CEF was pragmatically cancel our request. It may be certificate error or redirect (if set UR_FLAG_STOP_ON_REDIRECT) or something other...
     LOG(WARNING) << "Auth request was canceled, probably SSL or redirect error occurred";
     result.success = false;
     result.error_code = Account::ERROR_CODE::HTTP;
@@ -85,7 +85,9 @@ AuthClient::OnRequestComplete(CefRefPtr<CefURLRequest> request) {
     // Strange content-type. We expect JSON response...
     LOG(WARNING) << "Auth failed due to unexpected response type: "
                  << response->GetMimeType().ToString();
-    result.error_code = Account::ERROR_CODE::UNKNOWN;
+    result.error_code = Account::ERROR_CODE::HTTP;
+    result.http_error = request_helper::GetErrorString(ERR_INVALID_RESPONSE)
+                        + "\nPlease check the server schema and host";
     result.success = false;
     finished = true;
   }
@@ -117,7 +119,7 @@ AuthClient::OnRequestComplete(CefRefPtr<CefURLRequest> request) {
           result.error_code = Account::ERROR_CODE::NONE;
           result.cookies = request_helper::GetCookies(headerMap);
         } else {
-          // Server return incorrect JSON reponse...it's...it's so strage :(
+          // Server return incorrect JSON response...it's...it's so strange :(
           LOG(WARNING) << "Auth failed (can't find status in response): " << body_;
           result.success = false;
           result.error_code = Account::ERROR_CODE::UNKNOWN;
@@ -134,6 +136,14 @@ AuthClient::OnRequestComplete(CefRefPtr<CefURLRequest> request) {
           result.error_code = Account::ERROR_CODE::AUTH;
         }
       break;
+      case 403:
+        // Probably our request was redirected.
+        // ToDo: Implement getting redirected url from CEF (UR_FLAG_STOP_ON_REDIRECT)
+        LOG(WARNING) << "Auth failed (403)";
+        result.success = false;
+        result.error_code = Account::ERROR_CODE::HTTP;
+        result.http_error = request_helper::GetErrorString(ERR_INVALID_RESPONSE)
+                            + "\nPlease check the server schema and host";
       default:
         // Some error occurred...
         LOG(WARNING) << "Auth failed (Application error): " << body_;
@@ -213,7 +223,7 @@ AuthClient::CreateRequest(
   request->SetURL(url);
   request->SetMethod("POST");
   request->SetPostData(request_helper::PostFormToCefPost(form));
-  request->SetFlags(UR_FLAG_SKIP_CACHE|UR_FLAG_NO_RETRY_ON_5XX|UR_FLAG_STOP_ON_REDIRECT);
+  request->SetFlags(UR_FLAG_SKIP_CACHE|UR_FLAG_SKIP_CACHE|UR_FLAG_NO_RETRY_ON_5XX);
 
   // Create and start the new CefURLRequest.
   return CefURLRequest::Create(request, new AuthClient(callback, url));
