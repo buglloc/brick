@@ -194,6 +194,37 @@ void CefResponseCToCpp::SetHeaderMap(const HeaderMap& headerMap) {
     cef_string_multimap_free(headerMapMultimap);
 }
 
+CefString CefResponseCToCpp::GetURL() {
+  if (CEF_MEMBER_MISSING(struct_, get_url))
+    return CefString();
+
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Execute
+  cef_string_userfree_t _retval = struct_->get_url(struct_);
+
+  // Return type: string
+  CefString _retvalStr;
+  _retvalStr.AttachToUserFree(_retval);
+  return _retvalStr;
+}
+
+void CefResponseCToCpp::SetURL(const CefString& url) {
+  if (CEF_MEMBER_MISSING(struct_, set_url))
+    return;
+
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Verify param: url; type: string_byref_const
+  DCHECK(!url.empty());
+  if (url.empty())
+    return;
+
+  // Execute
+  struct_->set_url(struct_,
+      url.GetStruct());
+}
+
 
 #ifndef NDEBUG
 template<> base::AtomicRefCount CefCToCpp<CefResponseCToCpp, CefResponse,

@@ -63,13 +63,13 @@ extern "C" {
 // universal hash value will change if any platform is affected whereas the
 // platform hash values will change only if that particular platform is
 // affected.
-#define CEF_API_HASH_UNIVERSAL "6e54659a83a47174ccdb3891461dd0868a1e428c"
+#define CEF_API_HASH_UNIVERSAL "74b34694d5bdb9994c8d892c56e02f2d13b5f84c"
 #if defined(OS_WIN)
-#define CEF_API_HASH_PLATFORM "01f76b756fe17aee4eaf91843d143bd6599a0307"
+#define CEF_API_HASH_PLATFORM "7ad5db655c7267b1dddc04b3da423b706e0f8c63"
 #elif defined(OS_MACOSX)
-#define CEF_API_HASH_PLATFORM "4e964f9a1732c386cb8b30b83daf08ea5e3a302d"
+#define CEF_API_HASH_PLATFORM "59aade6300aad5264a2ce0f817c23f18257e93af"
 #elif defined(OS_LINUX)
-#define CEF_API_HASH_PLATFORM "8f337c140f37555b00d1399441a33980c1433ddc"
+#define CEF_API_HASH_PLATFORM "e81fce1abcc90fd8eddb07f9e972dbbc3c7ec0b3"
 #endif
 
 // Returns CEF version information for the libcef library. The |entry|

@@ -115,6 +115,18 @@ class CefResponse : public virtual CefBase {
   ///
   /*--cef()--*/
   virtual void SetHeaderMap(const HeaderMap& headerMap) =0;
+
+  ///
+  // Get the fully qualified URL (resolved after redirects, etc).
+  ///
+  /*--cef()--*/
+  virtual CefString GetURL() =0;
+
+  ///
+  // Set the fully qualified URL.
+  ///
+  /*--cef()--*/
+  virtual void SetURL(const CefString& url) =0;
 };
 
 #endif  // CEF_INCLUDE_CEF_RESPONSE_H_

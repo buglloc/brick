@@ -114,6 +114,18 @@ typedef struct _cef_response_t {
   ///
   void (CEF_CALLBACK *set_header_map)(struct _cef_response_t* self,
       cef_string_multimap_t headerMap);
+
+  ///
+  // Get the fully qualified URL (resolved after redirects, etc).
+  ///
+  // The resulting string must be freed by calling cef_string_userfree_free().
+  cef_string_userfree_t (CEF_CALLBACK *get_url)(struct _cef_response_t* self);
+
+  ///
+  // Set the fully qualified URL.
+  ///
+  void (CEF_CALLBACK *set_url)(struct _cef_response_t* self,
+      const cef_string_t* url);
 } cef_response_t;
 
 

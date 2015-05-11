@@ -41,6 +41,8 @@ class CefResponseCToCpp
   virtual CefString GetHeader(const CefString& name) OVERRIDE;
   virtual void GetHeaderMap(HeaderMap& headerMap) OVERRIDE;
   virtual void SetHeaderMap(const HeaderMap& headerMap) OVERRIDE;
+  virtual CefString GetURL() OVERRIDE;
+  virtual void SetURL(const CefString& url) OVERRIDE;
 };
 
 #endif  // USING_CEF_SHARED
