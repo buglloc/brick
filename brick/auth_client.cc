@@ -125,9 +125,9 @@ AuthClient::OnRequestComplete(CefRefPtr<CefURLRequest> request) {
       case 200:
         if (json.isMember("success") && json["success"].isBool()) {
 
-          if (json.isMember("app_password")) {
+          if (json.isMember("appPassword")) {
             // Server may return new password for our auth request
-            app_password = json["app_password"].asString();
+            app_password = json["appPassword"].asString();
             LOG(INFO) << "Received App Password";
           }
 
