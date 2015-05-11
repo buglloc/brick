@@ -39,7 +39,7 @@
                 reasonBox.html('Authorization error, wrong login or password');
                 break;
               case app.authErrorCodes['INVALID_URL']:
-                reasonBox.text('HTTP error: ' + decodeURIComponent(reason));
+                reasonBox.text(decodeURIComponent(reason) + '\nPlease, provide correct host name and scheme');
                 break;
               default:
                 reasonBox.html('I’m sorry, unknown error :(');
