@@ -4,6 +4,7 @@ Brick
 Unofficial, simple [Bitrix24](https://www.bitrix24.com/) messenger client.
 
 Project is currently under (rather) heavy development, so stay tuned, more features will come soon.
+**Currently supported version Bitrix24 of "Instant Messenger" module 15.1.5 and above**
 
 ## Some screenshots
 
