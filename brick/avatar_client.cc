@@ -71,6 +71,9 @@ AvatarClient::CreateRequest(
 
   CEF_REQUIRE_UI_THREAD();
 
+  if (platform_util::IsPathExists(path + kTmpSuffix))
+    return NULL;  // Probably we already started downloading for current avatar
+
   if (!platform_util::MakeDirectory(helper::BaseDir(path)))
     return NULL;
 
