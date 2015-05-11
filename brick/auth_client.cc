@@ -3,8 +3,8 @@
 #include "brick/account.h"
 
 #include "third-party/json/json.h"
+#include "include/cef_url.h"
 #include "brick/auth_client.h"
-#include "account.h"
 
 namespace {
 
@@ -51,9 +51,26 @@ AuthClient::OnRequestComplete(CefRefPtr<CefURLRequest> request) {
   bool finished = false;
   CefRefPtr<CefResponse> response = request->GetResponse();
 
+  if (
+      request->GetRequest()->GetURL() != response->GetURL()  // HSTS?
+      || (request->GetRequestStatus() == UR_CANCELED
+        && (response->GetStatus() / 100) == 3)
+      ) {
+    // Deal with redirects
+    LOG(WARNING) << "Auth failed (redirect occurred): " << response->GetURL().ToString();
+    result.success = false;
+    result.error_code = Account::ERROR_CODE::INVALID_URL;
+    result.http_error = "Redirect occurred: ";
+    CefURLParts redirect_parts;
+    if (CefParseURL(response->GetURL(), redirect_parts)) {
+      result.http_error +=  CefString(&redirect_parts.origin);
+    }
+    finished = true;
+  };
+
   if (!finished && request->GetRequestStatus() == UR_CANCELED) {
-    // CEF was pragmatically cancel our request. It may be certificate error or redirect (if set UR_FLAG_STOP_ON_REDIRECT) or something other...
-    LOG(WARNING) << "Auth request was canceled, probably SSL or redirect error occurred";
+    // CEF was pragmatically cancel our request. It may be certificate error or something other...
+    LOG(WARNING) << "Auth request was canceled, probably SSL error";
     result.success = false;
     result.error_code = Account::ERROR_CODE::HTTP;
     result.http_error = request_helper::GetErrorString(ERR_CONNECTION_FAILED);
@@ -137,8 +154,6 @@ AuthClient::OnRequestComplete(CefRefPtr<CefURLRequest> request) {
         }
       break;
       case 403:
-        // Probably our request was redirected.
-        // ToDo: Implement getting redirected url from CEF (UR_FLAG_STOP_ON_REDIRECT)
         LOG(WARNING) << "Auth failed (403)";
         result.success = false;
         result.error_code = Account::ERROR_CODE::HTTP;
@@ -223,7 +238,7 @@ AuthClient::CreateRequest(
   request->SetURL(url);
   request->SetMethod("POST");
   request->SetPostData(request_helper::PostFormToCefPost(form));
-  request->SetFlags(UR_FLAG_SKIP_CACHE|UR_FLAG_SKIP_CACHE|UR_FLAG_NO_RETRY_ON_5XX);
+  request->SetFlags(UR_FLAG_SKIP_CACHE|UR_FLAG_NO_RETRY_ON_5XX|UR_FLAG_STOP_ON_REDIRECT);
 
   // Create and start the new CefURLRequest.
   return CefURLRequest::Create(request, new AuthClient(callback, url));
