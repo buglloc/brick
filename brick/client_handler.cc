@@ -14,7 +14,6 @@
 #include "brick/platform_util.h"
 #include "brick/window_util.h"
 #include "brick/brick_app.h"
-#include "brick/cookie_cleaner.h"
 
 namespace {
 
@@ -554,10 +553,12 @@ void
 ClientHandler::SwitchAccount(int id) {
   CloseAllPopups(true);
   // Clear cookies
-  CefRefPtr<CookieCleaner> cleaner(new CookieCleaner);
-  cleaner->SetTargetDomain(account_manager_->GetCurrentAccount()->GetDomain());
-  CefRefPtr<CefCookieManager> manager = CefCookieManager::GetGlobalManager();
-  manager->VisitAllCookies(cleaner);
+  CefPostTask(TID_IO, base::Bind(
+      base::IgnoreResult(&CefCookieManager::DeleteCookies),
+      CefCookieManager::GetGlobalManager(),
+      account_manager_->GetCurrentAccount()->GetOrigin(),
+      CefString()
+  ));
 
   last_temporary_page_ = 0;
   temporary_page_map_.clear();
