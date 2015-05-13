@@ -8,7 +8,7 @@
 
 namespace {
 
-  const char kValidReponseType[] = "application/json";
+  const char kValidResponseType[] = "application/json";
 
   std::string
   GetOsMark() {
@@ -127,7 +127,7 @@ AuthClient::OnRequestComplete(CefRefPtr<CefURLRequest> request) {
 
   Json::Value json_response;
   if (!finished && !response->GetMimeType().empty()) {
-    if (response->GetMimeType() == kValidReponseType) {
+    if (response->GetMimeType() == kValidResponseType) {
       Json::Reader reader;
 
       LOG_IF(ERROR, !reader.parse(body_, json_response)) << "Failed to parse auth response\n"
