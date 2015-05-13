@@ -1,10 +1,10 @@
 // Copyright (c) 2015 The Brick Authors.
 
-#include "brick/account.h"
+#include "brick/auth_client.h"
 
 #include "third-party/json/json.h"
 #include "include/cef_url.h"
-#include "brick/auth_client.h"
+#include "brick/account.h"
 
 namespace {
 
@@ -93,7 +93,7 @@ AuthClient::OnRequestComplete(CefRefPtr<CefURLRequest> request) {
       result.http_error +=  CefString(&redirect_parts.origin);
     }
     finished = true;
-  };
+  }
 
   if (!finished && request->GetRequestStatus() == UR_CANCELED) {
     // CEF was pragmatically cancel our request. It may be certificate error or something other...
@@ -102,7 +102,7 @@ AuthClient::OnRequestComplete(CefRefPtr<CefURLRequest> request) {
     result.error_code = Account::ERROR_CODE::HTTP;
     result.http_error = request_helper::GetErrorString(ERR_CONNECTION_FAILED);
     finished = true;
-  };
+  }
 
   if (!finished
       && (request->GetRequestStatus() == UR_FAILED
@@ -115,7 +115,7 @@ AuthClient::OnRequestComplete(CefRefPtr<CefURLRequest> request) {
     result.error_code = Account::ERROR_CODE::HTTP;
     result.http_error = error;
     finished = true;
-  };
+  }
 
   if (!finished && request->GetRequestStatus() != UR_SUCCESS) {
     LOG(WARNING) << "Unexpected request status: " << request->GetRequestStatus();
