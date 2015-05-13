@@ -19,6 +19,33 @@ namespace {
     return std::string(hostname);
   }
 
+  Json::Value
+  TryToParseOldResponse(const std::string& body) {
+    Json::Value result;
+    if (body.find('{') != 0)
+      return result;
+
+    if (body.find("success:") == std::string::npos)
+      return result;
+
+    result["success"] = (body.find("success: true") != std::string::npos);
+    result["needOtp"] = (body.find("needOtp:") != std::string::npos);
+
+    if (body.find("captchaCode:") != std::string::npos)
+      result["captchaCode"] = true;
+
+    size_t pos = body.find("appPassword: '");
+    if (pos != std::string::npos) {
+      pos += sizeof("appPassword: '");
+      result["appPassword"] = body.substr(
+          pos - 1,
+          body.find("'", pos + 1) - pos + 1
+      );
+    }
+
+    return result;
+  }
+
 }  // namespace
 
 AuthClient::AuthClient(const Callback& callback, const std::string& url)
@@ -98,56 +125,51 @@ AuthClient::OnRequestComplete(CefRefPtr<CefURLRequest> request) {
     finished = true;
   }
 
-  if (!finished && response->GetMimeType() != kValidReponseType) {
-    // Strange content-type. We expect JSON response...
-    LOG(WARNING) << "Auth failed due to unexpected response type: "
-                 << response->GetMimeType().ToString();
+  Json::Value json_response;
+  if (!finished && !response->GetMimeType().empty()) {
+    if (response->GetMimeType() == kValidReponseType) {
+      Json::Reader reader;
+
+      LOG_IF(ERROR, !reader.parse(body_, json_response)) << "Failed to parse auth response\n"
+                   << reader.getFormattedErrorMessages();
+    } else {
+      json_response = TryToParseOldResponse(body_);
+    }
+  }
+
+  if (!finished && (!json_response.isMember("success") || !json_response["success"].isBool())) {
+    // Server return incorrect JSON response...it's...it's so strange :(
+    LOG(WARNING) << "Auth failed (can't find status in response): " << body_;
+    result.success = false;
     result.error_code = Account::ERROR_CODE::HTTP;
     result.http_error = request_helper::GetErrorString(ERR_INVALID_RESPONSE)
                         + "\nPlease check the server schema and host";
-    result.success = false;
     finished = true;
   }
 
   if (!finished) {
     CefResponse::HeaderMap headerMap;
     response->GetHeaderMap(headerMap);
-    Json::Value json;
-    Json::Reader reader;
-
-    if (!reader.parse(body_, json)) {
-      LOG(ERROR) << "Failed to parse auth response\n"
-                 << reader.getFormattedErrorMessages();
-      return;
-    }
 
     switch (response->GetStatus()) {
       case 200:
-        if (json.isMember("success") && json["success"].isBool()) {
-
-          if (json.isMember("appPassword")) {
-            // Server may return new password for our auth request
-            app_password = json["appPassword"].asString();
-            LOG(INFO) << "Received App Password";
-          }
-
-          LOG(INFO) << "Successful auth";
-          result.success = json["success"].asBool();
-          result.error_code = Account::ERROR_CODE::NONE;
-          result.cookies = request_helper::GetCookies(headerMap);
-        } else {
-          // Server return incorrect JSON response...it's...it's so strange :(
-          LOG(WARNING) << "Auth failed (can't find status in response): " << body_;
-          result.success = false;
-          result.error_code = Account::ERROR_CODE::UNKNOWN;
+        if (json_response.isMember("appPassword")) {
+          // Server may return new password for our auth request
+          app_password = json_response["appPassword"].asString();
+          LOG(INFO) << "Received App Password";
         }
+
+        LOG(INFO) << "Successful auth";
+        result.success = json_response["success"].asBool();
+        result.error_code = Account::ERROR_CODE::NONE;
+        result.cookies = request_helper::GetCookies(headerMap);
       break;
       case 401:
         // Auth failed
         LOG(WARNING) << "Auth failed: " << body_;
-        if (json.isMember("needOtp")) {
+        if (json_response.isMember("needOtp") && json_response["needOtp"].asBool()) {
           result.error_code = Account::ERROR_CODE::OTP;
-        } else if (json.isMember("needOtp")) {
+        } else if (json_response.isMember("captchaCode")) {
           result.error_code = Account::ERROR_CODE::CAPTCHA;
         } else {
           result.error_code = Account::ERROR_CODE::AUTH;
@@ -162,8 +184,10 @@ AuthClient::OnRequestComplete(CefRefPtr<CefURLRequest> request) {
       default:
         // Some error occurred...
         LOG(WARNING) << "Auth failed (Application error): " << body_;
-        result.error_code = Account::ERROR_CODE::UNKNOWN;
         result.success = false;
+        result.error_code = Account::ERROR_CODE::HTTP;
+        result.http_error = request_helper::GetErrorString(ERR_INVALID_RESPONSE)
+                            + "\nPlease check the server schema and host";
 
     }
   }
