@@ -28,7 +28,7 @@ class AppMessageDelegate : public ClientHandler::ProcessMessageDelegate {
 
   void SetCookies(CefRefPtr<CefCookieManager> manager,
                          const CefString &url,
-                         request_helper::CookiesMap cookies,
+                         request_util::CookiesMap cookies,
                          bool is_secure);
 
 IMPLEMENT_REFCOUNTING(AppMessageDelegate);

@@ -8,7 +8,7 @@
 #include "include/base/cef_bind.h"
 #include "include/wrapper/cef_closure_task.h"
 #include "brick/auth_client.h"
-#include "brick/request_helper.h"
+#include "request_util.h"
 
 namespace {
   const char kFakeId = -1;
@@ -244,7 +244,7 @@ Account::OnAuthTimedOut(const CefURLRequest *urlrequest) {
     AuthResult auth_result;
     auth_result.success = false;
     auth_result.error_code = ERROR_CODE::HTTP;
-    auth_result.http_error = request_helper::GetErrorString(ERR_TIMED_OUT);
+    auth_result.http_error = request_util::GetErrorString(ERR_TIMED_OUT);
 
     callback_.Run(this, auth_result);
     callback_.Reset();

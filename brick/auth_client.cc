@@ -100,7 +100,7 @@ AuthClient::OnRequestComplete(CefRefPtr<CefURLRequest> request) {
     LOG(WARNING) << "Auth request was canceled, probably SSL error";
     result.success = false;
     result.error_code = Account::ERROR_CODE::HTTP;
-    result.http_error = request_helper::GetErrorString(ERR_CONNECTION_FAILED);
+    result.http_error = request_util::GetErrorString(ERR_CONNECTION_FAILED);
     finished = true;
   }
 
@@ -108,7 +108,7 @@ AuthClient::OnRequestComplete(CefRefPtr<CefURLRequest> request) {
       && (request->GetRequestStatus() == UR_FAILED
           || request->GetRequestError() != ERR_NONE)) {
 
-    std::string error = request_helper::GetErrorString(request->GetRequestError());
+    std::string error = request_util::GetErrorString(request->GetRequestError());
 
     LOG(WARNING) << "Auth request was failed: " << error;
     result.success = false;
@@ -121,7 +121,7 @@ AuthClient::OnRequestComplete(CefRefPtr<CefURLRequest> request) {
     LOG(WARNING) << "Unexpected request status: " << request->GetRequestStatus();
     result.success = false;
     result.error_code = Account::ERROR_CODE::HTTP;
-    result.http_error = request_helper::GetErrorString(ERR_UNEXPECTED);
+    result.http_error = request_util::GetErrorString(ERR_UNEXPECTED);
     finished = true;
   }
 
@@ -142,7 +142,7 @@ AuthClient::OnRequestComplete(CefRefPtr<CefURLRequest> request) {
     LOG(WARNING) << "Auth failed (can't find status in response): " << body_;
     result.success = false;
     result.error_code = Account::ERROR_CODE::HTTP;
-    result.http_error = request_helper::GetErrorString(ERR_INVALID_RESPONSE)
+    result.http_error = request_util::GetErrorString(ERR_INVALID_RESPONSE)
                         + "\nPlease check the server schema and host";
     finished = true;
   }
@@ -162,7 +162,7 @@ AuthClient::OnRequestComplete(CefRefPtr<CefURLRequest> request) {
         LOG(INFO) << "Successful auth";
         result.success = json_response["success"].asBool();
         result.error_code = Account::ERROR_CODE::NONE;
-        result.cookies = request_helper::GetCookies(headerMap);
+        result.cookies = request_util::GetCookies(headerMap);
       break;
       case 401:
         // Auth failed
@@ -179,14 +179,14 @@ AuthClient::OnRequestComplete(CefRefPtr<CefURLRequest> request) {
         LOG(WARNING) << "Auth failed (403)";
         result.success = false;
         result.error_code = Account::ERROR_CODE::HTTP;
-        result.http_error = request_helper::GetErrorString(ERR_INVALID_RESPONSE)
+        result.http_error = request_util::GetErrorString(ERR_INVALID_RESPONSE)
                             + "\nPlease check the server schema and host";
       default:
         // Some error occurred...
         LOG(WARNING) << "Auth failed (Application error): " << body_;
         result.success = false;
         result.error_code = Account::ERROR_CODE::HTTP;
-        result.http_error = request_helper::GetErrorString(ERR_INVALID_RESPONSE)
+        result.http_error = request_util::GetErrorString(ERR_INVALID_RESPONSE)
                             + "\nPlease check the server schema and host";
 
     }
@@ -234,7 +234,7 @@ AuthClient::CreateRequest(
     bool renew) {
 
   CEF_REQUIRE_UI_THREAD();
-  request_helper::PostFormMap form;
+  request_util::PostFormMap form;
   // New versions of IM must return result in json format
   form["json"] = "y";
   if (!otp.empty()) {
@@ -255,13 +255,13 @@ CefRefPtr<CefURLRequest>
 AuthClient::CreateRequest(
     const Callback& callback,
     const std::string& url,
-    request_helper::PostFormMap form) {
+    request_util::PostFormMap form) {
 
   CEF_REQUIRE_UI_THREAD();
   CefRefPtr<CefRequest> request = CefRequest::Create();
   request->SetURL(url);
   request->SetMethod("POST");
-  request->SetPostData(request_helper::PostFormToCefPost(form));
+  request->SetPostData(request_util::PostFormToCefPost(form));
   request->SetFlags(UR_FLAG_SKIP_CACHE|UR_FLAG_NO_RETRY_ON_5XX|UR_FLAG_STOP_ON_REDIRECT);
 
   // Create and start the new CefURLRequest.

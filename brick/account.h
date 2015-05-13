@@ -9,7 +9,7 @@
 #include "include/cef_urlrequest.h"
 #include "include/cef_base.h"
 #include "include/base/cef_callback.h"
-#include "brick/request_helper.h"
+#include "request_util.h"
 
 class Account : public CefBase {
 
@@ -30,7 +30,7 @@ class Account : public CefBase {
     bool success;
     ERROR_CODE error_code;
     std::string http_error;
-    request_helper::CookiesMap cookies;
+    request_util::CookiesMap cookies;
   } AuthResult;
 
   typedef base::Callback<void(const CefRefPtr<Account>, AuthResult)> AuthCallback;

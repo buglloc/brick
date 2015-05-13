@@ -54,7 +54,7 @@ class AuthClient : public CefURLRequestClient {
  private:
   static CefRefPtr<CefURLRequest> CreateRequest(const Callback&  callback,
                                                 const std::string& url,
-                                                request_helper::PostFormMap form);
+                                                request_util::PostFormMap form);
 
   Callback callback_;
   std::string url_;

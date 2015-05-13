@@ -53,8 +53,8 @@ set(BRICK_SRCS
   cache_manager.cc
   auth_client.h
   auth_client.cc
-  request_helper.h
-  request_helper.cc
+  request_util.h
+  request_util.cc
   avatar_client.h
   avatar_client.cc
   )

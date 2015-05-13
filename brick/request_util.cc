@@ -1,10 +1,10 @@
 // Copyright (c) 2015 The Brick Authors.
 
-#include "brick/request_helper.h"
+#include "request_util.h"
 
 #include "include/cef_request.h"
 
-namespace request_helper {
+namespace request_util {
 
   std::string
   Urlencode(const std::string& str, bool plusAsSpace) {
@@ -225,4 +225,4 @@ namespace request_helper {
         return "UNKNOWN";
     }
   }
-}  // namespace request_helper
+}  // namespace request_util
