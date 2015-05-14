@@ -41,8 +41,8 @@ BrowserWindow::Resize(int width, int height) {
 
   gdk_window_resize(
       window_handler_,
-      (int) (width * window_util::GetDeviceScaleFactor()),
-      (int) (height * window_util::GetDeviceScaleFactor())
+      static_cast<int>(width * window_util::GetDeviceScaleFactor()),
+      static_cast<int>(height * window_util::GetDeviceScaleFactor())
   );
 
   if (need_froze_size)

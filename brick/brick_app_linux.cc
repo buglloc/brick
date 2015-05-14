@@ -289,8 +289,8 @@ int main(int argc, char* argv[]) {
   // Setup main window size & positions
   CefRect screen_rect = window_util::GetDefaultScreenRect();
   CefWindowInfo window_info;
-  window_info.width = (unsigned int) (kMainWindowWidth * window_util::GetDeviceScaleFactor());
-  window_info.height = (unsigned int) (kMainWindowHeight * window_util::GetDeviceScaleFactor());
+  window_info.width = static_cast<unsigned int>(kMainWindowWidth * window_util::GetDeviceScaleFactor());
+  window_info.height = static_cast<unsigned int>(kMainWindowHeight * window_util::GetDeviceScaleFactor());
   window_info.x = screen_rect.x + (screen_rect.width - window_info.width) / 2;
   window_info.y = screen_rect.y + (screen_rect.height - window_info.height) / 2;
 

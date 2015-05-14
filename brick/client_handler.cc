@@ -336,8 +336,8 @@ ClientHandler::OnBeforePopup(CefRefPtr<CefBrowser> browser,
     return true;
   }
 
-  windowInfo.width = (unsigned int) popupFeatures.width;
-  windowInfo.height = (unsigned int) popupFeatures.height;
+  windowInfo.width = static_cast<unsigned int>(popupFeatures.width);
+  windowInfo.height = static_cast<unsigned int>(popupFeatures.height);
 
   // ToDo: Fix it!
   // For now we disable scaling popup width and height due to IM settings dialog issues
@@ -345,8 +345,8 @@ ClientHandler::OnBeforePopup(CefRefPtr<CefBrowser> browser,
 
   // Calculate window placement
   if (!windowInfo.x && !windowInfo.y) {
-    unsigned int width = (unsigned int) (windowInfo.width * window_util::GetDeviceScaleFactor());
-    unsigned int height = (unsigned int) (windowInfo.height * window_util::GetDeviceScaleFactor());
+    unsigned int width = static_cast<unsigned int>(windowInfo.width * window_util::GetDeviceScaleFactor());
+    unsigned int height = static_cast<unsigned int>(windowInfo.height * window_util::GetDeviceScaleFactor());
 
     CefRect screen_rect = window_util::GetDefaultScreenRect();
     windowInfo.x = screen_rect.x + (screen_rect.width - width) / 2;
