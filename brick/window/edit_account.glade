@@ -17,10 +17,8 @@
     </data>
   </object>
   <object class="GtkDialog" id="edit_account_dialog">
-    <property name="width_request">400</property>
-    <property name="height_request">250</property>
     <property name="can_focus">False</property>
-    <property name="border_width">5</property>
+    <property name="border_width">10</property>
     <property name="title" translatable="yes">Add/Edit account</property>
     <property name="resizable">False</property>
     <property name="window_position">center</property>
@@ -75,6 +73,7 @@
             <property name="n_rows">3</property>
             <property name="n_columns">2</property>
             <property name="column_spacing">14</property>
+            <property name="row_spacing">24</property>
             <child>
               <object class="GtkLabel" id="login_label">
                 <property name="visible">True</property>
