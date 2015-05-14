@@ -356,8 +356,8 @@ namespace window_util {
 
   double
   GetDeviceScaleFactor() {
-   if (!device_scale_factor)
-      device_scale_factor = floor((GetDPI() / kCSSDefaultDPI) * 100) / 100 ;
+    if (!device_scale_factor)
+      device_scale_factor = floor((GetDPI() / kCSSDefaultDPI) * 100) / 100;
 
     return device_scale_factor;
   }

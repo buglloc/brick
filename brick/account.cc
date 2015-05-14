@@ -8,7 +8,7 @@
 #include "include/base/cef_bind.h"
 #include "include/wrapper/cef_closure_task.h"
 #include "brick/auth_client.h"
-#include "request_util.h"
+#include "brick/request_util.h"
 
 namespace {
   const char kFakeId = -1;

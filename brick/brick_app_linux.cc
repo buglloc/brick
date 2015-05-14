@@ -26,8 +26,8 @@
 namespace {
   const int kMainWindowWidth = 914;
   const int kMainWindowHeight = 454;
-  const long kIdleTimeout = 600000L;
-  const long kIdleCheckInterval = 4000L;
+  const int32 kIdleTimeout = 600000;
+  const int32 kIdleCheckInterval = 4000;
   std::string kAppIcons[] = {"brick16.png", "brick32.png", "brick48.png", "brick128.png", "brick256.png"};
   std::string szWorkingDir;  // The current working directory
 
@@ -286,10 +286,15 @@ int main(int argc, char* argv[]) {
     startup_url += "internals/pages/home";
   }
 
-  // Create browser
+  // Setup main window size & positions
+  CefRect screen_rect = window_util::GetDefaultScreenRect();
   CefWindowInfo window_info;
-  window_info.width = kMainWindowWidth * window_util::GetDeviceScaleFactor();
-  window_info.height = kMainWindowHeight * window_util::GetDeviceScaleFactor();
+  window_info.width = (unsigned int) (kMainWindowWidth * window_util::GetDeviceScaleFactor());
+  window_info.height = (unsigned int) (kMainWindowHeight * window_util::GetDeviceScaleFactor());
+  window_info.x = screen_rect.x + (screen_rect.width - window_info.width) / 2;
+  window_info.y = screen_rect.y + (screen_rect.height - window_info.height) / 2;
+
+  // Create browser
   CefBrowserHost::CreateBrowserSync(
      window_info, client_handler.get(),
      startup_url, BrickApp::GetBrowserSettings(szWorkingDir, app_settings), NULL);

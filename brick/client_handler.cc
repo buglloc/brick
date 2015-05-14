@@ -345,8 +345,8 @@ ClientHandler::OnBeforePopup(CefRefPtr<CefBrowser> browser,
 
   // Calculate window placement
   if (!windowInfo.x && !windowInfo.y) {
-    unsigned int width = windowInfo.width * window_util::GetDeviceScaleFactor();
-    unsigned int height = windowInfo.height * window_util::GetDeviceScaleFactor();
+    unsigned int width = (unsigned int) (windowInfo.width * window_util::GetDeviceScaleFactor());
+    unsigned int height = (unsigned int) (windowInfo.height * window_util::GetDeviceScaleFactor());
 
     CefRect screen_rect = window_util::GetDefaultScreenRect();
     windowInfo.x = screen_rect.x + (screen_rect.width - width) / 2;
