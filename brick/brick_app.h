@@ -12,8 +12,6 @@
 #define APP_NAME "Brick"
 #define APP_COMMON_NAME "brick"
 
-#define IDLE_TIMEOUT 600000L
-#define IDLE_CHECK_INTERVAL 4000L
 #define BRICK_SHUTDOWN_TIMEOUT 2000L
 
 #include <string>

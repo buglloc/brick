@@ -24,7 +24,9 @@
 #undef Success  // Definition conflicts with cef_message_router.h
 
 namespace {
-  std::string APPICONS[] = {"brick16.png", "brick32.png", "brick48.png", "brick128.png", "brick256.png"};
+  const long kIdleTimeout = 600000L;
+  const long kIdleCheckInterval = 4000L;
+  std::string kAppIcons[] = {"brick16.png", "brick32.png", "brick48.png", "brick128.png", "brick256.png"};
   std::string szWorkingDir;  // The current working directory
 
   bool
@@ -87,10 +89,10 @@ namespace {
 
     XScreenSaverQueryInfo(GDK_DISPLAY(), GDK_ROOT_WINDOW(), mit_info);
 
-    if (mit_info->idle >= IDLE_TIMEOUT && !handler->IsIdle()) {
+    if (mit_info->idle >= kIdleCheckInterval && !handler->IsIdle()) {
       UserAwayEvent e(true);
       EventBus::FireEvent(e);
-    } else if (mit_info->idle < IDLE_CHECK_INTERVAL && handler->IsIdle() && handler->IsIdlePending()) {
+    } else if (mit_info->idle < kIdleCheckInterval && handler->IsIdle() && handler->IsIdlePending()) {
       UserAwayEvent e(false);
       EventBus::FireEvent(e);
     } else if (!handler->IsIdlePending()) {
@@ -245,15 +247,15 @@ int main(int argc, char* argv[]) {
   window_util::InitHooks();
 
   if (app_settings.auto_away) {
-    gtk_timeout_add(IDLE_CHECK_INTERVAL, CheckUserIdle, NULL);
+    gtk_timeout_add(kIdleTimeout, CheckUserIdle, NULL);
   }
 
   // Set default windows icon. Important to do this before any GTK window created!
   GList *icons = NULL;
   std::string icon_path = app_settings.resource_dir + "/app_icons/";
-  int icons_count = sizeof(APPICONS) / sizeof(APPICONS[0]);
+  int icons_count = sizeof(kAppIcons) / sizeof(kAppIcons[0]);
   for (int i = 0; i < icons_count; ++i) {
-    GdkPixbuf *icon = gdk_pixbuf_new_from_file((icon_path + APPICONS[i]).c_str(), NULL);
+    GdkPixbuf *icon = gdk_pixbuf_new_from_file((icon_path + kAppIcons[i]).c_str(), NULL);
     if (!icon)
       continue;
     icons = g_list_append(icons, icon);
