@@ -185,7 +185,7 @@ ClientHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser,
        event.initUIEvent('resize', true, false, window, 0);
        window.dispatchEvent(event);
      })(window);
-  ;;)js";
+  ;)js";
 
   // ToDo: Use CefV8Value::ExecuteFunction? Maybe something like SendJSEvent...
   if (!app_settings_.client_scripts.empty()) {
@@ -339,11 +339,18 @@ ClientHandler::OnBeforePopup(CefRefPtr<CefBrowser> browser,
   windowInfo.width = (unsigned int) popupFeatures.width;
   windowInfo.height = (unsigned int) popupFeatures.height;
 
+  // ToDo: Fix it!
+  // For now we disable scaling popup width and height due to IM settings dialog issues
+  // But we still must calculate right position for it
+
   // Calculate window placement
   if (!windowInfo.x && !windowInfo.y) {
+    unsigned int width = windowInfo.width * window_util::GetDeviceScaleFactor();
+    unsigned int height = windowInfo.height * window_util::GetDeviceScaleFactor();
+
     CefRect screen_rect = window_util::GetDefaultScreenRect();
-    windowInfo.x = screen_rect.x + (screen_rect.width - windowInfo.width) / 2;
-    windowInfo.y = screen_rect.y + (screen_rect.height - windowInfo.height) / 2;
+    windowInfo.x = screen_rect.x + (screen_rect.width - width) / 2;
+    windowInfo.y = screen_rect.y + (screen_rect.height - height) / 2;
   }
 
   // ToDo: R&D, too ugly hack to catch popup features in OnWindowCreated

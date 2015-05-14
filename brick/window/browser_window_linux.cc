@@ -39,7 +39,11 @@ BrowserWindow::Resize(int width, int height) {
   if (need_froze_size)
     FrozeSize(0, 0);
 
-  gdk_window_resize(window_handler_, width, height);
+  gdk_window_resize(
+      window_handler_,
+      (int) (width * window_util::GetDeviceScaleFactor()),
+      (int) (height * window_util::GetDeviceScaleFactor())
+  );
 
   if (need_froze_size)
     FrozeSize(width, height);
@@ -47,6 +51,10 @@ BrowserWindow::Resize(int width, int height) {
 
 void
 BrowserWindow::SetMinSize(int width, int height) {
+  // Deal with HiDPI
+  width *= window_util::GetDeviceScaleFactor();
+  height *= window_util::GetDeviceScaleFactor();
+
   GdkGeometry hints;
   hints.min_width = width;
   hints.min_height = height;
@@ -57,6 +65,10 @@ void
 BrowserWindow::FrozeSize(int width, int height) {
   GdkGeometry hints = {0};
   if (width && height) {
+    // Deal with HiDPI
+    width *= window_util::GetDeviceScaleFactor();
+    height *= window_util::GetDeviceScaleFactor();
+
     resizable_ = false;
     hints.min_width = width;
     hints.min_height = height;
@@ -196,6 +208,10 @@ BrowserWindow::FlushChanges() {
 
 void
 BrowserWindow::MoveResize(Position position, int width, int height) {
+  // Deal with HiDPI
+  width *= window_util::GetDeviceScaleFactor();
+  height *= window_util::GetDeviceScaleFactor();
+
   CefRect screen_rect = GetScreenRect();
   int x = screen_rect.x;
   int y = screen_rect.y;

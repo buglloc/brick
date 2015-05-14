@@ -2,6 +2,8 @@
 
 #include "brick/client_app.h"
 
+#include <iomanip>
+
 #include "include/wrapper/cef_helpers.h"
 #include "brick/client_handler.h"
 #include "brick/v8_handler.h"
@@ -11,7 +13,8 @@
 extern char _binary_desktop_extension_js_start;
 extern char _binary_desktop_extension_js_size;
 
-ClientApp::ClientApp() {
+ClientApp::ClientApp()
+  : device_scale_factor_(1.0f) {
 //  CreateRenderDelegates(render_delegates_);
 }
 
@@ -157,5 +160,18 @@ std::string ClientApp::GetExtensionJSSource() {
 
 void
 ClientApp::OnBeforeCommandLineProcessing(const CefString& process_type, CefRefPtr<CefCommandLine> command_line) {
-  command_line.get()->AppendSwitch("enable-media-stream");
+  command_line->AppendSwitch("enable-media-stream");
+  if (!command_line->HasSwitch("force-device-scale-factor") && device_scale_factor_ > 1.0) {
+    // Chromium hack for HiDPI "supporting", https://code.google.com/p/chromium/issues/detail?id=143619
+    // ToDo: Recheck this ugly solution, when Brick reached Chromium 43+
+    LOG(INFO) << "Using device scale factor: " << device_scale_factor_;
+    std::stringstream ss;
+    ss << std::setprecision(2) << std::fixed << device_scale_factor_;
+    command_line->AppendSwitchWithValue("force-device-scale-factor", ss.str());
+  }
+}
+
+void
+ClientApp::SetDeviceScaleFactor(const double scale) {
+  device_scale_factor_ = scale;
 }

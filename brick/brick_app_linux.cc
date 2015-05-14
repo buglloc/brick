@@ -24,6 +24,8 @@
 #undef Success  // Definition conflicts with cef_message_router.h
 
 namespace {
+  const int kMainWindowWidth = 914;
+  const int kMainWindowHeight = 454;
   const long kIdleTimeout = 600000L;
   const long kIdleCheckInterval = 4000L;
   std::string kAppIcons[] = {"brick16.png", "brick32.png", "brick48.png", "brick128.png", "brick256.png"};
@@ -239,10 +241,12 @@ int main(int argc, char* argv[]) {
   // ToDo: need to be safer?
   cache_manager->CleanUpCache();
 
+  gtk_init(0, NULL);
+  // ToDo: Maybe better to set scale in main_args here?
+  app->SetDeviceScaleFactor(window_util::GetDeviceScaleFactor());
   // Initialize CEF.
   CefInitialize(main_args, cef_settings, app.get(), NULL);
 
-  gtk_init(0, NULL);
   gdk_event_handler_set(GdkEventDispatcher, NULL, NULL);
   window_util::InitHooks();
 
@@ -273,7 +277,6 @@ int main(int argc, char* argv[]) {
   brick_indicator->UseExtendedStatus(app_settings.extended_status);
   client_handler->SetIndicatorHandle(brick_indicator);
 
-  CefWindowInfo window_info;
   std::string startup_url = account_manager->GetCurrentAccount()->GetBaseUrl();
   if (account_manager->GetCurrentAccount()->IsExisted()) {
     // Login to our account
@@ -284,6 +287,9 @@ int main(int argc, char* argv[]) {
   }
 
   // Create browser
+  CefWindowInfo window_info;
+  window_info.width = kMainWindowWidth * window_util::GetDeviceScaleFactor();
+  window_info.height = kMainWindowHeight * window_util::GetDeviceScaleFactor();
   CefBrowserHost::CreateBrowserSync(
      window_info, client_handler.get(),
      startup_url, BrickApp::GetBrowserSettings(szWorkingDir, app_settings), NULL);

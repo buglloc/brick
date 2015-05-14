@@ -38,6 +38,7 @@ namespace window_util {
   void InitWindow(CefWindowHandle handle, bool is_leader);
 
   CefRect GetDefaultScreenRect();
+  double GetDeviceScaleFactor();
 
   void FlushChanges();
 

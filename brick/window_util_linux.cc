@@ -15,6 +15,8 @@
 namespace {
   GList *default_icons = NULL;
   CefWindowHandle leader_window_;
+  double device_scale_factor = 0;
+  const double kCSSDefaultDPI = 96.0f;
 
   int
   XErrorHandlerImpl(Display *display, XErrorEvent *event) {
@@ -339,5 +341,24 @@ namespace window_util {
        monitor_rect.width,
        monitor_rect.height
     );
+  }
+
+  double
+  GetDPI() {
+    GtkSettings* gtk_settings = gtk_settings_get_default();
+    DCHECK(gtk_settings);
+    gint gtk_dpi = -1;
+    g_object_get(gtk_settings, "gtk-xft-dpi", &gtk_dpi, NULL);
+
+    // GTK multiplies the DPI by 1024 before storing it.
+    return (gtk_dpi > 0) ? gtk_dpi / 1024.0 : kCSSDefaultDPI;
+  }
+
+  double
+  GetDeviceScaleFactor() {
+   if (!device_scale_factor)
+      device_scale_factor = floor((GetDPI() / kCSSDefaultDPI) * 100) / 100 ;
+
+    return device_scale_factor;
   }
 }  // namespace window_util

@@ -114,6 +114,8 @@ class ClientApp : public CefApp,
 
   std::string GetExtensionJSSource();
 
+  void SetDeviceScaleFactor(const double scale);
+
   // Creates all of the RenderDelegate objects. Implemented in
   // cef_app_delegates.
 //  static void CreateRenderDelegates(RenderDelegateSet& delegates);
@@ -135,6 +137,9 @@ class ClientApp : public CefApp,
   // Schemes that will be registered with the global cookie manager. Used in
   // both the browser and renderer process.
   std::vector<CefString> cookieable_schemes_;
+
+  // Device scale factor for chromium purposes
+  double device_scale_factor_;
 
   // Include the default reference counting implementation.
   IMPLEMENT_REFCOUNTING(ClientApp);
