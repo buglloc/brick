@@ -270,6 +270,7 @@ int main(int argc, char* argv[]) {
   CefRefPtr<ClientHandler> client_handler(new ClientHandler);
   client_handler->SetAppSettings(app_settings);
   client_handler->SetAccountManager(account_manager);
+  client_handler->SetNotificationManager(new NotificationManager);
   client_handler->SetCacheManager(cache_manager);
 
   // Initialize status icon

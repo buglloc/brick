@@ -8,7 +8,7 @@
 #include "include/wrapper/cef_closure_task.h"
 #include "brick/window/edit_account_window.h"
 #include "brick/helper.h"
-#include "brick/notification.h"
+#include "brick/notification_manager.h"
 #include "brick/platform_util.h"
 
 namespace {
@@ -276,7 +276,7 @@ AppMessageDelegate::OnProcessMessageReceived(
             || icon_url.find("http://") == 0
          ) {
 
-        Notification::Notify(
+        ClientHandler::GetInstance()->GetNotificationManager()->Notify(
            request_args->GetString(1),
            request_args->GetString(2),
            icon_url,

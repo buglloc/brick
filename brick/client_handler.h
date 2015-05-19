@@ -21,6 +21,7 @@
 #include "brick/cache_manager.h"
 #include "brick/command_callbacks.h"
 #include "brick/account_manager.h"
+#include "brick/notification_manager.h"
 #include "brick/api_error.h"
 
 
@@ -75,6 +76,9 @@ class ClientHandler : public CefClient,
 
   void SetAccountManager(CefRefPtr<AccountManager> account_manager);
   CefRefPtr<AccountManager> GetAccountManager() const;
+
+  void SetNotificationManager(CefRefPtr<NotificationManager> manager);
+  CefRefPtr<NotificationManager> GetNotificationManager() const;
 
   void SetAppSettings(AppSettings settings);
   AppSettings GetAppSettings() const;
@@ -270,6 +274,8 @@ class ClientHandler : public CefClient,
   CefRefPtr<BrickIndicator> indicator_handle_;
 
   CefRefPtr<AccountManager> account_manager_;
+
+  CefRefPtr<NotificationManager> notification_manager_;
 
   CefRefPtr<CacheManager> cache_manager_;
 

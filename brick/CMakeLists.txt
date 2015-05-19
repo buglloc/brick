@@ -46,7 +46,8 @@ set(BRICK_SRCS
   resource_util.h
   resource_util_posix.cc
   window_util.h
-  notification.h
+  notification_manager.h
+  notification_manager.cc
   platform_util.h
   api_error.h
   cache_manager.h
@@ -72,7 +73,7 @@ set(BRICK_SRCS_LINUX
   client_handler_linux.cc
   brick_app_linux.cc
   window_util_linux.cc
-  notification_linux.cc
+  notification_manager_linux.cc
   platform_util_linux.cc
   )
 set(BRICK_EXTENSIONS_SRCS

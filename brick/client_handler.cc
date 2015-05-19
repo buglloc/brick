@@ -485,6 +485,16 @@ ClientHandler::GetAccountManager() const {
   return account_manager_;
 }
 
+void
+ClientHandler::SetNotificationManager(CefRefPtr<NotificationManager> manager) {
+  notification_manager_ = manager;
+}
+
+CefRefPtr<NotificationManager>
+ClientHandler::GetNotificationManager() const {
+  return notification_manager_;
+}
+
 CefRefPtr<BrowserWindow>
 ClientHandler::GetMainWindowHandle() const {
   CEF_REQUIRE_UI_THREAD();
