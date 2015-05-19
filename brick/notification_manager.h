@@ -19,13 +19,16 @@ class NotificationManager : public CefBase {
   void OnClose();
 
  protected:
-  NotifyNotification *notification_ = NULL;
-  int last_id_ = 0;
-
+  void InitializeCapabilities();
   std::string TryGetIcon(std::string icon, bool &need_download);
   void UpdateIcon(int id, std::string icon_path, bool success);
   std::string GetDefaultIcon();
   void AsyncDownloadIcon(int id, const std::string& url, const std::string& path);
+
+ private:
+  NotifyNotification *notification_ = NULL;
+  int last_id_ = 0;
+  bool is_append_supported_;
 
  IMPLEMENT_REFCOUNTING(NotificationManager);
 };

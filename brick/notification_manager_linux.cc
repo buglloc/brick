@@ -15,6 +15,8 @@
 #include "brick/avatar_client.h"
 
 namespace {
+  const char kAppendCapability[] = "x-canonical-append";
+
   void
   OnCloseNotification(NotifyNotification *notify, NotificationManager *self) {
     self->OnClose();
@@ -30,7 +32,7 @@ NotificationManager::Notify(const std::string title, std::string body, std::stri
   bool need_download = false;
   std::string notification_icon = TryGetIcon(icon, need_download);
 
-  if (notification_ == NULL) {
+  if (notification_ == NULL || is_append_supported_) {
     notification_ = notify_notification_new(
        title.c_str(),
        body.c_str(),
@@ -38,6 +40,9 @@ NotificationManager::Notify(const std::string title, std::string body, std::stri
     );
     g_signal_connect(notification_, "closed", G_CALLBACK(OnCloseNotification), this);
   } else {
+    /* if the notification server supports x-canonical-append, it is
+   better to not use notify_notification_update to avoid
+   overwriting the current notification message */
     notify_notification_update(
        notification_,
        title.c_str(),
@@ -48,6 +53,9 @@ NotificationManager::Notify(const std::string title, std::string body, std::stri
 
   notify_notification_set_timeout(notification_, delay);
   notify_notification_set_urgency(notification_, NOTIFY_URGENCY_NORMAL);
+  if (is_append_supported_) {
+    notify_notification_set_hint_string(notification_, kAppendCapability, "1");
+  }
 
   if (need_download) {
     AsyncDownloadIcon(last_id_, icon, notification_icon);
@@ -132,4 +140,19 @@ NotificationManager::AsyncDownloadIcon(int id, const std::string& url, const std
       url,
       path
   );
+}
+
+void
+NotificationManager::InitializeCapabilities() {
+  /* fetch capabilities */
+  GList *capabilities = notify_get_server_caps ();
+  for (auto c = capabilities; c != NULL; c = g_list_next(c)) {
+    if (strcmp(static_cast<char*>(c->data), kAppendCapability) == 0) {
+      LOG(INFO) << "Notification server supports " << kAppendCapability;
+      is_append_supported_ = true;
+      break;
+    }
+  }
+  g_list_foreach(capabilities, (GFunc)g_free, NULL);
+  g_list_free(capabilities);
 }

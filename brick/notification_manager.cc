@@ -4,8 +4,10 @@
 
 NotificationManager::NotificationManager() :
     notification_(NULL),
-    last_id_(0) {
+    last_id_(0),
+    is_append_supported_(false) {
 
+  InitializeCapabilities();
 };
 
 void
