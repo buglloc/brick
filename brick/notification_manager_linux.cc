@@ -16,10 +16,17 @@
 
 namespace {
   const char kAppendCapability[] = "x-canonical-append";
+  const char kActionsCapability[] = "actions";
+  const char kDefaultActionName[] = "default";
 
   void
   OnCloseNotification(NotifyNotification *notify, NotificationManager *self) {
     self->OnClose();
+  }
+
+  void
+  OnAction(NotifyNotification *notify, char *action, NotificationManager *self) {
+    self->OnClick();
   }
 
 }  // namespace
@@ -51,11 +58,23 @@ NotificationManager::Notify(const std::string title, std::string body, std::stri
     );
   }
 
-  notify_notification_set_timeout(notification_, delay);
-  notify_notification_set_urgency(notification_, NOTIFY_URGENCY_NORMAL);
   if (is_append_supported_) {
     notify_notification_set_hint_string(notification_, kAppendCapability, "1");
   }
+
+  if (is_actions_supported_) {
+    notify_notification_add_action(
+        notification_,
+        kDefaultActionName,
+        "Show",
+        (NotifyActionCallback) OnAction,
+        this,
+        NULL
+    );
+  }
+
+  notify_notification_set_timeout(notification_, delay);
+  notify_notification_set_urgency(notification_, NOTIFY_URGENCY_NORMAL);
 
   if (need_download) {
     AsyncDownloadIcon(last_id_, icon, notification_icon);
@@ -147,11 +166,13 @@ NotificationManager::InitializeCapabilities() {
   // Fetch capabilities
   GList *capabilities = notify_get_server_caps ();
   for (auto c = capabilities; c != NULL; c = g_list_next(c)) {
-    if (strcmp(static_cast<char*>(c->data), kAppendCapability) == 0) {
+    char * cap = static_cast<char*>(c->data);
+    if (strcmp(cap, kAppendCapability) == 0) {
       LOG(INFO) << "Notification server supports " << kAppendCapability;
       is_append_supported_ = true;
-      // Must be reimplemented to support multiple capabilities checks...
-      break;
+    } else if (strcmp(cap, kActionsCapability) == 0) {
+      LOG(INFO) << "Notification server supports " << kActionsCapability;
+      is_actions_supported_ = true;
     }
   }
   g_list_foreach(capabilities, (GFunc)g_free, NULL);

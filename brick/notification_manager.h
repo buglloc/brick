@@ -17,6 +17,7 @@ class NotificationManager : public CefBase {
   void Notify(const std::string title, std::string body, std::string icon, int delay);
   void Hide();
   void OnClose();
+  void OnClick();
 
  protected:
   void InitializeCapabilities();
@@ -29,6 +30,7 @@ class NotificationManager : public CefBase {
   NotifyNotification *notification_ = NULL;
   int last_id_ = 0;
   bool is_append_supported_;
+  bool is_actions_supported_;
 
  IMPLEMENT_REFCOUNTING(NotificationManager);
 };

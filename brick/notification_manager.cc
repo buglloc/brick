@@ -2,10 +2,13 @@
 
 #include "brick/notification_manager.h"
 
+#include "brick/client_handler.h"
+
 NotificationManager::NotificationManager() :
     notification_(NULL),
     last_id_(0),
-    is_append_supported_(false) {
+    is_append_supported_(false),
+    is_actions_supported_(false) {
 
   InitializeCapabilities();
 };
@@ -13,4 +16,17 @@ NotificationManager::NotificationManager() :
 void
 NotificationManager::OnClose() {
  notification_ = NULL;
+}
+
+void
+NotificationManager::OnClick() {
+  CefRefPtr<ClientHandler> client_handler = ClientHandler::GetInstance();
+  if (!client_handler)
+    return;
+
+  CefRefPtr<BrowserWindow> window = client_handler->GetMainWindowHandle();
+  if (!window)
+    return;
+
+  window->Present();
 }
