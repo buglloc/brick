@@ -45,6 +45,22 @@ NotificationManager::Notify(const std::string title, std::string body, std::stri
        body.c_str(),
        need_download || notification_icon.empty() ? GetDefaultIcon().c_str() : notification_icon.c_str()
     );
+
+    if (is_append_supported_) {
+      notify_notification_set_hint_string(notification_, kAppendCapability, "1");
+    }
+
+    if (is_actions_supported_) {
+      notify_notification_add_action(
+        notification_,
+        kDefaultActionName,
+        "Show",
+        (NotifyActionCallback) OnAction,
+        this,
+        NULL
+      );
+    }
+
     g_signal_connect(notification_, "closed", G_CALLBACK(OnCloseNotification), this);
   } else {
     /* if the notification server supports x-canonical-append, it is
@@ -55,21 +71,6 @@ NotificationManager::Notify(const std::string title, std::string body, std::stri
        title.c_str(),
        body.c_str(),
        need_download || notification_icon.empty() ? GetDefaultIcon().c_str() : notification_icon.c_str()
-    );
-  }
-
-  if (is_append_supported_) {
-    notify_notification_set_hint_string(notification_, kAppendCapability, "1");
-  }
-
-  if (is_actions_supported_) {
-    notify_notification_add_action(
-        notification_,
-        kDefaultActionName,
-        "Show",
-        (NotifyActionCallback) OnAction,
-        this,
-        NULL
     );
   }
 
