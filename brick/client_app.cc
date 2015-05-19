@@ -14,7 +14,7 @@ extern char _binary_desktop_extension_js_start;
 extern char _binary_desktop_extension_js_size;
 
 ClientApp::ClientApp()
-  : device_scale_factor_(1.0f) {
+  : device_scale_factor_(1.0) {
 //  CreateRenderDelegates(render_delegates_);
 }
 

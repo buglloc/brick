@@ -16,7 +16,7 @@ namespace {
   GList *default_icons = NULL;
   CefWindowHandle leader_window_;
   double device_scale_factor = 0;
-  const double kCSSDefaultDPI = 96.0f;
+  const double kCSSDefaultDPI = 96.0;
 
   int
   XErrorHandlerImpl(Display *display, XErrorEvent *event) {

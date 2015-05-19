@@ -27,7 +27,7 @@ namespace {
   const int kMainWindowWidth = 914;
   const int kMainWindowHeight = 454;
   const int32 kIdleTimeout = 600000;
-  const int32 kIdleCheckInterval = 4000;
+  const unsigned long kIdleCheckInterval = 4000L;
   std::string kAppIcons[] = {"brick16.png", "brick32.png", "brick48.png", "brick128.png", "brick256.png"};
   std::string szWorkingDir;  // The current working directory
 
