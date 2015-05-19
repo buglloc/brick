@@ -27,8 +27,8 @@ class NotificationManager : public CefBase {
   void AsyncDownloadIcon(int id, const std::string& url, const std::string& path);
 
  private:
-  NotifyNotification *notification_ = NULL;
-  int last_id_ = 0;
+  NotifyNotification *notification_;
+  int last_id_;
   bool is_append_supported_;
   bool is_actions_supported_;
 
