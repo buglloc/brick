@@ -144,12 +144,13 @@ NotificationManager::AsyncDownloadIcon(int id, const std::string& url, const std
 
 void
 NotificationManager::InitializeCapabilities() {
-  /* fetch capabilities */
+  // Fetch capabilities
   GList *capabilities = notify_get_server_caps ();
   for (auto c = capabilities; c != NULL; c = g_list_next(c)) {
     if (strcmp(static_cast<char*>(c->data), kAppendCapability) == 0) {
       LOG(INFO) << "Notification server supports " << kAppendCapability;
       is_append_supported_ = true;
+      // Must be reimplemented to support multiple capabilities checks...
       break;
     }
   }
