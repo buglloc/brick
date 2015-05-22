@@ -43,6 +43,16 @@ namespace {
       );
     }
 
+    pos = body.find("bitrixSessionId: '");
+    if (pos != std::string::npos) {
+      pos += sizeof("bitrixSessionId: '");
+      result["bitrixSessionId"] = body.substr(
+          pos - 1,
+          body.find("'", pos + 1) - pos + 1
+      );
+    }
+
+
     return result;
   }
 
@@ -74,6 +84,7 @@ AuthClient::OnRequestComplete(CefRefPtr<CefURLRequest> request) {
   Account::AuthResult result;
   result.success = false;
   result.error_code = Account::ERROR_CODE::NONE;
+  result.bitrix_sessid = "";
 
   bool finished = false;
   CefRefPtr<CefResponse> response = request->GetResponse();
@@ -157,6 +168,10 @@ AuthClient::OnRequestComplete(CefRefPtr<CefURLRequest> request) {
           // Server may return new password for our auth request
           app_password = json_response["appPassword"].asString();
           LOG(INFO) << "Received App Password";
+        }
+
+        if (json_response.isMember("bitrixSessionId")) {
+          result.bitrix_sessid = json_response["bitrixSessionId"].asString();
         }
 
         LOG(INFO) << "Successful auth";

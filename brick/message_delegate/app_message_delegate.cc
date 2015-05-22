@@ -407,11 +407,19 @@ AppMessageDelegate::OnAfterLogin(
 
   if (auth_result.success) {
     SetCookies(CefCookieManager::GetGlobalManager(), account->GetOrigin(), auth_result.cookies, account->IsSecure());
+    // ToDo: Replace huge argument lists to dictionary!
     response_args->SetBool(2, true);
+    response_args->SetNull(3);
+    response_args->SetNull(4);
+    if (auth_result.bitrix_sessid.empty())
+      response_args->SetNull(5);
+    else
+      response_args->SetString(5, auth_result.bitrix_sessid);
   } else {
     response_args->SetBool(2, false);
     response_args->SetInt(3, auth_result.error_code);
     response_args->SetString(4, auth_result.http_error);
+    response_args->SetNull(5);
   }
 
   response_args->SetInt(1, NO_ERROR);

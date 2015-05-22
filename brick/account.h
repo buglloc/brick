@@ -28,6 +28,7 @@ class Account : public CefBase {
 
   typedef struct {
     bool success;
+    std::string bitrix_sessid;
     ERROR_CODE error_code;
     std::string http_error;
     request_util::CookiesMap cookies;
