@@ -1,3 +1,0 @@
-[submodule "third-party/libsodium"]
-	path = third-party/libsodium
-	url = https://github.com/buglloc/libsodium

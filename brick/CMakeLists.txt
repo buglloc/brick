@@ -226,8 +226,7 @@ endif()
 # Executable target.
 add_executable(${CEF_TARGET} ${BRICK_SRCS} ${BRICK_EMBED_FILES})
 add_dependencies(${CEF_TARGET} libcef_dll_wrapper)
-add_dependencies(${CEF_TARGET} sodium)
-target_link_libraries(${CEF_TARGET} libcef_lib libcef_dll_wrapper sodium ${CEF_STANDARD_LIBS})
+target_link_libraries(${CEF_TARGET} libcef_lib libcef_dll_wrapper ${CEF_STANDARD_LIBS})
 install(
     TARGETS
         brick
