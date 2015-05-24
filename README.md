@@ -29,7 +29,7 @@ sudo apt-get install brick
 ### AUR for Arch Linux
 You can install Brick from AUR [https://aur.archlinux.org/packages/brick/](https://aur.archlinux.org/packages/brick/):
 ```bash
-yaourt brick
+yaourt -S brick
 ```
 Brick for Unity doesn't supported so far. May be later:)
 
