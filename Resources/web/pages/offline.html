@@ -15,13 +15,13 @@
     </div>
   </div>
     <script>
-        $(document).ready((function (window, app) {
-          app.setIndicator('offline');
-            $('#reconnect').click(function() {
-              $(this).button('loading');
-              app.loadPortal();
-            });
-        }).bind(null, window, BrickApp));
+      $(document).ready((function (window, app) {
+        app.setIndicator('offline');
+          $('#reconnect').click(function() {
+            $(this).button('loading');
+            app.loadPortal();
+          });
+      }).bind(null, window, BrickApp));
     </script>
   </body>
 </html>

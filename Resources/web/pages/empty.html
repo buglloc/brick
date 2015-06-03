@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>&nbsp;</title>
+  <title>&nbsp;</title>
 </head>
 <body>
 <script>
-	(function (window) {
-	  if (!window.opener || !window.opener.BrickApp)
-		return;
+  (function (window) {
+    if (!window.opener || !window.opener.BrickApp)
+	  return;
 
-	  var callback = window.opener.BrickApp.getWindowCallback(BrickApp.getHashValue('id'));
-	   if (!callback)
-		return;
+    var callback = window.opener.BrickApp.getWindowCallback(BrickApp.getHashValue('id'));
+    if (!callback)
+	  return;
 
-	  callback(BXDesktopWindow);
-      BrickWindow.show();
-	})(window);
+    callback(BXDesktopWindow);
+	BrickWindow.show();
+  })(window);
 </script>
 </body>
 </html>

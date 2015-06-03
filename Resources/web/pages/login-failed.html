@@ -24,62 +24,62 @@
     </div>
   </div>
     <script>
-        $(document).ready((function (window, app) {
-          function autoLogin(timer, element) {
-            var seconds;
-            var interval = setInterval(function () {
-              seconds = timer;
-              seconds = seconds < 10 ? "0" + seconds : seconds;
+      $(document).ready((function (window, app) {
+        function autoLogin(timer, element) {
+          var seconds;
+          var interval = setInterval(function () {
+            seconds = timer;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
 
-              element.text(seconds);
+            element.text(seconds);
 
-              if (--timer < 0) {
-                clearInterval(interval);
-                $('#reconnect').click();
-              }
-            }, 1000);
-          }
-
-          var errorCode = parseInt(app.getHashValue('code'), 10);
-          var reason = app.getHashValue('reason');
-          if (errorCode) {
-            var reasonBox = $('div[data-role="reason-box"]');
-
-            switch (errorCode) {
-              case app.authErrorCodes['HTTP']:
-                reasonBox.text(decodeURIComponent(reason));
-                $('#autologin').show();
-                autoLogin(59, $('#time'));
-                break;
-              case app.authErrorCodes['CAPTCHA']:
-                reasonBox.html('You’ve exceeded the maximum number of login attempts allowed.<br>' +
-                  'Please, authorize in your <b>browser</b> first');
-                break;
-              case app.authErrorCodes['OTP']:
-                reasonBox.html('Two factor authorization has been activated for this account.<br>' +
-                  'Please use <b>Application Password</b>');
-                break;
-              case app.authErrorCodes['AUTH']:
-                reasonBox.html('Authorization error, wrong login or password');
-                break;
-              case app.authErrorCodes['INVALID_URL']:
-                reasonBox.text(decodeURIComponent(reason) + '\nPlease, provide correct host name and scheme');
-                break;
-              default:
-                reasonBox.html('I’m sorry, unknown error :(');
-                break;
+            if (--timer < 0) {
+              clearInterval(interval);
+              $('#reconnect').click();
             }
-          }
+          }, 1000);
+        }
 
-          app.setIndicator('offline');
-          $('#reconnect').click(function() {
-            $(this).button('loading');
-            app.loader(true);
-          });
-          $('#edit-account').click(function() {
-            app.editAccount(true);
-          });
-        }).bind(null, window, BrickApp));
+        var errorCode = parseInt(app.getHashValue('code'), 10);
+        var reason = app.getHashValue('reason');
+        if (errorCode) {
+          var reasonBox = $('div[data-role="reason-box"]');
+
+          switch (errorCode) {
+            case app.authErrorCodes['HTTP']:
+              reasonBox.text(decodeURIComponent(reason));
+              $('#autologin').show();
+              autoLogin(59, $('#time'));
+              break;
+            case app.authErrorCodes['CAPTCHA']:
+              reasonBox.html('You’ve exceeded the maximum number of login attempts allowed.<br>' +
+                'Please, authorize in your <b>browser</b> first');
+              break;
+            case app.authErrorCodes['OTP']:
+              reasonBox.html('Two factor authorization has been activated for this account.<br>' +
+                'Please use <b>Application Password</b>');
+              break;
+            case app.authErrorCodes['AUTH']:
+              reasonBox.html('Authorization error, wrong login or password');
+              break;
+            case app.authErrorCodes['INVALID_URL']:
+              reasonBox.text(decodeURIComponent(reason) + '\nPlease, provide correct host name and scheme');
+              break;
+            default:
+              reasonBox.html('I’m sorry, unknown error :(');
+              break;
+          }
+        }
+
+        app.setIndicator('offline');
+        $('#reconnect').click(function() {
+          $(this).button('loading');
+          app.loader(true);
+        });
+        $('#edit-account').click(function() {
+          app.editAccount(true);
+        });
+      }).bind(null, window, BrickApp));
     </script>
   </body>
 </html>
