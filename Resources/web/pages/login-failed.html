@@ -25,31 +25,45 @@
   </div>
     <script>
       $(document).ready((function (window, app) {
-        function autoLogin(timer, element) {
+        var loginTimer;
+        var errorCode = parseInt(app.getHashValue('code'), 10);
+        var reason = app.getHashValue('reason');
+
+        function stopLoginTimer() {
+          var autologin = $('#autologin');
+          if (!!autologin)
+            autologin.hide();
+          if (loginTimer)
+            clearInterval(loginTimer);
+        }
+
+        function startLoginTimer() {
           var seconds;
-          var interval = setInterval(function () {
+          var timer = 60;
+          var element = $('#time');
+          element.text(timer);
+          $('#autologin').show();
+
+          loginTimer = setInterval(function () {
+            timer -= 1;
             seconds = timer;
             seconds = seconds < 10 ? "0" + seconds : seconds;
-
             element.text(seconds);
 
-            if (--timer < 0) {
-              clearInterval(interval);
+            if (timer < 0) {
+              stopLoginTimer();
               $('#reconnect').click();
             }
           }, 1000);
         }
 
-        var errorCode = parseInt(app.getHashValue('code'), 10);
-        var reason = app.getHashValue('reason');
         if (errorCode) {
           var reasonBox = $('div[data-role="reason-box"]');
 
           switch (errorCode) {
             case app.authErrorCodes['HTTP']:
               reasonBox.text(decodeURIComponent(reason));
-              $('#autologin').show();
-              autoLogin(59, $('#time'));
+              startLoginTimer();
               break;
             case app.authErrorCodes['CAPTCHA']:
               reasonBox.html('You’ve exceeded the maximum number of login attempts allowed.<br>' +
@@ -73,10 +87,11 @@
 
         app.setIndicator('offline');
         $('#reconnect').click(function() {
-          $(this).button('loading');
+          stopLoginTimer();
           app.loader(true);
         });
         $('#edit-account').click(function() {
+          stopLoginTimer();
           app.editAccount(true);
         });
       }).bind(null, window, BrickApp));
