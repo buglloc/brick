@@ -12,12 +12,34 @@
     <div class="wrapper-data">       
       <h2 class="form-signin-heading">Authorization failed :(</h2>
       <div data-role="reason-box"></div>
-      <button class="btn btn-lg btn-primary btn-block" data-loading-text="Trying..." id="reconnect">Try again</button>
+      <button class="btn btn-lg btn-primary btn-block" id="reconnect">
+        <span>Try again</span>
+        <span id="autologin" style="display: none">
+          (auto in
+          <span id="time">60</span>
+          sec)
+        </span>
+      </button>
       <button class="btn btn-lg btn-primary btn-block" id="edit-account">Edit credentials</button>
     </div>
   </div>
     <script>
         $(document).ready((function (window, app) {
+          function autoLogin(timer, element) {
+            var seconds;
+            var interval = setInterval(function () {
+              seconds = timer;
+              seconds = seconds < 10 ? "0" + seconds : seconds;
+
+              element.text(seconds);
+
+              if (--timer < 0) {
+                clearInterval(interval);
+                $('#reconnect').click();
+              }
+            }, 1000);
+          }
+
           var errorCode = parseInt(app.getHashValue('code'), 10);
           var reason = app.getHashValue('reason');
           if (errorCode) {
@@ -26,6 +48,8 @@
             switch (errorCode) {
               case app.authErrorCodes['HTTP']:
                 reasonBox.text(decodeURIComponent(reason));
+                $('#autologin').show();
+                autoLogin(59, $('#time'));
                 break;
               case app.authErrorCodes['CAPTCHA']:
                 reasonBox.html('You’ve exceeded the maximum number of login attempts allowed.<br>' +
