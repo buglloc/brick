@@ -12,27 +12,52 @@
 
 namespace desktop_media {
 
-  bool
-  IsAcceptableState(::Window window) {
+  ::Window
+  GetApplicationWindow(::Window window) {
     ::XDisplay *display = cef_get_xdisplay();
     Atom wm_state = XInternAtom(display, "WM_STATE", False);
     Atom type;
     int format;
     unsigned long exists, bytes_left;
     unsigned char *data;
-    bool result = false;
+    long state;
 
     long request = XGetWindowProperty(display, window, wm_state, 0L, 2L, False,
                                     wm_state, &type, &format, &exists,
                                     &bytes_left, &data);
     if (request != Success || !exists)
-      return result;
+      return 0;
 
-    // Todo: also check WithdrawnState?
-    result = (*(long *) data) == NormalState;
-    XFree(data);
+    state = *(long *) data;
+    if (state == NormalState) {
+      // Window has WM_STATE == NormalState. It's good window:)
+      return window;
+    } else if (state == IconicState) {
+      // Window was minimized
+      return 0;
+    }
 
-    return result;
+    // If the window is in WithdrawnState then look at all of its children.
+    ::Window root, parent;
+    ::Window *children;
+    unsigned int num_children;
+    if (!XQueryTree(cef_get_xdisplay(), window, &root, &parent, &children,
+                    &num_children)) {
+      LOG(ERROR) << "Failed to query for child windows although window"
+                 << "does not have a valid WM_STATE.";
+      return 0;
+    }
+
+    ::Window app_window = 0;
+    for (unsigned int i = 0; i < num_children; ++i) {
+      app_window = GetApplicationWindow(children[i]);
+      if (app_window)
+        break;
+    }
+    if (children)
+      XFree(children);
+
+    return app_window;
   }
 
   bool
@@ -110,11 +135,10 @@ namespace desktop_media {
 
       for (unsigned int i = 0; i < num_children; ++i) {
         // Iterate in reverse order to return windows from front to back.
-        ::Window window = children[num_children - 1 - i];
+        ::Window window = GetApplicationWindow(children[num_children - 1 - i]);
         std::string title;
         if (
             window
-            && IsAcceptableState(window)
             && IsDesktopElement(window)
             && GetWindowTitle(window, &title)
             ) {
