@@ -58,6 +58,7 @@ set(BRICK_SRCS
   request_util.cc
   avatar_client.h
   avatar_client.cc
+  desktop_media.h
   )
 set(BRICK_COMMON_SRCS
   common/app_settings.cc
@@ -75,6 +76,7 @@ set(BRICK_SRCS_LINUX
   window_util_linux.cc
   notification_manager_linux.cc
   platform_util_linux.cc
+  desktop_media_linux.cc
   )
 set(BRICK_EXTENSIONS_SRCS
   v8_handler.cc

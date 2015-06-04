@@ -10,6 +10,7 @@
 #include "brick/helper.h"
 #include "brick/notification_manager.h"
 #include "brick/platform_util.h"
+#include "brick/desktop_media.h"
 
 namespace {
   const char kNameSpace[]                   = "AppEx";
@@ -26,8 +27,9 @@ namespace {
   const char kMessageAddTemporaryPageName[] = "AddTemporaryPage";
   const char kMessagePreventShutdownName[]  = "PreventShutdown";
   const char kMessageShutdownName[]         = "Shutdown";
+  const char kMessageListDesktopMedia[]     = "ListDesktopMedia";
 
-  const char kCurrentPortalId[] = "current_portal";
+  const char kCurrentPortalId[]             = "current_portal";
 
   const char kIndicatorOnlineName[]         = "online";
   const char kIndicatorDndName[]            = "dnd";
@@ -369,6 +371,34 @@ AppMessageDelegate::OnProcessMessageReceived(
 
     if (error == NO_ERROR) {
       ClientHandler::GetInstance()->Shutdown(true);
+    }
+
+  } else if (message_name == kMessageListDesktopMedia) {
+    // Parameters:
+    // 0: int32 - callback id
+    // 1: bool - list_screens
+    // 2: bool - list_windows
+
+    if (request_args->GetSize() != 3
+        || request_args->GetType(1) != VTYPE_BOOL
+        || request_args->GetType(2) != VTYPE_BOOL
+        ) {
+      error = ERR_INVALID_PARAMS;
+    }
+
+    if (error == NO_ERROR) {
+      CefRefPtr<CefListValue> media_list = CefListValue::Create();
+      // ToDo: switch to dictionary (first impelemt dictionary support in V8Helper)
+
+      if (request_args->GetBool(1)) {
+        desktop_media::EnumerateScreens(media_list);
+      }
+
+      if (request_args->GetBool(2)) {
+        desktop_media::EnumerateWindows(media_list);
+      }
+
+      response_args->SetList(2, media_list);
     }
 
   } else {

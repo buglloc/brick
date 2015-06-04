@@ -161,6 +161,33 @@ var BrickApp = {
       return defaultValue;
     }
   },
+  listDesktopMedia: function(callback, types) {
+    native function AppExListDesktopMedia();
+
+    types = types || ['screen', 'window'];
+
+    var list_screens = types.indexOf('screen') != -1;
+    var list_windows = types.indexOf('window') != -1;
+    if (!list_screens && !list_windows) {
+      callback([]);
+      return;
+    }
+
+    AppExListDesktopMedia(function(error, list) {
+      if (error)
+        return;
+
+      var result = [];
+      list.forEach(function(media) {
+        result.push({
+          'id': media[0],
+          'title': media[1]
+        });
+      });
+
+      callback(result);
+    }, list_screens, list_windows);
+  },
   setOption: function(name, value) {
     localStorage.setItem(name, value);
     return true;
@@ -390,6 +417,10 @@ BXDesktopWindow.ExecuteCommand = function(cmd, params) {
     default:
       BrickHelper.implementMe('BXDesktopWindow.ExecuteCommand', arguments);
   }
+};
+
+BXDesktopSystem.listDesktopMedia = function(callback, types) {
+  BrickApp.listDesktopMedia(callback, types);
 };
 
 BXDesktopSystem.SetProperty = function(name, value) {
