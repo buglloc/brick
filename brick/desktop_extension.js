@@ -419,7 +419,7 @@ BXDesktopWindow.ExecuteCommand = function(cmd, params) {
   }
 };
 
-BXDesktopSystem.listDesktopMedia = function(callback, types) {
+BXDesktopSystem.ListDesktopMedia = function(callback, types) {
   BrickApp.listDesktopMedia(callback, types);
 };
 
