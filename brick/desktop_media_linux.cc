@@ -41,7 +41,7 @@ namespace desktop_media {
     ::Window root, parent;
     ::Window *children;
     unsigned int num_children;
-    if (!XQueryTree(cef_get_xdisplay(), window, &root, &parent, &children,
+    if (!XQueryTree(display, window, &root, &parent, &children,
                     &num_children)) {
       LOG(ERROR) << "Failed to query for child windows although window"
                  << "does not have a valid WM_STATE.";
