@@ -119,6 +119,10 @@ set(BRICK_JSON_SRCS
   ../third-party/json/json-forwards.h
   ../third-party/json/jsoncpp.cc
   )
+set(BRICK_THIRDPARTY_SRCS
+  ../third-party/base64/base64.h
+  ../third-party/base64/base64.cc
+  )
 set(BRICK_EXTERNAL_INTERFACE
   external_interface/dbus_protocol.h
   external_interface/dbus_protocol.cc
@@ -163,6 +167,7 @@ set(BRICK_SRCS
   ${BRICK_JSON_SRCS}
   ${BRICK_EXTERNAL_INTERFACE}
   ${BRICK_EVENT_SYSTEM}
+  ${BRICK_THIRDPARTY_SRCS}
   )
 set(BRICK_EMBED_FILES
   desktop_extension.js
@@ -220,7 +225,7 @@ foreach(FILENAME ${BRICK_EMBED_FILES})
 endforeach(FILENAME)
 
 
-FIND_LINUX_LIBRARIES("gmodule-2.0 gtk+-2.0 gthread-2.0 libnotify xscrnsaver")
+FIND_LINUX_LIBRARIES("gmodule-2.0 gtk+-2.0 gthread-2.0 libnotify xscrnsaver cairo")
 if (UNITY)
   FIND_LINUX_LIBRARIES("unity appindicator-0.1")
 endif()

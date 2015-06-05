@@ -18,9 +18,10 @@
 namespace {
 
   CefRefPtr<ClientHandler> g_instance = NULL;
-  const char kInterceptionPath[] = "/desktop_app/internals/";
-  const char kTemporaryPagePath[] = "/desktop_app/internals/temp-pages/";
-  const char kInjectedJsPath[] = "/desktop_app/internals/injected-js/";
+  const char kInterceptionPath[]      = "/desktop_app/internals/";
+  const char kTemporaryPagePath[]     = "/desktop_app/internals/temp-pages/";
+  const char kInjectedJsPath[]        = "/desktop_app/internals/injected-js/";
+
   std::string kUnknownInternalContent = "Failed to load resource";
 
 }  // namespace
