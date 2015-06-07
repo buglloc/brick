@@ -11,7 +11,7 @@
 
 #include "include/internal/cef_linux.h"
 #include "include/base/cef_logging.h"
-#include "third-party/base64/base64.h"
+#include "third-party/codec/base64.h"
 
 namespace {
   const int shotWidth = 160;
@@ -55,7 +55,9 @@ namespace {
   CairoWriteToString(void* user_data, const unsigned char *data, unsigned int length)
   {
     std::vector<unsigned char>* result = reinterpret_cast<std::vector<unsigned char>*>(user_data);
-    result->insert(result->end(), data, data + length);
+    size_t old_size = result->size();
+    result->resize(old_size + length);
+    memcpy(&(*result)[old_size], data, length);
     return CAIRO_STATUS_SUCCESS;
   }
 
@@ -128,8 +130,8 @@ namespace desktop_media {
 
     cairo_surface_t *new_surface = CairoFitSurface(surface, image->width, image->height);
     cairo_surface_write_to_png_stream(new_surface, CairoWriteToString, result);
-    cairo_surface_destroy(surface);
     cairo_surface_destroy(new_surface);
+    cairo_surface_destroy(surface);
     XDestroyImage(image);
 
     return true;
@@ -151,8 +153,8 @@ namespace desktop_media {
     long state;
 
     long request = XGetWindowProperty(display, window, wm_state, 0L, 2L, False,
-                                    wm_state, &type, &format, &exists,
-                                    &bytes_left, &data);
+                                      wm_state, &type, &format, &exists,
+                                      &bytes_left, &data);
     if (request != Success)
       return 0;
 
@@ -234,7 +236,7 @@ namespace desktop_media {
       if (status >= Success && cnt && *list) {
         if (cnt > 1) {
           LOG(INFO) << "Window has " << cnt
-                       << " text properties, only using the first one.";
+                    << " text properties, only using the first one.";
         }
         *title = *list;
         result = true;
@@ -261,7 +263,7 @@ namespace desktop_media {
                               &children, &num_children);
       if (status == 0) {
         LOG(ERROR) << "Failed to query for child windows for screen "
-                      << screen;
+                   << screen;
         continue;
       }
 

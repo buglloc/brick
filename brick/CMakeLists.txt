@@ -119,9 +119,9 @@ set(BRICK_JSON_SRCS
   ../third-party/json/json-forwards.h
   ../third-party/json/jsoncpp.cc
   )
-set(BRICK_THIRDPARTY_SRCS
-  ../third-party/base64/base64.h
-  ../third-party/base64/base64.cc
+set(BRICK_CODECS_SRCS
+  ../third-party/codec/base64.h
+  ../third-party/codec/base64.cc
   )
 set(BRICK_EXTERNAL_INTERFACE
   external_interface/dbus_protocol.h
@@ -167,7 +167,7 @@ set(BRICK_SRCS
   ${BRICK_JSON_SRCS}
   ${BRICK_EXTERNAL_INTERFACE}
   ${BRICK_EVENT_SYSTEM}
-  ${BRICK_THIRDPARTY_SRCS}
+  ${BRICK_CODECS_SRCS}
   )
 set(BRICK_EMBED_FILES
   desktop_extension.js
