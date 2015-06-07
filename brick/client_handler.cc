@@ -14,6 +14,7 @@
 #include "brick/platform_util.h"
 #include "brick/window_util.h"
 #include "brick/brick_app.h"
+#include "desktop_media.h"
 
 namespace {
 
@@ -21,6 +22,7 @@ namespace {
   const char kInterceptionPath[]      = "/desktop_app/internals/";
   const char kTemporaryPagePath[]     = "/desktop_app/internals/temp-pages/";
   const char kInjectedJsPath[]        = "/desktop_app/internals/injected-js/";
+  const char kDesktopMediaPath[]      = "/desktop_app/internals/desktop-media/";
 
   std::string kUnknownInternalContent = "Failed to load resource";
 
@@ -399,6 +401,23 @@ ClientHandler::GetResourceHandler(
         stream = GetBinaryFileReader(file_name);
       }
 
+    } else if (file_name.find(kDesktopMediaPath) == 0) {
+      // Special logic for desktop (window) preview
+      mime_type = "image/png";
+      size_t delimiter = file_name.find('-', sizeof(kDesktopMediaPath) - 1);
+      if (delimiter != std::string::npos) {
+        std::string type = file_name.substr(sizeof(kDesktopMediaPath) - 1, delimiter - sizeof(kDesktopMediaPath) + 1);
+        int id = atoi(file_name.substr(delimiter + 1).c_str());
+        std::vector<unsigned char> preview;
+        if (desktop_media::GetMediaPreview(type, id, &preview)) {
+          stream = CefStreamReader::CreateForData(
+              static_cast<void*>(preview.data()),
+              preview.size()
+          );
+          preview.clear();
+        }
+      }
+
     } else if (file_name.find(kTemporaryPagePath) == 0 ) {
       // Special logic for runtime pages
       file_name = file_name.substr(strlen(kTemporaryPagePath));
@@ -423,13 +442,15 @@ ClientHandler::GetResourceHandler(
 
   LOG(WARNING) << "Intercepted resource \"" << url << "\" was not found.";
   // Never let the internal links walk on the external world
+  CefResponse::HeaderMap header_map;
   CefRefPtr<CefStreamReader> stream =
      CefStreamReader::CreateForData(
         static_cast<void*>(const_cast<char*>(kUnknownInternalContent.c_str())),
         kUnknownInternalContent.size()
      );
+
   ASSERT(stream.get());
-  return new CefStreamResourceHandler("text/plain", stream);
+  return new CefStreamResourceHandler(404, "Not Found", "text/plain", header_map, stream);
 }
 
 bool

@@ -10,46 +10,15 @@
 #include <vector>
 
 #include "include/internal/cef_linux.h"
+#include "include/cef_task.h"
 #include "include/base/cef_logging.h"
 #include "third-party/codec/base64.h"
 
 namespace {
+  const char kWindowTypeName[] = "window";
+  const char kScreenTypeName[] = "screen";
   const int shotWidth = 160;
   const int shotHeight = 160;
-  const char kFakeShot[] = "data:image/png;base64,"
-      "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"
-      "AABJRU5ErkJggg==";
-
 
   cairo_status_t
   CairoWriteToString(void* user_data, const unsigned char *data, unsigned int length)
@@ -90,8 +59,7 @@ namespace {
 namespace desktop_media {
 
   bool
-  GetWindowPreview(::Window window, std::vector<unsigned char>* result) {
-    ::XDisplay *display = cef_get_xdisplay();
+  GetWindowPreview(::XDisplay* display, ::Window window, std::vector<unsigned char>* result) {
     int shot_x = 0, shot_y = 0;
     unsigned int shot_width = 0, shot_height = 0;
     Window root_ret = None;
@@ -109,7 +77,7 @@ namespace desktop_media {
                               AllPlanes, ZPixmap);
 
     if (!image) {
-      LOG(WARNING) << "Cant't get window image. Window id: " << window;
+      LOG(WARNING) << "Can't get window image. Window id: " << window;
       return false;
     }
 
@@ -137,11 +105,6 @@ namespace desktop_media {
     return true;
   }
 
-  bool
-  GetScreenPreview() {
-    return true;
-  }
-
   ::Window
   GetApplicationWindow(::Window window) {
     ::XDisplay *display = cef_get_xdisplay();
@@ -162,9 +125,11 @@ namespace desktop_media {
       state = *(long *) data;
       if (state == NormalState) {
         // Window has WM_STATE == NormalState. It's good window:)
+        XFree(data);
         return window;
       } else if (state == IconicState) {
         // Window was minimized
+        XFree(data);
         return 0;
       }
     }
@@ -276,18 +241,12 @@ namespace desktop_media {
             && IsDesktopElement(window)
             && GetWindowTitle(window, &title)
             ) {
-          std::vector<unsigned char> preview_image;
-          std::string preview;
-          if (GetWindowPreview(window, &preview_image))
-            preview = "data:image/png;base64," + base64_encode(preview_image.data(), preview_image.size());
-          else
-            preview = kFakeShot;
-
-          std::string id = "window:" + std::to_string(window);
+          std::string id = kWindowTypeName;
+          id.append(":");
+          id.append(std::to_string(window));
           CefRefPtr<CefListValue> media = CefListValue::Create();
           media->SetString(0, id);
           media->SetString(1, title);
-          media->SetString(2, preview);
           list->SetList(last_index++, media);
         }
       }
@@ -301,20 +260,43 @@ namespace desktop_media {
   bool
   EnumerateScreens(CefListValue* list) {
     // ToDo: implement when WebRTC starts support screen enumeration
-    std::vector<unsigned char> preview_image;
-    std::string preview;
-    if (GetWindowPreview(XDefaultRootWindow(cef_get_xdisplay()), &preview_image))
-      preview = "data:image/png;base64," + base64_encode(preview_image.data(), preview_image.size());
-    else
-      preview = kFakeShot;
-
     CefRefPtr<CefListValue> media = CefListValue::Create();
-    media->SetString(0, "screen:0");
+    std::string id = kScreenTypeName;
+    id.append(":");
+    id.append("0");
+    media->SetString(0, id);
     media->SetString(1, "Entire screen");
-    media->SetString(2, preview);
 
     list->SetList(list->GetSize(), media);
 
     return true;
+  }
+
+  bool
+  GetMediaPreview(std::string type, int32 id, std::vector<unsigned char>* out) {
+    // ToDo: what are hell?!
+    bool selfConnect = !CefCurrentlyOn(TID_UI);
+    bool result = false;
+    ::Display* display;
+    if (selfConnect)
+      display = XOpenDisplay(NULL);
+    else
+      display = cef_get_xdisplay();
+
+    if (!display) {
+      LOG(ERROR) << "Can't open display for creating desktop media preview";
+      return result;
+    }
+
+    if (type == kWindowTypeName) {
+      result = GetWindowPreview(display, id, out);
+    } else if (type == kScreenTypeName) {
+      result = GetWindowPreview(display, XDefaultRootWindow(display), out);
+    }
+
+    if (selfConnect)
+      XCloseDisplay(display);
+
+    return result;
   }
 }  // namespace desktop_media

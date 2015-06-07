@@ -182,7 +182,7 @@ var BrickApp = {
         result.push({
           'id': media[0],
           'title': media[1],
-          'preview': media[2]
+          'preview': '/desktop_app/internals/desktop-media/' + media[0].replace(':', '-') + '.png?' + Math.random()
         });
       });
 

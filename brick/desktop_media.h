@@ -16,6 +16,7 @@
 namespace desktop_media {
   bool EnumerateWindows(CefListValue* list);
   bool EnumerateScreens(CefListValue* list);
+  bool GetMediaPreview(std::string type, int32 id, std::vector<unsigned char>* out);
 
 }  // namespace desktop_media
 #endif  // BRICK_DESKTOP_MEDIA_H_
