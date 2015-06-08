@@ -96,6 +96,12 @@ namespace window_util {
     Atom type = XInternAtom(display, "_NET_WM_WINDOW_TYPE", False);
     Atom value = XInternAtom(display, "_NET_WM_WINDOW_TYPE_UTILITY", False);
     XChangeProperty(display, handle, type, XA_ATOM, 32, PropModeReplace, reinterpret_cast<unsigned char *>(&value), 1);
+
+    Atom state[2];
+    state[0] = XInternAtom(display, "_NET_WM_STATE_SKIP_TASKBAR", False);
+    state[1] = XInternAtom(display, "_NET_WM_STATE_SKIP_PAGER", False);
+    Atom wm_state = XInternAtom(display, "_NET_WM_STATE", False);
+    XChangeProperty (display, handle, wm_state, XA_ATOM, 32, PropModeReplace, reinterpret_cast<unsigned char *>(&state), 2);
   }
 
   void
