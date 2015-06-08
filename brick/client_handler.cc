@@ -383,6 +383,7 @@ ClientHandler::GetResourceHandler(
     CefRefPtr<CefRequest> request) {
   CEF_REQUIRE_IO_THREAD();
 
+  // ToDo: move to new DataProviders: https://bitbucket.org/chromiumembedded/cef/issue/1640/add-new-cefresourcemanager-class-for
   std::string url = request->GetURL();
   if (url.find(kInterceptionPath) == std::string::npos)
     return NULL;
