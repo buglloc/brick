@@ -21,8 +21,7 @@ namespace {
   const int shotHeight = 160;
 
   cairo_status_t
-  CairoWriteToString(void* user_data, const unsigned char *data, unsigned int length)
-  {
+  CairoWriteToString(void* user_data, const unsigned char *data, unsigned int length) {
     std::vector<unsigned char>* result = reinterpret_cast<std::vector<unsigned char>*>(user_data);
     size_t old_size = result->size();
     result->resize(old_size + length);

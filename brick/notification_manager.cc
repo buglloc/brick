@@ -11,11 +11,11 @@ NotificationManager::NotificationManager() :
     is_actions_supported_(false) {
 
   InitializeCapabilities();
-};
+}
 
 void
 NotificationManager::OnClose() {
- notification_ = NULL;
+  notification_ = NULL;
 }
 
 void

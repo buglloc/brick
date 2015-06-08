@@ -14,7 +14,7 @@
 #include "brick/platform_util.h"
 #include "brick/window_util.h"
 #include "brick/brick_app.h"
-#include "desktop_media.h"
+#include "brick/desktop_media.h"
 
 namespace {
 

@@ -32,7 +32,7 @@ class NotificationManager : public CefBase {
   bool is_append_supported_;
   bool is_actions_supported_;
 
- IMPLEMENT_REFCOUNTING(NotificationManager);
+IMPLEMENT_REFCOUNTING(NotificationManager);
 };
 
 #endif  // BRICK_NOTIFICATION_MANAGER_H_
