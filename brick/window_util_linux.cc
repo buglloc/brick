@@ -91,11 +91,9 @@ namespace window_util {
 
   void
   ConfigureAsTopmost(CefWindowHandle handle) {
-    ::XDisplay *display = cef_get_xdisplay();
+    ConfigureAsDialog(handle);
 
-    Atom type = XInternAtom(display, "_NET_WM_WINDOW_TYPE", False);
-    Atom value = XInternAtom(display, "_NET_WM_WINDOW_TYPE_UTILITY", False);
-    XChangeProperty(display, handle, type, XA_ATOM, 32, PropModeReplace, reinterpret_cast<unsigned char *>(&value), 1);
+    ::XDisplay *display = cef_get_xdisplay();
 
     Atom state[2];
     state[0] = XInternAtom(display, "_NET_WM_STATE_SKIP_TASKBAR", False);
