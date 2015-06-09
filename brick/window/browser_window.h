@@ -16,7 +16,7 @@
 
 #endif
 
-#define BROWSER_WINDOW_PADDING 10;
+#define BROWSER_WINDOW_PADDING 20;
 
 #include "include/cef_base.h"
 #include "include/base/cef_lock.h"
