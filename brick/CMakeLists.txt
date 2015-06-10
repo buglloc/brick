@@ -120,8 +120,6 @@ set(BRICK_JSON_SRCS
   ../third-party/json/jsoncpp.cc
   )
 set(BRICK_CODECS_SRCS
-  ../third-party/codec/base64.h
-  ../third-party/codec/base64.cc
   )
 set(BRICK_EXTERNAL_INTERFACE
   external_interface/dbus_protocol.h

@@ -12,7 +12,6 @@
 #include "include/internal/cef_linux.h"
 #include "include/cef_task.h"
 #include "include/base/cef_logging.h"
-#include "third-party/codec/base64.h"
 
 namespace {
   const char kWindowTypeName[] = "window";
