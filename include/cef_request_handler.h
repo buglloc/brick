@@ -79,6 +79,7 @@ class CefRequestHandler : public virtual CefBase {
  public:
   typedef cef_return_value_t ReturnValue;
   typedef cef_termination_status_t TerminationStatus;
+  typedef cef_window_open_disposition_t WindowOpenDisposition;
 
   ///
   // Called on the UI thread before browser navigation. Return true to cancel
@@ -95,6 +96,31 @@ class CefRequestHandler : public virtual CefBase {
                               CefRefPtr<CefFrame> frame,
                               CefRefPtr<CefRequest> request,
                               bool is_redirect) {
+    return false;
+  }
+
+  ///
+  // Called on the UI thread before OnBeforeBrowse in certain limited cases
+  // where navigating a new or different browser might be desirable. This
+  // includes user-initiated navigation that might open in a special way (e.g.
+  // links clicked via middle-click or ctrl + left-click) and certain types of
+  // cross-origin navigation initiated from the renderer process (e.g.
+  // navigating the top-level frame to/from a file URL). The |browser| and
+  // |frame| values represent the source of the navigation. The
+  // |target_disposition| value indicates where the user intended to navigate
+  // the browser based on standard Chromium behaviors (e.g. current tab,
+  // new tab, etc). The |user_gesture| value will be true if the browser
+  // navigated via explicit user gesture (e.g. clicking a link) or false if it
+  // navigated automatically (e.g. via the DomContentLoaded event). Return true
+  // to cancel the navigation or false to allow the navigation to proceed in the
+  // source browser's top-level frame.
+  ///
+  /*--cef()--*/
+  virtual bool OnOpenURLFromTab(CefRefPtr<CefBrowser> browser,
+                                CefRefPtr<CefFrame> frame,
+                                const CefString& target_url,
+                                WindowOpenDisposition target_disposition,
+                                bool user_gesture) {
     return false;
   }
 
@@ -130,15 +156,30 @@ class CefRequestHandler : public virtual CefBase {
   }
 
   ///
-  // Called on the IO thread when a resource load is redirected. The |old_url|
-  // parameter will contain the old URL. The |new_url| parameter will contain
-  // the new URL and can be changed if desired.
+  // Called on the IO thread when a resource load is redirected. The |request|
+  // parameter will contain the old URL and other request-related information.
+  // The |new_url| parameter will contain the new URL and can be changed if
+  // desired. The |request| object cannot be modified in this callback.
   ///
   /*--cef()--*/
   virtual void OnResourceRedirect(CefRefPtr<CefBrowser> browser,
                                   CefRefPtr<CefFrame> frame,
-                                  const CefString& old_url,
+                                  CefRefPtr<CefRequest> request,
                                   CefString& new_url) {}
+
+  ///
+  // Called on the IO thread when a resource response is received. To allow the
+  // resource to load normally return false. To redirect or retry the resource
+  // modify |request| (url, headers or post body) and return true. The
+  // |response| object cannot be modified in this callback.
+  ///
+  /*--cef()--*/
+  virtual bool OnResourceResponse(CefRefPtr<CefBrowser> browser,
+                                  CefRefPtr<CefFrame> frame,
+                                  CefRefPtr<CefRequest> request,
+                                  CefRefPtr<CefResponse> response) {
+    return false;
+  }
 
   ///
   // Called on the IO thread when the browser needs credentials from the user.
@@ -226,6 +267,14 @@ class CefRequestHandler : public virtual CefBase {
   /*--cef()--*/
   virtual void OnPluginCrashed(CefRefPtr<CefBrowser> browser,
                                const CefString& plugin_path) {}
+
+  ///
+  // Called on the browser process UI thread when the render view associated
+  // with |browser| is ready to receive/handle IPC messages in the render
+  // process.
+  ///
+  /*--cef()--*/
+  virtual void OnRenderViewReady(CefRefPtr<CefBrowser> browser) {}
 
   ///
   // Called on the browser process UI thread when the render process

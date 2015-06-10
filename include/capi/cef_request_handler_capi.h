@@ -100,6 +100,27 @@ typedef struct _cef_request_handler_t {
       struct _cef_request_t* request, int is_redirect);
 
   ///
+  // Called on the UI thread before OnBeforeBrowse in certain limited cases
+  // where navigating a new or different browser might be desirable. This
+  // includes user-initiated navigation that might open in a special way (e.g.
+  // links clicked via middle-click or ctrl + left-click) and certain types of
+  // cross-origin navigation initiated from the renderer process (e.g.
+  // navigating the top-level frame to/from a file URL). The |browser| and
+  // |frame| values represent the source of the navigation. The
+  // |target_disposition| value indicates where the user intended to navigate
+  // the browser based on standard Chromium behaviors (e.g. current tab, new
+  // tab, etc). The |user_gesture| value will be true (1) if the browser
+  // navigated via explicit user gesture (e.g. clicking a link) or false (0) if
+  // it navigated automatically (e.g. via the DomContentLoaded event). Return
+  // true (1) to cancel the navigation or false (0) to allow the navigation to
+  // proceed in the source browser's top-level frame.
+  ///
+  int (CEF_CALLBACK *on_open_urlfrom_tab)(struct _cef_request_handler_t* self,
+      struct _cef_browser_t* browser, struct _cef_frame_t* frame,
+      const cef_string_t* target_url,
+      cef_window_open_disposition_t target_disposition, int user_gesture);
+
+  ///
   // Called on the IO thread before a resource request is loaded. The |request|
   // object may be modified. Return RV_CONTINUE to continue the request
   // immediately. Return RV_CONTINUE_ASYNC and call cef_request_tCallback::
@@ -123,13 +144,24 @@ typedef struct _cef_request_handler_t {
       struct _cef_frame_t* frame, struct _cef_request_t* request);
 
   ///
-  // Called on the IO thread when a resource load is redirected. The |old_url|
-  // parameter will contain the old URL. The |new_url| parameter will contain
-  // the new URL and can be changed if desired.
+  // Called on the IO thread when a resource load is redirected. The |request|
+  // parameter will contain the old URL and other request-related information.
+  // The |new_url| parameter will contain the new URL and can be changed if
+  // desired. The |request| object cannot be modified in this callback.
   ///
   void (CEF_CALLBACK *on_resource_redirect)(struct _cef_request_handler_t* self,
       struct _cef_browser_t* browser, struct _cef_frame_t* frame,
-      const cef_string_t* old_url, cef_string_t* new_url);
+      struct _cef_request_t* request, cef_string_t* new_url);
+
+  ///
+  // Called on the IO thread when a resource response is received. To allow the
+  // resource to load normally return false (0). To redirect or retry the
+  // resource modify |request| (url, headers or post body) and return true (1).
+  // The |response| object cannot be modified in this callback.
+  ///
+  int (CEF_CALLBACK *on_resource_response)(struct _cef_request_handler_t* self,
+      struct _cef_browser_t* browser, struct _cef_frame_t* frame,
+      struct _cef_request_t* request, struct _cef_response_t* response);
 
   ///
   // Called on the IO thread when the browser needs credentials from the user.
@@ -196,6 +228,14 @@ typedef struct _cef_request_handler_t {
   ///
   void (CEF_CALLBACK *on_plugin_crashed)(struct _cef_request_handler_t* self,
       struct _cef_browser_t* browser, const cef_string_t* plugin_path);
+
+  ///
+  // Called on the browser process UI thread when the render view associated
+  // with |browser| is ready to receive/handle IPC messages in the render
+  // process.
+  ///
+  void (CEF_CALLBACK *on_render_view_ready)(struct _cef_request_handler_t* self,
+      struct _cef_browser_t* browser);
 
   ///
   // Called on the browser process UI thread when the render process terminates
