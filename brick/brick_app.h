@@ -8,7 +8,7 @@
 
 #define VERSION "0.1.26.31"  // IM API version in last part!
 #define APP_VERSION "Robin-Brick/" VERSION
-#define CEF_PRODUCT_VERSION APP_VERSION " (BitrixDesktop/3.x compatible) Chrome/41.0.2272.104"
+#define CEF_PRODUCT_VERSION APP_VERSION " (BitrixDesktop/3.x compatible) Chrome/43.0.2357.81"
 #define APP_NAME "Brick"
 #define APP_COMMON_NAME "brick"
 

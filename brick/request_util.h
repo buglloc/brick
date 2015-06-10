@@ -13,8 +13,6 @@ namespace request_util {
   typedef std::map<std::string, std::string> CookiesMap;
   typedef std::map<std::string, std::string> PostFormMap;
 
-  std::string Urldecode(const std::string& str, bool plusAsSpace = false);
-  std::string Urlencode(const std::string& str, bool plusAsSpace = false);
   CefRefPtr<CefPostData> PostFormToCefPost(PostFormMap& form);
   void ParseCookie(const std::string& value, CookiesMap& destination);
   CookiesMap GetCookies(CefResponse::HeaderMap& headers);

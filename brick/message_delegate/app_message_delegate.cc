@@ -436,7 +436,7 @@ AppMessageDelegate::OnAfterLogin(
   CefRefPtr<CefListValue> response_args = response->GetArgumentList();
 
   if (auth_result.success) {
-    SetCookies(CefCookieManager::GetGlobalManager(), account->GetOrigin(), auth_result.cookies, account->IsSecure());
+    SetCookies(CefCookieManager::GetGlobalManager(NULL), account->GetOrigin(), auth_result.cookies, account->IsSecure());
     // ToDo: Replace huge argument lists to dictionary!
     response_args->SetBool(2, true);
     response_args->SetNull(3);
@@ -477,6 +477,6 @@ AppMessageDelegate::SetCookies(
     CefString(&cookie.value) = it->second;
     cookie.secure = is_secure;
     cookie.httponly = true;
-    manager->SetCookie(url, cookie);
+    manager->SetCookie(url, cookie, NULL);
   }
 }

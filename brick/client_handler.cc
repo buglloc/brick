@@ -320,12 +320,14 @@ ClientHandler::CloseDevTools(CefRefPtr<CefBrowser> browser) {
   browser->GetHost()->CloseDevTools();
 }
 
-
 bool
-ClientHandler::OnBeforePopup(CefRefPtr<CefBrowser> browser,
+ClientHandler::OnBeforePopup(
+    CefRefPtr<CefBrowser> browser,
     CefRefPtr<CefFrame> frame,
     const CefString& target_url,
     const CefString& target_frame_name,
+    CefLifeSpanHandler::WindowOpenDisposition target_disposition,
+    bool user_gesture,
     const CefPopupFeatures& popupFeatures,
     CefWindowInfo& windowInfo,
     CefRefPtr<CefClient>& client,
@@ -593,12 +595,11 @@ void
 ClientHandler::SwitchAccount(int id) {
   CloseAllPopups(true);
   // Clear cookies
-  CefPostTask(TID_IO, base::Bind(
-      base::IgnoreResult(&CefCookieManager::DeleteCookies),
-      CefCookieManager::GetGlobalManager(),
+  CefCookieManager::GetGlobalManager(NULL)->DeleteCookies(
       account_manager_->GetCurrentAccount()->GetOrigin(),
-      CefString()
-  ));
+      CefString(),
+      NULL
+  );
 
   last_temporary_page_ = 0;
   temporary_page_map_.clear();

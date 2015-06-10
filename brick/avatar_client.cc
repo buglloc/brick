@@ -83,5 +83,5 @@ AvatarClient::CreateRequest(
   request->SetFlags(UR_FLAG_NO_RETRY_ON_5XX);
 
   // Create and start the new CefURLRequest.
-  return CefURLRequest::Create(request, new AvatarClient(callback, path));
+  return CefURLRequest::Create(request, new AvatarClient(callback, path), NULL);
 }

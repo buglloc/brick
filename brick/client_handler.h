@@ -91,7 +91,7 @@ class ClientHandler : public CefClient,
   // Provide access to the single global instance of this object.
   static CefRefPtr<ClientHandler> GetInstance();
 
-  // CefClient methods:
+  // CefClient methods
   virtual CefRefPtr<CefContextMenuHandler> GetContextMenuHandler() OVERRIDE {
     return this;
   }
@@ -137,21 +137,23 @@ class ClientHandler : public CefClient,
      int command_id,
      EventFlags event_flags) OVERRIDE;
 
-  // CefDisplayHandler methods:
+  // CefDisplayHandler methods
   virtual void OnTitleChange(CefRefPtr<CefBrowser> browser,
      const CefString &title) OVERRIDE;
 
-  // CefLifeSpanHandler methods:
   // CefLifeSpanHandler methods
-  virtual bool OnBeforePopup(CefRefPtr<CefBrowser> browser,
-     CefRefPtr<CefFrame> frame,
-     const CefString &target_url,
-     const CefString &target_frame_name,
-     const CefPopupFeatures &popupFeatures,
-     CefWindowInfo &windowInfo,
-     CefRefPtr<CefClient> &client,
-     CefBrowserSettings &settings,
-     bool *no_javascript_access) OVERRIDE;
+  bool OnBeforePopup(
+      CefRefPtr<CefBrowser> browser,
+      CefRefPtr<CefFrame> frame,
+      const CefString& target_url,
+      const CefString& target_frame_name,
+      CefLifeSpanHandler::WindowOpenDisposition target_disposition,
+      bool user_gesture,
+      const CefPopupFeatures& popupFeatures,
+      CefWindowInfo& windowInfo,
+      CefRefPtr<CefClient>& client,
+      CefBrowserSettings& settings,
+      bool* no_javascript_access) OVERRIDE;
 
   virtual void OnWindowCreated(CefRefPtr<CefBrowser> browser) OVERRIDE;
 
@@ -161,7 +163,7 @@ class ClientHandler : public CefClient,
 
   virtual void OnBeforeClose(CefRefPtr<CefBrowser> browser) OVERRIDE;
 
-  // CefLoadHandler methods:
+  // CefLoadHandler methods
   virtual void OnLoadError(CefRefPtr<CefBrowser> browser,
      CefRefPtr<CefFrame> frame,
      ErrorCode errorCode,

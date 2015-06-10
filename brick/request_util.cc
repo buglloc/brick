@@ -3,6 +3,7 @@
 #include "brick/request_util.h"
 
 #include "include/cef_request.h"
+#include "include/cef_parser.h"
 
 namespace request_util {
 
@@ -75,7 +76,7 @@ namespace request_util {
   PostFormToCefPost(PostFormMap& form) {
     std::string data;
     for (auto it = form.begin(); it != form.end(); ++it) {
-      data += "&" + Urlencode(it->first) + "=" + Urlencode(it->second);
+      data += "&" + CefURIEncode(it->first, false).ToString() + "=" + CefURIEncode(it->second, false).ToString();
     }
 
     CefRefPtr<CefPostDataElement> postDataElement(CefPostDataElement::Create());
@@ -106,11 +107,21 @@ namespace request_util {
     }
 
     std::string key = header.substr(0, separator);
-    std::string value;
+    CefString value;
     if (end_value != std::string::npos) {
-      value = Urldecode(header.substr(separator + 1, end_value - separator - 1));
+      value = CefURIDecode(
+          header.substr(separator + 1, end_value - separator - 1),
+          false,
+          static_cast<cef_uri_unescape_rule_t>(
+            UU_SPACES | UU_URL_SPECIAL_CHARS)
+          );
     } else {
-      value = Urldecode(header.substr(separator + 1));
+      value = CefURIDecode(
+          header.substr(separator + 1),
+          false,
+          static_cast<cef_uri_unescape_rule_t>(
+              UU_SPACES | UU_URL_SPECIAL_CHARS)
+      );
     }
 
     destination[key] = value;

@@ -3,7 +3,7 @@
 #include "brick/auth_client.h"
 
 #include "third-party/json/json.h"
-#include "include/cef_url.h"
+#include "include/cef_parser.h"
 #include "brick/account.h"
 
 namespace {
@@ -280,5 +280,5 @@ AuthClient::CreateRequest(
   request->SetFlags(UR_FLAG_SKIP_CACHE|UR_FLAG_NO_RETRY_ON_5XX|UR_FLAG_STOP_ON_REDIRECT);
 
   // Create and start the new CefURLRequest.
-  return CefURLRequest::Create(request, new AuthClient(callback, url));
+  return CefURLRequest::Create(request, new AuthClient(callback, url), NULL);
 }
