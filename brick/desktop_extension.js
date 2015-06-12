@@ -144,7 +144,7 @@ var BrickApp = {
   openWindow: function(name, callback) {
     var windowId = 'window' + Math.random();
     var windowHandle = window.open(
-        '/desktop_app/internals/pages/web/empty?#name=' + name + '&id=' + windowId,
+        '/desktop_app/internals/web/pages/empty?#name=' + name + '&id=' + windowId,
         name,
         // default popup sizes from Bitrix im.js
         'width=567,height=335,resizable=no'
