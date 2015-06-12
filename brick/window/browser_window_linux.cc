@@ -266,18 +266,14 @@ BrowserWindow::MoveResize(Position position, int width, int height) {
 void
 BrowserWindow::Stick() {
   gdk_window_set_keep_above(window_handler_, true);
-#ifndef unity
-  // Unity have strange issues with _NET_WM_STATE_STICKY. Need research and implement this feature
+  // Unity have strange issues with _NET_WM_STATE_STICKY, so be very careful
   gdk_window_stick(window_handler_);
-#endif
 }
 
 void
 BrowserWindow::UnStick() {
   gdk_window_set_keep_above(window_handler_, false);
-#ifndef unity
   gdk_window_unstick(window_handler_);
-#endif
 }
 
 CefRect
