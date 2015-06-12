@@ -10,7 +10,11 @@
 #include "brick/message_delegate/app_message_delegate.h"
 #include "brick/message_delegate/app_window_message_delegate.h"
 #include "brick/helper.h"
-#include "brick/resource_util.h"
+#include "brick/resource/resource_util.h"
+#include "brick/resource/last_resource_provider.h"
+#include "brick/resource/injected_js_resource_provider.h"
+#include "brick/resource/temporary_page_resource_provider.h"
+#include "brick/resource/desktop_media_resource_provider.h"
 #include "brick/platform_util.h"
 #include "brick/window_util.h"
 #include "brick/brick_app.h"
@@ -19,12 +23,11 @@
 namespace {
 
   CefRefPtr<ClientHandler> g_instance = NULL;
-  const char kInterceptionPath[]      = "/desktop_app/internals/";
-  const char kTemporaryPagePath[]     = "/desktop_app/internals/temp-pages/";
-  const char kInjectedJsPath[]        = "/desktop_app/internals/injected-js/";
-  const char kDesktopMediaPath[]      = "/desktop_app/internals/desktop-media/";
-
-  std::string kUnknownInternalContent = "Failed to load resource";
+  const char kResourcesPath[]         = "/desktop_app/internals/";
+  const char kWebResourcePath[]       = "/web/";
+  const char kTemporaryPagePath[]     = "/temp-pages/";
+  const char kInjectedJsPath[]        = "/injected-js/";
+  const char kDesktopMediaPath[]      = "/desktop-media/";
 
 }  // namespace
 
@@ -42,8 +45,6 @@ ClientHandler::ClientHandler()
   DCHECK(!g_instance);
   g_instance = this;
   callbackId = 0;
-  CreateProcessMessageDelegates(&process_message_delegates_);
-  RegisterSystemEventListeners();
 }
 
 ClientHandler::~ClientHandler() {
@@ -54,6 +55,14 @@ ClientHandler::~ClientHandler() {
 CefRefPtr<ClientHandler>
 ClientHandler::GetInstance() {
   return g_instance;
+}
+
+bool
+ClientHandler::Initialize() {
+  CreateProcessMessageDelegates(&process_message_delegates_);
+  RegisterSystemEventListeners();
+  SetupResourceManager();
+  return true;
 }
 
 void
@@ -166,7 +175,7 @@ ClientHandler::OnLoadError(CefRefPtr<CefBrowser> browser,
 
   LOG(INFO) << "Failed to load URL:" << error_explain.str();
 
-  frame->LoadURL(GetAccountManager()->GetCurrentAccount()->GetBaseUrl() + "internals/pages/offline");
+  frame->LoadURL(GetAccountManager()->GetCurrentAccount()->GetBaseUrl() + "internals/web/pages/offline");
 }
 
 void
@@ -196,7 +205,9 @@ ClientHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser,
     std::string url;
     auto it = app_settings_.client_scripts.begin();
     for (; it != app_settings_.client_scripts.end(); ++it) {
-      url = kInjectedJsPath;
+      url = kResourcesPath;
+      // Without trailing slash
+      url.append(kInjectedJsPath, 1, sizeof(kInjectedJsPath) - 1);
       url.append(it->first);
       injected_js.append("'" + url +"',");
     }
@@ -378,6 +389,22 @@ ClientHandler::OnBeforeBrowse(CefRefPtr<CefBrowser> browser,
   return false;
 }
 
+cef_return_value_t
+ClientHandler::OnBeforeResourceLoad(
+    CefRefPtr<CefBrowser> browser,
+    CefRefPtr<CefFrame> frame,
+    CefRefPtr<CefRequest> request,
+    CefRefPtr<CefRequestCallback> callback) {
+  CEF_REQUIRE_IO_THREAD();
+
+  std::string url = request->GetURL();
+  if (url.find(kResourcesPath) == std::string::npos)
+    return RV_CONTINUE;
+
+  return resource_manager_->OnBeforeResourceLoad(browser, frame, request,
+                                                 callback);
+}
+
 CefRefPtr<CefResourceHandler>
 ClientHandler::GetResourceHandler(
     CefRefPtr<CefBrowser> browser,
@@ -385,75 +412,11 @@ ClientHandler::GetResourceHandler(
     CefRefPtr<CefRequest> request) {
   CEF_REQUIRE_IO_THREAD();
 
-  // ToDo: move to new DataProviders: https://bitbucket.org/chromiumembedded/cef/issue/1640/add-new-cefresourcemanager-class-for
   std::string url = request->GetURL();
-  if (url.find(kInterceptionPath) == std::string::npos)
+  if (url.find(kResourcesPath) == std::string::npos)
     return NULL;
 
-  // Handle URLs in interception path
-  std::string file_name, mime_type;
-  if (helper::ParseUrl(url, &file_name, &mime_type)) {
-    CefRefPtr<CefStreamReader> stream = NULL;
-
-    if (file_name.find(kInjectedJsPath) == 0 ) {
-      // Special logic for client injected JS
-      file_name = file_name.substr(strlen(kInjectedJsPath));
-      if (app_settings_.client_scripts.count(file_name)) {
-        // If we found our client script - load it :)
-        file_name = app_settings_.client_scripts[file_name];
-        stream = GetBinaryFileReader(file_name);
-      }
-
-    } else if (file_name.find(kDesktopMediaPath) == 0) {
-      // Special logic for desktop (window) preview
-      mime_type = "image/png";
-      size_t delimiter = file_name.find('-', sizeof(kDesktopMediaPath) - 1);
-      if (delimiter != std::string::npos) {
-        std::string type = file_name.substr(sizeof(kDesktopMediaPath) - 1, delimiter - sizeof(kDesktopMediaPath) + 1);
-        int id = atoi(file_name.substr(delimiter + 1).c_str());
-        std::vector<unsigned char> preview;
-        if (desktop_media::GetMediaPreview(type, id, &preview)) {
-          stream = CefStreamReader::CreateForData(
-              static_cast<void*>(preview.data()),
-              preview.size()
-          );
-          preview.clear();
-        }
-      }
-
-    } else if (file_name.find(kTemporaryPagePath) == 0 ) {
-      // Special logic for runtime pages
-      file_name = file_name.substr(strlen(kTemporaryPagePath));
-      if (temporary_page_map_.count(file_name)) {
-        std::string content = temporary_page_map_[file_name];
-        temporary_page_map_.erase(file_name);
-        stream = CefStreamReader::CreateForData(
-            static_cast<void*>(const_cast<char*>(content.c_str())),
-            content.size()
-        );
-      }
-
-    } else {
-      file_name = file_name.substr(strlen(kInterceptionPath) - 1);
-      // Load the resource from file.
-      stream = GetBinaryResourceReader(app_settings_.resource_dir, file_name.c_str());
-    }
-
-    if (stream.get())
-      return new CefStreamResourceHandler(mime_type, stream);
-  }
-
-  LOG(WARNING) << "Intercepted resource \"" << url << "\" was not found.";
-  // Never let the internal links walk on the external world
-  CefResponse::HeaderMap header_map;
-  CefRefPtr<CefStreamReader> stream =
-     CefStreamReader::CreateForData(
-        static_cast<void*>(const_cast<char*>(kUnknownInternalContent.c_str())),
-        kUnknownInternalContent.size()
-     );
-
-  ASSERT(stream.get());
-  return new CefStreamResourceHandler(404, "Not Found", "text/plain", header_map, stream);
+  return resource_manager_->GetResourceHandler(browser, frame, request);
 }
 
 bool
@@ -605,7 +568,7 @@ ClientHandler::SwitchAccount(int id) {
   temporary_page_map_.clear();
   account_manager_->SwitchAccount(id);
   browser_->GetMainFrame()->LoadURL(
-     account_manager_->GetCurrentAccount()->GetBaseUrl() + "internals/pages/portal-loader#login=yes"
+     account_manager_->GetCurrentAccount()->GetBaseUrl() + "internals/web/pages/portal-loader#login=yes"
   );
   account_manager_->Commit();
 }
@@ -662,12 +625,36 @@ ClientHandler::RegisterSystemEventListeners() {
 
 std::string
 ClientHandler::AddTemporaryPage(const std::string& content) {
-  std::string url = kTemporaryPagePath;
+  std::string url = kResourcesPath;
+  // Without trailing slash
+  url.append(kTemporaryPagePath, 1, sizeof(kTemporaryPagePath) - 1);
   std::string pageId = std::to_string(++last_temporary_page_) + ".html";
   url.append(pageId);
   temporary_page_map_[pageId] = content;
 
   return url;
+}
+
+void
+ClientHandler::SetupResourceManager() {
+  resource_manager_ = new CefResourceManager();
+  // Add the URL filter.
+  resource_manager_->SetUrlFilter(base::Bind(resource_util::UrlToResourcePath));
+
+  // Desktop media preview (screen or window).
+  resource_manager_->AddProvider(new DesktopMediaResourceProvider(kDesktopMediaPath), 97, "");
+
+  // Temporary (or runtime) pages. Mostly used by topmost windows.
+  resource_manager_->AddProvider(new TemporaryPageResourceProvider(kTemporaryPagePath, &temporary_page_map_), 98, "");
+
+  // Read client scripts from config
+  resource_manager_->AddProvider(new InjectedJsResourceProvider(kInjectedJsPath, &app_settings_.client_scripts), 99, "");
+
+  // Read resources from a directory on disk.
+  resource_manager_->AddDirectoryProvider(kWebResourcePath, app_settings_.resource_dir + "/web/", 100, "");
+
+  // Never let the internal links walk on the external world
+  resource_manager_->AddProvider(new LastResourceProvider, 1000, "");
 }
 
 // static

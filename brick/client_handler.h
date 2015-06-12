@@ -9,15 +9,16 @@
 #include <list>
 #include <map>
 #include <set>
+
+#include "include/wrapper/cef_resource_manager.h"
+#include "include/cef_client.h"
+
 #include "brick/common/app_settings.h"
 #include "brick/window/window_features.h"
 #include "brick/window/browser_window.h"
 #include "brick/event/user_away_event.h"
 #include "brick/event/sleep_event.h"
 #include "brick/indicator/indicator.h"
-
-#include "include/cef_client.h"
-
 #include "brick/cache_manager.h"
 #include "brick/command_callbacks.h"
 #include "brick/account_manager.h"
@@ -35,6 +36,10 @@ class ClientHandler : public CefClient,
                       public EventHandler<UserAwayEvent>,
                       public EventHandler<SleepEvent> {
  public:
+
+  // Temporary (or runtime, what your like) page storage definition
+  typedef std::map<std::string, std::string> TemporaryPageMap;
+
   // Interface for process message delegates. Do not perform work in the
   // RenderDelegate constructor.
   class ProcessMessageDelegate : public virtual CefBase {
@@ -70,6 +75,8 @@ class ClientHandler : public CefClient,
 
   ClientHandler();
   ~ClientHandler();
+
+  bool Initialize();
 
   void SetCacheManager(CefRefPtr<CacheManager> cache_manager);
   CefRefPtr<CacheManager> GetCacheManager() const;
@@ -178,6 +185,11 @@ class ClientHandler : public CefClient,
      CefRefPtr<CefFrame> frame,
      CefRefPtr<CefRequest> request,
      bool is_redirect) OVERRIDE;
+  cef_return_value_t OnBeforeResourceLoad(
+      CefRefPtr<CefBrowser> browser,
+      CefRefPtr<CefFrame> frame,
+      CefRefPtr<CefRequest> request,
+      CefRefPtr<CefRequestCallback> callback) OVERRIDE;
   virtual CefRefPtr<CefResourceHandler> GetResourceHandler(
      CefRefPtr<CefBrowser> browser,
      CefRefPtr<CefFrame> frame,
@@ -237,6 +249,10 @@ class ClientHandler : public CefClient,
   void PreventShutdown();
 
  protected:
+
+  // Set up the resource manager.
+  void SetupResourceManager();
+
   // Create all of ProcessMessageDelegate objects.
   static void CreateProcessMessageDelegates(
      ProcessMessageDelegateSet *delegates);
@@ -283,7 +299,6 @@ class ClientHandler : public CefClient,
 
   AppSettings app_settings_;
 
-  typedef std::map<std::string, std::string> TemporaryPageMap;
   TemporaryPageMap temporary_page_map_;
   int32 last_temporary_page_;
 
@@ -292,6 +307,9 @@ class ClientHandler : public CefClient,
 #ifdef __linux__
   guint shutdown_timer_id_;
 #endif
+
+  // Manages the registration and delivery of resources.
+  CefRefPtr<CefResourceManager> resource_manager_;
 
   // Include the default reference counting implementation.
 IMPLEMENT_REFCOUNTING(ClientHandler);

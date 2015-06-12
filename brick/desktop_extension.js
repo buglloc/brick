@@ -44,7 +44,7 @@ var BrickApp = {
 
     onFailure = onFailure || (function(error_code, reason) {
       window.location.href =
-          '/desktop_app/internals/pages/login-failed#' +
+          '/desktop_app/internals/web/pages/login-failed#' +
           '&code=' + error_code +
           '&reason=' + encodeURIComponent(reason)
       ;
@@ -78,7 +78,7 @@ var BrickApp = {
     AppExChangeTooltip(null, text);
   },
   loader: function(login) {
-    window.location.href = '/desktop_app/internals/pages/portal-loader' + (login? '#login=yes': '');
+    window.location.href = '/desktop_app/internals/web/pages/portal-loader' + (login? '#login=yes': '');
   },
   setIdleIndicator: function(type) {
     native function AppExSetIdleIndicator();
@@ -144,7 +144,7 @@ var BrickApp = {
   openWindow: function(name, callback) {
     var windowId = 'window' + Math.random();
     var windowHandle = window.open(
-        '/desktop_app/internals/pages/empty?#name=' + name + '&id=' + windowId,
+        '/desktop_app/internals/pages/web/empty?#name=' + name + '&id=' + windowId,
         name,
         // default popup sizes from Bitrix im.js
         'width=567,height=335,resizable=no'
@@ -472,6 +472,12 @@ BXDesktopSystem.ExecuteCommand = function(command, params) {
       BrickApp.browse(params);
       break;
     case 'topmost.show.html':
+      if (params.includes('BXIM.webrtc.callFloatDialog')) {
+        // Disable call float window, because it's so strange...
+        // Wait until it has been implemented on IM side
+        break;
+      }
+
       // Fast&Ugly hack for non UTF-8 portals. Strange but they may set not UTF-8 encoding for the UTF-8 content
       var html = params.replace(/text\/html;\s?charset=[a-zA-Z0-9-]+/, 'text/html;charset=UTF-8');
       BrickApp.openTopmostWindow(html, function (newWindow) {

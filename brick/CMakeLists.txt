@@ -43,8 +43,8 @@ set(BRICK_SRCS
   command_callbacks.h
   helper.h
   helper.cc
-  resource_util.h
-  resource_util_posix.cc
+  resource/resource_util.h
+  resource/resource_util_posix.cc
   window_util.h
   notification_manager.h
   notification_manager.cc
@@ -59,6 +59,13 @@ set(BRICK_SRCS
   avatar_client.h
   avatar_client.cc
   desktop_media.h
+  resource/injected_js_resource_provider.h
+  resource/injected_js_resource_provider.cc
+  resource/last_resource_provider.h
+  resource/last_resource_provider.cc
+  resource/temporary_page_resource_provider.h
+  resource/temporary_page_resource_provider.cc
+  resource/desktop_media_resource_provider.h
   )
 set(BRICK_COMMON_SRCS
   common/app_settings.cc
@@ -77,6 +84,7 @@ set(BRICK_SRCS_LINUX
   notification_manager_linux.cc
   platform_util_linux.cc
   desktop_media_linux.cc
+  resource/desktop_media_resource_provider_linux.cc
   )
 set(BRICK_EXTENSIONS_SRCS
   v8_handler.cc

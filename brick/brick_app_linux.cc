@@ -278,13 +278,15 @@ int main(int argc, char* argv[]) {
   brick_indicator->UseExtendedStatus(app_settings.extended_status);
   client_handler->SetIndicatorHandle(brick_indicator);
 
+  client_handler->Initialize();
+
   std::string startup_url = account_manager->GetCurrentAccount()->GetBaseUrl();
   if (account_manager->GetCurrentAccount()->IsExisted()) {
     // Login to our account
-    startup_url += "internals/pages/portal-loader#login=yes";
+    startup_url += "internals/web/pages/portal-loader#login=yes";
   } else {
     // Otherwise let's show error page
-    startup_url += "internals/pages/home";
+    startup_url += "internals/web/pages/home";
   }
 
   // Setup main window size & positions
