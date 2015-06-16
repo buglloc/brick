@@ -145,9 +145,9 @@ namespace {
   }
 
   bool
-  OnDelete(GtkWidget* widget, EditAccountWindow *self) {
+  OnDestroy(GtkWidget *widget, EditAccountWindow *self) {
     self->CancelAuthPending();
-
+    self->Release();
     // Allow the close.
     return FALSE;
   }
@@ -165,6 +165,7 @@ EditAccountWindow::Init(CefRefPtr<Account> account, bool switch_on_save) {
     g_error_free (error);
   }
 
+  AddRef();
   window_objects_.account = account;
   window_objects_.switch_on_save = switch_on_save;
   window_handler_ = GTK_WIDGET(gtk_builder_get_object(builder, "edit_account_dialog"));
@@ -177,7 +178,7 @@ EditAccountWindow::Init(CefRefPtr<Account> account, bool switch_on_save) {
   window_objects_.save_button = GTK_BUTTON(gtk_builder_get_object(builder, "save_button"));
   window_objects_.cancel_button = GTK_BUTTON(gtk_builder_get_object(builder, "cancel_button"));
 
-  g_signal_connect(GTK_OBJECT(window_objects_.window), "delete_event", G_CALLBACK(OnDelete), this);
+  g_signal_connect(GTK_OBJECT(window_objects_.window), "destroy", G_CALLBACK(OnDestroy), this);
   g_signal_connect(window_objects_.save_button, "clicked", G_CALLBACK(OnSave), this);
   g_signal_connect(window_objects_.cancel_button, "clicked", G_CALLBACK(OnCancel), this);
 
