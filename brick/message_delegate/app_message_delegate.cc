@@ -6,6 +6,7 @@
 
 #include "include/base/cef_bind.h"
 #include "include/wrapper/cef_closure_task.h"
+#include "brick/brick_app.h"
 #include "brick/window/edit_account_window.h"
 #include "brick/helper.h"
 #include "brick/notification_manager.h"
@@ -116,6 +117,9 @@ AppMessageDelegate::OnProcessMessageReceived(
       std::string url = request_args->GetString(1);
       if (url == kCurrentPortalId) {
         url = ClientHandler::GetInstance()->GetAccountManager()->GetCurrentAccount()->GetBaseUrl();
+        // BXD_API_VERSION is mandatory for stable IM work
+        url += "?BXD_API_VERSION=" JS_API_VERSION;
+        // ToDo: send user language as user_lang parameter
       }
 
       if (
