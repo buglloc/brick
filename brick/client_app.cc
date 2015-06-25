@@ -161,6 +161,8 @@ std::string ClientApp::GetExtensionJSSource() {
 void
 ClientApp::OnBeforeCommandLineProcessing(const CefString& process_type, CefRefPtr<CefCommandLine> command_line) {
   command_line->AppendSwitch("enable-media-stream");
+  // After update to CEF3 2357 we have some strange issues with GPU-procceses. Try to temporary disable it...
+  command_line->AppendSwitch("disable-gpu");
   if (!command_line->HasSwitch("force-device-scale-factor") && device_scale_factor_ > 1.0) {
     // Chromium hack for HiDPI "supporting", https://code.google.com/p/chromium/issues/detail?id=143619
     // ToDo: Recheck this ugly solution, when Brick reached Chromium 43+
