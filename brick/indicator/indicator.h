@@ -8,7 +8,6 @@
 
 #ifdef unity
 #include <unity.h>
-#include <libappindicator/app-indicator.h>
 #else
 #include "gtk/gtk.h"
 #endif
@@ -17,6 +16,8 @@
 
 #include <string>
 #include "include/cef_base.h"
+#include "brick/brick_app.h"
+#include "brick/indicator/base_icon.h"
 #include "brick/event/account_switch_event.h"
 #include "brick/event/account_list_event.h"
 #include "brick/event/event_handler.h"
@@ -27,20 +28,10 @@ class BrickIndicator : public CefBase,
                    public EventHandler<AccountSwitchEvent> {
 
  public:
-  enum Icon {
-    DEFAULT = 0,
-    OFFLINE,
-    ONLINE,
-    DND,
-    AWAY,
-    FLASH,
-    FLASH_IMPORTANT
-  };
-
   explicit BrickIndicator(std::string icons_dir);
 
-  void SetIdleIcon(Icon icon);
-  void SetIcon(Icon icon);
+  void SetIdleIcon(BrickApp::StatusIcon icon);
+  void SetIcon(BrickApp::StatusIcon icon);
   void SetTooltip(const char* text);
   void SetBadge(int badge, bool is_important = false);
   // Platform specific methods
@@ -63,26 +54,19 @@ class BrickIndicator : public CefBase,
 
  protected:
   void RegisterEventListeners();
-  std::string GetIconPath(Icon icon);
-  std::string GetIconName(Icon icon);
   void SwitchToIdle();
 
  private:
-  Icon current_icon_;
-  Icon idle_icon_;
+  BrickApp::StatusIcon current_icon_;
+  BrickApp::StatusIcon idle_icon_;
   std::string icons_folder_;
   bool idle_;
   bool extended_status_;
-#if defined(__linux__)
-
+  CefRefPtr<BaseIcon> icon_;
 #ifdef unity
-  AppIndicator *icon_handler_;
   UnityLauncherEntry *launcher_handler_;
-#else
-  GtkStatusIcon* icon_handler_;
 #endif
 
-#endif
 IMPLEMENT_REFCOUNTING(BrickIndicator);
 };
 

@@ -12,6 +12,9 @@
 
 namespace {
 
+  // The KDE session version environment variable used in KDE 4.
+  const char kKDE4SessionEnvVar[] = "KDE_SESSION_VERSION";
+
   // Set the calling thread's signal mask to new_sigmask and return
   // the previous signal mask.
   sigset_t
@@ -140,6 +143,78 @@ namespace platform_util {
     }
 
     return true;
+  }
+
+  bool
+  GetEnv(const char* variable_name, std::string* result) {
+    const char *env_value = getenv(variable_name);
+
+    if (!env_value)
+      return false;
+
+    // Note that the variable may be defined but empty.
+    if (result)
+      *result = env_value;
+
+    return true;
+  }
+
+  bool
+  HasEnv(const char* variable_name) {
+    return GetEnv(variable_name, NULL);
+  }
+
+  DesktopEnvironment
+  GetDesktopEnvironment() {
+    // XDG_CURRENT_DESKTOP is the newest standard circa 2012.
+    std::string xdg_current_desktop;
+    if (GetEnv("XDG_CURRENT_DESKTOP", &xdg_current_desktop)) {
+      // Not all desktop environments set this env var as of this writing.
+      if (xdg_current_desktop == "Unity") {
+        // gnome-fallback sessions set XDG_CURRENT_DESKTOP to Unity
+        // DESKTOP_SESSION can be gnome-fallback or gnome-fallback-compiz
+        std::string desktop_session;
+        if (GetEnv("DESKTOP_SESSION", &desktop_session) &&
+            desktop_session.find("gnome-fallback") != std::string::npos) {
+          return DESKTOP_ENVIRONMENT_GNOME;
+        }
+        return DESKTOP_ENVIRONMENT_UNITY;
+      } else if (xdg_current_desktop == "GNOME") {
+        return DESKTOP_ENVIRONMENT_GNOME;
+      } else if (xdg_current_desktop == "KDE") {
+        return DESKTOP_ENVIRONMENT_KDE;
+      }
+    }
+
+    // DESKTOP_SESSION was what everyone used in 2010.
+    std::string desktop_session;
+    if (GetEnv("DESKTOP_SESSION", &desktop_session)) {
+      if (desktop_session == "gnome" || desktop_session =="mate") {
+        return DESKTOP_ENVIRONMENT_GNOME;
+      } else if (desktop_session == "kde4" || desktop_session == "kde-plasma") {
+        return DESKTOP_ENVIRONMENT_KDE;
+      } else if (desktop_session == "kde") {
+        // This may mean KDE4 on newer systems, so we have to check.
+        if (HasEnv(kKDE4SessionEnvVar))
+          return DESKTOP_ENVIRONMENT_KDE;
+        return DESKTOP_ENVIRONMENT_KDE_OLD;
+      } else if (desktop_session.find("xfce") != std::string::npos ||
+                 desktop_session == "xubuntu") {
+        return DESKTOP_ENVIRONMENT_XFCE;
+      }
+    }
+
+    // Fall back on some older environment variables.
+    // Useful particularly in the DESKTOP_SESSION=default case.
+    if (HasEnv("GNOME_DESKTOP_SESSION_ID")) {
+      return DESKTOP_ENVIRONMENT_GNOME;
+    } else if (HasEnv("KDE_FULL_SESSION")) {
+      if (HasEnv(kKDE4SessionEnvVar))
+        return DESKTOP_ENVIRONMENT_KDE;
+      return DESKTOP_ENVIRONMENT_KDE_OLD;
+    }
+
+    return DESKTOP_ENVIRONMENT_OTHER;
   }
 
 }  // namespace platform_util

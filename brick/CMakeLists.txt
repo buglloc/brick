@@ -101,9 +101,15 @@ set(BRICK_RESOURCE_SRCS_LINUX
 set(BRICK_STATUS_ICON_SRCS
   indicator/indicator.cc
   indicator/indicator.h
+  indicator/base_icon.h
+  indicator/base_icon.cc
   )
 set(BRICK_STATUS_ICON_SRCS_LINUX
   indicator/indicator_linux.cc
+  indicator/gtk2_status_icon.h
+  indicator/gtk2_status_icon.cc
+  indicator/app_indicator_icon.h
+  indicator/app_indicator_icon.cc
   )
 set(BRICK_WINDOWS_SRCS
   window/base_window.h
@@ -239,13 +245,13 @@ endforeach(FILENAME)
 
 FIND_LINUX_LIBRARIES("gmodule-2.0 gtk+-2.0 gthread-2.0 libnotify xscrnsaver cairo")
 if (UNITY)
-  FIND_LINUX_LIBRARIES("unity appindicator-0.1")
+  FIND_LINUX_LIBRARIES("unity")
 endif()
 
 # Executable target.
 add_executable(${CEF_TARGET} ${BRICK_SRCS} ${BRICK_EMBED_FILES})
 add_dependencies(${CEF_TARGET} libcef_dll_wrapper)
-target_link_libraries(${CEF_TARGET} libcef_lib libcef_dll_wrapper ${CEF_STANDARD_LIBS})
+target_link_libraries(${CEF_TARGET} libcef_lib libcef_dll_wrapper ${CEF_STANDARD_LIBS} ${CMAKE_DL_LIBS})
 install(
     TARGETS
         brick

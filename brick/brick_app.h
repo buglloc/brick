@@ -22,6 +22,17 @@
 class BrickApp : public CefBase {
 
  public:
+ // ToDo: What are hell??!!
+  enum StatusIcon {
+   DEFAULT = 0,
+   OFFLINE,
+   ONLINE,
+   DND,
+   AWAY,
+   FLASH,
+   FLASH_IMPORTANT
+  };
+
   static CefBrowserSettings GetBrowserSettings(std::string work_dir, AppSettings app_settings);
   static CefSettings GetCefSettings(std::string work_dir, AppSettings app_settings);
   static std::string GetUserConfig();

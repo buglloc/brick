@@ -3,7 +3,7 @@
 #include "brick/brick_app.h"
 
 #include <unistd.h>
-#include <gdk/gdkx.h>
+#include <gtk/gtk.h>
 #include <sys/file.h>
 #include <sys/stat.h>
 #include <X11/Xlib.h>

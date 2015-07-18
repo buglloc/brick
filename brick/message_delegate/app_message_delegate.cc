@@ -181,7 +181,7 @@ AppMessageDelegate::OnProcessMessageReceived(
   } else if (message_name == kMessageSetIdleIndicatorName) {
     // Parameters:
     //  0: int32 - callback id
-    //  1: string - status from BrickIndicator::Icon
+    //  1: string - status from BrickApp::StatusIcon
 
     if (
        request_args->GetSize() != 2
@@ -194,20 +194,20 @@ AppMessageDelegate::OnProcessMessageReceived(
       std::string status = request_args->GetString(1);
 
       if (status == kIndicatorOnlineName) {
-        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIdleIcon(BrickIndicator::Icon::ONLINE);
+        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIdleIcon(BrickApp::StatusIcon::ONLINE);
       } else if (status == kIndicatorDndName) {
-        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIdleIcon(BrickIndicator::Icon::DND);
+        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIdleIcon(BrickApp::StatusIcon::DND);
       } else if (status == kIndicatorAwayName) {
-        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIdleIcon(BrickIndicator::Icon::AWAY);
+        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIdleIcon(BrickApp::StatusIcon::AWAY);
       } else if (status == kIndicatorOfflineName) {
-        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIdleIcon(BrickIndicator::Icon::OFFLINE);
+        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIdleIcon(BrickApp::StatusIcon::OFFLINE);
       }
     }
 
   } else if (message_name == kMessageSetIndicatorName) {
     // Parameters:
     //  0: int32 - callback id
-    //  1: string - status from BrickIndicator::Icon
+    //  1: string - status from BrickApp::StatusIcon
 
     if (
        request_args->GetSize() != 2
@@ -220,17 +220,17 @@ AppMessageDelegate::OnProcessMessageReceived(
       std::string status = request_args->GetString(1);
 
       if (status == kIndicatorOnlineName) {
-        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIcon(BrickIndicator::Icon::ONLINE);
+        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIcon(BrickApp::StatusIcon::ONLINE);
       } else if (status == kIndicatorDndName) {
-        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIcon(BrickIndicator::Icon::DND);
+        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIcon(BrickApp::StatusIcon::DND);
       } else if (status == kIndicatorAwayName) {
-        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIcon(BrickIndicator::Icon::AWAY);
+        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIcon(BrickApp::StatusIcon::AWAY);
       } else if (status == kIndicatorOfflineName) {
-        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIcon(BrickIndicator::Icon::OFFLINE);
+        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIcon(BrickApp::StatusIcon::OFFLINE);
       } else if (status == kIndicatorFlashName) {
-        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIcon(BrickIndicator::Icon::FLASH);
+        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIcon(BrickApp::StatusIcon::FLASH);
       } else if (status == kIndicatorFlashImportantName) {
-        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIcon(BrickIndicator::Icon::FLASH_IMPORTANT);
+        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIcon(BrickApp::StatusIcon::FLASH_IMPORTANT);
       }
     }
 

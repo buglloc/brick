@@ -25,6 +25,7 @@ sudo apt-get install brick-unity
 # Otherwise
 sudo apt-get install brick
 ```
+if you are using KDE4/5 your may want to install `libappindicator`
 
 ### AUR for Arch Linux
 You can install Brick from AUR [https://aur.archlinux.org/packages/brick/](https://aur.archlinux.org/packages/brick/):
@@ -40,7 +41,9 @@ Or you can build Brick from sources:
 sudo apt-get install build-essential cmake
 sudo apt-get install libgtk2.0-dev libudev1 libnss3 libgconf-2-4 libnotify-dev libxss-dev
 # Install this only if you are using Unity
-sudo apt-get install libappindicator-dev libunity-dev
+sudo apt-get install libunity-dev
+```
+if you are using KDE4/5 your may want to install `libappindicator`
 
 # Let's make it
 mkdir ~/tmp && cd ~/tmp

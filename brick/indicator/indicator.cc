@@ -9,58 +9,24 @@
 #include "brick/window/accounts_window.h"
 #include "brick/event/indicator_badge_event.h"
 
-namespace {
-
-    const char *const icon_names_[] = {
-       "offline",
-       "offline",
-       "online",
-       "dnd",
-       "away",
-       "flash",
-       "flash-important"
-    };
-
-    const char *const icon_files_[] = {
-       "offline.svg",
-       "offline.svg",
-       "online.svg",
-       "dnd.svg",
-       "away.svg",
-       "flash.svg",
-       "flash-important.svg"
-    };
-
-}  // namespace
-
 BrickIndicator::BrickIndicator(std::string icons_dir)
-    : current_icon_(Icon::DEFAULT),
-     idle_icon_(Icon::DEFAULT),
+    : current_icon_(BrickApp::StatusIcon::DEFAULT),
+     idle_icon_(BrickApp::StatusIcon::DEFAULT),
      icons_folder_(icons_dir),
      idle_(true),
      extended_status_(true),
-     icon_handler_(NULL) {
+     icon_(NULL) {
 
   Init();
-}
-
-std::string
-BrickIndicator::GetIconPath(Icon icon) {
-  return icons_folder_ + icon_files_[icon];
-}
-
-std::string
-BrickIndicator::GetIconName(Icon icon) {
-  return icon_names_[icon];
 }
 
 void
 BrickIndicator::SetBadge(int badge, bool is_important) {
   if (badge > 0) {
     if (is_important) {
-        SetIcon(Icon::FLASH_IMPORTANT);
+        SetIcon(BrickApp::StatusIcon::FLASH_IMPORTANT);
     } else {
-        SetIcon(Icon::FLASH);
+        SetIcon(BrickApp::StatusIcon::FLASH);
     }
 #ifdef unity
     // Parts of simple Unity integration - let's set badge in launcher!
@@ -129,8 +95,8 @@ BrickIndicator::OnMenuChangeAccount(int id) {
   if (account_manager->GetCurrentAccount()->GetId() == id)
     return true;  // Selected current account
 
-  SetIdleIcon(Icon::DEFAULT);
-  SetIcon(Icon::DEFAULT);
+  SetIdleIcon(BrickApp::StatusIcon::DEFAULT);
+  SetIcon(BrickApp::StatusIcon::DEFAULT);
   client_handler->SwitchAccount(id);
 
   return true;
@@ -139,7 +105,7 @@ BrickIndicator::OnMenuChangeAccount(int id) {
 void
 BrickIndicator::SwitchToIdle() {
   idle_ = true;
-  SetIcon((Icon) idle_icon_);
+  SetIcon((BrickApp::StatusIcon) idle_icon_);
 }
 
 void

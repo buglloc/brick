@@ -10,6 +10,8 @@
 #include "brick/account_manager.h"
 #include "brick/client_handler.h"
 #include "brick/brick_app.h"
+#include "brick/indicator/app_indicator_icon.h"
+#include "brick/indicator/gtk2_status_icon.h"
 
 namespace {
 
@@ -21,8 +23,6 @@ namespace {
     self->OnClick();
   }
 
-#ifdef unity
-#else
   void
   status_icon_popup(GtkWidget *status_icon, guint button, guint32 activate_time, BrickIndicator *self) {
     if (self->OnPopup())
@@ -31,7 +31,7 @@ namespace {
     gtk_widget_show_all(menu);
     gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, status_icon, button, activate_time);
   }
-#endif
+
   void
   menu_about(GtkMenuItem *item, BrickIndicator *self) {
     self->OnMenuAbout();
@@ -61,16 +61,7 @@ namespace {
 void
 BrickIndicator::Init() {
 #ifdef unity
-  icon_handler_ = app_indicator_new(
-          "brick",
-          "indicator-messages",
-          APP_INDICATOR_CATEGORY_APPLICATION_STATUS
-  );
   launcher_handler_ = unity_launcher_entry_get_for_desktop_id(APP_COMMON_NAME ".desktop");
-#else
-  icon_handler_ = gtk_status_icon_new();
-  g_signal_connect(icon_handler_, "activate", G_CALLBACK(status_icon_click), this);
-  g_signal_connect_swapped(icon_handler_, "popup-menu", G_CALLBACK(status_icon_popup), this);
 #endif
 
   // Create popup menu
@@ -89,28 +80,31 @@ BrickIndicator::Init() {
   g_signal_connect(G_OBJECT(quit_item), "activate", G_CALLBACK(menu_quit), NULL);
   gtk_menu_append(GTK_MENU(menu), quit_item);
 
+  if (AppIndicatorIcon::CouldOpen()) {
+    CefRefPtr<AppIndicatorIcon> icon(new AppIndicatorIcon(icons_folder_));
+    icon->SetMenu(menu, show_item);
+    icon_ = icon;
+  } else {
+    CefRefPtr<Gtk2StatusIcon> icon(new Gtk2StatusIcon(icons_folder_));
+    g_signal_connect(icon->GetHandler(), "activate", G_CALLBACK(status_icon_click), this);
+    g_signal_connect_swapped(icon->GetHandler(), "popup-menu", G_CALLBACK(status_icon_popup), this);
+    icon_ = icon;
+  }
+
   UpdateAccountsMenu();
   RegisterEventListeners();
 
-#ifdef unity
-  app_indicator_set_status(icon_handler_, APP_INDICATOR_STATUS_ACTIVE);
-  gtk_widget_show_all(menu);
-  app_indicator_set_menu(icon_handler_, GTK_MENU(menu));
-  app_indicator_set_secondary_activate_target(icon_handler_, show_item);
-  app_indicator_set_icon_theme_path(icon_handler_, icons_folder_.c_str());
-#else
-  gtk_status_icon_set_visible(icon_handler_, true);
-#endif
   SwitchToIdle();
+  icon_->Show();
 }
 
 void
-BrickIndicator::SetIdleIcon(Icon icon) {
+BrickIndicator::SetIdleIcon(BrickApp::StatusIcon icon) {
   if (extended_status_) {
     idle_icon_ = icon;
   } else {
-    if (icon > Icon::OFFLINE &&  icon < Icon::FLASH)
-      idle_icon_ = Icon::ONLINE;
+    if (icon > BrickApp::StatusIcon::OFFLINE &&  icon < BrickApp::StatusIcon::FLASH)
+      idle_icon_ = BrickApp::StatusIcon::ONLINE;
     else
       idle_icon_ = icon;
   }
@@ -120,28 +114,19 @@ BrickIndicator::SetIdleIcon(Icon icon) {
 }
 
 void
-BrickIndicator::SetIcon(Icon icon) {
-  idle_ = icon < Icon::FLASH;
+BrickIndicator::SetIcon(BrickApp::StatusIcon icon) {
+  idle_ = icon < BrickApp::StatusIcon::FLASH;
 
   current_icon_ = icon;
-#ifdef unity
-  app_indicator_set_icon(icon_handler_, GetIconName(icon).c_str());
-#else
-  gtk_status_icon_set_from_file(icon_handler_, GetIconPath(icon).c_str());
-#endif
+  icon_->SetIcon(icon);
 
-  IndicatorStateEvent e(GetIconName(icon));
+  IndicatorStateEvent e(icon_->GetIconName(icon));
   EventBus::FireEvent(e);
 }
 
 void
 BrickIndicator::SetTooltip(const char *tooltip) {
-#ifdef unity
-  app_indicator_set_title(icon_handler_, tooltip);
-#else
-  gtk_status_icon_set_tooltip_text(icon_handler_, tooltip);
-  gtk_status_icon_set_title(icon_handler_, tooltip);
-#endif
+  icon_->SetTooltip(tooltip);
 
   IndicatorTooltipEvent e(tooltip);
   EventBus::FireEvent(e);
