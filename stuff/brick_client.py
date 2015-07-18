@@ -84,6 +84,9 @@ class BrickClient(object):
     def command_user_present(self):
         self.app.UserPresent()
 
+    def command_quit(self):
+        self.app.Quit()
+
     def command_introspect(self):
         print('--==App==--\n')
         dbus_iface = dbus.Interface(self.remote_app, 'org.freedesktop.DBus.Introspectable')
@@ -109,7 +112,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         'command',
-        choices=['present', 'hide', 'toggle', 'user_away', 'user_present', 'watch', 'introspect']
+        choices=['present', 'hide', 'toggle', 'user_away', 'user_present', 'watch', 'introspect', 'quit']
     )
     args = parser.parse_args()
 

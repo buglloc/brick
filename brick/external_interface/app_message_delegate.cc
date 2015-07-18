@@ -55,7 +55,9 @@ ExternalAppMessageDelegate::OnMessageReceived(
     AccountsWindow::Instance()->Show();
 
   } else if (message_name == kMessageQuitName) {
-    CefQuitMessageLoop();
+    CefRefPtr<ClientHandler> client_handler = ClientHandler::GetInstance();
+    if (client_handler)
+      client_handler->Shutdown(false);
 
   } else if (message_name == kMessageUserAwayName) {
     UserAwayEvent e(true, true);
