@@ -27,6 +27,7 @@ namespace {
   void
   OnAction(NotifyNotification *notify, char *action, NotificationManager *self) {
     self->OnClick();
+    notify_notification_close(notify, NULL);
   }
 
 }  // namespace
