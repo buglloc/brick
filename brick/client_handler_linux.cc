@@ -2,6 +2,8 @@
 
 #include "brick/client_handler.h"
 
+#include <gtk/gtk.h>
+
 #include "include/cef_app.h"
 #include "include/wrapper/cef_helpers.h"
 #include "brick/window_util.h"
