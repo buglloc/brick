@@ -32,7 +32,7 @@ You can install Brick from AUR [https://aur.archlinux.org/packages/brick/](https
 ```bash
 yaourt -S brick
 ```
-Brick for Unity doesn't supported so far. May be later:)
+Brick for Unity isn't supported so far. May be later:)
 
 ### Build manualy
 Or you can build Brick from sources:
