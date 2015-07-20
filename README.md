@@ -42,8 +42,6 @@ sudo apt-get install build-essential cmake
 sudo apt-get install libgtk2.0-dev libudev1 libnss3 libgconf-2-4 libnotify-dev libxss-dev
 # Install this only if you are using Unity
 sudo apt-get install libunity-dev
-```
-if you are using KDE4/5 your may want to install `libappindicator`
 
 # Let's make it
 mkdir ~/tmp && cd ~/tmp
@@ -56,6 +54,7 @@ sudo make install
 # And run it!
 brick
 ```
+if you are using KDE4/5 your may want to install `libappindicator`
 
 ##  Contributing
 
