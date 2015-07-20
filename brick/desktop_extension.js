@@ -536,6 +536,8 @@ BXDesktopSystem.GetProperty = function GetProperty(property) {
       return version.split('.');
     case 'version':
       return version;
+    case 'autostart':
+      return false;
     default:
       BrickHelper.implementMe('BXDesktopSystem.GetProperty', arguments);
   }
