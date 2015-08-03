@@ -4,6 +4,7 @@
 
 #include <gdk/gdk.h>
 #include <gdk/gdkx.h>
+#include <sys/time.h>
 
 #include "include/base/cef_logging.h"
 #include "brick/window_util.h"
@@ -165,9 +166,11 @@ BrowserWindow::ToggleVisibility() {
 
 void
 BrowserWindow::SetActive() {
-  gdk_window_focus(window_handler_,
-    gdk_x11_display_get_user_time(gdk_window_get_display(window_handler_))
-  );
+  // ToDo: Ugly hack for deals with KDE Focus stealing
+  // maybe better to use gdk_x11_display_get_user_time(gdk_window_get_display(window_handler_)) as timestamp?
+  struct timeval now;
+  gettimeofday(&now, NULL);
+  gdk_window_focus(window_handler_, now.tv_sec);
 }
 
 bool
