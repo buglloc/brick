@@ -115,8 +115,7 @@ AppSettings::UpdateByJson(std::string json) {
 
   if (root.isMember("client_scripts")
      && root["client_scripts"].isArray()) {
-    for (unsigned int i = 0; i < root["client_scripts"].size(); ++i) {
-      const Json::Value script = root["client_scripts"][i];
+    for (auto script: root["client_scripts"]) {
 
       if (!script.isString()) {
         LOG(WARNING) << "Strange client script: " << script << "; Skipping";

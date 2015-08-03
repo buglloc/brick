@@ -31,7 +31,7 @@ DesktopMediaResourceProvider::OnRequest(scoped_refptr<CefResourceManager::Reques
     return false;
   }
 
-  size_t delimiter = url.find('-', url_path_.length());
+  std::string::size_type delimiter = url.find('-', url_path_.length());
   if (delimiter == std::string::npos) {
     return false;
   }

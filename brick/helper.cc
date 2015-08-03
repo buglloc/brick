@@ -201,7 +201,7 @@ namespace helper {
       return src;  // nothing to match against
     }
 
-    size_t idx = 0;
+    std::string::size_type idx = 0;
 
     for (;;) {
       idx = src.find(target, idx);
@@ -229,8 +229,7 @@ namespace helper {
     if (file.find("..") != std::string::npos)
       return false;
 
-    for(size_t i = 0; i < file.size(); ++i) {
-      const char c = file[i];
+    for (auto c: file) {
       if (!isalpha(c) && !isdigit(c) && c != '_' && c != '-' && c != '.' && c != '/') {
         return false;
       }

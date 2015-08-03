@@ -124,17 +124,17 @@ AccountManager::Init(std::string config_path) {
     }
 
     const Json::Value accounts = json["accounts"];
-    for(unsigned int i = 0; i < accounts.size(); ++i) {
-      CefRefPtr<Account> account(new Account);
-      account->SetLogin(accounts[i].get("login", "").asString());
-      account->SetPassword(accounts[i].get("password", "").asString());
-      account->SetSecure(accounts[i].get("secure", false).asBool());
-      account->SetDomain(accounts[i].get("domain", "").asString());
-      account->SetUseAppPassword(accounts[i].get("use_app_password", true).asBool());
+    for (auto account: accounts) {
+      CefRefPtr<Account> newAccount(new Account);
+      newAccount->SetLogin(account.get("login", "").asString());
+      newAccount->SetPassword(account.get("password", "").asString());
+      newAccount->SetSecure(account.get("secure", false).asBool());
+      newAccount->SetDomain(account.get("domain", "").asString());
+      newAccount->SetUseAppPassword(account.get("use_app_password", true).asBool());
 
-      AddAccount(account);
-      if (accounts[i].get("default", false).asBool()) {
-        SwitchAccount(account->GetId());
+      AddAccount(newAccount);
+      if (account.get("default", false).asBool()) {
+        SwitchAccount(newAccount->GetId());
       }
     }
   } else {

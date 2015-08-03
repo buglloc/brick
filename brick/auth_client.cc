@@ -34,7 +34,7 @@ namespace {
     if (body.find("captchaCode:") != std::string::npos)
       result["captchaCode"] = true;
 
-    size_t pos = body.find("appPassword: '");
+    std::string::size_type pos = body.find("appPassword: '");
     if (pos != std::string::npos) {
       pos += sizeof("appPassword: '");
       result["appPassword"] = body.substr(
