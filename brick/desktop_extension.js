@@ -578,6 +578,8 @@ BXDesktopSystem.LoginForm = function(f) {
 
 BXDesktopSystem.Logout = function(src) {
   BrickHelper.implementMe('BXDesktopSystem.Logout', arguments);
+  // I don't known what mean "Logout" in this case, so just shutdown application.
+  BXDesktopSystem.Shutdown();
 };
 
 BXDesktopSystem.GetMainWindow = function() {
