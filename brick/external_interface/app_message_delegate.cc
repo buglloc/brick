@@ -5,6 +5,7 @@
 #include <string>
 
 #include "include/cef_app.h"
+#include "third-party/json/json.h"
 #include "brick/window/accounts_window.h"
 #include "brick/window/edit_account_window.h"
 #include "brick/client_handler.h"
@@ -16,6 +17,7 @@ namespace {
   const char kMessageShowAccountsDialogName[]   = "ShowAccountsDialog";
   const char kMessageUserAwayName[]             = "UserAway";
   const char kMessageUserPresentName[]          = "UserPresent";
+  const char kMessageActionName[]               = "Action";
   const char kMessageQuitName[]                 = "Quit";
 
 }  // namespace
@@ -62,6 +64,42 @@ ExternalAppMessageDelegate::OnMessageReceived(
   } else if (message_name == kMessageUserAwayName) {
     UserAwayEvent e(true, true);
     EventBus::FireEvent(e);
+
+  } else if (message_name == kMessageActionName) {
+    // Parameters:
+    // 0: int32 - callback id
+    // 1: string - action name
+    // 2: dictionary - params
+
+    if (
+        request_args->GetSize() != 3
+        || request_args->GetType(1) != VTYPE_STRING
+        || request_args->GetType(2) != VTYPE_DICTIONARY
+        ) {
+      error = ERR_INVALID_PARAMS;
+    }
+
+    if (error == NO_ERROR) {
+      CefRefPtr<ClientHandler> client_handler = ClientHandler::GetInstance();
+      if (client_handler) {
+        Json::Value action_params(Json::objectValue);
+        CefDictionaryValue::KeyList key_list;
+        CefRefPtr<CefDictionaryValue> params = request_args->GetDictionary(2);
+        params->GetKeys(key_list);
+        for (auto key: key_list) {
+          action_params[key.ToString()] = params->GetString(key).ToString();
+        }
+
+        Json::Value event_params(Json::arrayValue);
+        event_params[0] = request_args->GetString(1).ToString();
+        event_params[1] = action_params;
+
+        std::stringstream data;
+        Json::FastWriter writer;
+        data << writer.write(event_params);
+        client_handler->SendJSEvent(client_handler->GetBrowser(), "BXProtocolUrl", data.str());
+      }
+    }
 
   } else if (message_name == kMessageQuitName) {
     UserAwayEvent e(false, true);

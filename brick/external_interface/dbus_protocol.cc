@@ -41,6 +41,10 @@ namespace {
               <arg type='i' name='badge'/>
               <arg type='b' name='important'/>
             </signal>
+            <method name='Action'>
+              <arg type='s' name='action' direction='in'/>
+              <arg type='a{ss}' name='parameters' direction='in'/>
+            </method>
           </interface>
           <interface name='org.brick.Brick.AppWindowInterface'>
             <method name='Hide' />
@@ -73,6 +77,23 @@ namespace {
       bool switch_on_save;
       g_variant_get(parameters, "(b)", &switch_on_save);
       message_args->SetBool(1, switch_on_save);
+    } else if (!g_strcmp0(method_name, "Action")) {
+      const gchar *action;
+      GVariantIter *call_params;
+      GVariant *item;
+      const gchar *key;
+      const gchar *value;
+
+      g_variant_get(parameters, "(sa{ss})", &action, &call_params);
+      CefRefPtr<CefDictionaryValue> js_params = CefDictionaryValue::Create();
+      while ((item = g_variant_iter_next_value(call_params))) {
+        g_variant_get(item, "{ss}", &key, &value);
+        js_params->SetString(key, value);
+        g_variant_unref(item);
+      }
+
+      message_args->SetString(1, action);
+      message_args->SetDictionary(2, js_params);
     }
 
     self->Handle(
@@ -252,9 +273,9 @@ void
 DBusProtocol::BringAnotherInstance() {
   GError *error = NULL;
   GVariant *result = g_dbus_connection_call_sync(session_bus_,
-     "org.brick.Brick",
-     "/org/brick/Brick/AppWindow",
-     "org.brick.Brick.AppWindowInterface",
+     kOwnName,
+     kAppWindowPath,
+     kAppWindowInterface,
      "Present",
      g_variant_new("()"),
      G_VARIANT_TYPE("()"),
