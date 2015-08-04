@@ -1,5 +1,7 @@
 [Desktop Entry]
+Encoding=UTF-8
 Name=Brick
+Comment=Bitrix24 messenger
 Type=Application
 Categories=Network;InstantMessaging;
 Exec=brick
