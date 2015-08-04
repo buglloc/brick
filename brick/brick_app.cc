@@ -3,7 +3,9 @@
 #include "brick/brick_app.h"
 
 #include <fstream>
+#include <sstream>
 
+#include "include/cef_version.h"
 #include "brick/helper.h"
 #include "brick/platform_util.h"
 
@@ -16,7 +18,13 @@ BrickApp::GetBrowserSettings(std::string work_dir, AppSettings app_settings) {
 CefSettings
 BrickApp::GetCefSettings(std::string work_dir, AppSettings app_settings) {
   CefSettings settings;
-  CefString(&settings.product_version) = CEF_PRODUCT_VERSION;
+
+  std::stringstream product_version;
+  product_version << APP_VERSION << " " << "(BitrixDesktop/3.x compatible)"
+    << " Chrome/" << cef_version_info(2) << "." << cef_version_info(3)
+    << "." << cef_version_info(4) << "." << cef_version_info(5);
+
+  CefString(&settings.product_version) = product_version.str();
 
   if (!app_settings.cache_path.empty())
     CefString(&settings.cache_path) = app_settings.cache_path;
