@@ -27,7 +27,6 @@ namespace {
   void
   OnAction(NotifyNotification *notify, char *action, NotificationManager *self) {
     self->OnClick();
-    notify_notification_close(notify, NULL);
   }
 
 }  // namespace
@@ -40,40 +39,34 @@ NotificationManager::Notify(const std::string title, std::string body, std::stri
   bool need_download = false;
   std::string notification_icon = TryGetIcon(icon, need_download);
 
-  if (notification_ == NULL || is_append_supported_) {
-    notification_ = notify_notification_new(
-       title.c_str(),
-       body.c_str(),
-       need_download || notification_icon.empty() ? GetDefaultIcon().c_str() : notification_icon.c_str()
-    );
+  if (notification_ != nullptr && !is_append_supported_) {
+    // Permanently close previous notification if server doesn't supports message appending.
+    // Due to KDE NotificationEngine logic.
+    Close();
+  };
 
-    if (is_append_supported_) {
-      notify_notification_set_hint_string(notification_, kAppendCapability, "1");
-    }
+  notification_ = notify_notification_new(
+     title.c_str(),
+     body.c_str(),
+     need_download || notification_icon.empty() ? GetDefaultIcon().c_str() : notification_icon.c_str()
+  );
 
-    if (is_actions_supported_) {
-      notify_notification_add_action(
-        notification_,
-        kDefaultActionName,
-        "Show",
-        (NotifyActionCallback) OnAction,
-        this,
-        NULL
-      );
-    }
+  if (is_append_supported_) {
+    notify_notification_set_hint_string(notification_, kAppendCapability, "1");
+  }
 
-    g_signal_connect(notification_, "closed", G_CALLBACK(OnCloseNotification), this);
-  } else {
-    /* if the notification server supports x-canonical-append, it is
-   better to not use notify_notification_update to avoid
-   overwriting the current notification message */
-    notify_notification_update(
-       notification_,
-       title.c_str(),
-       body.c_str(),
-       need_download || notification_icon.empty() ? GetDefaultIcon().c_str() : notification_icon.c_str()
+  if (is_actions_supported_) {
+    notify_notification_add_action(
+      notification_,
+      kDefaultActionName,
+      "Show",
+      (NotifyActionCallback) OnAction,
+      this,
+      NULL
     );
   }
+
+  g_signal_connect(notification_, "closed", G_CALLBACK(OnCloseNotification), this);
 
   notify_notification_set_timeout(notification_, delay);
   notify_notification_set_urgency(notification_, NOTIFY_URGENCY_NORMAL);
@@ -88,8 +81,8 @@ NotificationManager::Notify(const std::string title, std::string body, std::stri
 }
 
 void
-NotificationManager::Hide() {
-  if (notification_ == NULL)
+NotificationManager::Close() {
+  if (notification_ == nullptr)
     return;
 
   if (!notify_notification_close(notification_, NULL))
@@ -131,7 +124,7 @@ NotificationManager::GetDefaultIcon() {
 
 void
 NotificationManager::UpdateIcon(int id, std::string icon_path, bool success) {
-  if (notification_ == NULL)
+  if (notification_ == nullptr)
     return;
 
   if (!success)
