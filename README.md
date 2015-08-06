@@ -8,9 +8,18 @@ Project is currently under (rather) heavy development, so stay tuned, more featu
 
 ## Some screenshots
 
+Chat:
 ![Chat](/doc/chat.png?raw=true&v=2)
+
+Video call:
 ![Video](/doc/video.png?raw=true)
+
+System notification:
 ![Notify](/doc/notify.png?raw=true)
+
+Screen sharing (experimental):
+![Screen Sharing](/doc/screen-sharing.png?raw=true)
+
 
 ## How to install and run Brick
 
