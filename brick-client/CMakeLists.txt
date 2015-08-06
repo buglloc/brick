@@ -46,6 +46,10 @@ set_target_properties(${CEF_TARGET} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${OUT_D
 COPY_AND_INSTALL_FILES("${CEF_TARGET}" "${CEF_BINARY_FILES}" "${CEF_BINARY_DIR}" "bin")
 
 # Additional install rules
+install(
+  FILES "${CMAKE_SOURCE_DIR}/${CEF_RESOURCE_DIR}/install/brick-client/brick-client.desktop"
+  DESTINATION "${CMAKE_INSTALL_PREFIX}/${BRICK_INSTALL_DIR}"
+)
 # Create link to executable in /usr/bin
 install(DIRECTORY DESTINATION "${CMAKE_INSTALL_PREFIX}/usr/bin")
-INSTALL_SYMLINK("${CMAKE_INSTALL_PREFIX}/${BRICK_INSTALL_DIR}/brick-client" "${CMAKE_INSTALL_PREFIX}/usr/bin")
+INSTALL_SYMLINK("${CMAKE_INSTALL_PREFIX}/${BRICK_INSTALL_DIR}/bin/brick-client" "${CMAKE_INSTALL_PREFIX}/usr/bin")
