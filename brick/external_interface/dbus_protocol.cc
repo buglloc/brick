@@ -30,6 +30,10 @@ namespace {
                <arg type='b' name='switch_on_save' direction='in'/>
             </method>
             <method name='ShowAccountsDialog' />
+            <method name='Action'>
+              <arg type='s' name='action' direction='in'/>
+              <arg type='a{ss}' name='parameters' direction='in'/>
+            </method>
             <method name='Quit' />
             <signal name='IndicatorTooltipChanged'>
               <arg type='s' name='text'/>
@@ -41,10 +45,6 @@ namespace {
               <arg type='i' name='badge'/>
               <arg type='b' name='important'/>
             </signal>
-            <method name='Action'>
-              <arg type='s' name='action' direction='in'/>
-              <arg type='a{ss}' name='parameters' direction='in'/>
-            </method>
           </interface>
           <interface name='org.brick.Brick.AppWindowInterface'>
             <method name='Hide' />
