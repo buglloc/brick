@@ -1,6 +1,6 @@
 // Copyright (c) 2015 The Brick Authors.
 
-#include "brick-remote/main.h"
+#include "brick-client/main.h"
 
 #include <iostream>
 #include <sstream>
@@ -28,7 +28,7 @@ namespace {
 
 
   static const char *kUsage =
-      "Usage: brick-remote command\n";
+      "Usage: brick-client command\n";
 
   static std::map<std::string, std::string> window_commands = {
       {"present", "Present"},

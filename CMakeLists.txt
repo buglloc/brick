@@ -137,7 +137,7 @@ endif()
 
 # Project name.
 project("brick")
-project("brick-remote")
+project("brick-client")
 
 # Use folders in the resulting project files.
 set_property(GLOBAL PROPERTY OS_FOLDERS ON)
@@ -545,7 +545,7 @@ set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CEF_LINKER_FLAGS_RELEASE} ${CEF_SHARED_
 
 add_subdirectory(libcef_dll)
 add_subdirectory(brick)
-add_subdirectory(brick-remote)
+add_subdirectory(brick-client)
 
 #
 # Display configuration settings.

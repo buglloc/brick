@@ -7,14 +7,14 @@ set(BRICK_SRCS
   main.h
   )
 APPEND_PLATFORM_SOURCES(BRICK_SRCS)
-source_group(brick-remote FILES ${BRICK_SRCS})
+source_group(brick-client FILES ${BRICK_SRCS})
 
 set(BRICK_SRCS
   ${BRICK_SRCS}
   )
 
 # Target executable names.
-set(CEF_TARGET "brick-remote")
+set(CEF_TARGET "brick-client")
 
 # Determine the target output directory.
 set(OUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
@@ -32,7 +32,7 @@ add_executable(${CEF_TARGET} ${BRICK_SRCS})
 target_link_libraries(${CEF_TARGET} ${CEF_STANDARD_LIBS} ${CMAKE_DL_LIBS})
 install(
     TARGETS
-        brick-remote
+        brick-client
     RUNTIME DESTINATION
         "${CMAKE_INSTALL_PREFIX}/${BRICK_INSTALL_DIR}/bin"
 )
@@ -48,4 +48,4 @@ COPY_AND_INSTALL_FILES("${CEF_TARGET}" "${CEF_BINARY_FILES}" "${CEF_BINARY_DIR}"
 # Additional install rules
 # Create link to executable in /usr/bin
 install(DIRECTORY DESTINATION "${CMAKE_INSTALL_PREFIX}/usr/bin")
-INSTALL_SYMLINK("${CMAKE_INSTALL_PREFIX}/${BRICK_INSTALL_DIR}/brick-remote" "${CMAKE_INSTALL_PREFIX}/usr/bin")
+INSTALL_SYMLINK("${CMAKE_INSTALL_PREFIX}/${BRICK_INSTALL_DIR}/brick-client" "${CMAKE_INSTALL_PREFIX}/usr/bin")
