@@ -18,7 +18,7 @@ ExternalMessageDelegate::IsAcceptedNamespace(std::string namespace_name) {
     return false;
 
   return std::equal(
-     namespace_name.begin() + namespace_name.size() - message_namespace_.size(),
-     namespace_name.end(), message_namespace_.begin()
+     namespace_name.cbegin() + namespace_name.size() - message_namespace_.size(),
+     namespace_name.cend(), message_namespace_.cbegin()
   );
 }

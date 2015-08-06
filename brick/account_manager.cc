@@ -73,8 +73,8 @@ AccountManager::Commit() {
   Json::Value json(Json::objectValue);
   Json::Value json_accounts(Json::arrayValue);
 
-  accounts_map::iterator it = accounts_.begin();
-  for (; it != accounts_.end(); ++it) {
+  accounts_map::const_iterator it = accounts_.cbegin();
+  for (; it != accounts_.cend(); ++it) {
     CefRefPtr<Account> account = (*it).second;
     Json::Value json_account(Json::objectValue);
     json_account["secure"] = account->IsSecure();

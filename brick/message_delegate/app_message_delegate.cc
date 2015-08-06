@@ -475,10 +475,10 @@ AppMessageDelegate::SetCookies(
     return;
   }
 
-  for (auto it = cookies.begin(); it != cookies.end(); ++it) {
+  for (const auto item: cookies) {
     CefCookie cookie;
-    CefString(&cookie.name) = it->first;
-    CefString(&cookie.value) = it->second;
+    CefString(&cookie.name) = item.first;
+    CefString(&cookie.value) = item.second;
     cookie.secure = is_secure;
     cookie.httponly = true;
     manager->SetCookie(url, cookie, NULL);

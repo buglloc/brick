@@ -85,9 +85,10 @@ ExternalAppMessageDelegate::OnMessageReceived(
         Json::Value action_params(Json::objectValue);
         CefDictionaryValue::KeyList key_list;
         CefRefPtr<CefDictionaryValue> params = request_args->GetDictionary(2);
-        params->GetKeys(key_list);
-        for (auto key: key_list) {
-          action_params[key.ToString()] = params->GetString(key).ToString();
+        if (params->GetKeys(key_list)) {
+          for (auto key: key_list) {
+            action_params[key.ToString()] = params->GetString(key).ToString();
+          }
         }
 
         Json::Value event_params(Json::arrayValue);

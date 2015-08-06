@@ -5,10 +5,8 @@
 void
 AccountsWindow::ReloadAccounts() {
   Clear();
-  AccountManager::accounts_map *accounts = window_objects_.account_manager->GetAccounts();
-  AccountManager::accounts_map::iterator it = accounts->begin();
-  for (; it != accounts->end(); ++it) {
-    AddToList((*it).first, (*it).second->GetLabel());
+  for (const auto account: *(window_objects_.account_manager->GetAccounts())) {
+    AddToList(account.first, account.second->GetLabel());
   }
 }
 

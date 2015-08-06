@@ -49,9 +49,8 @@ bool ClientApp::OnProcessMessageReceived(
   bool handled = false;
 
   // Execute delegate callbacks.
-  RenderDelegateSet::iterator it = render_delegates_.begin();
-  for (; it != render_delegates_.end() && !handled; ++it) {
-    handled = (*it)->OnProcessMessageReceived(this, browser, source_process, message);
+  for (const auto delegate: render_delegates_) {
+    handled = delegate->OnProcessMessageReceived(this, browser, source_process, message);
   }
 
   if (!handled) {

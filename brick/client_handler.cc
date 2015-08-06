@@ -139,8 +139,8 @@ ClientHandler::OnBeforeClose(CefRefPtr<CefBrowser> browser) {
   CEF_REQUIRE_UI_THREAD();
 
   // Remove from the list of existing browsers.
-  BrowserList::iterator bit = browser_list_.begin();
-  for (; bit != browser_list_.end(); ++bit) {
+  BrowserList::const_iterator bit = browser_list_.cbegin();
+  for (; bit != browser_list_.cend(); ++bit) {
     if ((*bit)->IsSame(browser)) {
       browser_list_.erase(bit);
       break;
@@ -203,12 +203,11 @@ ClientHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser,
   if (!app_settings_.client_scripts.empty()) {
     injected_js.append("if (typeof BX != 'undefined' && BrickApp.loadScripts !== void 0) BrickApp.loadScripts([");
     std::string url;
-    auto it = app_settings_.client_scripts.begin();
-    for (; it != app_settings_.client_scripts.end(); ++it) {
+    for (const auto script: app_settings_.client_scripts) {
       url = kResourcesPath;
       // Without trailing slash
       url.append(kInjectedJsPath, 1, sizeof(kInjectedJsPath) - 1);
-      url.append(it->first);
+      url.append(script.first);
       injected_js.append("'" + url +"',");
     }
     injected_js.append("]);");
@@ -233,9 +232,8 @@ ClientHandler::CloseAllBrowsers(bool force_close) {
   if (browser_list_.empty())
     return;
 
-  BrowserList::const_iterator it = browser_list_.begin();
-  for (; it != browser_list_.end(); ++it)
-    (*it)->GetHost()->CloseBrowser(force_close);
+  for (const auto browser: browser_list_)
+    browser->GetHost()->CloseBrowser(force_close);
 }
 
 void
@@ -250,8 +248,8 @@ ClientHandler::CloseAllPopups(bool force_close) {
   if (browser_list_.empty())
     return;
 
-  BrowserList::const_iterator it = browser_list_.begin();
-  for (; it != browser_list_.end(); ++it) {
+  BrowserList::const_iterator it = browser_list_.cbegin();
+  for (; it != browser_list_.cend(); ++it) {
     if (!(*it)->IsPopup())
       continue;
 
@@ -444,15 +442,15 @@ ClientHandler::OnProcessMessageReceived(
   }
 
   std::string message_name = message->GetName();
+
   // Execute delegate callbacks.
-  ProcessMessageDelegateSet::iterator it = process_message_delegates_.begin();
-  for (; it != process_message_delegates_.end() && !handled; ++it) {
-    if ((*it)->IsAcceptedNamespace(message_name)) {
-      handled = (*it)->OnProcessMessageReceived(
-         this,
-         browser,
-         source_process,
-         message
+  for (const auto delegate: process_message_delegates_) {
+    if (delegate->IsAcceptedNamespace(message_name)) {
+      handled = delegate->OnProcessMessageReceived(
+          this,
+          browser,
+          source_process,
+          message
       );
     }
   }

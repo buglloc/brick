@@ -11,7 +11,7 @@ namespace request_util {
   Urlencode(const std::string& str, bool plusAsSpace) {
     static char hex[] = "0123456789ABCDEF";
     std::string result;
-    for (std::string::const_iterator it = str.begin(); it != str.end(); ++it) {
+    for (std::string::const_iterator it = str.cbegin(); it != str.cend(); ++it) {
       char c = *it;
       if ((c >= 'a' && c <= 'z') ||
           (c >= 'A' && c <= 'Z') ||
@@ -32,8 +32,8 @@ namespace request_util {
   std::string
   Urldecode(const std::string& str, bool plusAsSpace) {
     std::string result;
-    std::string::const_iterator it  = str.begin();
-    std::string::const_iterator end = str.end();
+    std::string::const_iterator it  = str.cbegin();
+    std::string::const_iterator end = str.cend();
     while (it != end) {
       char c = *it++;
       // spaces may be encoded as plus signs
@@ -75,8 +75,8 @@ namespace request_util {
   CefRefPtr<CefPostData>
   PostFormToCefPost(PostFormMap& form) {
     std::string data;
-    for (auto it = form.begin(); it != form.end(); ++it) {
-      data += "&" + CefURIEncode(it->first, false).ToString() + "=" + CefURIEncode(it->second, false).ToString();
+    for (const auto element: form) {
+      data += "&" + CefURIEncode(element.first, false).ToString() + "=" + CefURIEncode(element.second, false).ToString();
     }
 
     CefRefPtr<CefPostDataElement> postDataElement(CefPostDataElement::Create());
