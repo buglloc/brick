@@ -4,8 +4,11 @@
 #define BRICK_REMOTE_MAIN_H
 #pragma once
 
-#include <string>
 #include <gio/gio.h>
+
+#include <string>
+#include <exception>
+
 
 void PrintUsage();
 bool CallCommand(bool to_app, const std::string &command, GVariant *parameters = nullptr);

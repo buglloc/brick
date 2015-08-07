@@ -2,14 +2,15 @@
 
 #include "brick-client/main.h"
 
+#include <unistd.h>
+#include <glib.h>
+#include <gio/gio.h>
+
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <map>
 #include <vector>
-#include <unistd.h>
-#include <glib.h>
-#include <gio/gio.h>
 
 
 
@@ -145,7 +146,7 @@ bool
 CallCommand(bool to_app, const std::string &command, GVariant *parameters) {
   if (!InitDbus() || !EnsureBrickStarted()) {
     std::cerr << "Can't start Brick." << std::endl;
-    return false;
+    std::exit(EXIT_FAILURE);
   }
 
   GError *error = NULL;
@@ -162,6 +163,7 @@ CallCommand(bool to_app, const std::string &command, GVariant *parameters) {
   if (!result) {
     std::cerr << "Can't call command: " << error->message << std::endl;
     g_error_free(error);
+    std::exit(EXIT_FAILURE);
   }
 
   return true;
@@ -180,7 +182,7 @@ HandleBxProtocol(const std::string &requestLine) {
 
   if (tokens.empty()) {
     std::cerr << "Malformed Bitrix-protocol request." << std::endl;
-    return;
+    std::exit(EXIT_FAILURE);
   }
 
   GVariant *detail_params = nullptr;
@@ -216,6 +218,7 @@ HandleCommand(const std::string &command) {
     CallCommand(true, app_commands[command]);
   } else {
     std::cerr << "Command \"" << command << "\" not found." << std::endl;
+    std::exit(EXIT_FAILURE);
   }
 }
 
@@ -240,7 +243,7 @@ main(int argc, char** argv) {
   if (argc != 2) {
     std::cerr << "Too few arguments, command expected." << std::endl;
     PrintUsage();
-    return 1;
+    std::exit(EXIT_FAILURE);
   }
 
   std::string command(argv[1]);
@@ -252,5 +255,5 @@ main(int argc, char** argv) {
     HandleCommand(command);
   }
 
-  return 0;
+  std::exit(EXIT_SUCCESS);
 }
