@@ -183,7 +183,7 @@ BrickApp::GetCurrentLanguage(bool withTags) {
   // withTags = true means returns "en_US" for locale "en_US.UTF-8"
   // Otherwise returns only language "en"
   if (withTags)
-    pos = startupLocale.find_first_of(".");
+    pos = startupLocale.find('.');
   else
     pos = startupLocale.find_first_of("-_");
 
