@@ -36,6 +36,7 @@ BrickApp::GetCefSettings(std::string work_dir, AppSettings app_settings) {
   else
     CefString(&settings.log_file) = std::string(GetCacheHome()) + "/" + APP_COMMON_NAME + "/runtime.log";
 
+  CefString(&settings.locale) = GetCurrentLanguage();
   CefString(&settings.resources_dir_path) = app_settings.resource_dir + "/cef";
   CefString(&settings.locales_dir_path) = app_settings.resource_dir + "/cef/locales";
   settings.ignore_certificate_errors = app_settings.ignore_certificate_errors;

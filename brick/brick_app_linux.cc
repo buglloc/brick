@@ -173,6 +173,20 @@ BrickApp::GetCacheHome() {
   return g_get_user_cache_dir();
 }
 
+const std::string
+BrickApp::GetCurrentLanguage() {
+  std::string result = pango_language_to_string(gtk_get_default_language());
+  std::string::size_type pos = result.find_first_of("-_");
+  if (pos != std::string::npos)
+    result = result.substr(0, pos);
+
+  if (result == "c")
+    result = "en"; // We use "en" by default
+
+  // TODO: R&D, maybe we may using locale as-is, without stripping?
+  return result;
+}
+
 void
 TerminationSignalHandler(int signatl) {
   CefRefPtr<ClientHandler> handler = ClientHandler::GetInstance();
@@ -186,6 +200,7 @@ TerminationSignalHandler(int signatl) {
 int main(int argc, char* argv[]) {
   // ToDo: Good refactoring candidate!
 
+  setlocale(LC_ALL, "");
   CefMainArgs main_args(argc, argv);
   CefRefPtr<ClientApp> app(new ClientApp);
 

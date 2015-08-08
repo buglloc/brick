@@ -36,6 +36,7 @@ class BrickApp : public CefBase {
   static CefSettings GetCefSettings(std::string work_dir, AppSettings app_settings);
   static std::string GetUserConfig();
   static std::string GetSystemConfig();
+  static const std::string GetCurrentLanguage();
 
   // Platform specified methods
   static std::string FindUserConfig(const char* name);

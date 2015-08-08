@@ -119,7 +119,7 @@ AppMessageDelegate::OnProcessMessageReceived(
         url = ClientHandler::GetInstance()->GetAccountManager()->GetCurrentAccount()->GetBaseUrl();
         // BXD_API_VERSION is mandatory for stable IM work
         url += "?BXD_API_VERSION=" JS_API_VERSION;
-        // ToDo: send user language as user_lang parameter
+        url += "&user_lang=" + BrickApp::GetCurrentLanguage();
       }
 
       if (
