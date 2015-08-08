@@ -30,6 +30,7 @@ namespace {
   const unsigned long kIdleCheckInterval = 4000L;
   std::string kAppIcons[] = {"brick16.png", "brick32.png", "brick48.png", "brick128.png", "brick256.png"};
   std::string szWorkingDir;  // The current working directory
+  std::string startupLocale;
 
   bool
   GetWorkingDir(std::string& dir) {
@@ -174,17 +175,36 @@ BrickApp::GetCacheHome() {
 }
 
 const std::string
-BrickApp::GetCurrentLanguage() {
-  std::string result = pango_language_to_string(gtk_get_default_language());
-  std::string::size_type pos = result.find_first_of("-_");
-  if (pos != std::string::npos)
-    result = result.substr(0, pos);
+BrickApp::GetCurrentLanguage(bool withTags) {
+  if (startupLocale.empty())
+    startupLocale = pango_language_to_string(gtk_get_default_language());
 
-  if (result == "c")
-    result = "en"; // We use "en" by default
+  std::string::size_type pos;
+  // withTags = true means returns "en_US" for locale "en_US.UTF-8"
+  // Otherwise returns only language "en"
+  if (withTags)
+    pos = startupLocale.find_first_of(".");
+  else
+    pos = startupLocale.find_first_of("-_");
+
+  std::string result;
+  if (pos != std::string::npos)
+    result = startupLocale.substr(0, pos);
+  else
+    result = startupLocale;
+
+  if (result.empty() || result == "c")
+    result = withTags ? "en-us" : "en"; // We use "en" by default
 
   // TODO: R&D, maybe we may using locale as-is, without stripping?
   return result;
+}
+
+const std::string
+BrickApp::GetAcceptLanguageList() {
+  std::ostringstream result;
+  result << GetCurrentLanguage(true) << "," << GetCurrentLanguage(false);
+  return result.str();
 }
 
 void
