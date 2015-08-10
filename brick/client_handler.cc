@@ -2,11 +2,14 @@
 
 #include "brick/client_handler.h"
 
+#include "third-party/json/json.h"
+
 #include "include/base/cef_bind.h"
 #include "include/cef_app.h"
 #include "include/wrapper/cef_closure_task.h"
 #include "include/wrapper/cef_helpers.h"
 #include "include/wrapper/cef_stream_resource_handler.h"
+
 #include "brick/message_delegate/app_message_delegate.h"
 #include "brick/message_delegate/app_window_message_delegate.h"
 #include "brick/helper.h"
@@ -201,16 +204,20 @@ ClientHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser,
 
   // ToDo: Use CefV8Value::ExecuteFunction? Maybe something like SendJSEvent...
   if (!app_settings_.client_scripts.empty()) {
-    injected_js.append("if (typeof BX != 'undefined' && BrickApp.loadScripts !== void 0) BrickApp.loadScripts([");
+    Json::Value client_scripts(Json::arrayValue);
     std::string url;
     for (const auto script: app_settings_.client_scripts) {
       url = kResourcesPath;
       // Without trailing slash
       url.append(kInjectedJsPath, 1, sizeof(kInjectedJsPath) - 1);
       url.append(script.first);
-      injected_js.append("'" + url +"',");
+      client_scripts.append(url);
     }
-    injected_js.append("]);");
+
+    Json::FastWriter json_writer;
+    injected_js += "if (typeof BX != 'undefined' && BrickApp.loadScripts !== void 0) BrickApp.loadScripts(";
+    injected_js += json_writer.write(client_scripts);
+    injected_js += ");";
   }
 
   frame->ExecuteJavaScript(
