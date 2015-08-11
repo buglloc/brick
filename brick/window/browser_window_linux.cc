@@ -4,12 +4,27 @@
 
 #include <gdk/gdk.h>
 #include <gdk/gdkx.h>
-#include <sys/time.h>
+#include <ctime>
 
 #include "include/base/cef_logging.h"
 #include "brick/window_util.h"
+#include <brick/platform_util.h>
 #include "brick/brick_app.h"
 
+
+BrowserWindow::BrowserWindow()
+    : window_handler_(NULL),
+    hided_ (false),
+    focused_ (true),
+    visible_ (true),
+    resizable_ (true),
+    closable_ (true),
+    restore_last_position_ (false),
+    last_x_ (0),
+    last_y_ (0) {
+
+  on_kde_ = platform_util::GetDesktopEnvironment() == platform_util::DESKTOP_ENVIRONMENT_KDE;
+}
 
 bool
 BrowserWindow::WrapNative(CefWindowHandle window) {
@@ -166,11 +181,15 @@ BrowserWindow::ToggleVisibility() {
 
 void
 BrowserWindow::SetActive() {
-  // ToDo: Ugly hack for deals with KDE Focus stealing
-  // maybe better to use gdk_x11_display_get_user_time(gdk_window_get_display(window_handler_)) as timestamp?
-  struct timeval now;
-  gettimeofday(&now, NULL);
-  gdk_window_focus(window_handler_, now.tv_sec);
+  std::time_t time = 0;
+  if (on_kde_) {
+    // ToDo: Ugly hack for deals with KDE focus stealing prevention
+    time = std::time(nullptr);
+  } else {
+    time = gdk_x11_display_get_user_time(gdk_window_get_display(window_handler_));
+  }
+
+  gdk_window_focus(window_handler_, time);
 }
 
 bool

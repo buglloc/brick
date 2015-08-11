@@ -27,17 +27,7 @@
 class BrowserWindow : public CefBase {
 
  public:
-  BrowserWindow() : window_handler_(NULL),
-                 hided_ (false),
-                 focused_ (true),
-                 visible_ (true),
-                 resizable_ (true),
-                 closable_ (true),
-                 restore_last_position_ (false),
-                 last_x_ (0),
-                 last_y_ (0) {
-  }
-
+  BrowserWindow();
   BrowserWindowHandle GetHandler();
 
   typedef enum {
@@ -95,6 +85,9 @@ class BrowserWindow : public CefBase {
   bool restore_last_position_;
   int last_x_;
   int last_y_;
+#if defined(__linux__)
+  bool on_kde_;
+#endif
 
 IMPLEMENT_REFCOUNTING(BrowserWindow);
 };
