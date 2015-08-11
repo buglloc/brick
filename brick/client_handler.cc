@@ -142,8 +142,8 @@ ClientHandler::OnBeforeClose(CefRefPtr<CefBrowser> browser) {
   CEF_REQUIRE_UI_THREAD();
 
   // Remove from the list of existing browsers.
-  BrowserList::const_iterator bit = browser_list_.cbegin();
-  for (; bit != browser_list_.cend(); ++bit) {
+  BrowserList::iterator bit = browser_list_.begin();
+  for (; bit != browser_list_.end(); ++bit) {
     if ((*bit)->IsSame(browser)) {
       browser_list_.erase(bit);
       break;
