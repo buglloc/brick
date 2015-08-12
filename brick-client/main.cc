@@ -13,7 +13,6 @@
 #include <vector>
 
 
-
 namespace {
   static const char *kAppBusName = "org.brick.Brick";
   static const char *kAppInterface = "org.brick.Brick.AppInterface";
@@ -189,7 +188,7 @@ HandleBxProtocol(const std::string &requestLine) {
   if (tokens.size() > 2) {
     GVariantBuilder detail_builder;
     g_variant_builder_init(&detail_builder, G_VARIANT_TYPE_ARRAY);
-    for (decltype(tokens.size()) i = 1; i < tokens.size() - 1; i+=2) {
+    for (decltype(tokens.size()) i = 1; i < tokens.size() - 1; i += 2 ) {
       g_variant_builder_add(&detail_builder, "{ss}",
                             tokens[i].c_str(),
                             tokens[i + 1].c_str());
@@ -197,7 +196,7 @@ HandleBxProtocol(const std::string &requestLine) {
 
     detail_params = g_variant_builder_end(&detail_builder);
   } else {
-    detail_params = g_variant_new_array(G_VARIANT_TYPE("a{ss}"), NULL, 0);
+    detail_params = g_variant_new_array(G_VARIANT_TYPE("{ss}"), NULL, 0);
   }
 
   GVariantBuilder params_builder;
