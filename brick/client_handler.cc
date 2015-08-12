@@ -94,6 +94,9 @@ ClientHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
     browser_id_ = browser->GetIdentifier();
     main_handle_ = new BrowserWindow;
     main_handle_->WrapNative(browser->GetHost()->GetWindowHandle());
+    if (app_settings_.start_minimized)
+      main_handle_->Hide();
+
   } else if (browser->IsPopup()) {
     // Add to the list of popup browsers.
     // popup_browsers_.push_back(browser);

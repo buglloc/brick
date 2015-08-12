@@ -1,11 +1,30 @@
 // Copyright (c) 2015 The Brick Authors.
 
 #include "brick/common/app_settings.h"
+
 #include <string>
-#include "brick/platform_util.h"
-#include "brick/helper.h"
+
 #include "third-party/json/json.h"
 #include "include/base/cef_logging.h"
+#include "brick/platform_util.h"
+#include "brick/helper.h"
+
+
+namespace {
+  const char kAppTokenName[]       = "app_token";
+  const char kProfilePathName[]    = "profile_path";
+  const char kCachePathName[]      = "cache_path";
+  const char kLogFileName[]        = "log_file";
+  const char kResourceDirName[]    = "resource_dir";
+  const char kVerifySSLName[]      = "ignore_certificate_errors";
+  const char kStartMinimizedName[] = "minimized";
+  const char kAutoAwayName[]       = "auto_away";
+  const char kExternalApiName[]    = "external_api";
+  const char kHideOnDeleteName[]   = "hide_on_delete";
+  const char kExtendedStatusName[] = "extended_status";
+  const char kClientScriptsName[]  = "client_scripts";
+
+}  // namespace
 
 AppSettings::AppSettings()
 : app_token (""),
@@ -15,12 +34,13 @@ AppSettings::AppSettings()
   resource_dir (""),
   ignore_certificate_errors (false),
   log_severity (LOGSEVERITY_DEFAULT),
-  start_minimized (true),
+  start_minimized(false),
   auto_away (true),
   external_api (true),
   hide_on_delete (true),
-  extended_status (true)
-{ }
+  extended_status (true) {
+
+}
 
 AppSettings
 AppSettings::InitByJson(std::string json) {
@@ -48,64 +68,64 @@ AppSettings::UpdateByJson(std::string json) {
     return;
   }
 
-  if (root.isMember("app_token")
-     && root["app_token"].isString()) {
-    profile_path = root["app_token"].asString();
+  if (root.isMember(kAppTokenName)
+     && root[kAppTokenName].isString()) {
+    profile_path = root[kAppTokenName].asString();
   }
 
-  if (root.isMember("profile_path")
-     && root["profile_path"].isString()) {
-    profile_path = root["profile_path"].asString();
+  if (root.isMember(kProfilePathName)
+     && root[kProfilePathName].isString()) {
+    profile_path = root[kProfilePathName].asString();
   }
 
-  if (root.isMember("cache_path")
-     && root["cache_path"].isString()) {
-    cache_path = root["cache_path"].asString();
+  if (root.isMember(kCachePathName)
+     && root[kCachePathName].isString()) {
+    cache_path = root[kCachePathName].asString();
   }
 
-  if (root.isMember("log_file")
-     && root["log_file"].isString()) {
-    log_file = root["log_file"].asString();
+  if (root.isMember(kLogFileName)
+     && root[kLogFileName].isString()) {
+    log_file = root[kLogFileName].asString();
   }
 
-  if (root.isMember("ignore_certificate_errors")
-     && root["ignore_certificate_errors"].isBool()) {
-    ignore_certificate_errors = root["ignore_certificate_errors"].asBool();
+  if (root.isMember(kVerifySSLName)
+     && root[kVerifySSLName].isBool()) {
+    ignore_certificate_errors = root[kVerifySSLName].asBool();
   }
 
-  if (root.isMember("start_minimized")
-     && root["start_minimized"].isBool()) {
-    start_minimized = root["start_minimized"].asBool();
+  if (root.isMember(kStartMinimizedName)
+     && root[kStartMinimizedName].isBool()) {
+    start_minimized = root[kStartMinimizedName].asBool();
   }
 
-  if (root.isMember("resource_dir")
-     && root["resource_dir"].isString()) {
-    resource_dir = root["resource_dir"].asString();
+  if (root.isMember(kResourceDirName)
+     && root[kResourceDirName].isString()) {
+    resource_dir = root[kResourceDirName].asString();
   }
 
-  if (root.isMember("auto_away")
-     && root["auto_away"].isBool()) {
-    auto_away = root["auto_away"].asBool();
+  if (root.isMember(kAutoAwayName)
+     && root[kAutoAwayName].isBool()) {
+    auto_away = root[kAutoAwayName].asBool();
   }
 
-  if (root.isMember("external_api")
-     && root["external_api"].isBool()) {
-    external_api = root["external_api"].asBool();
+  if (root.isMember(kExternalApiName)
+     && root[kExternalApiName].isBool()) {
+    external_api = root[kExternalApiName].asBool();
   }
 
-  if (root.isMember("hide_on_delete")
-     && root["hide_on_delete"].isBool()) {
-    hide_on_delete = root["hide_on_delete"].asBool();
+  if (root.isMember(kHideOnDeleteName)
+     && root[kHideOnDeleteName].isBool()) {
+    hide_on_delete = root[kHideOnDeleteName].asBool();
   }
 
-  if (root.isMember("extended_status")
-     && root["extended_status"].isBool()) {
-    extended_status = root["extended_status"].asBool();
+  if (root.isMember(kExtendedStatusName)
+     && root[kExtendedStatusName].isBool()) {
+    extended_status = root[kExtendedStatusName].asBool();
   }
 
-  if (root.isMember("client_scripts")
-     && root["client_scripts"].isArray()) {
-    for (auto script: root["client_scripts"]) {
+  if (root.isMember(kClientScriptsName)
+     && root[kClientScriptsName].isArray()) {
+    for (auto script: root[kClientScriptsName]) {
 
       if (!script.isString()) {
         LOG(WARNING) << "Strange client script: " << script << "; Skipping";
@@ -123,6 +143,18 @@ AppSettings::UpdateByJson(std::string json) {
       id.append(".js");
       client_scripts[id] = script_path;
     }
+  }
+}
+
+void
+AppSettings::UpdateByCommandLine(CefRefPtr<CefCommandLine> command_line) {
+
+  if (command_line->HasSwitch(kHideOnDeleteName)) {
+    hide_on_delete = true;
+  }
+
+  if (command_line->HasSwitch(kStartMinimizedName)) {
+    start_minimized = true;
   }
 }
 

@@ -8,8 +8,9 @@
 #include <map>
 #include <string>
 
-#include "brick/account.h"
 #include "include/internal/cef_types_wrappers.h"
+#include "include/cef_command_line.h"
+#include "brick/account.h"
 
 struct AppSettings {
   typedef std::map<std::string, std::string> client_scripts_map;
@@ -32,6 +33,7 @@ struct AppSettings {
 
   AppSettings();
   void UpdateByJson(std::string json);
+  void UpdateByCommandLine(CefRefPtr<CefCommandLine> command_line);
   std::string DumpJson();
 };
 

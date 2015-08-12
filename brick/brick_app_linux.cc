@@ -234,12 +234,18 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
+  CefRefPtr<CefCommandLine> command_line = CefCommandLine::CreateCommandLine();
+  command_line->InitFromArgv(argc, (const char* const *) argv);
+
   GetWorkingDir(szWorkingDir);
   AppSettings app_settings = AppSettings::InitByJson(
      BrickApp::GetSystemConfig()
   );
   app_settings.UpdateByJson(
      BrickApp::GetUserConfig()
+  );
+  app_settings.UpdateByCommandLine(
+      command_line
   );
 
   app_settings.resource_dir = helper::BaseDir(szWorkingDir) + "/resources/";
