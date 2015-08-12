@@ -8,23 +8,18 @@
 #include "include/base/cef_logging.h"
 
 AppSettings::AppSettings()
-: app_token(""),
-  profile_path(""),
-  cache_path(""),
-  log_file(""),
-  proxy_server(""),
-  resource_dir(""),
-  ignore_certificate_errors(false),
-  log_severity(LOGSEVERITY_DEFAULT),
-#ifndef NDEBUG
-  start_minimized(true),
-#else
-  start_minimized(false),
-#endif
-  auto_away(true),
-  external_api(true),
-  hide_on_delete(true),
-  extended_status(true)
+: app_token (""),
+  profile_path (""),
+  cache_path (""),
+  log_file (""),
+  resource_dir (""),
+  ignore_certificate_errors (false),
+  log_severity (LOGSEVERITY_DEFAULT),
+  start_minimized (true),
+  auto_away (true),
+  external_api (true),
+  hide_on_delete (true),
+  extended_status (true)
 { }
 
 AppSettings
@@ -71,11 +66,6 @@ AppSettings::UpdateByJson(std::string json) {
   if (root.isMember("log_file")
      && root["log_file"].isString()) {
     log_file = root["log_file"].asString();
-  }
-
-  if (root.isMember("proxy_server")
-     && root["proxy_server"].isString()) {
-    proxy_server = root["proxy_server"].asString();
   }
 
   if (root.isMember("ignore_certificate_errors")
