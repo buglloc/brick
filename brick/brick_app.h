@@ -8,7 +8,7 @@
 
 #define JS_API_VERSION "31"
 #define VERSION "0.2.0" "." JS_API_VERSION  // IM API version in last part!
-#define APP_VERSION "Robin-Chemo/" VERSION "/beta"
+#define APP_VERSION "Brick/" VERSION "/beta"
 #define APP_NAME "Brick"
 #define APP_COMMON_NAME "brick"
 
