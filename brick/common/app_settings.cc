@@ -11,18 +11,18 @@
 
 
 namespace {
-  const char kAppTokenName[]       = "app_token";
-  const char kProfilePathName[]    = "profile_path";
-  const char kCachePathName[]      = "cache_path";
-  const char kLogFileName[]        = "log_file";
-  const char kResourceDirName[]    = "resource_dir";
-  const char kVerifySSLName[]      = "ignore_certificate_errors";
-  const char kStartMinimizedName[] = "minimized";
-  const char kAutoAwayName[]       = "auto_away";
-  const char kExternalApiName[]    = "external_api";
-  const char kHideOnDeleteName[]   = "hide_on_delete";
-  const char kExtendedStatusName[] = "extended_status";
-  const char kClientScriptsName[]  = "client_scripts";
+  const char kAppTokenName[]            = "app-token";
+  const char kProfilePathName[]         = "profile-path";
+  const char kCachePathName[]           = "cache-path";
+  const char kLogFileName[]             = "log-file";
+  const char kResourceDirName[]         = "resource-dir";
+  const char kIgnoreCertificateErrors[] = "ignore-certificate-errors";
+  const char kStartMinimizedName[]      = "minimized";
+  const char kAutoAwayName[]            = "auto-away";
+  const char kExternalApiName[]         = "external-api";
+  const char kHideOnDeleteName[]        = "hide-on-delete";
+  const char kExtendedStatusName[]      = "extended-status";
+  const char kClientScriptsName[]       = "client-scripts";
 
 }  // namespace
 
@@ -88,9 +88,9 @@ AppSettings::UpdateByJson(std::string json) {
     log_file = root[kLogFileName].asString();
   }
 
-  if (root.isMember(kVerifySSLName)
-     && root[kVerifySSLName].isBool()) {
-    ignore_certificate_errors = root[kVerifySSLName].asBool();
+  if (root.isMember(kIgnoreCertificateErrors)
+     && root[kIgnoreCertificateErrors].isBool()) {
+    ignore_certificate_errors = root[kIgnoreCertificateErrors].asBool();
   }
 
   if (root.isMember(kStartMinimizedName)
