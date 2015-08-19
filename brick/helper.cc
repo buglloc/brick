@@ -307,4 +307,14 @@ namespace helper {
     return "";
   }
 
+  std::string
+  GetFileName(const std::string& source) {
+    size_t pos = source.rfind("/");
+    if (pos != std::string::npos) {
+      return source.substr(pos + 1);
+    }
+
+    return "";
+  }
+
 }  // namespace helper

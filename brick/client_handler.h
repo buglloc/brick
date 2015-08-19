@@ -18,12 +18,16 @@
 #include "brick/window/browser_window.h"
 #include "brick/event/user_away_event.h"
 #include "brick/event/sleep_event.h"
+#include "brick/event/download_start_event.h"
+#include "brick/event/download_progress_event.h"
+#include "brick/event/download_complete_event.h"
 #include "brick/indicator/indicator.h"
 #include "brick/cache_manager.h"
 #include "brick/command_callbacks.h"
 #include "brick/account_manager.h"
 #include "brick/notification_manager.h"
 #include "brick/api_error.h"
+#include "brick/download_history_item.h"
 
 
 class ClientHandler : public CefClient,
@@ -34,7 +38,10 @@ class ClientHandler : public CefClient,
                       public CefContextMenuHandler,
                       public CefRequestHandler,
                       public EventHandler<UserAwayEvent>,
-                      public EventHandler<SleepEvent> {
+                      public EventHandler<SleepEvent>,
+                      public EventHandler<DownloadStartEvent>,
+                      public EventHandler<DownloadProgressEvent>,
+                      public EventHandler<DownloadCompleteEvent> {
  public:
 
   // Temporary (or runtime, what your like) page storage definition
@@ -231,7 +238,16 @@ class ClientHandler : public CefClient,
      CefRefPtr<CefProcessMessage> message)
      OVERRIDE;
 
-  bool IsAllowedUrl(std::string url);
+  bool IsAllowedUrl(const std::string &url);
+  bool IsDownloadUrl(const std::string &url);
+  CefRefPtr<CefListValue> GetDownloadHistoryList();
+  CefRefPtr<DownloadHistoryItem> GetDownloadHistoryItem(const std::string &id);
+
+  void InitDownload(const std::string &url, const std::string &filename);
+  void RegisterDownload(std::string id, CefRefPtr<CefURLRequest> request);
+  void RestartDownload(const std::string &id);
+  void CancelDownload(const std::string &id);
+  void RemoveDownload(const std::string &id);
 
   void SwitchAccount(int id);
 
@@ -241,6 +257,9 @@ class ClientHandler : public CefClient,
   void RegisterSystemEventListeners();
   virtual void onEvent(const UserAwayEvent& event) OVERRIDE;
   virtual void onEvent(const SleepEvent& event) OVERRIDE;
+  virtual void onEvent(const DownloadStartEvent& event) OVERRIDE;
+  virtual void onEvent(const DownloadProgressEvent& event) OVERRIDE;
+  virtual void onEvent(const DownloadCompleteEvent& event) OVERRIDE;
 
   std::string AddTemporaryPage(const std::string& content);
 
@@ -310,6 +329,13 @@ class ClientHandler : public CefClient,
 
   // Manages the registration and delivery of resources.
   CefRefPtr<CefResourceManager> resource_manager_;
+
+  // Map of existing downloads
+  typedef std::map<std::string, CefRefPtr<CefURLRequest> > DownloadMap;
+  DownloadMap download_map_;
+
+  typedef std::map<std::string, CefRefPtr<DownloadHistoryItem> > DownloadHistoryMap;
+  DownloadHistoryMap download_history_;
 
   // Include the default reference counting implementation.
 IMPLEMENT_REFCOUNTING(ClientHandler);

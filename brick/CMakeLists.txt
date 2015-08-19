@@ -57,6 +57,10 @@ set(BRICK_SRCS
   avatar_client.h
   avatar_client.cc
   desktop_media.h
+  download_client.h
+  download_client.cc
+  download_history_item.h
+  brick_types.h
   )
 set(BRICK_COMMON_SRCS
   common/app_settings.cc

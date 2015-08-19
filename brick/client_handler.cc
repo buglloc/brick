@@ -22,6 +22,7 @@
 #include "brick/window_util.h"
 #include "brick/brick_app.h"
 #include "brick/desktop_media.h"
+#include "brick/download_client.h"
 
 namespace {
 
@@ -339,6 +340,103 @@ ClientHandler::CloseDevTools(CefRefPtr<CefBrowser> browser) {
   browser->GetHost()->CloseDevTools();
 }
 
+void
+ClientHandler::InitDownload(const std::string &url, const std::string &filename) {
+  if (!CefCurrentlyOn(TID_UI)) {
+    // Execute on the UI thread.
+    CefPostTask(TID_UI,
+                base::Bind(&ClientHandler::InitDownload, this, url, filename));
+    return;
+  }
+
+  const std::vector<CefString> accept_filters;
+  CefRefPtr<CefFileDialogCallback> callback(new DownloadClientDialogCallback(url));
+  OnFileDialog(
+      GetBrowser(),
+      FILE_DIALOG_SAVE,
+      CefString(),
+      filename,
+      accept_filters,
+      1,
+      callback
+  );
+}
+
+void
+ClientHandler::RegisterDownload(std::string id, CefRefPtr<CefURLRequest> request) {
+  download_map_[id] = request;
+}
+
+void
+ClientHandler::RestartDownload(const std::string &id) {
+  if (!download_history_.count(id)) {
+    LOG(WARNING) << "Download id '" << id << "' was not found while canceling.";
+    return;
+  }
+
+  if (download_map_.count(id)) {
+    download_map_[id]->Cancel();
+  }
+
+  const std::vector<CefString> file_paths{download_history_[id]->GetPath()};
+  CefRefPtr<CefFileDialogCallback> callback(new DownloadClientDialogCallback(download_history_[id]->GetUrl()));
+  callback->Continue(1, file_paths);
+}
+
+void
+ClientHandler::CancelDownload(const std::string &id) {
+  if (!download_map_.count(id)) {
+    LOG(WARNING) << "Download id '" << id << "' was not found while canceling.";
+    return;
+  }
+
+  download_map_[id]->Cancel();
+}
+
+void
+ClientHandler::RemoveDownload(const std::string &id) {
+  if (download_map_.count(id)) {
+    download_map_[id]->Cancel();
+    download_map_.erase(id);
+  }
+
+  if (download_history_.count(id)) {
+    download_history_.erase(id);
+  }
+}
+
+CefRefPtr<CefListValue>
+ClientHandler::GetDownloadHistoryList() {
+  // ToDo: Implement dictionary!
+  CefRefPtr<CefListValue> result = CefListValue::Create();
+  decltype(result->GetSize()) i = 0;
+  for (const auto history_item: download_history_) {
+    CefRefPtr<CefListValue> item = CefListValue::Create();
+    item->SetString(0, history_item.first);
+    item->SetString(1, history_item.second->GetName());
+    item->SetString(2, history_item.second->GetPath());
+    item->SetString(3, history_item.second->GetUrl());
+    item->SetInt(4, history_item.second->Status());
+    item->SetInt(5, history_item.second->Reason());
+    item->SetInt(6, history_item.second->Percent());
+    item->SetDouble(7, history_item.second->CurrentBytes());
+    item->SetDouble(8, history_item.second->TotalBytes());
+    result->SetList(i++, item);
+  }
+
+  return result;
+}
+
+CefRefPtr<DownloadHistoryItem>
+ClientHandler::GetDownloadHistoryItem(const std::string &id) {
+  if (!download_history_.count(id)) {
+    LOG(WARNING) << "Downloaded file id '" << id << "' was not found while path finding.";
+    return NULL;
+  }
+
+  return download_history_[id];
+}
+
 bool
 ClientHandler::OnBeforePopup(
     CefRefPtr<CefBrowser> browser,
@@ -355,6 +453,16 @@ ClientHandler::OnBeforePopup(
   CEF_REQUIRE_IO_THREAD();
 
   std::string url = target_url;
+
+  if (IsDownloadUrl(url)) {
+    if (app_settings_.implicit_file_download) {
+      InitDownload(url, request_util::ParseDownloadFilename(url));
+    } else {
+      platform_util::OpenExternal(url);
+    }
+    return true;
+  }
+
   if (!IsAllowedUrl(url)) {
     platform_util::OpenExternal(url);
     return true;
@@ -389,7 +497,7 @@ ClientHandler::OnBeforeBrowse(CefRefPtr<CefBrowser> browser,
     bool is_redirect) {
 
   std::string url = request->GetURL();
-  if (!IsAllowedUrl(url)) {
+  if (!IsAllowedUrl(url) || IsDownloadUrl(url)) {
     platform_util::OpenExternal(url);
     return true;
   }
@@ -547,19 +655,19 @@ ClientHandler::GetBrowserId() const {
 }
 
 bool
-ClientHandler::IsAllowedUrl(std::string url) {
-  if (
-    // Ugly temporary fix for file downloading...
-    // ToDo: fix it!
-    url.find("/desktop_app/download.file.php") != std::string::npos
-    || url.find("/desktop_app/show.file.php") != std::string::npos
-  )
+ClientHandler::IsAllowedUrl(const std::string &url) {
+  if (url.find("/desktop_app/show.file.php") != std::string::npos)
     return false;
 
   return (
      account_manager_->GetCurrentAccount()->CheckBaseUrl(url)
      || url.find("chrome-devtools://") == 0
   );
+}
+
+bool
+ClientHandler::IsDownloadUrl(const std::string &url) {
+  return (url.find("/desktop_app/download.file.php") != std::string::npos);
 }
 
 void
@@ -620,6 +728,92 @@ ClientHandler::onEvent(const SleepEvent& event) {
 
 }
 
+void
+ClientHandler::onEvent(const DownloadStartEvent& event) {
+  download_history_[event.getId()] = new DownloadHistoryItem(
+      event.getUrl(),
+      event.getFilepath(),
+      event.getFilename()
+  );
+
+  CefRefPtr<CefBrowser> browser = GetBrowser();
+  if (!browser)
+    return;
+
+  Json::Value params(Json::objectValue);
+  params["name"] = event.getFilename();
+  params["path"] = event.getFilepath();
+  params["url"] = event.getUrl();
+
+  Json::Value data(Json::arrayValue);
+  data.append(event.getId());
+  data.append(params);
+
+
+  Json::FastWriter json_writer;
+  SendJSEvent(browser, "BXDownloadStart", json_writer.write(data));
+}
+
+void
+ClientHandler::onEvent(const DownloadProgressEvent& event) {
+  if (download_history_.count(event.getId())) {
+    download_history_[event.getId()]->UpdateProgress(
+        event.getPercent(),
+        event.getCurrent(),
+        event.getTotal()
+    );
+  } else {
+    LOG(ERROR) << "Try to update undefined download item. ID: " << event.getId();
+  }
+
+
+  CefRefPtr<CefBrowser> browser = GetBrowser();
+  if (!browser)
+    return;
+
+  Json::Value params(Json::objectValue);
+  params["percent"] = event.getPercent();
+  params["current"] = static_cast<Json::Value::Int64>(event.getCurrent());
+  params["total"] = static_cast<Json::Value::Int64>(event.getTotal());
+
+  Json::Value data(Json::arrayValue);
+  data.append(event.getId());
+  data.append(params);
+
+
+  Json::FastWriter json_writer;
+  SendJSEvent(browser, "BXDownloadProgress", json_writer.write(data));
+}
+
+void
+ClientHandler::onEvent(const DownloadCompleteEvent& event) {
+  if (download_map_.count(event.getId())) {
+    download_map_.erase(event.getId());
+  }
+
+  if (download_history_.count(event.getId())) {
+    download_history_[event.getId()]->SetStatus(event.getStatus());
+    download_history_[event.getId()]->SetReason(event.getReason());
+  } else {
+    LOG(ERROR) << "Try to complete undefined download item. ID: " << event.getId();
+  }
+
+  CefRefPtr<CefBrowser> browser = GetBrowser();
+  if (!browser)
+    return;
+
+  Json::Value params(Json::objectValue);
+  params["status"] = event.getStatus();
+  params["reason"] = event.getReason();
+
+  Json::Value data(Json::arrayValue);
+  data.append(event.getId());
+  data.append(params);
+
+  Json::FastWriter json_writer;
+  SendJSEvent(browser, "BXDownloadComplete", json_writer.write(data));
+}
+
 bool
 ClientHandler::InShutdownState() {
   return in_shutdown_state_;
@@ -629,6 +823,9 @@ void
 ClientHandler::RegisterSystemEventListeners() {
   EventBus::AddHandler<UserAwayEvent>(*this);
   EventBus::AddHandler<SleepEvent>(*this);
+  EventBus::AddHandler<DownloadStartEvent>(*this);
+  EventBus::AddHandler<DownloadProgressEvent>(*this);
+  EventBus::AddHandler<DownloadCompleteEvent>(*this);
 }
 
 std::string

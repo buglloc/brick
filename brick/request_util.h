@@ -15,6 +15,7 @@ namespace request_util {
 
   CefRefPtr<CefPostData> PostFormToCefPost(PostFormMap& form);
   void ParseCookie(const std::string& value, CookiesMap& destination);
+  std::string ParseDownloadFilename(const std::string& url);
   CookiesMap GetCookies(CefResponse::HeaderMap& headers);
   std::string GetErrorString(CefURLRequest::ErrorCode code);
 };  // namespace request_util

@@ -236,4 +236,30 @@ namespace request_util {
         return "UNKNOWN";
     }
   }
+
+  std::string
+  ParseDownloadFilename(const std::string& url) {
+    std::string result;
+
+    auto start_pos = url.find("fileName=");
+    if (start_pos == std::string::npos) {
+      return "undefined";
+    }
+    start_pos += sizeof("fileName=") - 1;
+
+    auto end_pos = url.find_first_of("&#", start_pos);
+    if (end_pos == std::string::npos) {
+      result = url.substr(start_pos);
+    } else {
+      result = url.substr(start_pos, end_pos - start_pos);
+    }
+
+    return CefURIDecode(
+        result,
+        true,
+        static_cast<cef_uri_unescape_rule_t>(
+            UU_SPACES | UU_URL_SPECIAL_CHARS | UU_REPLACE_PLUS_WITH_SPACE)
+    );
+  }
+
 }  // namespace request_util

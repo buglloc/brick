@@ -11,18 +11,19 @@
 
 
 namespace {
-  const char kAppTokenName[]            = "app-token";
-  const char kProfilePathName[]         = "profile-path";
-  const char kCachePathName[]           = "cache-path";
-  const char kLogFileName[]             = "log-file";
-  const char kResourceDirName[]         = "resource-dir";
-  const char kIgnoreCertificateErrors[] = "ignore-certificate-errors";
-  const char kStartMinimizedName[]      = "minimized";
-  const char kAutoAwayName[]            = "auto-away";
-  const char kExternalApiName[]         = "external-api";
-  const char kHideOnDeleteName[]        = "hide-on-delete";
-  const char kExtendedStatusName[]      = "extended-status";
-  const char kClientScriptsName[]       = "client-scripts";
+  const char kAppTokenName[]                = "app-token";
+  const char kProfilePathName[]             = "profile-path";
+  const char kCachePathName[]               = "cache-path";
+  const char kLogFileName[]                 = "log-file";
+  const char kResourceDirName[]             = "resource-dir";
+  const char kIgnoreCertificateErrors[]     = "ignore-certificate-errors";
+  const char kStartMinimizedName[]          = "minimized";
+  const char kAutoAwayName[]                = "auto-away";
+  const char kExternalApiName[]             = "external-api";
+  const char kHideOnDeleteName[]            = "hide-on-delete";
+  const char kExtendedStatusName[]          = "extended-status";
+  const char kImplicitFileDownloadName[]    = "implicit-file-download";
+  const char kClientScriptsName[]           = "client-scripts";
 
 }  // namespace
 
@@ -38,7 +39,8 @@ AppSettings::AppSettings()
   auto_away (true),
   external_api (true),
   hide_on_delete (true),
-  extended_status (true) {
+  extended_status (true),
+  implicit_file_download (false) {
 
 }
 
@@ -121,6 +123,11 @@ AppSettings::UpdateByJson(std::string json) {
   if (root.isMember(kExtendedStatusName)
      && root[kExtendedStatusName].isBool()) {
     extended_status = root[kExtendedStatusName].asBool();
+  }
+
+  if (root.isMember(kImplicitFileDownloadName)
+      && root[kImplicitFileDownloadName].isBool()) {
+    implicit_file_download = root[kImplicitFileDownloadName].asBool();
   }
 
   if (root.isMember(kClientScriptsName)

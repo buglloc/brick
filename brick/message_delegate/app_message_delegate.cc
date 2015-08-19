@@ -29,6 +29,13 @@ namespace {
   const char kMessagePreventShutdownName[]  = "PreventShutdown";
   const char kMessageShutdownName[]         = "Shutdown";
   const char kMessageListDesktopMedia[]     = "ListDesktopMedia";
+  const char kMessageRequestDownloadName[]  = "RequestDownload";
+  const char kMessageRestartDownloadName[]  = "RestartDownload";
+  const char kMessageCancelDownloadName[]   = "CancelDownload";
+  const char kMessageRemoveDownloadName[]   = "RemoveDownload";
+  const char kMessageOpenDownloadedName[]   = "OpenDownloaded";
+  const char kMessageShowDownloadedName[]   = "ShowDownloaded";
+  const char kMessageListDownloadHistory[]  = "ListDownloadHistory";
 
   const char kCurrentPortalId[]             = "current_portal";
 
@@ -403,6 +410,126 @@ AppMessageDelegate::OnProcessMessageReceived(
       }
 
       response_args->SetList(2, media_list);
+    }
+
+  } else if (message_name == kMessageRequestDownloadName) {
+    // Parameters:
+    // 0: int32 - callback id
+    // 1: string - url
+    // 2: string - filename
+
+    if (request_args->GetSize() != 3
+        || request_args->GetType(1) != VTYPE_STRING
+        || request_args->GetType(2) != VTYPE_STRING
+        ) {
+      error = ERR_INVALID_PARAMS;
+    }
+
+    if (error == NO_ERROR) {
+      handler->InitDownload(
+          request_args->GetString(1).ToString(),
+          request_args->GetString(2).ToString()
+      );
+    }
+
+  } else if (message_name == kMessageCancelDownloadName) {
+    // Parameters:
+    // 0: int32 - callback id
+    // 1: string - id
+
+    if (request_args->GetSize() != 2
+        || request_args->GetType(1) != VTYPE_STRING
+        ) {
+      error = ERR_INVALID_PARAMS;
+    }
+
+    if (error == NO_ERROR) {
+      handler->CancelDownload(request_args->GetString(1));
+    }
+
+  } else if (message_name == kMessageRestartDownloadName) {
+    // Parameters:
+    // 0: int32 - callback id
+    // 1: string - id
+
+    if (request_args->GetSize() != 2
+        || request_args->GetType(1) != VTYPE_STRING
+        ) {
+      error = ERR_INVALID_PARAMS;
+    }
+
+    if (error == NO_ERROR) {
+      handler->RestartDownload(request_args->GetString(1));
+    }
+
+  } else if (message_name == kMessageRemoveDownloadName) {
+    // Parameters:
+    // 0: int32 - callback id
+    // 1: string - id
+
+    if (request_args->GetSize() != 2
+        || request_args->GetType(1) != VTYPE_STRING
+        ) {
+      error = ERR_INVALID_PARAMS;
+    }
+
+    if (error == NO_ERROR) {
+      handler->RemoveDownload(request_args->GetString(1));
+    }
+
+  } else if (message_name == kMessageOpenDownloadedName) {
+    // Parameters:
+    // 0: int32 - callback id
+    // 1: string - id
+
+    if (request_args->GetSize() != 2
+        || request_args->GetType(1) != VTYPE_STRING
+        ) {
+      error = ERR_INVALID_PARAMS;
+    }
+
+    if (error == NO_ERROR) {
+      CefRefPtr<DownloadHistoryItem> item = handler->GetDownloadHistoryItem(request_args->GetString(1));
+      if (item.get() && item->Status() == DC_STATUS_SUCCESS) {
+        platform_util::OpenExternal(item->GetPath());
+      } else {
+        error = ERR_NOT_FOUND;
+      }
+
+    }
+
+  } else if (message_name == kMessageShowDownloadedName) {
+    // Parameters:
+    // 0: int32 - callback id
+    // 1: string - id
+
+    if (request_args->GetSize() != 2
+        || request_args->GetType(1) != VTYPE_STRING
+        ) {
+      error = ERR_INVALID_PARAMS;
+    }
+
+    if (error == NO_ERROR) {
+      CefRefPtr<DownloadHistoryItem> item = handler->GetDownloadHistoryItem(request_args->GetString(1));
+      if (item.get() && item->Status() == DC_STATUS_SUCCESS) {
+        // ToDo: maybe org.freedesktop.FileManager1 ?
+        platform_util::OpenExternal("file://" + item->GetPath());
+      } else {
+        error = ERR_NOT_FOUND;
+      }
+
+    }
+
+  } else if (message_name == kMessageListDownloadHistory) {
+    // Parameters:
+    // 0: int32 - callback id
+
+    if (request_args->GetSize() != 1) {
+      error = ERR_INVALID_PARAMS;
+    }
+
+    if (error == NO_ERROR) {
+      response_args->SetList(2, handler->GetDownloadHistoryList());
     }
 
   } else {

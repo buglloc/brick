@@ -21,6 +21,8 @@ var BrickApp = {
   windowCallbacks: {},
   defaultNotifyDuration: 3000,
   authErrorCodes: {NONE:0, HTTP:1, CAPTCHA:2, OTP:3, AUTH:4, INVALID_URL:5, UNKNOWN:6},
+  downloadStatus: {SUCCESS:0, FAILED:1, PROGRESS:2},
+  downloadFailedReason: {NONE:0, UNKNOWN:1, ABORTED:2, HTTP:3},
   setWindowCallback: function(windowId, callback) {
     BrickApp.windowCallbacks[windowId] = callback;
   },
@@ -71,6 +73,63 @@ var BrickApp = {
     native function AppExBrowse();
 
     AppExBrowse(null, url);
+  },
+  requestDownload: function(url, filename) {
+    native function AppExRequestDownload();
+
+    AppExRequestDownload(null, url, filename || '');
+  },
+  restartDownload: function(id) {
+    native function AppExRestartDownload();
+
+    AppExRestartDownload(null, id);
+  },
+  cancelDownload: function(id) {
+    native function AppExCancelDownload();
+
+    AppExCancelDownload(null, id);
+  },
+  removeDownload: function(id) {
+    native function AppExRemoveDownload();
+
+    AppExRemoveDownload(null, id);
+  },
+  openDownloaded: function(id) {
+    native function AppExOpenDownloaded();
+
+    AppExOpenDownloaded(null, id);
+  },
+  showDownloaded: function(id) {
+    native function AppExShowDownloaded();
+
+    AppExShowDownloaded(null, id);
+  },
+  listDownloads: function(callback) {
+    native function AppExListDownloadHistory();
+
+    AppExListDownloadHistory(function(error, list) {
+      if (error) {
+        console.error('Can\'t list download history. Error: ' + error);
+        return;
+      }
+
+      var result = [];
+      list.forEach(function(item) {
+        result.push({
+          'id': item[0],
+          'name': item[1],
+          'path': item[2],
+          'url': item[3],
+          'status': item[4],
+          'reason': item[5],
+          'percent': item[6],
+          'current': item[7],
+          'total': item[8],
+        });
+      });
+
+      callback(result);
+    });
   },
   changeTooltip: function(text) {
     native function AppExChangeTooltip();
@@ -420,6 +479,9 @@ BXDesktopWindow.ExecuteCommand = function(cmd, params) {
   }
 };
 
+BXDesktopSystem.DownloadStatus = BrickApp.downloadStatus;
+BXDesktopSystem.DownloadFailedReason = BrickApp.downloadFailedReason;
+
 BXDesktopSystem.ListScreenMedia = function(callback, types) {
   BrickApp.listDesktopMedia(callback, types);
 };
@@ -675,6 +737,35 @@ BXDesktopSystem.Navigate = function(index, url) {
 BXDesktopSystem.GetWorkArea = function() {
   BrickHelper.implementMe('BXDesktopSystem.GetWorkArea', arguments);
 };
+
+BXDesktopSystem.StartDownload = function(url, filename) {
+  BrickApp.requestDownload(url, filename);
+};
+
+BXDesktopSystem.RestartDownload = function(id) {
+  BrickApp.restartDownload(id);
+};
+
+BXDesktopSystem.CancelDownload = function(id) {
+  BrickApp.cancelDownload(id);
+};
+
+BXDesktopSystem.RemoveDownload = function(id) {
+  BrickApp.removeDownload(id);
+};
+
+BXDesktopSystem.OpenFileDownload = function(id) {
+  BrickApp.openDownloaded(id);
+};
+
+BXDesktopSystem.ShowFileDownload = function(id) {
+  BrickApp.showDownloaded(id);
+};
+
+BXDesktopSystem.ListDownload = function(callback) {
+  BrickApp.listDownloads(callback);
+};
+
 /*---------- Original API ---------*/
 
 /*---------- Helpers ---------*/

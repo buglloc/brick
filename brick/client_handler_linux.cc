@@ -171,7 +171,7 @@ ClientHandler::OnFileDialog(
   }
 
   if (!default_file_path.empty()) {
-    gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dialog),
+    gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog),
        default_file_path.ToString().c_str());
   }
 
