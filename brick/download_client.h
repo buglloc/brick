@@ -62,6 +62,7 @@ private:
   std::string file_name_;
   std::ofstream tmp_file_;
   int last_percent_;
+  int64 last_bytes_;
 
 IMPLEMENT_REFCOUNTING(DownloadClient);
 };

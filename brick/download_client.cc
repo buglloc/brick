@@ -14,6 +14,14 @@
 
 namespace {
   const char kTmpSuffix[] = ".brdown";
+  const int kHighPercentBound = 10 * 1024 * 1024;
+  const int kMiddleBytesBound = 5 * 1024 * 1024;
+  const int kHighBytesBound = 100 * 1024 * 1024;
+  const int kLowPercentLimit = 5;
+  const int kHighPercentLimit = 1;
+  const int kLowBytesLimit = 512 * 1024;
+  const int kMiddleBytesLimit = 1024 * 1024;
+  const int kHighBytesLimit = 10 * 1024 * 1024;
 
 }  // namespace
 
@@ -21,7 +29,8 @@ DownloadClient::DownloadClient(const std::string& id, const std::string& path, c
     : id_ (id),
       file_path_ (path),
       file_name_ (name),
-      last_percent_ (0) {
+      last_percent_ (0),
+      last_bytes_ (0) {
 
   CEF_REQUIRE_UI_THREAD();
   tmp_file_path_ = path + kTmpSuffix;
@@ -71,17 +80,40 @@ DownloadClient::OnRequestComplete(CefRefPtr<CefURLRequest> request) {
 
 void
 DownloadClient::OnDownloadProgress(CefRefPtr<CefURLRequest> request, int64 current, int64 total) {
-  if (total <= 0)
-    return;
-  // ToDo: what should be without total size?
-  // Send only "current" w/o "percent" and "total"? How often?
+  bool percent_mode = (total > 0);
 
-  int progress = static_cast<int>(current * 100.0 / total);
-  if (progress == last_percent_) {
-    return;
+  int progress = 0;
+  if (percent_mode) {
+    progress = static_cast<int>(current * 100.0 / total);
+    int delta_progress = progress - last_percent_;
+    int limit;
+    if (current < kHighPercentBound) {
+      limit = kLowPercentLimit;
+    } else {
+      limit = kHighPercentLimit;
+    }
+
+    if (delta_progress < limit)
+      return;
+
+    last_percent_ = progress;
+  } else {
+    int64 delta_bytes = current - last_bytes_;
+    int limit;
+    if (current < kMiddleBytesBound) {
+      limit = kLowBytesLimit;
+    } else if (current < kHighBytesBound) {
+      limit = kMiddleBytesLimit;
+    } else {
+      limit = kHighBytesLimit;
+    }
+
+    if (delta_bytes < limit)
+      return;
+
+    last_bytes_ = current;
   }
 
-  last_percent_ = progress;
   DownloadProgressEvent e(id_, progress, current, total);
   EventBus::FireEvent(e);
 }
@@ -116,7 +148,7 @@ DownloadClient::CreateRequest(
   CefRefPtr<CefRequest> request = CefRequest::Create();
   request->SetURL(url);
   request->SetMethod("GET");
-  request->SetFlags(UR_FLAG_ALLOW_CACHED_CREDENTIALS|UR_FLAG_NO_RETRY_ON_5XX|UR_FLAG_STOP_ON_REDIRECT|UR_FLAG_SKIP_CACHE);
+  request->SetFlags(UR_FLAG_ALLOW_CACHED_CREDENTIALS|UR_FLAG_NO_RETRY_ON_5XX|UR_FLAG_SKIP_CACHE);
 
   // Create and start the new CefURLRequest.
   return CefURLRequest::Create(request, new DownloadClient(id, path, name), NULL);

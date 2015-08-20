@@ -775,9 +775,11 @@ ClientHandler::onEvent(const DownloadProgressEvent& event) {
     return;
 
   Json::Value params(Json::objectValue);
-  params["percent"] = event.getPercent();
   params["current"] = static_cast<Json::Value::Int64>(event.getCurrent());
-  params["total"] = static_cast<Json::Value::Int64>(event.getTotal());
+  if (event.getTotal() > 0) {
+    params["percent"] = event.getPercent();
+    params["total"] = static_cast<Json::Value::Int64>(event.getTotal());
+  }
 
   Json::Value data(Json::arrayValue);
   data.append(event.getId());
