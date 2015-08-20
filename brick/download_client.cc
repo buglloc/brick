@@ -106,6 +106,9 @@ DownloadClient::CreateRequest(
 
   CEF_REQUIRE_UI_THREAD();
 
+  if (!platform_util::MakeDirectory(helper::BaseDir(path)))
+    return NULL;
+
 // ToDo: What we must todo in this case?
 //  if (platform_util::IsPathExists(path + kTmpSuffix))
 //    return NULL;  // Probably we already started downloading
