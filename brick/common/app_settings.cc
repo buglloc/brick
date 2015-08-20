@@ -24,6 +24,7 @@ namespace {
   const char kHideOnDeleteName[]            = "hide-on-delete";
   const char kExtendedStatusName[]          = "extended-status";
   const char kImplicitFileDownloadName[]    = "implicit-file-download";
+  const char kAutoDownloadName[]            = "auto-download";
   const char kClientScriptsName[]           = "client-scripts";
 
 }  // namespace
@@ -41,7 +42,8 @@ AppSettings::AppSettings()
   external_api (true),
   hide_on_delete (true),
   extended_status (true),
-  implicit_file_download (false) {
+  implicit_file_download (false),
+  auto_download (false) {
 
   download_dir = platform_util::GetDefaultDownloadDir();
 }
@@ -135,6 +137,11 @@ AppSettings::UpdateByJson(std::string json) {
   if (root.isMember(kImplicitFileDownloadName)
       && root[kImplicitFileDownloadName].isBool()) {
     implicit_file_download = root[kImplicitFileDownloadName].asBool();
+  }
+
+  if (root.isMember(kAutoDownloadName)
+      && root[kAutoDownloadName].isBool()) {
+    auto_download = root[kAutoDownloadName].asBool();
   }
 
   if (root.isMember(kClientScriptsName)

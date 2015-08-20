@@ -349,17 +349,23 @@ ClientHandler::InitDownload(const std::string &url, const std::string &filename)
     return;
   }
 
-  const std::vector<CefString> accept_filters;
-  CefRefPtr<CefFileDialogCallback> callback(new DownloadClientDialogCallback(url));
-  OnFileDialog(
-      GetBrowser(),
-      FILE_DIALOG_SAVE,
-      CefString(),
-      filename,
-      accept_filters,
-      1,
-      callback
-  );
+  if (app_settings_.auto_download) {
+    const std::vector<CefString> file_paths{app_settings_.download_dir + "/" + filename};
+    CefRefPtr<CefFileDialogCallback> callback(new DownloadClientDialogCallback(url));
+    callback->Continue(1, file_paths);
+  } else {
+    const std::vector<CefString> accept_filters;
+    CefRefPtr<CefFileDialogCallback> callback(new DownloadClientDialogCallback(url));
+    OnFileDialog(
+        GetBrowser(),
+        FILE_DIALOG_SAVE,
+        CefString(),
+        filename,
+        accept_filters,
+        1,
+        callback
+    );
+  }
 }
 
 void

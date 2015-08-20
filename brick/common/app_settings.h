@@ -29,6 +29,7 @@ struct AppSettings {
   bool hide_on_delete;
   bool extended_status;
   bool implicit_file_download;
+  bool auto_download;
   client_scripts_map client_scripts;
 
   static AppSettings InitByJson(std::string json);
