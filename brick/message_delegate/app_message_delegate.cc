@@ -7,6 +7,7 @@
 #include "include/base/cef_bind.h"
 #include "include/wrapper/cef_closure_task.h"
 #include "brick/brick_app.h"
+#include "brick/brick_types.h"
 #include "brick/window/edit_account_window.h"
 #include "brick/helper.h"
 #include "brick/notification_manager.h"
@@ -188,7 +189,7 @@ AppMessageDelegate::OnProcessMessageReceived(
   } else if (message_name == kMessageSetIdleIndicatorName) {
     // Parameters:
     //  0: int32 - callback id
-    //  1: string - status from BrickApp::StatusIcon
+    //  1: string - status from IndicatorStatusIcon
 
     if (
        request_args->GetSize() != 2
@@ -201,20 +202,20 @@ AppMessageDelegate::OnProcessMessageReceived(
       std::string status = request_args->GetString(1);
 
       if (status == kIndicatorOnlineName) {
-        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIdleIcon(BrickApp::StatusIcon::ONLINE);
+        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIdleIcon(IndicatorStatusIcon::ONLINE);
       } else if (status == kIndicatorDndName) {
-        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIdleIcon(BrickApp::StatusIcon::DND);
+        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIdleIcon(IndicatorStatusIcon::DND);
       } else if (status == kIndicatorAwayName) {
-        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIdleIcon(BrickApp::StatusIcon::AWAY);
+        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIdleIcon(IndicatorStatusIcon::AWAY);
       } else if (status == kIndicatorOfflineName) {
-        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIdleIcon(BrickApp::StatusIcon::OFFLINE);
+        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIdleIcon(IndicatorStatusIcon::OFFLINE);
       }
     }
 
   } else if (message_name == kMessageSetIndicatorName) {
     // Parameters:
     //  0: int32 - callback id
-    //  1: string - status from BrickApp::StatusIcon
+    //  1: string - status from IndicatorStatusIcon
 
     if (
        request_args->GetSize() != 2
@@ -227,17 +228,17 @@ AppMessageDelegate::OnProcessMessageReceived(
       std::string status = request_args->GetString(1);
 
       if (status == kIndicatorOnlineName) {
-        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIcon(BrickApp::StatusIcon::ONLINE);
+        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIcon(IndicatorStatusIcon::ONLINE);
       } else if (status == kIndicatorDndName) {
-        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIcon(BrickApp::StatusIcon::DND);
+        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIcon(IndicatorStatusIcon::DND);
       } else if (status == kIndicatorAwayName) {
-        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIcon(BrickApp::StatusIcon::AWAY);
+        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIcon(IndicatorStatusIcon::AWAY);
       } else if (status == kIndicatorOfflineName) {
-        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIcon(BrickApp::StatusIcon::OFFLINE);
+        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIcon(IndicatorStatusIcon::OFFLINE);
       } else if (status == kIndicatorFlashName) {
-        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIcon(BrickApp::StatusIcon::FLASH);
+        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIcon(IndicatorStatusIcon::FLASH);
       } else if (status == kIndicatorFlashImportantName) {
-        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIcon(BrickApp::StatusIcon::FLASH_IMPORTANT);
+        ClientHandler::GetInstance()->GetIndicatorHandle()->SetIcon(IndicatorStatusIcon::FLASH_IMPORTANT);
       }
     }
 

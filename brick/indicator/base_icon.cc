@@ -33,11 +33,11 @@ BaseIcon::BaseIcon(std::string icons_dir) :
 }
 
 std::string
-BaseIcon::GetIconPath(BrickApp::StatusIcon icon) {
+BaseIcon::GetIconPath(IndicatorStatusIcon icon) {
   return icons_folder_ + icon_files_[icon];
 }
 
 std::string
-BaseIcon::GetIconName(BrickApp::StatusIcon icon) {
+BaseIcon::GetIconName(IndicatorStatusIcon icon) {
   return icon_names_[icon];
 }

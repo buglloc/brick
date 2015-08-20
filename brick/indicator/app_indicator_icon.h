@@ -15,7 +15,7 @@ class AppIndicatorIcon : public BaseIcon {
  public:
   explicit AppIndicatorIcon(std::string icons_dir);
 
-  virtual void SetIcon(BrickApp::StatusIcon icon);
+  virtual void SetIcon(IndicatorStatusIcon icon);
   virtual void SetTooltip(const char* text);
   virtual void Show();
 

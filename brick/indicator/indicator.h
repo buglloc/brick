@@ -17,6 +17,7 @@
 #include <string>
 #include "include/cef_base.h"
 #include "brick/brick_app.h"
+#include "brick/brick_types.h"
 #include "brick/indicator/base_icon.h"
 #include "brick/event/account_switch_event.h"
 #include "brick/event/account_list_event.h"
@@ -30,8 +31,8 @@ class BrickIndicator : public CefBase,
  public:
   explicit BrickIndicator(std::string icons_dir);
 
-  void SetIdleIcon(BrickApp::StatusIcon icon);
-  void SetIcon(BrickApp::StatusIcon icon);
+  void SetIdleIcon(IndicatorStatusIcon icon);
+  void SetIcon(IndicatorStatusIcon icon);
   void SetTooltip(const char* text);
   void SetBadge(int badge, bool is_important = false);
   // Platform specific methods
@@ -57,8 +58,8 @@ class BrickIndicator : public CefBase,
   void SwitchToIdle();
 
  private:
-  BrickApp::StatusIcon current_icon_;
-  BrickApp::StatusIcon idle_icon_;
+  IndicatorStatusIcon current_icon_;
+  IndicatorStatusIcon idle_icon_;
   std::string icons_folder_;
   bool idle_;
   bool extended_status_;

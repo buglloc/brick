@@ -10,8 +10,8 @@
 #include "brick/event/indicator_badge_event.h"
 
 BrickIndicator::BrickIndicator(std::string icons_dir)
-    : current_icon_(BrickApp::StatusIcon::DEFAULT),
-     idle_icon_(BrickApp::StatusIcon::DEFAULT),
+    : current_icon_(IndicatorStatusIcon::DEFAULT),
+     idle_icon_(IndicatorStatusIcon::DEFAULT),
      icons_folder_(icons_dir),
      idle_(true),
      extended_status_(true),
@@ -24,9 +24,9 @@ void
 BrickIndicator::SetBadge(int badge, bool is_important) {
   if (badge > 0) {
     if (is_important) {
-        SetIcon(BrickApp::StatusIcon::FLASH_IMPORTANT);
+        SetIcon(IndicatorStatusIcon::FLASH_IMPORTANT);
     } else {
-        SetIcon(BrickApp::StatusIcon::FLASH);
+        SetIcon(IndicatorStatusIcon::FLASH);
     }
 #ifdef unity
     // Parts of simple Unity integration - let's set badge in launcher!
@@ -95,8 +95,8 @@ BrickIndicator::OnMenuChangeAccount(int id) {
   if (account_manager->GetCurrentAccount()->GetId() == id)
     return true;  // Selected current account
 
-  SetIdleIcon(BrickApp::StatusIcon::DEFAULT);
-  SetIcon(BrickApp::StatusIcon::DEFAULT);
+  SetIdleIcon(IndicatorStatusIcon::DEFAULT);
+  SetIcon(IndicatorStatusIcon::DEFAULT);
   client_handler->SwitchAccount(id);
 
   return true;
@@ -105,7 +105,7 @@ BrickIndicator::OnMenuChangeAccount(int id) {
 void
 BrickIndicator::SwitchToIdle() {
   idle_ = true;
-  SetIcon((BrickApp::StatusIcon) idle_icon_);
+  SetIcon((IndicatorStatusIcon) idle_icon_);
 }
 
 void

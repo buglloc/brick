@@ -11,7 +11,7 @@ Gtk2StatusIcon::Gtk2StatusIcon(std::string icons_dir):
 }
 
 void
-Gtk2StatusIcon::SetIcon(BrickApp::StatusIcon icon) {
+Gtk2StatusIcon::SetIcon(IndicatorStatusIcon icon) {
   gtk_status_icon_set_from_file(icon_handler_, GetIconPath(icon).c_str());
 }
 

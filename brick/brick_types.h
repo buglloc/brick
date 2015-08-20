@@ -16,4 +16,14 @@ typedef enum {
   DC_REASON_HTTP
 } DownloadClientReason;
 
+typedef enum {
+  DEFAULT = 0,
+  OFFLINE,
+  ONLINE,
+  DND,
+  AWAY,
+  FLASH,
+  FLASH_IMPORTANT
+} IndicatorStatusIcon;
+
 #endif  // BRICK_TYPES_H_

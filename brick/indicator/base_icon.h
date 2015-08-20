@@ -7,17 +7,17 @@
 #include <string>
 
 #include "include/cef_base.h"
-#include "brick/brick_app.h"
+#include "brick/brick_types.h"
 
 class BaseIcon : public CefBase {
 
  public:
   explicit BaseIcon(std::string icons_dir);
 
-  std::string GetIconPath(BrickApp::StatusIcon icon);
-  std::string GetIconName(BrickApp::StatusIcon icon);
+  std::string GetIconPath(IndicatorStatusIcon icon);
+  std::string GetIconName(IndicatorStatusIcon icon);
 
-  virtual void SetIcon(BrickApp::StatusIcon icon) = 0;
+  virtual void SetIcon(IndicatorStatusIcon icon) = 0;
   virtual void SetTooltip(const char* text) = 0;
   virtual void Show() = 0;
 

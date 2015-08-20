@@ -130,7 +130,7 @@ AppIndicatorIcon::AppIndicatorIcon(std::string icons_dir):
 }
 
 void
-AppIndicatorIcon::SetIcon(BrickApp::StatusIcon icon) {
+AppIndicatorIcon::SetIcon(IndicatorStatusIcon icon) {
   app_indicator_set_icon(icon_handler_, GetIconName(icon).c_str());
 }
 

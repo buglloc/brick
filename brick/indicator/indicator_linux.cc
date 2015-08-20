@@ -99,12 +99,12 @@ BrickIndicator::Init() {
 }
 
 void
-BrickIndicator::SetIdleIcon(BrickApp::StatusIcon icon) {
+BrickIndicator::SetIdleIcon(IndicatorStatusIcon icon) {
   if (extended_status_) {
     idle_icon_ = icon;
   } else {
-    if (icon > BrickApp::StatusIcon::OFFLINE &&  icon < BrickApp::StatusIcon::FLASH)
-      idle_icon_ = BrickApp::StatusIcon::ONLINE;
+    if (icon > IndicatorStatusIcon::OFFLINE &&  icon < IndicatorStatusIcon::FLASH)
+      idle_icon_ = IndicatorStatusIcon::ONLINE;
     else
       idle_icon_ = icon;
   }
@@ -114,8 +114,8 @@ BrickIndicator::SetIdleIcon(BrickApp::StatusIcon icon) {
 }
 
 void
-BrickIndicator::SetIcon(BrickApp::StatusIcon icon) {
-  idle_ = icon < BrickApp::StatusIcon::FLASH;
+BrickIndicator::SetIcon(IndicatorStatusIcon icon) {
+  idle_ = icon < IndicatorStatusIcon::FLASH;
 
   current_icon_ = icon;
   icon_->SetIcon(icon);

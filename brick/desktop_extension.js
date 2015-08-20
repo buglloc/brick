@@ -120,11 +120,12 @@ var BrickApp = {
           'name': item[1],
           'path': item[2],
           'url': item[3],
-          'status': item[4],
-          'reason': item[5],
-          'percent': item[6],
-          'current': item[7],
-          'total': item[8],
+          'date': item[4],
+          'status': item[5],
+          'reason': item[6],
+          'progress': item[7],
+          'current': item[8],
+          'size': item[9]
         });
       });
 
