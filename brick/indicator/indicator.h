@@ -7,7 +7,7 @@
 #if defined(__linux__)
 
 #ifdef unity
-#include <unity.h>
+#include "brick/indicator/unity_launcher.h"
 #else
 #include "gtk/gtk.h"
 #endif
@@ -65,7 +65,7 @@ class BrickIndicator : public CefBase,
   bool extended_status_;
   CefRefPtr<BaseIcon> icon_;
 #ifdef unity
-  UnityLauncherEntry *launcher_handler_;
+  CefRefPtr<UnityLauncher> unity_launcher_;
 #endif
 
 IMPLEMENT_REFCOUNTING(BrickIndicator);

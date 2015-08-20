@@ -61,9 +61,8 @@ namespace {
 void
 BrickIndicator::Init() {
 #ifdef unity
-  launcher_handler_ = unity_launcher_entry_get_for_desktop_id(APP_COMMON_NAME ".desktop");
+  unity_launcher_->Init();
 #endif
-
   // Create popup menu
   menu = gtk_menu_new();
   GtkWidget * show_item = gtk_menu_item_new_with_label("Show/Hide");

@@ -115,6 +115,10 @@ set(BRICK_STATUS_ICON_SRCS_LINUX
   indicator/app_indicator_icon.h
   indicator/app_indicator_icon.cc
   )
+set(BRICK_UNITY_LAUNCHER_SRCS
+  indicator/unity_launcher.h
+  indicator/unity_launcher.cc
+  )
 set(BRICK_WINDOWS_SRCS
   window/base_window.h
   window/base_window.cc
@@ -171,6 +175,13 @@ set(BRICK_EVENT_SYSTEM
   event/download_progress_event.h
   event/download_complete_event.h
   )
+
+if (UNITY)
+  set(BRICK_STATUS_ICON_SRCS
+    ${BRICK_STATUS_ICON_SRCS}
+    ${BRICK_UNITY_LAUNCHER_SRCS}
+    )
+endif()
 
 APPEND_PLATFORM_SOURCES(BRICK_SRCS)
 APPEND_PLATFORM_SOURCES(BRICK_RESOURCE_SRCS)

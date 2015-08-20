@@ -17,6 +17,9 @@ BrickIndicator::BrickIndicator(std::string icons_dir)
      extended_status_(true),
      icon_(NULL) {
 
+#ifdef unity
+  unity_launcher_ = new UnityLauncher();
+#endif
   Init();
 }
 
@@ -28,19 +31,14 @@ BrickIndicator::SetBadge(int badge, bool is_important) {
     } else {
         SetIcon(IndicatorStatusIcon::FLASH);
     }
-#ifdef unity
-    // Parts of simple Unity integration - let's set badge in launcher!
-    unity_launcher_entry_set_count(launcher_handler_, badge);
-    unity_launcher_entry_set_count_visible(launcher_handler_, true);
-#endif
   } else {
     // restore icon for current application state
     SwitchToIdle();
-#ifdef unity
-    unity_launcher_entry_set_count(launcher_handler_, 0);
-    unity_launcher_entry_set_count_visible(launcher_handler_, false);
-#endif
   }
+
+#ifdef unity
+  unity_launcher_->SetBadge(badge);
+#endif
 
   IndicatorBadgeEvent e(badge, is_important);
   EventBus::FireEvent(e);
