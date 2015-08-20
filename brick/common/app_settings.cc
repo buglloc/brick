@@ -44,7 +44,6 @@ AppSettings::AppSettings()
   implicit_file_download (false) {
 
   download_dir = platform_util::GetDefaultDownloadDir();
-  LOG(WARNING) << "DOWNLOAD: " << download_dir;
 }
 
 AppSettings
