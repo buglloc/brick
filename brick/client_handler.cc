@@ -355,7 +355,7 @@ ClientHandler::InitDownload(const std::string &url, const std::string &filename)
       GetBrowser(),
       FILE_DIALOG_SAVE,
       CefString(),
-      filename,
+      app_settings_.download_dir + "/" + filename,
       accept_filters,
       1,
       callback

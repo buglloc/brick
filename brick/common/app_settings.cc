@@ -16,6 +16,7 @@ namespace {
   const char kCachePathName[]               = "cache-path";
   const char kLogFileName[]                 = "log-file";
   const char kResourceDirName[]             = "resource-dir";
+  const char kDownloadDirName[]             = "download-dir";
   const char kIgnoreCertificateErrors[]     = "ignore-certificate-errors";
   const char kStartMinimizedName[]          = "minimized";
   const char kAutoAwayName[]                = "auto-away";
@@ -42,6 +43,8 @@ AppSettings::AppSettings()
   extended_status (true),
   implicit_file_download (false) {
 
+  download_dir = platform_util::GetDefaultDownloadDir();
+  LOG(WARNING) << "DOWNLOAD: " << download_dir;
 }
 
 AppSettings
@@ -103,6 +106,11 @@ AppSettings::UpdateByJson(std::string json) {
   if (root.isMember(kResourceDirName)
      && root[kResourceDirName].isString()) {
     resource_dir = root[kResourceDirName].asString();
+  }
+
+  if (root.isMember(kDownloadDirName)
+      && root[kDownloadDirName].isString()) {
+    download_dir = root[kDownloadDirName].asString();
   }
 
   if (root.isMember(kAutoAwayName)

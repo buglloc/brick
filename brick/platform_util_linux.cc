@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <signal.h>
 #include <sys/stat.h>
+#include <glib.h>
+
 #include <string>
 
 #include "include/wrapper/cef_helpers.h"
@@ -215,6 +217,21 @@ namespace platform_util {
     }
 
     return DESKTOP_ENVIRONMENT_OTHER;
+  }
+
+  const std::string
+  GetDefaultDownloadDir() {
+    const gchar * dir = g_get_user_special_dir(G_USER_DIRECTORY_DOWNLOAD);
+    if (dir == NULL) {
+      // Fallback to $HOME/Downloads
+      dir = g_get_home_dir();
+    }
+
+    if (dir != NULL) {
+      return std::string(dir) + "/" + "Downloads";
+    }
+
+    return "";
   }
 
 }  // namespace platform_util
