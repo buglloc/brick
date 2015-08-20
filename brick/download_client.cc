@@ -29,8 +29,8 @@ DownloadClient::DownloadClient(const std::string& id, const std::string& path, c
     : id_ (id),
       file_path_ (path),
       file_name_ (name),
-      last_percent_ (0),
-      last_bytes_ (0) {
+      last_percent_ (-1),
+      last_bytes_ (-1) {
 
   CEF_REQUIRE_UI_THREAD();
   tmp_file_path_ = path + kTmpSuffix;
@@ -85,31 +85,35 @@ DownloadClient::OnDownloadProgress(CefRefPtr<CefURLRequest> request, int64 curre
   int progress = 0;
   if (percent_mode) {
     progress = static_cast<int>(current * 100.0 / total);
-    int delta_progress = progress - last_percent_;
-    int limit;
-    if (current < kHighPercentBound) {
-      limit = kLowPercentLimit;
-    } else {
-      limit = kHighPercentLimit;
-    }
+    if (last_percent_ != -1) {
+      int delta_progress = progress - last_percent_;
+      int limit;
+      if (current < kHighPercentBound) {
+        limit = kLowPercentLimit;
+      } else {
+        limit = kHighPercentLimit;
+      }
 
-    if (delta_progress < limit)
-      return;
+      if (delta_progress < limit)
+        return;
+    }
 
     last_percent_ = progress;
   } else {
-    int64 delta_bytes = current - last_bytes_;
-    int limit;
-    if (current < kMiddleBytesBound) {
-      limit = kLowBytesLimit;
-    } else if (current < kHighBytesBound) {
-      limit = kMiddleBytesLimit;
-    } else {
-      limit = kHighBytesLimit;
-    }
+    if (last_bytes_ != -1) {
+      int64 delta_bytes = current - last_bytes_;
+      int limit;
+      if (current < kMiddleBytesBound) {
+        limit = kLowBytesLimit;
+      } else if (current < kHighBytesBound) {
+        limit = kMiddleBytesLimit;
+      } else {
+        limit = kHighBytesLimit;
+      }
 
-    if (delta_bytes < limit)
-      return;
+      if (delta_bytes < limit)
+        return;
+    }
 
     last_bytes_ = current;
   }
