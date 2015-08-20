@@ -5,7 +5,7 @@
 #pragma once
 
 #include <string>
-
+#include <ctime>
 #include "brick/event/event.h"
 
 class DownloadStartEvent : public Event {
@@ -14,25 +14,29 @@ class DownloadStartEvent : public Event {
                      const std::string id,
                      const std::string filename,
                      const std::string filepath,
-                     const std::string url) :
+                     const std::string url,
+                     const std::time_t date) :
 
      Event (sender),
      id_ (id),
      filename_ (filename),
      filepath_ (filepath),
-     url_ (url) {
+     url_ (url),
+     date_ (date) {
 
   }
 
   DownloadStartEvent(const std::string id,
                      const std::string filename,
                      const std::string filepath,
-                     const std::string url) :
+                     const std::string url,
+                     const std::time_t date) :
      Event (nullptr),
      id_ (id),
      filename_ (filename),
      filepath_ (filepath),
-     url_ (url) {
+     url_ (url),
+     date_ (date) {
 
   }
 
@@ -54,11 +58,16 @@ class DownloadStartEvent : public Event {
     return id_;
   }
 
+  const std::time_t getDate() const {
+    return date_;
+  }
+
  private:
   const std::string id_;
   const std::string filename_;
   const std::string filepath_;
   const std::string url_;
+  const std::time_t date_;
 
 IMPLEMENT_REFCOUNTING(DownloadStartEvent);
 };

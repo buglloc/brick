@@ -2,6 +2,7 @@
 
 #include "brick/download_client.h"
 
+#include <ctime>
 #include <fstream>
 #include <include/cef_parser.h>
 
@@ -145,7 +146,7 @@ DownloadClientDialogCallback::Continue(
 
   if (request.get()) {
     ClientHandler::GetInstance()->RegisterDownload(id , request);
-    DownloadStartEvent e(id, filename, file, url_);
+    DownloadStartEvent e(id, filename, file, url_, std::time(nullptr));
     EventBus::FireEvent(e);
   }
 }

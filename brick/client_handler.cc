@@ -416,11 +416,12 @@ ClientHandler::GetDownloadHistoryList() {
     item->SetString(1, history_item.second->GetName());
     item->SetString(2, history_item.second->GetPath());
     item->SetString(3, history_item.second->GetUrl());
-    item->SetInt(4, history_item.second->Status());
-    item->SetInt(5, history_item.second->Reason());
-    item->SetInt(6, history_item.second->Percent());
-    item->SetDouble(7, history_item.second->CurrentBytes());
-    item->SetDouble(8, history_item.second->TotalBytes());
+    item->SetDouble(4, history_item.second->GetDate());
+    item->SetInt(5, history_item.second->Status());
+    item->SetInt(6, history_item.second->Reason());
+    item->SetInt(7, history_item.second->Percent());
+    item->SetDouble(8, history_item.second->CurrentBytes());
+    item->SetDouble(9, history_item.second->TotalBytes());
     result->SetList(i++, item);
   }
 
@@ -733,7 +734,8 @@ ClientHandler::onEvent(const DownloadStartEvent& event) {
   download_history_[event.getId()] = new DownloadHistoryItem(
       event.getUrl(),
       event.getFilepath(),
-      event.getFilename()
+      event.getFilename(),
+      event.getDate()
   );
 
   CefRefPtr<CefBrowser> browser = GetBrowser();
@@ -744,6 +746,7 @@ ClientHandler::onEvent(const DownloadStartEvent& event) {
   params["name"] = event.getFilename();
   params["path"] = event.getFilepath();
   params["url"] = event.getUrl();
+  params["date"] = static_cast<Json::Value::Int64>(event.getDate());
 
   Json::Value data(Json::arrayValue);
   data.append(event.getId());

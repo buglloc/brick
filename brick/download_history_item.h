@@ -5,6 +5,7 @@
 #pragma once
 
 #include <string>
+#include <ctime>
 
 #include "include/wrapper/cef_helpers.h"
 #include "include/cef_base.h"
@@ -15,10 +16,11 @@
 class DownloadHistoryItem : public CefBase {
 public:
 
-  DownloadHistoryItem(const std::string url, const std::string path, const std::string name)
+  DownloadHistoryItem(const std::string url, const std::string path, const std::string name, const std::time_t date)
       : url_ (url),
         path_ (path),
-        name_ (name) {
+        name_ (name),
+        date_ (date){
 
     status_ = DC_STATUS_PROGRESS;
     reason_ = DC_REASON_NONE;
@@ -37,6 +39,10 @@ public:
 
   const std::string GetUrl() const {
     return url_;
+  }
+
+  const std::time_t GetDate() const {
+    return date_;
   }
 
   const DownloadClientStatus Status() {
@@ -101,6 +107,7 @@ private:
   const std::string url_;
   const std::string path_;
   const std::string name_;
+  const std::time_t date_;
   DownloadClientStatus status_;
   DownloadClientReason reason_;
   int percent_;

@@ -167,6 +167,9 @@ set(BRICK_EVENT_SYSTEM
   event/indicator_tooltip_event.h
   event/sleep_event.h
   event/user_away_event.h
+  event/download_start_event.h
+  event/download_progress_event.h
+  event/download_complete_event.h
   )
 
 APPEND_PLATFORM_SOURCES(BRICK_SRCS)
