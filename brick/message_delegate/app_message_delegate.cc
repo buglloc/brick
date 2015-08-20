@@ -513,8 +513,7 @@ AppMessageDelegate::OnProcessMessageReceived(
     if (error == NO_ERROR) {
       CefRefPtr<DownloadHistoryItem> item = handler->GetDownloadHistoryItem(request_args->GetString(1));
       if (item.get() && item->Status() == DC_STATUS_SUCCESS) {
-        // ToDo: maybe org.freedesktop.FileManager1 ?
-        platform_util::OpenExternal("file://" + item->GetPath());
+        platform_util::ShowInFolder(item->GetPath());
       } else {
         error = ERR_NOT_FOUND;
       }

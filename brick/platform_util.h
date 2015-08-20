@@ -19,9 +19,11 @@ namespace platform_util {
         DESKTOP_ENVIRONMENT_XFCE,
     };
 
-    void OpenExternal(std::string url);
-    bool IsPathExists(std::string path);
-    bool MakeDirectory(std::string path);
+    void OpenExternal(const std::string &url);
+    void ShowInFolder(const std::string &path);
+    bool IsPathExists(const std::string &path);
+    bool IsDir(const std::string &path);
+    bool MakeDirectory(const std::string &path);
     bool GetEnv(const char* variable_name, std::string* result);
     bool HasEnv(const char* variable_name);
     DesktopEnvironment GetDesktopEnvironment();

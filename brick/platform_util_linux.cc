@@ -6,6 +6,7 @@
 #include <signal.h>
 #include <sys/stat.h>
 #include <glib.h>
+#include <gio/gio.h>
 
 #include <string>
 
@@ -16,6 +17,10 @@ namespace {
 
   // The KDE session version environment variable used in KDE 4.
   const char kKDE4SessionEnvVar[] = "KDE_SESSION_VERSION";
+  const char kFileManagerName[] = "org.freedesktop.FileManager1";
+  const char kFileManagerPath[] = "/org/freedesktop/FileManager1";
+  const char kFileManagerInterface[] = "org.freedesktop.FileManager1";
+  const char kFileManagerMethod[] = "ShowItems";
 
   // Set the calling thread's signal mask to new_sigmask and return
   // the previous signal mask.
@@ -100,12 +105,72 @@ namespace {
     XDGUtil("xdg-email", email);
   }
 
+
+  bool
+  ShowInFileManager(const std::string &path) {
+    static bool available = true;
+    GDBusProxy *proxy = NULL;
+    GDBusProxyFlags flags = G_DBUS_PROXY_FLAGS_NONE;
+    gchar *uri = NULL;
+    GVariant *call_result = NULL;
+    GError *error = NULL;
+
+    if (!available) {
+      return false;
+    }
+
+    proxy = g_dbus_proxy_new_for_bus_sync(G_BUS_TYPE_SESSION,
+                                          flags,
+                                          NULL,
+                                          kFileManagerName,
+                                          kFileManagerPath,
+                                          kFileManagerInterface,
+                                          NULL,
+                                          &error);
+
+    if (proxy == NULL) {
+      LOG(WARNING) << "Can't create proxy for file showing. Error: " << error->message;
+      g_error_free(error);
+      return false;
+    }
+
+    uri = g_filename_to_uri(path.c_str(), NULL, NULL);
+    if (uri == NULL) {
+      return false;
+    }
+
+    const gchar *uris[2] = {uri,NULL};
+    const gchar *startup_id = "dontstealmyfocus";
+
+    call_result = g_dbus_proxy_call_sync(proxy,
+                                         kFileManagerMethod, // method
+                                         g_variant_new("(^ass)", uris, startup_id), // parameters
+                                         G_DBUS_CALL_FLAGS_NONE,
+                                         -1,
+                                         NULL,
+                                         &error);
+
+    g_object_unref(proxy);
+    g_free(uri);
+
+    if (call_result != NULL) {
+      g_variant_unref(call_result);
+    } else {
+      available = false;
+      LOG(WARNING) << "Can't call " << kFileManagerInterface << "." << kFileManagerMethod << ". Error: " << error->message;
+      g_error_free(error);
+      return false;
+    }
+
+    return true;
+  }
+
 }  // namespace
 
 namespace platform_util {
 
   void
-  OpenExternal(std::string url) {
+  OpenExternal(const std::string &url) {
     if (url.find("mailto:") == 0)
       XDGEmail(url);
     else
@@ -113,27 +178,33 @@ namespace platform_util {
   }
 
   bool
-  IsPathExists(std::string path) {
+  IsPathExists(const std::string &path) {
     struct stat stat_data;
     return stat(path.c_str(), &stat_data) != -1;
   }
 
   bool
-  MakeDirectory(std::string path) {
+  IsDir(const std::string &path) {
+    struct stat stat_data;
+    return stat(path.c_str(), &stat_data) != -1 && S_ISDIR(stat_data.st_mode);
+  }
+
+  bool
+  MakeDirectory(const std::string &path) {
     if (IsPathExists(path))
       return true;
 
     size_t pre = 0;
     size_t pos;
     std::string dir;
-
-    if (path[path.size()-1] != '/') {
+    std::string target_path = path;
+    if (target_path[target_path.size()-1] != '/') {
       // force trailing / so we can handle everything in loop
-      path += '/';
+      target_path += '/';
     }
 
-    while ((pos = path.find_first_of('/', pre)) !=std::string::npos) {
-      dir = path.substr(0, pos++);
+    while ((pos = target_path.find_first_of('/', pre)) != std::string::npos) {
+      dir = target_path.substr(0, pos++);
       pre = pos;
 
       if (dir.size() == 0)
@@ -234,4 +305,15 @@ namespace platform_util {
     return "";
   }
 
+  void
+  ShowInFolder(const std::string &path) {
+
+    if (IsDir(path)) {
+      // If we already have a folder - just open it
+      XDGOpen(path);
+    } else if (!ShowInFileManager(path)) {
+      // Fallback to open folder w/o highlighting item
+      XDGOpen(helper::BaseDir(path));
+    }
+  }
 }  // namespace platform_util
