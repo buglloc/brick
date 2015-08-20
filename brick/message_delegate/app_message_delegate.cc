@@ -36,6 +36,7 @@ namespace {
   const char kMessageRemoveDownloadName[]   = "RemoveDownload";
   const char kMessageOpenDownloadedName[]   = "OpenDownloaded";
   const char kMessageShowDownloadedName[]   = "ShowDownloaded";
+  const char kMessageOpenDownloadFolder[]   = "OpenDownloadFolder";
   const char kMessageListDownloadHistory[]  = "ListDownloadHistory";
 
   const char kCurrentPortalId[]             = "current_portal";
@@ -530,6 +531,18 @@ AppMessageDelegate::OnProcessMessageReceived(
 
     if (error == NO_ERROR) {
       response_args->SetList(2, handler->GetDownloadHistoryList());
+    }
+
+  } else if (message_name == kMessageOpenDownloadFolder) {
+    // Parameters:
+    // 0: int32 - callback id
+
+    if (request_args->GetSize() != 1) {
+      error = ERR_INVALID_PARAMS;
+    }
+
+    if (error == NO_ERROR) {
+      platform_util::ShowInFolder(handler->GetAppSettings().download_dir);
     }
 
   } else {

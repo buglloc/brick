@@ -104,6 +104,11 @@ var BrickApp = {
 
     AppExShowDownloaded(null, id);
   },
+  openDownloadFolder: function() {
+    native function AppExOpenDownloadFolder();
+
+    AppExOpenDownloadFolder();
+  },
   listDownloads: function(callback) {
     native function AppExListDownloadHistory();
 
@@ -761,6 +766,10 @@ BXDesktopSystem.OpenFileDownload = function(id) {
 
 BXDesktopSystem.ShowFileDownload = function(id) {
   BrickApp.showDownloaded(id);
+};
+
+BXDesktopSystem.OpenDownloadFolder = function() {
+  BrickApp.openDownloadFolder();
 };
 
 BXDesktopSystem.ListDownload = function(callback) {
