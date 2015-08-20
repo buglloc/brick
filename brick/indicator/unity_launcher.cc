@@ -41,7 +41,7 @@ UnityLauncher::Update() {
       for (auto download: downloads_) {
         progress += download.second;
       }
-      LOG(WARNING) << "prog: " << progress / downloads_.size() / 100;
+
       unity_launcher_entry_set_progress(handler_, progress / downloads_.size() / 100);
     }
   } else {

@@ -687,10 +687,17 @@ ClientHandler::SwitchAccount(int id) {
       NULL
   );
 
-  for (auto download: download_map_) {
-    download.second->Cancel();
+  if (!download_map_.empty()) {
+    std::vector<std::string> keys;
+    for (const auto &download: download_map_)
+      keys.push_back(download.first);
+
+    for (const auto &key: keys) {
+      if (download_map_.count(key))
+        download_map_[key]->Cancel();
+    }
   }
-  download_map_.clear();
+
   last_temporary_page_ = 0;
   temporary_page_map_.clear();
   account_manager_->SwitchAccount(id);
