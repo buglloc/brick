@@ -228,7 +228,7 @@ namespace platform_util {
     }
 
     if (dir != NULL) {
-      return std::string(dir) + "/" + "Downloads";
+      return dir;
     }
 
     return "";
