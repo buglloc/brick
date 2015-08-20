@@ -138,7 +138,7 @@ DownloadClientDialogCallback::Continue(
 
   std::string file = file_paths.cbegin()->ToString();
   std::string filename = helper::GetFileName(file);
-  std::string id = std::to_string(helper::HashString(url_ + file));
+  std::string id = std::to_string(helper::HashString(url_));
 
   CefRefPtr<CefURLRequest> request = DownloadClient::CreateRequest(
       id,
