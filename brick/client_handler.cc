@@ -687,6 +687,10 @@ ClientHandler::SwitchAccount(int id) {
       NULL
   );
 
+  for (auto download: download_map_) {
+    download.second->Cancel();
+  }
+  download_map_.clear();
   last_temporary_page_ = 0;
   temporary_page_map_.clear();
   account_manager_->SwitchAccount(id);
