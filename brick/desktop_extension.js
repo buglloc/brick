@@ -764,7 +764,7 @@ BXDesktopSystem.OpenFileDownload = function(id) {
   BrickApp.openDownloaded(id);
 };
 
-BXDesktopSystem.ShowFileDownload = function(id) {
+BXDesktopSystem.OpenFolderDownload = function(id) {
   BrickApp.showDownloaded(id);
 };
 
