@@ -370,6 +370,10 @@ ClientHandler::InitDownload(const std::string &url, const std::string &filename)
 
 void
 ClientHandler::RegisterDownload(std::string id, CefRefPtr<CefURLRequest> request) {
+  if (download_map_.count(id)) {
+    download_map_[id]->Cancel();
+  }
+
   download_map_[id] = request;
 }
 
