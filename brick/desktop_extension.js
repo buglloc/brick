@@ -22,7 +22,7 @@ var BrickApp = {
   defaultNotifyDuration: 3000,
   authErrorCodes: {NONE:0, HTTP:1, CAPTCHA:2, OTP:3, AUTH:4, INVALID_URL:5, UNKNOWN:6},
   downloadStatus: {SUCCESS:0, FAILED:1, PROGRESS:2},
-  downloadFailedReason: {NONE:0, UNKNOWN:1, ABORTED:2, HTTP:3},
+  downloadFailedReason: {NONE:0, UNKNOWN:1, ABORTED:2, HTTP:3, NOT_ATTACHMENT: 4},
   setWindowCallback: function(windowId, callback) {
     BrickApp.windowCallbacks[windowId] = callback;
   },

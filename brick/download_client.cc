@@ -14,6 +14,10 @@
 
 namespace {
   const char kTmpSuffix[] = ".brdown";
+  const char kPageType[] = "text/html";
+  const char kJsonType[] = "application/json";
+  const char kDispositionHeaderName[] = "Content-Disposition";
+
   const int kHighPercentBound = 10 * 1024 * 1024;
   const int kMiddleBytesBound = 5 * 1024 * 1024;
   const int kHighBytesBound = 100 * 1024 * 1024;
@@ -22,6 +26,17 @@ namespace {
   const int kLowBytesLimit = 512 * 1024;
   const int kMiddleBytesLimit = 1024 * 1024;
   const int kHighBytesLimit = 10 * 1024 * 1024;
+
+  bool
+  IsDownloadResponse(CefRefPtr<CefResponse> response) {
+    // ToDo: checks Content-Disposition for all responses?
+    const std::string mime_type = response->GetMimeType().ToString();
+
+    if (mime_type.find(kPageType) == 0 || mime_type.find(kJsonType) == 0)
+      return response->GetHeader(kDispositionHeaderName).ToString().find("attachment") == 0;
+
+    return true;
+  }
 
 }  // namespace
 
@@ -52,25 +67,37 @@ DownloadClient::OnRequestComplete(CefRefPtr<CefURLRequest> request) {
   DownloadClientStatus status = DC_STATUS_FAILED;
   DownloadClientReason reason = DC_REASON_UNKNOWN;
   if (request->GetRequestError() == ERR_NONE && request->GetResponse()->GetStatus() == 200) {
-    if (rename(tmp_file_path_.c_str(), file_path_.c_str()) == 0) {
-      status = DC_STATUS_SUCCESS;
-      reason = DC_REASON_NONE;
-    } else {
+    if (!IsDownloadResponse(request->GetResponse())) {
+      status = DC_STATUS_FAILED;
+      reason = DC_REASON_NOT_ATTACHMENT;
+      LOG(WARNING) << "Strange response type, not a file? ID: " << id_ << ". "
+                   << "Url: " << request->GetRequest()->GetURL().ToString() << ". "
+                   << "Type: " << request->GetResponse()->GetMimeType().ToString();
+
+    } else if (rename(tmp_file_path_.c_str(), file_path_.c_str()) != 0) {
       reason = DC_REASON_UNKNOWN;
       LOG(WARNING) << "Can't rename downloaded file. ID: " << id_ << ". "
-                                << "Tmp path: " << tmp_file_path_ << "."
-                                << "Result path: " << file_path_ ;
+                   << "Tmp path: " << tmp_file_path_ << "."
+                   << "Result path: " << file_path_ ;
+
+    } else {
+      status = DC_STATUS_SUCCESS;
+      reason = DC_REASON_NONE;
     }
   } else if (request->GetRequestError() == ERR_ABORTED) {
     reason = DC_REASON_ABORTED;
-    unlink(tmp_file_path_.c_str());
     LOG(INFO) << "Download aborted. ID: " << id_ << ". "
-                 << "Url: " << request->GetRequest()->GetURL().ToString();
+              << "Url: " << request->GetRequest()->GetURL().ToString();
+
   } else {
     reason = DC_REASON_HTTP;
     LOG(WARNING) << "Download failed. ID: " << id_ << ". "
                  << "Url: " << request->GetRequest()->GetURL().ToString() << "."
                  << "Reason: " << request_util::GetErrorString(request->GetRequestError());
+  }
+
+  if (status != DC_STATUS_SUCCESS) {
+    unlink(tmp_file_path_.c_str());
   }
 
   DownloadCompleteEvent e(id_, file_path_, status, reason);

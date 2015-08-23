@@ -13,7 +13,8 @@ typedef enum {
   DC_REASON_NONE = 0,
   DC_REASON_UNKNOWN,
   DC_REASON_ABORTED,
-  DC_REASON_HTTP
+  DC_REASON_HTTP,
+  DC_REASON_NOT_ATTACHMENT
 } DownloadClientReason;
 
 typedef enum {
