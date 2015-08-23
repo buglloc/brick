@@ -20,12 +20,6 @@ namespace {
   static const char *kAppWindowInterface = "org.brick.Brick.AppWindowInterface";
   static const char *kAppWindowPath = "/org/brick/Brick/AppWindow";
 
-  static const char *kDBusName = "org.freedesktop.DBus";
-  static const char *kDBusPath = "/org/freedesktop/DBus";
-  static const char *kDBusInterface = "org.freedesktop.DBus";
-  static const char *kDBusMethodHasOwner = "NameHasOwner";
-  static const char *kDBusMethodStartApp = "StartServiceByName";
-
 
   static const char *kUsage =
       "Usage: brick-client command\n";
@@ -41,9 +35,6 @@ namespace {
       {"user_present", "UserPresent"},
       {"quit", "Quit"}
   };
-
-  bool g_dbus_inited = false;
-  GDBusConnection *g_connection = nullptr;
 
 
   std::vector<std::string>
@@ -61,110 +52,48 @@ namespace {
     return tokens;
   }
 
-
-  bool
-  InitDbus() {
-    if (g_dbus_inited) {
-      return true;
-    }
-
-    if (glib_check_version(2, 36, 0)) {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-      // In older version of glib we must call g_type_init manually (see https://developer.gnome.org/gobject/unstable/gobject-Type-Information.html#g-type-init)
-      g_type_init();
-#pragma GCC diagnostic pop
-    }
-
-    GError *error = nullptr;
-    g_connection = g_bus_get_sync(G_BUS_TYPE_SESSION, NULL, &error);
-    if (g_connection == NULL) {
-      std::cerr << "Failed to connect D-Bus session: " << error->message;
-      g_error_free(error);
-      return false;
-    }
-
-    g_dbus_inited = true;
-    return true;
-  }
-
-  bool
-  EnsureBrickStarted() {
-    static bool first_call = true;
-    bool brick_started = false;
-    GError *error = nullptr;
-    /* Checks if Brick is already running */
-    GVariant *result = g_dbus_connection_call_sync(g_connection,
-                                                   kDBusName,               /* bus name */
-                                                   kDBusPath,               /* object path */
-                                                   kDBusInterface,          /* interface name */
-                                                   kDBusMethodHasOwner,          /* method name */
-                                                   g_variant_new ("(s)", kAppBusName),
-                                                   G_VARIANT_TYPE ("(b)"),
-                                                   G_DBUS_CALL_FLAGS_NONE,
-                                                   -1,
-                                                   NULL,
-                                                   &error);
-    if (result == NULL) {
-      std::cerr << "Failed to complete NameHasOwner" << error->message;
-      g_error_free(error);
-      return false;
-    }
-
-    g_dbus_inited = true;
-    g_variant_get(result, "(b)", &brick_started);
-    g_variant_unref(result);
-    if (!brick_started && first_call) {
-      first_call = false;
-      result = g_dbus_connection_call_sync(g_connection,
-                                           kDBusName,
-                                           kDBusPath,
-                                           kDBusInterface,
-                                           kDBusMethodStartApp,
-                                           g_variant_new ("(su)", kAppBusName, 0),
-                                           NULL,
-                                           G_DBUS_CALL_FLAGS_NONE,
-                                           -1,
-                                           NULL,
-                                           &error);
-      if (result == NULL) {
-        std::cerr << "Failed to complete StartServiceByName: " << error->message << std::endl;
-        g_error_free(error);
-        return false;
-      }
-      return EnsureBrickStarted();
-    }
-
-    return brick_started;
-  }
-
 }  // namespace
 
 
 bool
 CallCommand(bool to_app, const std::string &command, GVariant *parameters) {
-  if (!InitDbus() || !EnsureBrickStarted()) {
-    std::cerr << "Can't start Brick." << std::endl;
+  GDBusProxy *proxy = NULL;
+  GDBusProxyFlags flags = G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS;
+  GVariant *call_result = NULL;
+  GError *error = NULL;
+
+  proxy = g_dbus_proxy_new_for_bus_sync(G_BUS_TYPE_SESSION,
+                                        flags,
+                                        NULL,
+                                        kAppBusName,
+                                        to_app ? kAppPath : kAppWindowPath,
+                                        to_app ? kAppInterface : kAppWindowInterface,
+                                        NULL,
+                                        &error);
+
+  if (proxy == NULL) {
+    std::cerr <<  "Can't create proxy. Error: " << error->message << std::endl;
+    g_error_free(error);
     std::exit(EXIT_FAILURE);
   }
 
-  GError *error = NULL;
-  GVariant *result = g_dbus_connection_call_sync(g_connection,
-                                                 kAppBusName,
-                                                 to_app ? kAppPath : kAppWindowPath,
-                                                 to_app ? kAppInterface : kAppWindowInterface,
-                                                 command.c_str(),
-                                                 parameters != nullptr ? parameters : g_variant_new("()"),
-                                                 G_VARIANT_TYPE("()"),
-                                                 G_DBUS_CALL_FLAGS_NONE,
-                                                 -1, NULL, &error);
+  call_result = g_dbus_proxy_call_sync(proxy,
+                                       command.c_str(),
+                                       parameters != nullptr ? parameters : g_variant_new("()"),
+                                       G_DBUS_CALL_FLAGS_NONE,
+                                       -1,
+                                       NULL,
+                                       &error);
 
-  if (!result) {
+  g_object_unref(proxy);
+
+  if (call_result == NULL) {
     std::cerr << "Can't call command: " << error->message << std::endl;
     g_error_free(error);
     std::exit(EXIT_FAILURE);
   }
 
+  g_variant_unref(call_result);
   return true;
 }
 
