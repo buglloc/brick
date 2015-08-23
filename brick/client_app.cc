@@ -49,7 +49,7 @@ bool ClientApp::OnProcessMessageReceived(
   bool handled = false;
 
   // Execute delegate callbacks.
-  for (const auto delegate: render_delegates_) {
+  for (const auto &delegate : render_delegates_) {
     handled = delegate->OnProcessMessageReceived(this, browser, source_process, message);
   }
 

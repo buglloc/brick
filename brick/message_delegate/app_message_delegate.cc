@@ -615,7 +615,7 @@ AppMessageDelegate::SetCookies(
     return;
   }
 
-  for (const auto item: cookies) {
+  for (const auto &item : cookies) {
     CefCookie cookie;
     CefString(&cookie.name) = item.first;
     CefString(&cookie.value) = item.second;

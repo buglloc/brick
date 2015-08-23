@@ -5,7 +5,7 @@
 void
 AccountsWindow::ReloadAccounts() {
   Clear();
-  for (const auto account: *(window_objects_.account_manager->GetAccounts())) {
+  for (const auto account : *(window_objects_.account_manager->GetAccounts())) {
     AddToList(account.first, account.second->GetLabel());
   }
 }

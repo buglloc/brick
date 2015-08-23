@@ -194,7 +194,7 @@ BrickApp::GetCurrentLanguage(bool withTags) {
     result = startupLocale;
 
   if (result.empty() || result == "c")
-    result = withTags ? "en-us" : "en"; // We use "en" by default
+    result = withTags ? "en-us" : "en";  // Use "en" by default
 
   // TODO: R&D, maybe we may using locale as-is, without stripping?
   return result;

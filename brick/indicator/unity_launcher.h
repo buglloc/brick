@@ -6,6 +6,7 @@
 
 #include <unity.h>
 
+#include <string>
 #include <map>
 
 #include "include/cef_base.h"
@@ -17,18 +18,18 @@ class UnityLauncher : public CefBase,
                       public EventHandler<DownloadProgressEvent>,
                       public EventHandler<DownloadCompleteEvent>{
 
-public:
+ public:
   void Init();
   void SetBadge(int badge);
   // System events handler
   virtual void onEvent(const DownloadProgressEvent& event) OVERRIDE;
   virtual void onEvent(const DownloadCompleteEvent& event) OVERRIDE;
 
-protected:
+ protected:
   void RegisterEventListeners();
   void Update();
 
-private:
+ private:
   int badges_;
   std::map<std::string, int> downloads_;
   UnityLauncherEntry *handler_;

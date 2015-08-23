@@ -5,6 +5,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include <fstream>
 
 #include "include/wrapper/cef_helpers.h"
@@ -12,15 +13,15 @@
 #include "include/cef_dialog_handler.h"
 
 class DownloadClientDialogCallback : public CefFileDialogCallback {
-public:
-  DownloadClientDialogCallback(std::string url);
+ public:
+  explicit DownloadClientDialogCallback(std::string url);
   virtual void Continue(int selected_accept_filter,
                         const std::vector<CefString>& file_paths) OVERRIDE;
 
   virtual void Cancel() OVERRIDE {
   }
 
-private:
+ private:
   std::string url_;
 
 IMPLEMENT_REFCOUNTING(DownloadClientDialogCallback);
@@ -28,7 +29,7 @@ IMPLEMENT_REFCOUNTING(DownloadClientDialogCallback);
 
 
 class DownloadClient : public CefURLRequestClient {
-public:
+ public:
 
   DownloadClient(const std::string& id, const std::string& path, const std::string& name);
 
@@ -55,7 +56,7 @@ public:
                                                 const std::string& path,
                                                 const std::string& name);
 
-private:
+ private:
   std::string id_;
   std::string file_path_;
   std::string tmp_file_path_;

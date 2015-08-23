@@ -139,12 +139,12 @@ namespace {
       return false;
     }
 
-    const gchar *uris[2] = {uri,NULL};
+    const gchar *uris[2] = {uri, NULL};
     const gchar *startup_id = "dontstealmyfocus";
 
     call_result = g_dbus_proxy_call_sync(proxy,
-                                         kFileManagerMethod, // method
-                                         g_variant_new("(^ass)", uris, startup_id), // parameters
+                                         kFileManagerMethod,  // method
+                                         g_variant_new("(^ass)", uris, startup_id),  // parameters
                                          G_DBUS_CALL_FLAGS_NONE,
                                          -1,
                                          NULL,

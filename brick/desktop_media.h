@@ -4,11 +4,13 @@
 #define BRICK_DESKTOP_MEDIA_H_
 #pragma once
 
-#include <string>
 #if defined(__linux__)
 #include <glib.h>
 #else
 #endif
+
+#include <string>
+#include <vector>
 
 #include "include/internal/cef_linux.h"
 #include "include/cef_values.h"

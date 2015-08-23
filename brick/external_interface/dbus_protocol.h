@@ -16,20 +16,20 @@
 #include "brick/event/event_handler.h"
 
 
-class DBusProtocol :
-    public CefBase,
-    public EventHandler<AccountListEvent>,
-    public EventHandler<AccountSwitchEvent>,
-    public EventHandler<IndicatorBadgeEvent>,
-    public EventHandler<IndicatorStateEvent>,
-    public EventHandler<IndicatorTooltipEvent> {
+class DBusProtocol : public CefBase,
+                     public EventHandler<AccountListEvent>,
+                     public EventHandler<AccountSwitchEvent>,
+                     public EventHandler<IndicatorBadgeEvent>,
+                     public EventHandler<IndicatorStateEvent>,
+                     public EventHandler<IndicatorTooltipEvent> {
  public:
   typedef std::set<CefRefPtr<ExternalMessageDelegate> >
      ExternalMessageDelegateSet;
 
   DBusProtocol():
      session_bus_(NULL),
-     owned_(false) { }
+     owned_(false) {
+  }
 
   bool Init();
   bool isSingleInstance();

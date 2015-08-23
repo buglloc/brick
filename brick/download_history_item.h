@@ -14,13 +14,13 @@
 
 
 class DownloadHistoryItem : public CefBase {
-public:
+ public:
 
   DownloadHistoryItem(const std::string url, const std::string path, const std::string name, const std::time_t date)
       : url_ (url),
         path_ (path),
         name_ (name),
-        date_ (date){
+        date_ (date) {
 
     status_ = DC_STATUS_PROGRESS;
     reason_ = DC_REASON_NONE;
@@ -103,7 +103,7 @@ public:
     total_ = total;
   }
 
-private:
+ private:
   const std::string url_;
   const std::string path_;
   const std::string name_;

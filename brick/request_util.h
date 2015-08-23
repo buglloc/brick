@@ -13,11 +13,11 @@ namespace request_util {
   typedef std::map<std::string, std::string> CookiesMap;
   typedef std::map<std::string, std::string> PostFormMap;
 
-  CefRefPtr<CefPostData> PostFormToCefPost(PostFormMap& form);
+  CefRefPtr<CefPostData> PostFormToCefPost(const PostFormMap& form);
   void ParseCookie(const std::string& value, CookiesMap& destination);
   std::string ParseDownloadFilename(const std::string& url);
-  CookiesMap GetCookies(CefResponse::HeaderMap& headers);
-  std::string GetErrorString(CefURLRequest::ErrorCode code);
+  CookiesMap GetCookies(const CefResponse::HeaderMap& headers);
+  std::string GetErrorString(const CefURLRequest::ErrorCode code);
 };  // namespace request_util
 
 

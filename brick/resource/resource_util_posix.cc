@@ -18,7 +18,7 @@ namespace {
     return false;
   }
 
-  bool ReadFileToString(const char* path, std::string& data) {
+  bool ReadFileToString(const char* path, std::string* data) {
     // Implementation adapted from base/file_util.cc
     FILE* file = fopen(path, "rb");
     if (!file)
@@ -27,7 +27,7 @@ namespace {
     char buf[1 << 16];
     size_t len;
     while ((len = fread(buf, 1, sizeof(buf), file)) > 0)
-      data.append(buf, len);
+      data->append(buf, len);
     fclose(file);
 
     return true;
@@ -38,7 +38,7 @@ namespace {
 
 namespace resource_util {
   bool
-  LoadBinaryResource(const std::string resource_dir, const char* resource_name, std::string& resource_data) {
+  LoadBinaryResource(const std::string& resource_dir, const char* resource_name, std::string* resource_data) {
     std::string path =
        resource_dir
         + "/web/"

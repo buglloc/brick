@@ -293,7 +293,7 @@ DBusProtocol::Handle(std::string interface_name, CefRefPtr<CefProcessMessage> me
   bool handled = false;
 
   // Execute delegate callbacks.
-  for (const auto delegate: external_message_delegates_) {
+  for (const auto &delegate : external_message_delegates_) {
     if (delegate->IsAcceptedNamespace(interface_name)) {
       handled = delegate->OnMessageReceived(
           message

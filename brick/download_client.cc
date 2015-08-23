@@ -4,8 +4,8 @@
 
 #include <ctime>
 #include <fstream>
-#include <include/cef_parser.h>
 
+#include "include/cef_parser.h"
 #include "include/base/cef_logging.h"
 #include "brick/brick_types.h"
 #include "brick/client_handler.h"
@@ -78,7 +78,7 @@ DownloadClient::OnRequestComplete(CefRefPtr<CefURLRequest> request) {
       reason = DC_REASON_UNKNOWN;
       LOG(WARNING) << "Can't rename downloaded file. ID: " << id_ << ". "
                    << "Tmp path: " << tmp_file_path_ << "."
-                   << "Result path: " << file_path_ ;
+                   << "Result path: " << file_path_;
 
     } else {
       status = DC_STATUS_SUCCESS;

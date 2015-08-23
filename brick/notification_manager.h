@@ -14,7 +14,7 @@ class NotificationManager : public CefBase {
  public:
   NotificationManager();
 
-  void Notify(const std::string title, std::string body, std::string icon, int delay);
+  void Notify(const std::string &title, std::string body, std::string icon, int delay);
   void Close();
   void OnClose();
   void OnClick();

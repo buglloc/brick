@@ -7,75 +7,10 @@
 
 namespace request_util {
 
-  std::string
-  Urlencode(const std::string& str, bool plusAsSpace) {
-    static char hex[] = "0123456789ABCDEF";
-    std::string result;
-    for (std::string::const_iterator it = str.cbegin(); it != str.cend(); ++it) {
-      char c = *it;
-      if ((c >= 'a' && c <= 'z') ||
-          (c >= 'A' && c <= 'Z') ||
-          (c >= '0' && c <= '9') ||
-          c == '-' || c == '_' ||
-          c == '.' || c == '~') {
-        result += c;
-      } else {
-        result += '%';
-        result += hex[(c >> 4) & 0xf];
-        result += hex[(c & 0xf)];
-      }
-    }
-
-    return result;
-  }
-
-  std::string
-  Urldecode(const std::string& str, bool plusAsSpace) {
-    std::string result;
-    std::string::const_iterator it  = str.cbegin();
-    std::string::const_iterator end = str.cend();
-    while (it != end) {
-      char c = *it++;
-      // spaces may be encoded as plus signs
-      if (plusAsSpace && c == '+') {
-        c = ' ';
-      } else if (c == '%') {
-        // ToDo: throw exception on error
-        if (it == end)
-          return NULL;  // no hex digit following percent sign
-        char hi = *it++;
-        if (it == end)
-          return NULL;  // two hex digits must follow percent sign
-        char lo = *it++;
-        if (hi >= '0' && hi <= '9')
-          c = hi - '0';
-        else if (hi >= 'A' && hi <= 'F')
-          c = hi - 'A' + 10;
-        else if (hi >= 'a' && hi <= 'f')
-          c = hi - 'a' + 10;
-        else
-          return NULL;  // not a hex digit
-        c *= 16;
-        if (lo >= '0' && lo <= '9')
-          c += lo - '0';
-        else if (lo >= 'A' && lo <= 'F')
-          c += lo - 'A' + 10;
-        else if (lo >= 'a' && lo <= 'f')
-          c += lo - 'a' + 10;
-        else
-          return NULL;  // not a hex digit
-      }
-
-      result += c;
-    }
-
-    return result;
-  }
-
   CefRefPtr<CefPostData>
-  PostFormToCefPost(PostFormMap& form) {
+  PostFormToCefPost(const PostFormMap& form) {
     std::string data;
-    for (const auto element: form) {
+    for (const auto &element : form) {
       data += "&" + CefURIEncode(element.first, false).ToString() + "=" + CefURIEncode(element.second, false).ToString();
     }
 
@@ -87,14 +22,13 @@ namespace request_util {
   }
 
   CookiesMap
-  GetCookies(CefResponse::HeaderMap& headers) {
+  GetCookies(const CefResponse::HeaderMap& headers) {
     CookiesMap result;
-    for (auto it = headers.begin(); it != headers.end(); ++it) {
-      if (it->first == "Set-Cookie") {
-        ParseCookie(it->second, result);
+    for (const auto &it : headers) {
+      if (it.first == "Set-Cookie") {
+        ParseCookie(it.second, result);
       }
     }
-
     return result;
   }
 

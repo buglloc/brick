@@ -8,7 +8,7 @@
 
 #include "include/base/cef_logging.h"
 #include "brick/window_util.h"
-#include <brick/platform_util.h>
+#include "brick/platform_util.h"
 #include "brick/brick_app.h"
 
 

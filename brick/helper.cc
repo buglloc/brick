@@ -229,7 +229,7 @@ namespace helper {
     if (file.find("..") != std::string::npos)
       return false;
 
-    for (auto c: file) {
+    for (const auto &c : file) {
       if (!isalpha(c) && !isdigit(c) && c != '_' && c != '-' && c != '.' && c != '/') {
         return false;
       }

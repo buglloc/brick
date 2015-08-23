@@ -1,3 +1,5 @@
+// Copyright (c) 2015 The Brick Authors.
+
 #include "brick/indicator/unity_launcher.h"
 #include "brick/brick_app.h"
 #include "include/base/cef_logging.h"
@@ -38,7 +40,7 @@ UnityLauncher::Update() {
     if (!downloads_.empty()) {
       unity_launcher_entry_set_progress_visible(handler_, true);
       double progress = 0;
-      for (auto download: downloads_) {
+      for (const auto &download: downloads_) {
         progress += download.second;
       }
 

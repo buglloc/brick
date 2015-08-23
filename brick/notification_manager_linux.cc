@@ -1,6 +1,6 @@
 // Copyright (c) 2015 The Brick Authors.
 
-#include "notification_manager.h"
+#include "brick/notification_manager.h"
 
 #include <unistd.h>
 #include <libnotify/notify.h>
@@ -32,7 +32,7 @@ namespace {
 }  // namespace
 
 void
-NotificationManager::Notify(const std::string title, std::string body, std::string icon, int delay) {
+NotificationManager::Notify(const std::string &title, std::string body, std::string icon, int delay) {
   notify_init("brick");
 
   last_id_++;
@@ -43,7 +43,7 @@ NotificationManager::Notify(const std::string title, std::string body, std::stri
     // Permanently close previous notification if server doesn't supports message appending.
     // Due to KDE NotificationEngine logic.
     Close();
-  };
+  }
 
   notification_ = notify_notification_new(
      title.c_str(),

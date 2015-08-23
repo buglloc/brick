@@ -86,7 +86,7 @@ ExternalAppMessageDelegate::OnMessageReceived(
         CefDictionaryValue::KeyList key_list;
         CefRefPtr<CefDictionaryValue> params = request_args->GetDictionary(2);
         if (params->GetKeys(key_list)) {
-          for (auto key: key_list) {
+          for (const auto &key : key_list) {
             action_params[key.ToString()] = params->GetString(key).ToString();
           }
         }

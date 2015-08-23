@@ -1,5 +1,7 @@
-#ifndef BRICK_TYPES_H_
-#define BRICK_TYPES_H_
+// Copyright (c) 2015 The Brick Authors.
+
+#ifndef BRICK_BRICK_TYPES_H_
+#define BRICK_BRICK_TYPES_H_
 #pragma once
 
 
@@ -27,4 +29,4 @@ typedef enum {
   FLASH_IMPORTANT
 } IndicatorStatusIcon;
 
-#endif  // BRICK_TYPES_H_
+#endif  // BRICK_BRICK_TYPES_H_

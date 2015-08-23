@@ -210,7 +210,7 @@ ClientHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser,
   if (!app_settings_.client_scripts.empty()) {
     Json::Value client_scripts(Json::arrayValue);
     std::string url;
-    for (const auto script: app_settings_.client_scripts) {
+    for (const auto &script : app_settings_.client_scripts) {
       url = kResourcesPath;
       // Without trailing slash
       url.append(kInjectedJsPath, 1, sizeof(kInjectedJsPath) - 1);
@@ -244,7 +244,7 @@ ClientHandler::CloseAllBrowsers(bool force_close) {
   if (browser_list_.empty())
     return;
 
-  for (const auto browser: browser_list_)
+  for (const auto &browser : browser_list_)
     browser->GetHost()->CloseBrowser(force_close);
 }
 
@@ -421,7 +421,7 @@ ClientHandler::GetDownloadHistoryList() {
   // ToDo: Implement dictionary!
   CefRefPtr<CefListValue> result = CefListValue::Create();
   decltype(result->GetSize()) i = 0;
-  for (const auto history_item: download_history_) {
+  for (const auto &history_item : download_history_) {
     CefRefPtr<CefListValue> item = CefListValue::Create();
     item->SetString(0, history_item.first);
     item->SetString(1, history_item.second->GetName());
@@ -574,7 +574,7 @@ ClientHandler::OnProcessMessageReceived(
   std::string message_name = message->GetName();
 
   // Execute delegate callbacks.
-  for (const auto delegate: process_message_delegates_) {
+  for (const auto &delegate : process_message_delegates_) {
     if (delegate->IsAcceptedNamespace(message_name)) {
       handled = delegate->OnProcessMessageReceived(
           this,
@@ -694,10 +694,10 @@ ClientHandler::SwitchAccount(int id) {
 
   if (!download_map_.empty()) {
     std::vector<std::string> keys;
-    for (const auto &download: download_map_)
+    for (const auto &download : download_map_)
       keys.push_back(download.first);
 
-    for (const auto &key: keys) {
+    for (const auto &key : keys) {
       if (download_map_.count(key))
         download_map_[key]->Cancel();
     }

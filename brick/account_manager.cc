@@ -124,7 +124,7 @@ AccountManager::Init(std::string config_path) {
     }
 
     const Json::Value accounts = json["accounts"];
-    for (auto account: accounts) {
+    for (const auto &account : accounts) {
       CefRefPtr<Account> newAccount(new Account);
       newAccount->SetLogin(account.get("login", "").asString());
       newAccount->SetPassword(account.get("password", "").asString());

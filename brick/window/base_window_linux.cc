@@ -114,7 +114,7 @@ BaseWindow::SetResizable(bool resizable) {
 
 bool
 BaseWindow::GetResizable() {
-  return (bool) gtk_window_get_resizable(GTK_WINDOW(window_handler_));
+  return static_cast<bool>(gtk_window_get_resizable(GTK_WINDOW(window_handler_)));
 }
 
 void
@@ -124,7 +124,7 @@ BaseWindow::SetShowChrome(bool showChrome) {
 
 bool
 BaseWindow::GetShowChrome() {
-  return (bool) gtk_window_get_decorated(GTK_WINDOW(window_handler_));
+  return static_cast<bool>(gtk_window_get_decorated(GTK_WINDOW(window_handler_)));
 }
 
 void

@@ -2,6 +2,8 @@
 
 #include "brick/resource/temporary_page_resource_provider.h"
 
+#include <string>
+
 #include "include/wrapper/cef_stream_resource_handler.h"
 #include "brick/helper.h"
 #include "brick/resource/resource_util.h"
