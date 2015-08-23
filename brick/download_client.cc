@@ -86,7 +86,7 @@ DownloadClient::OnDownloadProgress(CefRefPtr<CefURLRequest> request, int64 curre
   if (percent_mode) {
     progress = static_cast<int>(current * 100.0 / total);
     if (last_percent_ != -1) {
-      int delta_progress = progress - last_percent_;
+      const int delta_progress = progress - last_percent_;
       int limit;
       if (current < kHighPercentBound) {
         limit = kLowPercentLimit;
@@ -101,7 +101,7 @@ DownloadClient::OnDownloadProgress(CefRefPtr<CefURLRequest> request, int64 curre
     last_percent_ = progress;
   } else {
     if (last_bytes_ != -1) {
-      int64 delta_bytes = current - last_bytes_;
+      const int64 delta_bytes = current - last_bytes_;
       int limit;
       if (current < kMiddleBytesBound) {
         limit = kLowBytesLimit;
