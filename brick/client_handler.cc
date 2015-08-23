@@ -219,6 +219,7 @@ ClientHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser,
     }
 
     Json::FastWriter json_writer;
+    json_writer.omitEndingLineFeed();
     injected_js += "if (typeof BX != 'undefined' && BrickApp.loadScripts !== void 0) BrickApp.loadScripts(";
     injected_js += json_writer.write(client_scripts);
     injected_js += ");";
@@ -775,6 +776,7 @@ ClientHandler::onEvent(const DownloadStartEvent& event) {
 
 
   Json::FastWriter json_writer;
+  json_writer.omitEndingLineFeed();
   SendJSEvent(browser, "BXDownloadStart", json_writer.write(data));
 }
 
@@ -808,6 +810,7 @@ ClientHandler::onEvent(const DownloadProgressEvent& event) {
 
 
   Json::FastWriter json_writer;
+  json_writer.omitEndingLineFeed();
   SendJSEvent(browser, "BXDownloadProgress", json_writer.write(data));
 }
 
@@ -837,6 +840,7 @@ ClientHandler::onEvent(const DownloadCompleteEvent& event) {
   data.append(params);
 
   Json::FastWriter json_writer;
+  json_writer.omitEndingLineFeed();
   SendJSEvent(browser, "BXDownloadComplete", json_writer.write(data));
 }
 

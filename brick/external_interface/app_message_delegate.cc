@@ -97,6 +97,7 @@ ExternalAppMessageDelegate::OnMessageReceived(
 
         std::stringstream data;
         Json::FastWriter writer;
+        writer.omitEndingLineFeed();
         data << writer.write(event_params);
         client_handler->SendJSEvent(client_handler->GetBrowser(), "BXProtocolUrl", data.str());
       }
