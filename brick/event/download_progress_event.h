@@ -13,11 +13,13 @@ class DownloadProgressEvent : public Event {
   DownloadProgressEvent(const EventSender* sender,
                         const std::string id,
                         const int percent,
+                        const int64 speed,
                         const int64 current,
                         const int64 total) :
      Event (sender),
      id_ (id),
      percent_ (percent),
+     speed_ (speed),
      current_ (current),
      total_ (total) {
 
@@ -25,11 +27,13 @@ class DownloadProgressEvent : public Event {
 
   DownloadProgressEvent(const std::string id,
                         const int percent,
+                        const int64 speed,
                         const int64 current,
                         const int64 total) :
      Event (nullptr),
      id_ (id),
      percent_ (percent),
+     speed_ (speed),
      current_ (current),
      total_ (total) {
   }
@@ -38,6 +42,10 @@ class DownloadProgressEvent : public Event {
 
   const int getPercent() const {
     return percent_;
+  }
+
+  const int64 getSpeed() const {
+    return speed_;
   }
 
   const int64 getCurrent() const {
@@ -55,6 +63,7 @@ class DownloadProgressEvent : public Event {
  private:
   const std::string id_;
   const int percent_;
+  const int64 speed_;
   const int64 current_;
   const int64 total_;
 

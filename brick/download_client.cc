@@ -48,6 +48,8 @@ DownloadClient::DownloadClient(const std::string& id, const std::string& path, c
       last_bytes_ (-1) {
 
   CEF_REQUIRE_UI_THREAD();
+
+  start_time_ = std::chrono::system_clock::now();
   tmp_file_path_ = path + kTmpSuffix;
   tmp_file_.open(tmp_file_path_, std::ofstream::binary);
 }
@@ -64,8 +66,9 @@ DownloadClient::OnRequestComplete(CefRefPtr<CefURLRequest> request) {
   CEF_REQUIRE_UI_THREAD();
 
   tmp_file_.close();
-  DownloadClientStatus status = DC_STATUS_FAILED;
-  DownloadClientReason reason = DC_REASON_UNKNOWN;
+  DownloadClientStatus status;
+  DownloadClientReason reason;
+
   if (request->GetRequestError() == ERR_NONE && request->GetResponse()->GetStatus() == 200) {
     if (!IsDownloadResponse(request->GetResponse())) {
       status = DC_STATUS_FAILED;
@@ -75,6 +78,7 @@ DownloadClient::OnRequestComplete(CefRefPtr<CefURLRequest> request) {
                    << "Type: " << request->GetResponse()->GetMimeType().ToString();
 
     } else if (rename(tmp_file_path_.c_str(), file_path_.c_str()) != 0) {
+      status = DC_STATUS_FAILED;
       reason = DC_REASON_UNKNOWN;
       LOG(WARNING) << "Can't rename downloaded file. ID: " << id_ << ". "
                    << "Tmp path: " << tmp_file_path_ << "."
@@ -85,11 +89,13 @@ DownloadClient::OnRequestComplete(CefRefPtr<CefURLRequest> request) {
       reason = DC_REASON_NONE;
     }
   } else if (request->GetRequestError() == ERR_ABORTED) {
+    status = DC_STATUS_FAILED;
     reason = DC_REASON_ABORTED;
     LOG(INFO) << "Download aborted. ID: " << id_ << ". "
               << "Url: " << request->GetRequest()->GetURL().ToString();
 
   } else {
+    status = DC_STATUS_FAILED;
     reason = DC_REASON_HTTP;
     LOG(WARNING) << "Download failed. ID: " << id_ << ". "
                  << "Url: " << request->GetRequest()->GetURL().ToString() << "."
@@ -145,7 +151,16 @@ DownloadClient::OnDownloadProgress(CefRefPtr<CefURLRequest> request, int64 curre
     last_bytes_ = current;
   }
 
-  DownloadProgressEvent e(id_, progress, current, total);
+  const auto diff_time = std::chrono::system_clock::now() - start_time_;
+  const auto time_elapsed =
+      std::chrono::duration_cast<std::chrono::milliseconds>(diff_time).count();
+
+  int64 speed = 0;
+  if (time_elapsed > 0) {
+    speed = static_cast<int>(current * 1000 / time_elapsed);
+  }
+
+  DownloadProgressEvent e(id_, progress, speed, current, total);
   EventBus::FireEvent(e);
 }
 

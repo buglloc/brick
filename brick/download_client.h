@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <chrono>
 
 #include "include/wrapper/cef_helpers.h"
 #include "include/cef_urlrequest.h"
@@ -64,6 +65,7 @@ class DownloadClient : public CefURLRequestClient {
   std::ofstream tmp_file_;
   int last_percent_;
   int64 last_bytes_;
+  std::chrono::system_clock::time_point start_time_;
 
 IMPLEMENT_REFCOUNTING(DownloadClient);
 };
