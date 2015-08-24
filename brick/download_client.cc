@@ -157,7 +157,7 @@ DownloadClient::OnDownloadProgress(CefRefPtr<CefURLRequest> request, int64 curre
 
   int64 speed = 0;
   if (time_elapsed > 0) {
-    speed = static_cast<int>(current * 1000 / time_elapsed);
+    speed = static_cast<int64>(current * 1000 / time_elapsed);
   }
 
   DownloadProgressEvent e(id_, progress, speed, current, total);
