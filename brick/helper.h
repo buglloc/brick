@@ -21,19 +21,19 @@
 
 namespace helper {
 
-    void SetList(CefRefPtr<CefV8Value> source, CefRefPtr<CefListValue> target);
-    void SetList(CefRefPtr<CefListValue> source, CefRefPtr<CefV8Value> target);
-    void SetListValue(CefRefPtr<CefListValue> list, int index, CefRefPtr<CefV8Value> value);
-    void SetListValue(CefRefPtr<CefV8Value> list, int index, CefRefPtr<CefListValue> value);
-    CefRefPtr<CefV8Value> ListValueToV8Value(CefRefPtr<CefListValue> value, int index);
-    std::string DumpListValue(CefRefPtr<CefListValue> list, int index);
-    std::string DumpList(CefRefPtr<CefListValue> list);
-    std::string stringReplace(std::string src, std::string const &target, std::string const &repl);
-    bool ParseUrl(const std::string& url, std::string* file_name, std::string* mime_type);
-    std::string BaseDir(const std::string& path);
-    std::string GetFileExtension(const std::string& path);
-    std::string GetFileName(const std::string& path);
-    unsigned int HashString(const std::string& str);
+  void SetList(CefRefPtr<CefV8Value> source, CefRefPtr<CefListValue> target);
+  void SetList(CefRefPtr<CefListValue> source, CefRefPtr<CefV8Value> target);
+  void SetListValue(CefRefPtr<CefListValue> list, int index, CefRefPtr<CefV8Value> value);
+  void SetListValue(CefRefPtr<CefV8Value> list, int index, CefRefPtr<CefListValue> value);
+  CefRefPtr<CefV8Value> ListValueToV8Value(CefRefPtr<CefListValue> value, int index);
+  std::string DumpListValue(CefRefPtr<CefListValue> list, int index);
+  std::string DumpList(CefRefPtr<CefListValue> list);
+  std::string stringReplace(std::string src, std::string const &target, std::string const &repl);
+  bool ParseUrl(const std::string& url, std::string* file_name, std::string* mime_type);
+  std::string BaseDir(const std::string& path);
+  std::string GetFileExtension(const std::string& path);
+  std::string GetFileName(const std::string& path);
+  uint32 HashString(const std::string& str);
 }  // namespace helper
 
 #endif  // BRICK_HELPER_H_

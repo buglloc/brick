@@ -262,11 +262,11 @@ namespace helper {
     return true;
   }
 
-  unsigned int
+  uint32
   HashString(const std::string& str) {
     // Currently based on FNV-1 with 32 bit prime
-    const unsigned int fnv_prime = 0x811C9DC5;
-    unsigned int hash = 0;
+    const uint32 fnv_prime = 0x811C9DC5;
+    uint32 hash = 0;
     for(std::size_t i = 0; i < str.length(); i++) {
       hash *= fnv_prime;
       hash ^= str[i];
