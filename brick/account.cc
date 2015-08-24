@@ -100,7 +100,7 @@ Account::GetLabel() {
 }
 
 bool
-Account::CheckBaseUrl(std::string url) {
+Account::CheckBaseUrl(const std::string& url) {
   return (url.find(base_url_) == 0);
 }
 
@@ -164,7 +164,7 @@ Account::GenBaseUrl() {
 }
 
 void
-Account::Auth(bool renew_password, const AuthCallback& callback, std::string otp) {
+Account::Auth(bool renew_password, const AuthCallback& callback, const std::string& otp) {
   CEF_REQUIRE_UI_THREAD();
 
   CancelAuthPending(false);
