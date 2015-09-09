@@ -845,6 +845,27 @@ ClientHandler::onEvent(const DownloadCompleteEvent& event) {
   SendJSEvent(browser, "BXDownloadComplete", json_writer.write(data));
 }
 
+void
+ClientHandler::onEvent(const NotificationEvent& event) {
+  CefRefPtr<CefBrowser> browser = GetBrowser();
+  if (!browser)
+    return;
+
+  std::string eventName;
+  if (event.IsMessage()) {
+    eventName = event.IsShowAction() ? "bxImClickNewMessage" : "bxImClickCloseMessage";
+  } else {
+    eventName = event.IsShowAction() ? "bxImClickNotify" : "bxImClickCloseNotify";
+  }
+
+  Json::Value data(Json::arrayValue);
+  data.append(event.getId());
+
+  Json::FastWriter json_writer;
+  json_writer.omitEndingLineFeed();
+  SendJSEvent(browser, eventName, json_writer.write(data));
+}
+
 bool
 ClientHandler::InShutdownState() {
   return in_shutdown_state_;
@@ -857,6 +878,7 @@ ClientHandler::RegisterSystemEventListeners() {
   EventBus::AddHandler<DownloadStartEvent>(*this);
   EventBus::AddHandler<DownloadProgressEvent>(*this);
   EventBus::AddHandler<DownloadCompleteEvent>(*this);
+  EventBus::AddHandler<NotificationEvent>(*this);
 }
 
 std::string

@@ -164,17 +164,22 @@ var BrickApp = {
         !!isImportant
     );
   },
-  showNotification: function(title, text, icon, duration) {
+  showNotification: function(title, text, icon, jsId, isMessage, duration) {
     native function AppExShowNotification();
 
     duration = duration || this.defaultNotifyDuration;
     icon = icon || '';
+    jsId = jsId || -1;
+    isMessage = isMessage || false;
+
     AppExShowNotification(
         null,
         title,
         text,
         icon,
-        duration
+        duration,
+        jsId,
+        isMessage
     );
   },
   hideNotification: function() {
@@ -503,6 +508,18 @@ BXDesktopSystem.ParseNotificationHtml = function(html) {
 
   var document = this.parser.parseFromString(html, "text/html");
 
+  var jsId = null;
+  var isMessage = false;
+  var notificationItem = document.body.querySelector('div.bx-notifier-item');
+  if (notificationItem && html.indexOf('bxImClickNewMessage') > 0) {
+    // Notification for user message
+    isMessage = true;
+    jsId = notificationItem.dataset.userid;
+  } else if (notificationItem && html.indexOf('bxImClickNotify') > 0) {
+    // "True" Notification
+    isMessage = false;
+    jsId = notificationItem.dataset.notifyid;
+  }
   var icon = document.body.querySelector('img.bx-notifier-item-avatar-img');
   var date = document.body.querySelector('span.bx-notifier-item-date');
   var title = document.body.querySelector('span.bx-notifier-item-name');
@@ -515,6 +532,8 @@ BXDesktopSystem.ParseNotificationHtml = function(html) {
   }
 
   return {
+    'jsId': jsId !== void 0 ? parseInt(jsId, 10) : null,
+    'isMessage': isMessage,
     'icon': /blank\.gif$/.test(iconUri) ? null : iconUri, // Don't show blank.gif (1x1 px) as notification icon
     'date': date !== null ? date.innerHTML : '',
     'title': title !== null ? title.innerHTML.replace(/<[^>]+>/g, '') : '',
@@ -533,7 +552,9 @@ BXDesktopSystem.ExecuteCommand = function(command, params) {
       BrickApp.showNotification(
         parsed.title,
         parsed.text,
-        parsed.icon
+        parsed.icon,
+        parsed.jsId,
+        parsed.isMessage
       );
       break;
     case 'browse':

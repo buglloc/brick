@@ -14,10 +14,10 @@ class NotificationManager : public CefBase {
  public:
   NotificationManager();
 
-  void Notify(const std::string &title, std::string body, std::string icon, int delay);
+  void Notify(const std::string &title, std::string body, std::string icon, int delay, int js_id, bool is_message);
   void Close();
-  void OnClose();
-  void OnClick();
+  void OnClose(int js_id, bool is_message);
+  void OnClick(int js_id, bool is_message);
 
  protected:
   void InitializeCapabilities();

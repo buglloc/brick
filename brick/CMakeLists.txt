@@ -174,6 +174,7 @@ set(BRICK_EVENT_SYSTEM
   event/download_start_event.h
   event/download_progress_event.h
   event/download_complete_event.h
+  event/notification_event.h
   )
 
 if (UNITY)

@@ -21,6 +21,7 @@
 #include "brick/event/download_start_event.h"
 #include "brick/event/download_progress_event.h"
 #include "brick/event/download_complete_event.h"
+#include "brick/event/notification_event.h"
 #include "brick/indicator/indicator.h"
 #include "brick/cache_manager.h"
 #include "brick/command_callbacks.h"
@@ -41,7 +42,8 @@ class ClientHandler : public CefClient,
                       public EventHandler<SleepEvent>,
                       public EventHandler<DownloadStartEvent>,
                       public EventHandler<DownloadProgressEvent>,
-                      public EventHandler<DownloadCompleteEvent> {
+                      public EventHandler<DownloadCompleteEvent>,
+                      public EventHandler<NotificationEvent> {
  public:
 
   // Temporary (or runtime, what your like) page storage definition
@@ -260,6 +262,7 @@ class ClientHandler : public CefClient,
   virtual void onEvent(const DownloadStartEvent& event) OVERRIDE;
   virtual void onEvent(const DownloadProgressEvent& event) OVERRIDE;
   virtual void onEvent(const DownloadCompleteEvent& event) OVERRIDE;
+  virtual void onEvent(const NotificationEvent& event) OVERRIDE;
 
   std::string AddTemporaryPage(const std::string& content);
 

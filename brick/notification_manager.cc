@@ -3,6 +3,7 @@
 #include "brick/notification_manager.h"
 
 #include "brick/client_handler.h"
+#include "brick/event/notification_event.h"
 
 NotificationManager::NotificationManager() :
     notification_(nullptr),
@@ -14,12 +15,16 @@ NotificationManager::NotificationManager() :
 }
 
 void
-NotificationManager::OnClose() {
+NotificationManager::OnClose(int js_id, bool is_message) {
   notification_ = nullptr;
+  if (js_id > 0) {
+    NotificationEvent e(js_id, is_message, false);
+    EventBus::FireEvent(e);
+  }
 }
 
 void
-NotificationManager::OnClick() {
+NotificationManager::OnClick(int js_id, bool is_message) {
   CefRefPtr<ClientHandler> client_handler = ClientHandler::GetInstance();
   if (!client_handler)
     return;
@@ -29,4 +34,9 @@ NotificationManager::OnClick() {
     return;
 
   window->Present();
+
+  if (js_id > 0) {
+    NotificationEvent e(js_id, is_message, true);
+    EventBus::FireEvent(e);
+  }
 }

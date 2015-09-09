@@ -18,21 +18,48 @@ namespace {
   const char kAppendCapability[] = "x-canonical-append";
   const char kActionsCapability[] = "actions";
   const char kDefaultActionName[] = "default";
+  const char kDataJsIdName[] = "js-id";
+  const char kDataTypeName[] = "type";
+  const gint kTypeRegular = 0;
+  const gint kTypeMessage = 1;
+  // See https://developer.gnome.org/notification-spec/#signal-notification-closed
+  const gint kCloseReasonExpire = 1;
+  const gint kCloseReasonDismissed = 2;
+  const gint kCloseReasonProgrammaticaly = 3;
+  const gint kCloseReasonUndefined = 4;
+
 
   void
   OnCloseNotification(NotifyNotification *notify, NotificationManager *self) {
-    self->OnClose();
+    gint js_id = -1;
+    if (notify_notification_get_closed_reason(notify) == kCloseReasonDismissed)
+      js_id = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(notify), kDataJsIdName));
+
+    gint type = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(notify), kDataTypeName));
+    self->OnClose(js_id, type == kTypeMessage);
   }
 
   void
   OnAction(NotifyNotification *notify, char *action, NotificationManager *self) {
-    self->OnClick();
+    gint js_id = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(notify), kDataJsIdName));
+    // Clear notification jsId
+    g_object_set_data(G_OBJECT(notify), kDataJsIdName, GINT_TO_POINTER(-1));
+
+    gint type = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(notify), kDataTypeName));
+    self->OnClick(js_id, type == kTypeMessage);
   }
 
 }  // namespace
 
 void
-NotificationManager::Notify(const std::string &title, std::string body, std::string icon, int delay) {
+NotificationManager::Notify(
+    const std::string &title,
+    std::string body,
+    std::string icon,
+    int delay,
+    int js_id,
+    bool is_message) {
+
   notify_init("brick");
 
   last_id_++;
@@ -50,6 +77,9 @@ NotificationManager::Notify(const std::string &title, std::string body, std::str
      body.c_str(),
      need_download || notification_icon.empty() ? GetDefaultIcon().c_str() : notification_icon.c_str()
   );
+
+  g_object_set_data(G_OBJECT(notification_), kDataJsIdName, GINT_TO_POINTER(js_id));
+  g_object_set_data(G_OBJECT(notification_), kDataTypeName, GINT_TO_POINTER(is_message ? kTypeMessage : kTypeRegular));
 
   if (is_append_supported_) {
     notify_notification_set_hint_string(notification_, kAppendCapability, "1");
