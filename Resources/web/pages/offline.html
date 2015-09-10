@@ -11,16 +11,54 @@
     <div class="wrapper">
     <div class="wrapper-data">       
       <h2 class="form-signin-heading">Account is not available</h2>
-      <button class="btn btn-lg btn-primary btn-block" data-loading-text="Loading..."  id="reconnect">Try again</button>
+      <button class="btn btn-lg btn-primary btn-block" data-loading-text="Loading..."  id="reconnect">
+        <span>Try again</span>
+        <span id="autologin" style="display: none">
+          (auto in
+          <span id="time">60</span>
+          sec)
+        </span>
+      </button>
     </div>
   </div>
     <script>
       $(document).ready((function (window, app) {
+        var loginTimer;
+
+        function stopLoginTimer() {
+          var autologin = $('#autologin');
+          if (!!autologin)
+            autologin.hide();
+          if (loginTimer)
+            clearInterval(loginTimer);
+        }
+
+        function startLoginTimer() {
+          var seconds;
+          var timer = 60;
+          var element = $('#time');
+          element.text(timer);
+          $('#autologin').show();
+
+          loginTimer = setInterval(function () {
+            timer -= 1;
+            seconds = timer;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+            element.text(seconds);
+
+            if (timer < 0) {
+              stopLoginTimer();
+              $('#reconnect').click();
+            }
+          }, 1000);
+        }
+
         app.setIndicator('offline');
-          $('#reconnect').click(function() {
-            $(this).button('loading');
-            app.loadPortal();
-          });
+        startLoginTimer();
+        $('#reconnect').click(function() {
+          stopLoginTimer();
+          app.loadPortal();
+        });
       }).bind(null, window, BrickApp));
     </script>
   </body>
