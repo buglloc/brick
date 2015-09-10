@@ -31,22 +31,22 @@ namespace {
 
   void
   OnCloseNotification(NotifyNotification *notify, NotificationManager *self) {
-    gint js_id = -1;
+    const char* js_id = NULL;
     if (notify_notification_get_closed_reason(notify) == kCloseReasonDismissed)
-      js_id = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(notify), kDataJsIdName));
+      js_id = static_cast<const char *>(g_object_get_data(G_OBJECT(notify), kDataJsIdName));
 
     gint type = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(notify), kDataTypeName));
-    self->OnClose(js_id, type == kTypeMessage);
+    self->OnClose(js_id != NULL ? js_id : "", type == kTypeMessage);
   }
 
   void
   OnAction(NotifyNotification *notify, char *action, NotificationManager *self) {
-    gint js_id = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(notify), kDataJsIdName));
+    const char* js_id = static_cast<char *>(g_object_get_data(G_OBJECT(notify), kDataJsIdName));
     // Clear notification jsId
-    g_object_set_data(G_OBJECT(notify), kDataJsIdName, GINT_TO_POINTER(-1));
+    g_object_set_data(G_OBJECT(notify), kDataJsIdName, NULL);
 
     gint type = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(notify), kDataTypeName));
-    self->OnClick(js_id, type == kTypeMessage);
+    self->OnClick(js_id != NULL ? js_id : "", type == kTypeMessage);
   }
 
 }  // namespace
@@ -57,7 +57,7 @@ NotificationManager::Notify(
     std::string body,
     std::string icon,
     int delay,
-    int js_id,
+    const std::string &js_id,
     bool is_message) {
 
   notify_init("brick");
@@ -78,7 +78,7 @@ NotificationManager::Notify(
      need_download || notification_icon.empty() ? GetDefaultIcon().c_str() : notification_icon.c_str()
   );
 
-  g_object_set_data(G_OBJECT(notification_), kDataJsIdName, GINT_TO_POINTER(js_id));
+  g_object_set_data_full(G_OBJECT(notification_), kDataJsIdName, g_strdup(js_id.c_str()), (GDestroyNotify) g_free);
   g_object_set_data(G_OBJECT(notification_), kDataTypeName, GINT_TO_POINTER(is_message ? kTypeMessage : kTypeRegular));
 
   if (is_append_supported_) {

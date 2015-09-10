@@ -15,16 +15,16 @@ NotificationManager::NotificationManager() :
 }
 
 void
-NotificationManager::OnClose(int js_id, bool is_message) {
+NotificationManager::OnClose(const std::string &js_id, bool is_message) {
   notification_ = nullptr;
-  if (js_id > 0) {
+  if (!js_id.empty()) {
     NotificationEvent e(js_id, is_message, false);
     EventBus::FireEvent(e);
   }
 }
 
 void
-NotificationManager::OnClick(int js_id, bool is_message) {
+NotificationManager::OnClick(const std::string &js_id, bool is_message) {
   CefRefPtr<ClientHandler> client_handler = ClientHandler::GetInstance();
   if (!client_handler)
     return;
@@ -35,7 +35,7 @@ NotificationManager::OnClick(int js_id, bool is_message) {
 
   window->Present();
 
-  if (js_id > 0) {
+  if (!js_id.empty()) {
     NotificationEvent e(js_id, is_message, true);
     EventBus::FireEvent(e);
   }

@@ -169,7 +169,7 @@ var BrickApp = {
 
     duration = duration || this.defaultNotifyDuration;
     icon = icon || '';
-    jsId = jsId || -1;
+    jsId = jsId || '';
     isMessage = isMessage || false;
 
     AppExShowNotification(
@@ -532,7 +532,7 @@ BXDesktopSystem.ParseNotificationHtml = function(html) {
   }
 
   return {
-    'jsId': jsId !== void 0 ? parseInt(jsId, 10) : null,
+    'jsId': jsId !== void 0 ? jsId : null,
     'isMessage': isMessage,
     'icon': /blank\.gif$/.test(iconUri) ? null : iconUri, // Don't show blank.gif (1x1 px) as notification icon
     'date': date !== null ? date.innerHTML : '',

@@ -271,7 +271,7 @@ AppMessageDelegate::OnProcessMessageReceived(
     //  2: string - text
     //  3: string - icon path
     //  4: int - duration
-    //  5: int - jsId
+    //  5: string - jsId
     //  6: bool - "message notify" flag
 
     if (
@@ -280,7 +280,7 @@ AppMessageDelegate::OnProcessMessageReceived(
           || request_args->GetType(2) != VTYPE_STRING
           || request_args->GetType(3) != VTYPE_STRING
           || request_args->GetType(4) != VTYPE_INT
-          || request_args->GetType(5) != VTYPE_INT
+          || request_args->GetType(5) != VTYPE_STRING
           || request_args->GetType(6) != VTYPE_BOOL
        ) {
       error = ERR_INVALID_PARAMS;
@@ -300,7 +300,7 @@ AppMessageDelegate::OnProcessMessageReceived(
            request_args->GetString(2),
            icon_url,
            request_args->GetInt(4),
-           request_args->GetInt(5),
+           request_args->GetString(5),
            request_args->GetBool(6)
         );
       } else {

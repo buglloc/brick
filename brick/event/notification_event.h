@@ -10,23 +10,23 @@
 
 class NotificationEvent : public Event {
  public:
-  NotificationEvent(const EventSender* sender, const int id, const bool is_message, const bool show_action) :
+  NotificationEvent(const EventSender* sender, const std::string& id, const bool is_message, const bool show_action) :
      Event (sender),
      id_ (id),
-     is_show_action_(show_action),
+     is_show_action_ (show_action),
      is_message_ (is_message) {
   }
 
-  NotificationEvent(const int id, const bool is_message, const bool show_action) :
-     Event(nullptr),
+  NotificationEvent(const std::string& id, const bool is_message, const bool show_action) :
+     Event (nullptr),
      id_ (id),
-     is_show_action_(show_action),
+     is_show_action_ (show_action),
      is_message_ (is_message) {
   }
 
   virtual ~NotificationEvent() { }
 
-  int getId() const {
+  const std::string& getId() const {
     return id_;
   }
 
@@ -39,7 +39,7 @@ class NotificationEvent : public Event {
   }
 
  private:
-  const int id_;
+  const std::string id_;
   const bool is_show_action_;
   const bool is_message_;
 
