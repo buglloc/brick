@@ -28,6 +28,7 @@ namespace platform_util {
     bool HasEnv(const char* variable_name);
     DesktopEnvironment GetDesktopEnvironment();
     const std::string GetDefaultDownloadDir();
+    const std::string GetHomeDir();
 }  // namespace platform_util
 
 #endif  // BRICK_PLATFORM_UTIL_H_

@@ -76,22 +76,22 @@ AppSettings::UpdateByJson(std::string json) {
 
   if (root.isMember(kAppTokenName)
      && root[kAppTokenName].isString()) {
-    profile_path = root[kAppTokenName].asString();
+    profile_path = NormalizePath(root[kAppTokenName].asString());
   }
 
   if (root.isMember(kProfilePathName)
      && root[kProfilePathName].isString()) {
-    profile_path = root[kProfilePathName].asString();
+    profile_path = NormalizePath(root[kProfilePathName].asString());
   }
 
   if (root.isMember(kCachePathName)
      && root[kCachePathName].isString()) {
-    cache_path = root[kCachePathName].asString();
+    cache_path = NormalizePath(root[kCachePathName].asString());
   }
 
   if (root.isMember(kLogFileName)
      && root[kLogFileName].isString()) {
-    log_file = root[kLogFileName].asString();
+    log_file = NormalizePath(root[kLogFileName].asString());
   }
 
   if (root.isMember(kIgnoreCertificateErrors)
@@ -106,12 +106,12 @@ AppSettings::UpdateByJson(std::string json) {
 
   if (root.isMember(kResourceDirName)
      && root[kResourceDirName].isString()) {
-    resource_dir = root[kResourceDirName].asString();
+    resource_dir = NormalizePath(root[kResourceDirName].asString());
   }
 
   if (root.isMember(kDownloadDirName)
       && root[kDownloadDirName].isString()) {
-    download_dir = root[kDownloadDirName].asString();
+    download_dir = NormalizePath(root[kDownloadDirName].asString());
   }
 
   if (root.isMember(kAutoAwayName)
@@ -153,9 +153,9 @@ AppSettings::UpdateByJson(std::string json) {
         continue;
       }
 
-      std::string script_path = script.asString();
+      std::string script_path = NormalizePath(script.asString());
       if (script_path.find('/') != 0) {
-        LOG(WARNING) << "Can't load client script, supported only absolute path: " << script_path << "; Skipping";
+        LOG(WARNING) << "Can't load client script: " << script_path << "; Skipping";
         continue;
       }
 
@@ -182,4 +182,15 @@ AppSettings::UpdateByCommandLine(CefRefPtr<CefCommandLine> command_line) {
 std::string
 AppSettings::DumpJson() {
   return "Implement me!";
+}
+
+std::string
+AppSettings::NormalizePath(const std::string& path) {
+  if (path.empty())
+    return "";
+
+  if (path[0] == '~')
+    return platform_util::GetHomeDir() + path.substr(1);
+
+  return path;
 }

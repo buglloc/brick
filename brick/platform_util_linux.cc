@@ -294,7 +294,7 @@ namespace platform_util {
   GetDefaultDownloadDir() {
     const gchar * dir = g_get_user_special_dir(G_USER_DIRECTORY_DOWNLOAD);
     if (dir == NULL) {
-      // Fallback to $HOME/Downloads
+      // Fallback to $HOME
       dir = g_get_home_dir();
     }
 
@@ -303,6 +303,11 @@ namespace platform_util {
     }
 
     return "";
+  }
+
+  const std::string
+  GetHomeDir() {
+    return g_get_home_dir();
   }
 
   void

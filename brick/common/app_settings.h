@@ -38,6 +38,8 @@ struct AppSettings {
   void UpdateByJson(std::string json);
   void UpdateByCommandLine(CefRefPtr<CefCommandLine> command_line);
   std::string DumpJson();
+ private:
+  std::string NormalizePath(const std::string& path);
 };
 
 #endif  // BRICK_COMMON_APP_SETTINGS_H_
