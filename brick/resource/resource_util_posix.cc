@@ -35,13 +35,9 @@ namespace {
 
   std::string
   GetUrlWithoutQueryOrFragment(const std::string& url) {
-    size_t query_pos = url.find('?');
-    if (query_pos != std::string::npos)
-      return url.substr(0, query_pos);
-
-    size_t fragment_pos = url.find('#');
-    if (fragment_pos != std::string::npos)
-      return url.substr(0, fragment_pos);
+    auto pos = url.find_first_of("?#");
+    if (pos != std::string::npos)
+      return url.substr(0, pos);
 
     return url;
   }
