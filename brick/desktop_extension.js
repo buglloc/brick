@@ -538,7 +538,7 @@ BXDesktopSystem.ParseNotificationHtml = function(html) {
     'date': date !== null ? date.innerHTML : '',
     'title': title !== null ? title.innerHTML.replace(/<[^>]+>/g, '') : '',
     'text': (text !== null ? text.innerHTML: html)
-      .replace(/<br[^>]*>/gi, '\n').replace(/<p[^>]*>/gi, '\n').replace(/<[^>]+>/g, '')
+      .replace(/<br[^>]*>/gi, '\n').replace(/<p[^>]*>/gi, '\n').replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ')
   }
 };
 
