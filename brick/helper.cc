@@ -238,20 +238,7 @@ namespace helper {
     // Determine the mime type based on the file extension, if any.
     std::string ext = GetFileExtension(file);
     if (!ext.empty()) {
-      if (ext == "html")
-        *mime_type = "text/html";
-      else if (ext == "png")
-        *mime_type = "image/png";
-      else if (ext == "jpg")
-        *mime_type = "image/jpeg";
-      else if (ext == "gif")
-        *mime_type = "image/gif";
-      else if (ext == "js")
-        *mime_type = "text/javascript";
-      else if (ext == "css")
-        *mime_type = "text/css";
-      else
-        return false;
+      *mime_type = GetMimeType(ext);
     } else {
       // Default to an html extension if none is specified.
       *mime_type = "text/html";
@@ -315,6 +302,24 @@ namespace helper {
     }
 
     return "";
+  }
+
+  std::string
+  GetMimeType(const std::string& ext) {
+    if (ext == "html")
+      return "text/html";
+    else if (ext == "png")
+      return "image/png";
+    else if (ext == "jpg")
+      return "image/jpeg";
+    else if (ext == "gif")
+      return "image/gif";
+    else if (ext == "js")
+      return "text/javascript";
+    else if (ext == "css")
+      return "text/css";
+    else
+      return "application/octet-strem";
   }
 
 }  // namespace helper

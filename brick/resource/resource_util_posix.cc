@@ -33,6 +33,19 @@ namespace {
     return true;
   }
 
+  std::string
+  GetUrlWithoutQueryOrFragment(const std::string& url) {
+    size_t query_pos = url.find('?');
+    if (query_pos != std::string::npos)
+      return url.substr(0, query_pos);
+
+    size_t fragment_pos = url.find('#');
+    if (fragment_pos != std::string::npos)
+      return url.substr(0, fragment_pos);
+
+    return url;
+  }
+
 }  // namespace
 
 
@@ -88,9 +101,7 @@ namespace resource_util {
 
   std::string
   GetMimeType(const std::string& url) {
-    std::string file_name, mime_type;
-    helper::ParseUrl(url, &file_name, &mime_type);
-
-    return !mime_type.empty() ? mime_type : "text/html";
+    const std::string& path = GetUrlWithoutQueryOrFragment(url);
+    return helper::GetMimeType(helper::GetFileExtension(path));
   }
 }  // namespace resource_util

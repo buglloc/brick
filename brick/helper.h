@@ -31,6 +31,7 @@ namespace helper {
   std::string stringReplace(std::string src, std::string const &target, std::string const &repl);
   bool ParseUrl(const std::string& url, std::string* file_name, std::string* mime_type);
   std::string BaseDir(const std::string& path);
+  std::string GetMimeType(const std::string& ext);
   std::string GetFileExtension(const std::string& path);
   std::string GetFileName(const std::string& path);
   uint32 HashString(const std::string& str);
