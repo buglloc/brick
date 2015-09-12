@@ -24,13 +24,13 @@ class Event : public EventObject {
    * @param sender The sender of the event
    */
   explicit Event(const EventSender* sender) :
-    sender(sender),
-    canceled(false) {
+    sender (sender),
+    canceled (false) {
   }
 
   Event() :
-     sender(nullptr),
-     canceled(false) {
+     sender (nullptr),
+     canceled (false) {
   }
 
 
@@ -45,7 +45,7 @@ class Event : public EventObject {
    *
    * @return The event sender
    */
-  const EventSender* getSender() const {
+  const EventSender* GetSender() const {
     return sender;
   }
 
@@ -55,7 +55,7 @@ class Event : public EventObject {
    *
    * @return true if the event is canceled
    */
-  bool getCanceled() {
+  bool GetCanceled() {
     return canceled;
   }
 
@@ -65,7 +65,7 @@ class Event : public EventObject {
    *
    * @param canceled Whether the even is canceled or not
    */
-  void setCanceled(bool canceled) {
+  void SetCanceled(bool canceled) {
     this->canceled = canceled;
   }
 

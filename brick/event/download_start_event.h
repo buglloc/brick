@@ -42,23 +42,23 @@ class DownloadStartEvent : public Event {
 
   virtual ~DownloadStartEvent() { }
 
-  const std::string getFilename() const {
+  const std::string GetFilename() const {
     return filename_;
   }
 
-  const std::string getFilepath() const {
+  const std::string GetFilepath() const {
     return filepath_;
   }
 
-  const std::string getUrl() const {
+  const std::string GetUrl() const {
     return url_;
   }
 
-  const std::string getId() const {
+  const std::string GetId() const {
     return id_;
   }
 
-  const std::time_t getDate() const {
+  const std::time_t GetDate() const {
     return date_;
   }
 

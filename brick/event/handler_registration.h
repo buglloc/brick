@@ -10,7 +10,7 @@ class HandlerRegistration : public EventObject {
  public:
   virtual ~HandlerRegistration() { }
 
-  virtual void removeHandler() = 0;
+  virtual void RemoveHandler() = 0;
 };
 
 #endif  // BRICK_EVENT_HANDLER_REGISTRATION_H_

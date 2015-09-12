@@ -36,19 +36,19 @@ class DownloadCompleteEvent : public Event {
 
   virtual ~DownloadCompleteEvent() { }
 
-  const std::string getId() const {
+  const std::string GetId() const {
     return id_;
   }
 
-  const std::string getFilepath() const {
+  const std::string GetFilepath() const {
     return filepath_;
   }
 
-  const DownloadClientStatus getStatus() const {
+  const DownloadClientStatus GetStatus() const {
     return status_;
   }
 
-  const DownloadClientReason getReason() const {
+  const DownloadClientReason GetReason() const {
     return reason_;
   }
 

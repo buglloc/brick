@@ -372,17 +372,17 @@ DBusProtocol::RegisterEventListeners() {
 }
 
 void
-DBusProtocol::onEvent(const AccountListEvent& event) {
+DBusProtocol::OnEvent(const AccountListEvent &event) {
   LOG(WARNING) << "D-BUS implement me: AccountListEvent";
 }
 
 void
-DBusProtocol::onEvent(const AccountSwitchEvent &event) {
+DBusProtocol::OnEvent(const AccountSwitchEvent &event) {
   LOG(WARNING) << "D-BUS implement me: AccountSwitchEvent";
 }
 
 void
-DBusProtocol::onEvent(const IndicatorBadgeEvent& event) {
+DBusProtocol::OnEvent(const IndicatorBadgeEvent &event) {
   GError *error = NULL;
   gboolean result;
 
@@ -392,7 +392,7 @@ DBusProtocol::onEvent(const IndicatorBadgeEvent& event) {
      kAppPath,
      kAppInterface,
      "IndicatorBadgeChanged",
-     g_variant_new("(ib)", event.getBadge(), event.isImportant()),
+     g_variant_new("(ib)", event.GetBadge(), event.IsImportant()),
      &error);
 
   if (!result) {
@@ -402,7 +402,7 @@ DBusProtocol::onEvent(const IndicatorBadgeEvent& event) {
 }
 
 void
-DBusProtocol::onEvent(const IndicatorStateEvent& event) {
+DBusProtocol::OnEvent(const IndicatorStateEvent &event) {
   GError *error = NULL;
   gboolean result;
 
@@ -412,7 +412,7 @@ DBusProtocol::onEvent(const IndicatorStateEvent& event) {
      kAppPath,
      kAppInterface,
      "IndicatorStateChanged",
-     g_variant_new("(s)", event.getState().c_str()),
+     g_variant_new("(s)", event.GetState().c_str()),
      &error);
 
   if (!result) {
@@ -422,7 +422,7 @@ DBusProtocol::onEvent(const IndicatorStateEvent& event) {
 }
 
 void
-DBusProtocol::onEvent(const IndicatorTooltipEvent& event) {
+DBusProtocol::OnEvent(const IndicatorTooltipEvent &event) {
   GError *error = NULL;
   gboolean result;
 
@@ -432,7 +432,7 @@ DBusProtocol::onEvent(const IndicatorTooltipEvent& event) {
      kAppPath,
      kAppInterface,
      "IndicatorTooltipChanged",
-     g_variant_new("(s)", event.getTooltip().c_str()),
+     g_variant_new("(s)", event.GetTooltip().c_str()),
      &error);
 
   if (!result) {

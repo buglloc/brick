@@ -22,8 +22,8 @@ class UnityLauncher : public CefBase,
   void Init();
   void SetBadge(int badge);
   // System events handler
-  virtual void onEvent(const DownloadProgressEvent& event) OVERRIDE;
-  virtual void onEvent(const DownloadCompleteEvent& event) OVERRIDE;
+  virtual void OnEvent(const DownloadProgressEvent &event) OVERRIDE;
+  virtual void OnEvent(const DownloadCompleteEvent &event) OVERRIDE;
 
  protected:
   void RegisterEventListeners();

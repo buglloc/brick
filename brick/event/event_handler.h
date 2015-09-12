@@ -32,7 +32,7 @@ class EventHandler {
   /**
    * @param The event instance
    */
-  virtual void onEvent(const T &) = 0;
+  virtual void OnEvent(const T &) = 0;
 
 
   /**
@@ -41,8 +41,8 @@ class EventHandler {
    *
    * @param e The event to dispatch
    */
-  void dispatch(const Event &e) {
-    onEvent(dynamic_cast<const T &>(e));
+  void Dispatch(const Event &e) {
+   OnEvent(dynamic_cast<const T &>(e));
   }
 };
 

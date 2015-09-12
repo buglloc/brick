@@ -11,18 +11,18 @@
 class IndicatorTooltipEvent : public Event {
  public:
   IndicatorTooltipEvent(const EventSender* sender, const std::string tooltip) :
-     Event(sender),
-     tooltip_(tooltip) {
+     Event (sender),
+     tooltip_ (tooltip) {
   }
 
   explicit IndicatorTooltipEvent(const std::string tooltip) :
-     Event(nullptr),
-     tooltip_(tooltip) {
+     Event (nullptr),
+     tooltip_ (tooltip) {
   }
 
   virtual ~IndicatorTooltipEvent() { }
 
-  const std::string getTooltip() const {
+  const std::string GetTooltip() const {
     return tooltip_;
   }
 

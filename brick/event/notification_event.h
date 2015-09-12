@@ -26,7 +26,7 @@ class NotificationEvent : public Event {
 
   virtual ~NotificationEvent() { }
 
-  const std::string& getId() const {
+  const std::string& GetId() const {
     return id_;
   }
 

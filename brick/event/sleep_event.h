@@ -9,18 +9,18 @@
 class SleepEvent : public Event {
  public:
   SleepEvent(const EventSender* sender, bool is_sleep) :
-     Event(sender),
-     sleep_(is_sleep) {
+     Event (sender),
+     sleep_ (is_sleep) {
   }
 
   explicit SleepEvent(bool is_sleep) :
-     Event(nullptr),
-     sleep_(is_sleep) {
+     Event (nullptr),
+     sleep_ (is_sleep) {
   }
 
   virtual ~SleepEvent() { }
 
-  bool isSleep() const {
+  bool IsSleep() const {
     return sleep_;
   }
 

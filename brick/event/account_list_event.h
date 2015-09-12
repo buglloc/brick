@@ -10,11 +10,11 @@
 class AccountListEvent : public Event {
  public:
   explicit AccountListEvent(const EventSender* sender) :
-     Event(sender) {
+     Event (sender) {
   }
 
   AccountListEvent() :
-     Event(nullptr) {
+     Event (nullptr) {
   }
 
   virtual ~AccountListEvent() { }

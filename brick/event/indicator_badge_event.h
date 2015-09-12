@@ -11,24 +11,24 @@
 class IndicatorBadgeEvent : public Event {
  public:
   IndicatorBadgeEvent(const EventSender* sender, int badge, bool important) :
-     Event(sender),
-     badge_(badge),
-     important_(important) {
+     Event (sender),
+     badge_ (badge),
+     important_ (important) {
   }
 
   explicit IndicatorBadgeEvent(int badge, bool important) :
-     Event(nullptr),
-     badge_(badge),
-     important_(important) {
+     Event (nullptr),
+     badge_ (badge),
+     important_ (important) {
   }
 
   virtual ~IndicatorBadgeEvent() { }
 
-  int getBadge() const {
+  int GetBadge() const {
     return badge_;
   }
 
-  bool isImportant() const {
+  bool IsImportant() const {
     return important_;
   }
 

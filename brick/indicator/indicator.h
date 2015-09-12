@@ -50,8 +50,8 @@ class BrickIndicator : public CefBase,
   bool OnMenuChangeAccount(int id);
 
   // System events handler
-  virtual void onEvent(const AccountListEvent& event) OVERRIDE;
-  virtual void onEvent(const AccountSwitchEvent& event) OVERRIDE;
+  virtual void OnEvent(const AccountListEvent &event) OVERRIDE;
+  virtual void OnEvent(const AccountSwitchEvent &event) OVERRIDE;
 
  protected:
   void RegisterEventListeners();

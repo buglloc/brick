@@ -40,23 +40,23 @@ class DownloadProgressEvent : public Event {
 
   virtual ~DownloadProgressEvent() { }
 
-  const int getPercent() const {
+  const int GetPercent() const {
     return percent_;
   }
 
-  const int64 getSpeed() const {
+  const int64 GetSpeed() const {
     return speed_;
   }
 
-  const int64 getCurrent() const {
+  const int64 GetCurrent() const {
     return current_;
   }
 
-  const int64 getTotal() const {
+  const int64 GetTotal() const {
     return total_;
   }
 
-  const std::string getId() const {
+  const std::string GetId() const {
     return id_;
   }
 

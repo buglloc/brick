@@ -112,12 +112,12 @@ BrickIndicator::UseExtendedStatus(bool use) {
 }
 
 void
-BrickIndicator::onEvent(const AccountListEvent& event) {
+BrickIndicator::OnEvent(const AccountListEvent &event) {
   UpdateAccountsMenu();
 }
 
 void
-BrickIndicator::onEvent(const AccountSwitchEvent& event) {
+BrickIndicator::OnEvent(const AccountSwitchEvent &event) {
   UpdateAccountsMenu();
 }
 

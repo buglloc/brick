@@ -123,15 +123,15 @@ class EventBus : public EventObject {
     // matches the source or if the sender is not specified
     for (auto &reg : *registrations) {
       if (
-         (reg->getSender() == nullptr)
-         || (e.getSender() == nullptr)
-         || (reg->getSender() == e.getSender())
+         (reg->GetSender() == nullptr)
+         || (e.GetSender() == nullptr)
+         || (reg->GetSender() == e.GetSender())
          ) {
 
         // This is where some magic happens. The void * handler is statically cast to an event handler
         // of generic type Event and dispatched. The dispatch function will then do a dynamic
-        // cast to the correct event type so the matching onEvent method can be called
-        static_cast<EventHandler<Event>*>(reg->getHandler())->dispatch(e);
+        // cast to the correct event type so the matching OnEvent method can be called
+        static_cast<EventHandler<Event> *>(reg->GetHandler())->Dispatch(e);
       }
     }
   }
@@ -160,10 +160,10 @@ class EventBus : public EventObject {
      * @param sender The registered sender object
      */
     EventRegistration(void * const handler, Registrations * const registrations, EventSender * const sender ) :
-      handler(handler),
-      registrations(registrations),
-      sender(sender),
-      registered(true)
+      handler (handler),
+      registrations (registrations),
+      sender (sender),
+      registered (true)
     { }
 
 
@@ -178,7 +178,7 @@ class EventBus : public EventObject {
      *
      * @return The event handler
      */
-    void * const getHandler() {
+    void * const GetHandler() {
       return handler;
     }
 
@@ -188,7 +188,7 @@ class EventBus : public EventObject {
      *
      * @return The registered sender object
      */
-    EventSender* const getSender() {
+    EventSender* const GetSender() {
       return sender;
     }
 
@@ -198,7 +198,7 @@ class EventBus : public EventObject {
      *
      * The event handler will no longer receive events for this event type
      */
-    virtual void removeHandler() {
+    virtual void RemoveHandler() {
       if (registered) {
         registrations->remove(this);
         registered = false;

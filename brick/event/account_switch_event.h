@@ -12,13 +12,13 @@
 class AccountSwitchEvent : public Event {
  public:
   AccountSwitchEvent(const EventSender* sender, const Account *account) :
-     Event(sender),
-     account_(account) {
+     Event (sender),
+     account_ (account) {
   }
 
   explicit AccountSwitchEvent(const Account *account) :
-     Event(nullptr),
-     account_(account) {
+     Event (nullptr),
+     account_ (account) {
   }
 
   virtual ~AccountSwitchEvent() { }

@@ -257,12 +257,12 @@ class ClientHandler : public CefClient,
 
   // System event handlers
   void RegisterSystemEventListeners();
-  virtual void onEvent(const UserAwayEvent& event) OVERRIDE;
-  virtual void onEvent(const SleepEvent& event) OVERRIDE;
-  virtual void onEvent(const DownloadStartEvent& event) OVERRIDE;
-  virtual void onEvent(const DownloadProgressEvent& event) OVERRIDE;
-  virtual void onEvent(const DownloadCompleteEvent& event) OVERRIDE;
-  virtual void onEvent(const NotificationEvent& event) OVERRIDE;
+  virtual void OnEvent(const UserAwayEvent &event) OVERRIDE;
+  virtual void OnEvent(const SleepEvent &event) OVERRIDE;
+  virtual void OnEvent(const DownloadStartEvent &event) OVERRIDE;
+  virtual void OnEvent(const DownloadProgressEvent &event) OVERRIDE;
+  virtual void OnEvent(const DownloadCompleteEvent &event) OVERRIDE;
+  virtual void OnEvent(const NotificationEvent &event) OVERRIDE;
 
   std::string AddTemporaryPage(const std::string& content);
 

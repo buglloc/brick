@@ -65,11 +65,7 @@ AppSettings::UpdateByJson(std::string json) {
   if (!parsingSuccessful) {
 #if 0
 // Turn off error message while we haven't any configuration file by default
-    fprintf(
-      stderr,
-      "Failed to parse configuration: %s",
-      reader.getFormattedErrorMessages().c_str()
-    );
+    std::cerr << "Failed to parse configuration: " << reader.getFormattedErrorMessages().c_str();
 #endif
     return;
   }

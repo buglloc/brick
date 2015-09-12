@@ -731,9 +731,9 @@ ClientHandler::SendJSEvent(CefRefPtr<CefBrowser> browser, const CefString& name,
 }
 
 void
-ClientHandler::onEvent(const UserAwayEvent& event) {
-  is_idle_ = event.isAway();
-  if (event.isManual())
+ClientHandler::OnEvent(const UserAwayEvent &event) {
+  is_idle_ = event.IsAway();
+  if (event.IsManual())
     idle_pending_ = false;
 
   CefRefPtr<CefBrowser> browser = GetBrowser();
@@ -744,12 +744,12 @@ ClientHandler::onEvent(const UserAwayEvent& event) {
 }
 
 void
-ClientHandler::onEvent(const SleepEvent& event) {
+ClientHandler::OnEvent(const SleepEvent &event) {
   CefRefPtr<CefBrowser> browser = GetBrowser();
   if (!browser)
     return;
 
-  if (event.isSleep()) {
+  if (event.IsSleep()) {
     SendJSEvent(browser, "BXSleepAction");
   } {
     SendJSEvent(browser, "BXWakeAction");
@@ -758,12 +758,12 @@ ClientHandler::onEvent(const SleepEvent& event) {
 }
 
 void
-ClientHandler::onEvent(const DownloadStartEvent& event) {
-  download_history_[event.getId()] = new DownloadHistoryItem(
-      event.getUrl(),
-      event.getFilepath(),
-      event.getFilename(),
-      event.getDate()
+ClientHandler::OnEvent(const DownloadStartEvent &event) {
+  download_history_[event.GetId()] = new DownloadHistoryItem(
+      event.GetUrl(),
+      event.GetFilepath(),
+      event.GetFilename(),
+      event.GetDate()
   );
 
   CefRefPtr<CefBrowser> browser = GetBrowser();
@@ -771,13 +771,13 @@ ClientHandler::onEvent(const DownloadStartEvent& event) {
     return;
 
   Json::Value params(Json::objectValue);
-  params["name"] = event.getFilename();
-  params["path"] = event.getFilepath();
-  params["url"] = event.getUrl();
-  params["date"] = static_cast<Json::Value::Int64>(event.getDate());
+  params["name"] = event.GetFilename();
+  params["path"] = event.GetFilepath();
+  params["url"] = event.GetUrl();
+  params["date"] = static_cast<Json::Value::Int64>(event.GetDate());
 
   Json::Value data(Json::arrayValue);
-  data.append(event.getId());
+  data.append(event.GetId());
   data.append(params);
 
 
@@ -787,15 +787,15 @@ ClientHandler::onEvent(const DownloadStartEvent& event) {
 }
 
 void
-ClientHandler::onEvent(const DownloadProgressEvent& event) {
-  if (download_history_.count(event.getId())) {
-    download_history_[event.getId()]->UpdateProgress(
-        event.getPercent(),
-        event.getCurrent(),
-        event.getTotal()
+ClientHandler::OnEvent(const DownloadProgressEvent &event) {
+  if (download_history_.count(event.GetId())) {
+    download_history_[event.GetId()]->UpdateProgress(
+        event.GetPercent(),
+        event.GetCurrent(),
+        event.GetTotal()
     );
   } else {
-    LOG(ERROR) << "Try to update undefined download item. ID: " << event.getId();
+    LOG(ERROR) << "Try to update undefined download item. ID: " << event.GetId();
   }
 
 
@@ -804,15 +804,15 @@ ClientHandler::onEvent(const DownloadProgressEvent& event) {
     return;
 
   Json::Value params(Json::objectValue);
-  params["current"] = static_cast<Json::Value::Int64>(event.getCurrent());
-  params["speed"] = static_cast<Json::Value::Int64>(event.getSpeed());
-  if (event.getTotal() > 0) {
-    params["progress"] = event.getPercent();
-    params["size"] = static_cast<Json::Value::Int64>(event.getTotal());
+  params["current"] = static_cast<Json::Value::Int64>(event.GetCurrent());
+  params["speed"] = static_cast<Json::Value::Int64>(event.GetSpeed());
+  if (event.GetTotal() > 0) {
+    params["progress"] = event.GetPercent();
+    params["size"] = static_cast<Json::Value::Int64>(event.GetTotal());
   }
 
   Json::Value data(Json::arrayValue);
-  data.append(event.getId());
+  data.append(event.GetId());
   data.append(params);
 
 
@@ -822,16 +822,16 @@ ClientHandler::onEvent(const DownloadProgressEvent& event) {
 }
 
 void
-ClientHandler::onEvent(const DownloadCompleteEvent& event) {
-  if (download_map_.count(event.getId())) {
-    download_map_.erase(event.getId());
+ClientHandler::OnEvent(const DownloadCompleteEvent &event) {
+  if (download_map_.count(event.GetId())) {
+    download_map_.erase(event.GetId());
   }
 
-  if (download_history_.count(event.getId())) {
-    download_history_[event.getId()]->SetStatus(event.getStatus());
-    download_history_[event.getId()]->SetReason(event.getReason());
+  if (download_history_.count(event.GetId())) {
+    download_history_[event.GetId()]->SetStatus(event.GetStatus());
+    download_history_[event.GetId()]->SetReason(event.GetReason());
   } else {
-    LOG(ERROR) << "Try to complete undefined download item. ID: " << event.getId();
+    LOG(ERROR) << "Try to complete undefined download item. ID: " << event.GetId();
   }
 
   CefRefPtr<CefBrowser> browser = GetBrowser();
@@ -839,11 +839,11 @@ ClientHandler::onEvent(const DownloadCompleteEvent& event) {
     return;
 
   Json::Value params(Json::objectValue);
-  params["status"] = event.getStatus();
-  params["reason"] = event.getReason();
+  params["status"] = event.GetStatus();
+  params["reason"] = event.GetReason();
 
   Json::Value data(Json::arrayValue);
-  data.append(event.getId());
+  data.append(event.GetId());
   data.append(params);
 
   Json::FastWriter json_writer;
@@ -852,7 +852,7 @@ ClientHandler::onEvent(const DownloadCompleteEvent& event) {
 }
 
 void
-ClientHandler::onEvent(const NotificationEvent& event) {
+ClientHandler::OnEvent(const NotificationEvent &event) {
   CefRefPtr<CefBrowser> browser = GetBrowser();
   if (!browser)
     return;
@@ -865,7 +865,7 @@ ClientHandler::onEvent(const NotificationEvent& event) {
   }
 
   Json::Value data(Json::arrayValue);
-  data.append(event.getId());
+  data.append(event.GetId());
 
   Json::FastWriter json_writer;
   json_writer.omitEndingLineFeed();

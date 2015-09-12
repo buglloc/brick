@@ -9,24 +9,24 @@
 class UserAwayEvent : public Event {
  public:
   UserAwayEvent(const EventSender* sender, bool is_away, bool manual = false) :
-     Event(sender),
-     away_(is_away),
-     manual_(manual) {
+     Event (sender),
+     away_ (is_away),
+     manual_ (manual) {
   }
 
   explicit UserAwayEvent(bool is_away, bool manual = false) :
-     Event(nullptr),
-     away_(is_away),
-     manual_(manual) {
+     Event (nullptr),
+     away_ (is_away),
+     manual_ (manual) {
   }
 
   virtual ~UserAwayEvent() { }
 
-  bool isAway() const {
+  bool IsAway() const {
     return away_;
   }
 
-  bool isManual() const {
+  bool IsManual() const {
     return manual_;
   }
 

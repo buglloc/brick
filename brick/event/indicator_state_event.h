@@ -11,18 +11,18 @@
 class IndicatorStateEvent : public Event {
  public:
   IndicatorStateEvent(const EventSender* sender, const std::string state) :
-     Event(sender),
-     state_(state) {
+     Event (sender),
+     state_ (state) {
   }
 
   explicit IndicatorStateEvent(const std::string state) :
-     Event(nullptr),
-     state_(state) {
+     Event (nullptr),
+     state_ (state) {
   }
 
   virtual ~IndicatorStateEvent() { }
 
-  const std::string getState() const {
+  const std::string GetState() const {
     return state_;
   }
 

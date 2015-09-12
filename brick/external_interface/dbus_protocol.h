@@ -37,11 +37,11 @@ class DBusProtocol : public CefBase,
   bool Handle(std::string interface_name, CefRefPtr<CefProcessMessage> message);
 
   // Event handlers
-  virtual void onEvent(const AccountListEvent& event) OVERRIDE;
-  virtual void onEvent(const AccountSwitchEvent& event) OVERRIDE;
-  virtual void onEvent(const IndicatorBadgeEvent& event) OVERRIDE;
-  virtual void onEvent(const IndicatorStateEvent& event) OVERRIDE;
-  virtual void onEvent(const IndicatorTooltipEvent& event) OVERRIDE;
+  virtual void OnEvent(const AccountListEvent &event) OVERRIDE;
+  virtual void OnEvent(const AccountSwitchEvent &event) OVERRIDE;
+  virtual void OnEvent(const IndicatorBadgeEvent &event) OVERRIDE;
+  virtual void OnEvent(const IndicatorStateEvent &event) OVERRIDE;
+  virtual void OnEvent(const IndicatorTooltipEvent &event) OVERRIDE;
 
  protected:
   void RegisterSystemListeners();
