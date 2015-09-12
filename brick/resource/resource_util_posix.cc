@@ -85,4 +85,12 @@ namespace resource_util {
 
     return file_name.substr(sizeof(kResourcesPath) - 2);
   }
+
+  std::string
+  GetMimeType(const std::string& url) {
+    std::string file_name, mime_type;
+    helper::ParseUrl(url, &file_name, &mime_type);
+
+    return !mime_type.empty() ? mime_type : "text/html";
+  }
 }  // namespace resource_util

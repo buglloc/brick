@@ -16,6 +16,7 @@ namespace resource_util {
   CefRefPtr<CefStreamReader> GetBinaryResourceReader(const std::string resource_dir, const char* resource_name);
   CefRefPtr<CefStreamReader> GetBinaryFileReader(const std::string& path);
   std::string UrlToResourcePath(const std::string& url);
+  std::string GetMimeType(const std::string& url);
 };  // namespace resource_util
 
 #endif  // BRICK_RESOURCE_RESOURCE_UTIL_H_

@@ -902,6 +902,12 @@ ClientHandler::AddTemporaryPage(const std::string& content) {
 void
 ClientHandler::SetupResourceManager() {
   resource_manager_ = new CefResourceManager();
+
+  // Default MimeTypeResolver is broken on Debug build by thread restrictions:
+  // "Function marked as IO-only was called from a thread that disallows IO!"
+  // So we set custom and very simple resolver
+  resource_manager_->SetMimeTypeResolver(base::Bind(resource_util::GetMimeType));
+
   // Add the URL filter.
   resource_manager_->SetUrlFilter(base::Bind(resource_util::UrlToResourcePath));
 
