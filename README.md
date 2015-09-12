@@ -17,9 +17,6 @@ Video call:
 System notification:
 ![Notify](/doc/notify.png?raw=true)
 
-Screen sharing (experimental):
-![Screen Sharing](/doc/screen-sharing.png?raw=true)
-
 
 ## How to install and run Brick
 
