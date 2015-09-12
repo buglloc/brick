@@ -16,9 +16,8 @@ class IndicatorStateEvent : public Event {
   }
 
   explicit IndicatorStateEvent(const std::string state) :
-     Event (nullptr),
-     state_ (state) {
-  }
+     IndicatorStateEvent(nullptr, state)
+  { }
 
   virtual ~IndicatorStateEvent() { }
 

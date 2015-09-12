@@ -30,13 +30,8 @@ class DownloadProgressEvent : public Event {
                         const int64 speed,
                         const int64 current,
                         const int64 total) :
-     Event (nullptr),
-     id_ (id),
-     percent_ (percent),
-     speed_ (speed),
-     current_ (current),
-     total_ (total) {
-  }
+     DownloadProgressEvent(nullptr, id, percent, speed, current, total)
+  { }
 
   virtual ~DownloadProgressEvent() { }
 

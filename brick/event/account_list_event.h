@@ -14,8 +14,8 @@ class AccountListEvent : public Event {
   }
 
   AccountListEvent() :
-     Event (nullptr) {
-  }
+     AccountListEvent (nullptr)
+  { }
 
   virtual ~AccountListEvent() { }
 

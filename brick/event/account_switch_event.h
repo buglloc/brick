@@ -17,9 +17,8 @@ class AccountSwitchEvent : public Event {
   }
 
   explicit AccountSwitchEvent(const Account *account) :
-     Event (nullptr),
-     account_ (account) {
-  }
+     AccountSwitchEvent(nullptr, account)
+  { }
 
   virtual ~AccountSwitchEvent() { }
 
