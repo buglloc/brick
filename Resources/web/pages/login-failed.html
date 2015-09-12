@@ -16,7 +16,7 @@
         <span>Try again</span>
         <span id="autologin" style="display: none">
           (auto in
-          <span id="time">60</span>
+          <span id="time">30</span>
           sec)
         </span>
       </button>
@@ -39,7 +39,7 @@
 
         function startLoginTimer() {
           var seconds;
-          var timer = 60;
+          var timer = 30;
           var element = $('#time');
           element.text(timer);
           $('#autologin').show();
