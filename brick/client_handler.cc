@@ -9,6 +9,7 @@
 #include "include/wrapper/cef_closure_task.h"
 #include "include/wrapper/cef_helpers.h"
 #include "include/wrapper/cef_stream_resource_handler.h"
+#include "include/cef_parser.h"
 
 #include "brick/message_delegate/app_message_delegate.h"
 #include "brick/message_delegate/app_window_message_delegate.h"
@@ -182,7 +183,12 @@ ClientHandler::OnLoadError(CefRefPtr<CefBrowser> browser,
 
   LOG(INFO) << "Failed to load URL:" << error_explain.str();
 
-  frame->LoadURL(GetAccountManager()->GetCurrentAccount()->GetBaseUrl() + "internals/web/pages/offline");
+  std::ostringstream url;
+  url << GetAccountManager()->GetCurrentAccount()->GetBaseUrl()
+      << "internals/web/pages/offline"
+      << "#reason=" << CefURIEncode(request_util::GetErrorString(errorCode), false).ToString();
+
+  frame->LoadURL(url.str());
 }
 
 void

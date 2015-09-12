@@ -11,6 +11,7 @@
     <div class="wrapper">
     <div class="wrapper-data">       
       <h2 class="form-signin-heading">Account is not available</h2>
+      <div data-role="reason-box"></div>
       <button class="btn btn-lg btn-primary btn-block" data-loading-text="Loading..."  id="reconnect">
         <span>Try again</span>
         <span id="autologin" style="display: none">
@@ -23,6 +24,7 @@
   </div>
     <script>
       $(document).ready((function (window, app) {
+        var reason = app.getHashValue('reason');
         var loginTimer;
 
         function stopLoginTimer() {
@@ -55,6 +57,10 @@
 
         app.setIndicator('offline');
         startLoginTimer();
+        if (reason) {
+          $('div[data-role="reason-box"]').text(decodeURIComponent(reason));
+        }
+
         $('#reconnect').click(function() {
           stopLoginTimer();
           app.loadPortal();
