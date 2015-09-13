@@ -15,18 +15,18 @@ UnityLauncher::OnEvent(const DownloadProgressEvent& event) {
   if (event.getTotal() <= 0)
     return;
 
-  if (event.getPercent() >= 100 && downloads_.count(event.getId())) {
-    downloads_.erase(event.getId());
+  if (event.getPercent() >= 100 && downloads_.count(event.GetId())) {
+    downloads_.erase(event.GetId());
   }
 
-  downloads_[event.getId()] = event.getPercent();
+  downloads_[event.GetId()] = event.GetPercent();
   Update();
 }
 
 void
 UnityLauncher::OnEvent(const DownloadCompleteEvent& event) {
-  if (downloads_.count(event.getId())) {
-    downloads_.erase(event.getId());
+  if (downloads_.count(event.GetId())) {
+    downloads_.erase(event.GetId());
   }
   Update();
 }
