@@ -15,7 +15,7 @@
   // Uncomment line below to disable "Extended indicator statuses" like a DnD, Away, etc.
   // "extended-status": false,
 
-  // Uncomment line below to ignore SSL certificare errors
+  // Uncomment line below to ignore errors related to invalid SSL certificates
   // "ignore-certificate-errors": true,
 
   // Uncomment line below to enable file downloading w/o "Save file" dialog
