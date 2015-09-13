@@ -127,7 +127,7 @@ NotificationManager::OnClose(const std::string &js_id, bool is_message) {
   notification_ = nullptr;
 
   // On KDE notification has timed out and has been dismissed by the user closes with the same reason (2)
-  if (on_kde_ && !js_id.empty()) {
+  if (!on_kde_ && !js_id.empty()) {
     NotificationEvent e(js_id, is_message, false);
     EventBus::FireEvent(e);
   }
