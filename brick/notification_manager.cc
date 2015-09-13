@@ -15,15 +15,6 @@ NotificationManager::NotificationManager() :
 }
 
 void
-NotificationManager::OnClose(const std::string &js_id, bool is_message) {
-  notification_ = nullptr;
-  if (!js_id.empty()) {
-    NotificationEvent e(js_id, is_message, false);
-    EventBus::FireEvent(e);
-  }
-}
-
-void
 NotificationManager::OnClick(const std::string &js_id, bool is_message) {
   CefRefPtr<ClientHandler> client_handler = ClientHandler::GetInstance();
   if (!client_handler)

@@ -31,6 +31,9 @@ class NotificationManager : public CefBase {
   int last_id_;
   bool is_append_supported_;
   bool is_actions_supported_;
+#ifdef  __linux__
+  bool on_kde_;
+#endif
 
 IMPLEMENT_REFCOUNTING(NotificationManager);
 };

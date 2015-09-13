@@ -122,6 +122,17 @@ NotificationManager::Close() {
   notification_ = NULL;
 }
 
+void
+NotificationManager::OnClose(const std::string &js_id, bool is_message) {
+  notification_ = nullptr;
+
+  // On KDE notification has timed out and has been dismissed by the user closes with the same reason (2)
+  if (on_kde_ && !js_id.empty()) {
+    NotificationEvent e(js_id, is_message, false);
+    EventBus::FireEvent(e);
+  }
+}
+
 std::string
 NotificationManager::TryGetIcon(std::string icon, bool &need_download) {
   need_download = false;
@@ -163,6 +174,11 @@ NotificationManager::UpdateIcon(int id, std::string icon_path, bool success) {
   if (id < last_id_)
     return;
 
+  // Notification update was broken on KDE
+  // TODO(buglloc): Can fix this?
+  if (on_kde_)
+    return;
+
   g_object_set(G_OBJECT(notification_), "icon-name", icon_path.c_str(), NULL);
 
   // We must show notification again to update icon :-(
@@ -202,4 +218,7 @@ NotificationManager::InitializeCapabilities() {
   }
   g_list_foreach(capabilities, (GFunc)g_free, NULL);
   g_list_free(capabilities);
+
+  // Detect KDE, because it have some strange behavior
+  on_kde_ = platform_util::GetDesktopEnvironment() == platform_util::DESKTOP_ENVIRONMENT_KDE;
 }
