@@ -11,7 +11,7 @@ UnityLauncher::Init() {
 }
 
 void
-UnityLauncher::onEvent(const DownloadProgressEvent& event) {
+UnityLauncher::OnEvent(const DownloadProgressEvent& event) {
   if (event.getTotal() <= 0)
     return;
 
@@ -24,7 +24,7 @@ UnityLauncher::onEvent(const DownloadProgressEvent& event) {
 }
 
 void
-UnityLauncher::onEvent(const DownloadCompleteEvent& event) {
+UnityLauncher::OnEvent(const DownloadCompleteEvent& event) {
   if (downloads_.count(event.getId())) {
     downloads_.erase(event.getId());
   }
