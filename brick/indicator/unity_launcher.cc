@@ -12,10 +12,10 @@ UnityLauncher::Init() {
 
 void
 UnityLauncher::OnEvent(const DownloadProgressEvent& event) {
-  if (event.getTotal() <= 0)
+  if (event.GetTotal() <= 0)
     return;
 
-  if (event.getPercent() >= 100 && downloads_.count(event.GetId())) {
+  if (event.GetPercent() >= 100 && downloads_.count(event.GetId())) {
     downloads_.erase(event.GetId());
   }
 
