@@ -17,8 +17,10 @@ class IndicatorBadgeEvent : public Event {
   }
 
   explicit IndicatorBadgeEvent(int badge, bool important) :
-     IndicatorBadgeEvent(nullptr, badge, important)
-  { }
+      Event (nullptr),
+      badge_ (badge),
+      important_ (important) {
+  }
 
   virtual ~IndicatorBadgeEvent() { }
 

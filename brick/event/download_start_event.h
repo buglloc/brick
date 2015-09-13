@@ -23,7 +23,6 @@ class DownloadStartEvent : public Event {
      filepath_ (filepath),
      url_ (url),
      date_ (date) {
-
   }
 
   DownloadStartEvent(const std::string id,
@@ -31,8 +30,13 @@ class DownloadStartEvent : public Event {
                      const std::string filepath,
                      const std::string url,
                      const std::time_t date) :
-     DownloadStartEvent(nullptr, id, filename, filepath, url, date)
-  { }
+      Event (nullptr),
+      id_ (id),
+      filename_ (filename),
+      filepath_ (filepath),
+      url_ (url),
+      date_ (date) {
+  }
 
   virtual ~DownloadStartEvent() { }
 

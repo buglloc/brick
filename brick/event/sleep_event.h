@@ -14,8 +14,9 @@ class SleepEvent : public Event {
   }
 
   explicit SleepEvent(bool is_sleep) :
-     SleepEvent(nullptr, is_sleep)
-  { }
+      Event (nullptr),
+      sleep_ (is_sleep) {
+  }
 
   virtual ~SleepEvent() { }
 

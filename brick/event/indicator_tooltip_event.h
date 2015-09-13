@@ -16,8 +16,9 @@ class IndicatorTooltipEvent : public Event {
   }
 
   explicit IndicatorTooltipEvent(const std::string tooltip) :
-     IndicatorTooltipEvent(nullptr, tooltip)
-  { }
+      Event (nullptr),
+      tooltip_ (tooltip) {
+  }
 
   virtual ~IndicatorTooltipEvent() { }
 

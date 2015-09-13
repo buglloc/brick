@@ -27,8 +27,12 @@ class DownloadCompleteEvent : public Event {
                         const std::string filepath,
                         const DownloadClientStatus status,
                         const DownloadClientReason reason) :
-     DownloadCompleteEvent(nullptr, id, filepath, status, reason)
-  { }
+      Event (nullptr),
+      id_ (id),
+      filepath_ (filepath),
+      status_ (status),
+      reason_ (reason) {
+  }
 
   virtual ~DownloadCompleteEvent() { }
 

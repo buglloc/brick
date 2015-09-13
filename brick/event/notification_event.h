@@ -18,8 +18,11 @@ class NotificationEvent : public Event {
   }
 
   NotificationEvent(const std::string& id, const bool is_message, const bool show_action) :
-     NotificationEvent(nullptr, id, show_action, is_message)
-  { }
+      Event (nullptr),
+      id_ (id),
+      is_show_action_ (show_action),
+      is_message_ (is_message) {
+  }
 
   virtual ~NotificationEvent() { }
 

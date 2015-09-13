@@ -15,8 +15,10 @@ class UserAwayEvent : public Event {
   }
 
   explicit UserAwayEvent(bool is_away, bool manual = false) :
-     UserAwayEvent(nullptr, is_away, manual)
-  { }
+      Event (nullptr),
+      away_ (is_away),
+      manual_ (manual) {
+  }
 
   virtual ~UserAwayEvent() { }
 
