@@ -20,6 +20,7 @@ endmacro()
 set(LIBCEF_SRCS
   transfer_util.cc
   transfer_util.h
+  wrapper_types.h
   )
 source_group(libcef_dll FILES ${LIBCEF_SRCS})
 
@@ -42,6 +43,7 @@ source_group(libcef_dll\\\\base FILES ${LIBCEF_BASE_SRCS})
 set(LIBCEF_CPPTOC_SRCS
   cpptoc/app_cpptoc.cc
   cpptoc/app_cpptoc.h
+  cpptoc/base_cpptoc.cc
   cpptoc/base_cpptoc.h
   cpptoc/browser_process_handler_cpptoc.cc
   cpptoc/browser_process_handler_cpptoc.h
@@ -86,6 +88,8 @@ set(LIBCEF_CPPTOC_SRCS
   cpptoc/load_handler_cpptoc.h
   cpptoc/navigation_entry_visitor_cpptoc.cc
   cpptoc/navigation_entry_visitor_cpptoc.h
+  cpptoc/pdf_print_callback_cpptoc.cc
+  cpptoc/pdf_print_callback_cpptoc.h
   cpptoc/print_handler_cpptoc.cc
   cpptoc/print_handler_cpptoc.h
   cpptoc/read_handler_cpptoc.cc
@@ -130,7 +134,6 @@ source_group(libcef_dll\\\\cpptoc FILES ${LIBCEF_CPPTOC_SRCS})
 set(LIBCEF_CTOCPP_SRCS
   ctocpp/auth_callback_ctocpp.cc
   ctocpp/auth_callback_ctocpp.h
-  ctocpp/base_ctocpp.h
   ctocpp/before_download_callback_ctocpp.cc
   ctocpp/before_download_callback_ctocpp.h
   ctocpp/binary_value_ctocpp.cc

@@ -163,6 +163,9 @@ ClientApp::OnBeforeCommandLineProcessing(const CefString& process_type, CefRefPt
   // After update to CEF3 2357 we have some strange issues with GPU-procceses. Try to temporary disable it...
   command_line->AppendSwitch("disable-gpu");
   command_line->AppendSwitch("disable-gpu-compositing");
+  // We don't need any plugins, such as PDF viewer
+  command_line->AppendSwitch("disable-extensions");
+
   if (!command_line->HasSwitch("force-device-scale-factor") && device_scale_factor_ > 1.0) {
     // Chromium hack for HiDPI "supporting", https://code.google.com/p/chromium/issues/detail?id=143619
     // ToDo: Recheck this ugly solution, when Brick reached Chromium 43+

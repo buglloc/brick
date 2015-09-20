@@ -298,7 +298,6 @@ if(OS_LINUX)
   # List of CEF binary files.
   set(CEF_BINARY_FILES
     chrome-sandbox
-    libffmpegsumo.so
     libcef.so
     natives_blob.bin
     snapshot_blob.bin
