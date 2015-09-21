@@ -83,21 +83,26 @@ BrowserWindow::SetMinSize(int width, int height) {
 void
 BrowserWindow::FrozeSize(int width, int height) {
   GdkGeometry hints = {0};
-  if (width && height) {
+  bool set_hints = false;
+  if (resizable_ && width && height) {
     // Deal with HiDPI
     width *= window_util::GetDeviceScaleFactor();
     height *= window_util::GetDeviceScaleFactor();
 
     resizable_ = false;
+    set_hints = true;
     hints.min_width = width;
     hints.min_height = height;
     hints.max_width = width;
     hints.max_height = height;
-  } else {
+  } else if (!resizable_) {
     resizable_ = true;
+    set_hints = true;
   }
 
-  gdk_window_set_geometry_hints(window_handler_, &hints, (GdkWindowHints) (GDK_HINT_MIN_SIZE | GDK_HINT_MAX_SIZE));
+  if (set_hints) {
+    gdk_window_set_geometry_hints(window_handler_, &hints, (GdkWindowHints) (GDK_HINT_MIN_SIZE | GDK_HINT_MAX_SIZE));
+  }
 }
 
 void
