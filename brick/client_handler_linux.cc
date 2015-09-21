@@ -103,6 +103,21 @@ ClientHandler::OnTitleChange(CefRefPtr<CefBrowser> browser,
   window->SetTitle(window_title);
 }
 
+void
+ClientHandler::OnFullscreenModeChange(CefRefPtr<CefBrowser> browser,
+                                      bool fullscreen) {
+  CEF_REQUIRE_UI_THREAD();
+
+  BrowserWindow *window = window_util::LookupBrowserWindow(
+      browser->GetHost()->GetWindowHandle()
+  );
+
+  if (fullscreen)
+    window->Fullscreen();
+  else
+    window->UnFullscreen();
+}
+
 bool
 ClientHandler::OnFileDialog(
     CefRefPtr<CefBrowser> browser,

@@ -17,6 +17,7 @@ BrowserWindow::BrowserWindow()
     hided_ (false),
     focused_ (true),
     visible_ (true),
+    in_fullscreen_(false),
     resizable_ (true),
     closable_ (true),
     restore_last_position_ (false),
@@ -313,4 +314,21 @@ BrowserWindow::GetScreenRect() {
      monitor_rect.width,
      monitor_rect.height
   );
+}
+
+void
+BrowserWindow::Fullscreen() {
+  gdk_window_fullscreen(window_handler_);
+  in_fullscreen_ = true;
+}
+
+void
+BrowserWindow::UnFullscreen() {
+  gdk_window_unfullscreen(window_handler_);
+  in_fullscreen_ = false;
+}
+
+bool
+BrowserWindow::IsInFullscreen() {
+  return in_fullscreen_;
 }
