@@ -561,12 +561,6 @@ BXDesktopSystem.ExecuteCommand = function(command, params) {
       BrickApp.browse(params);
       break;
     case 'topmost.show.html':
-      if (params.includes('BXIM.webrtc.callFloatDialog')) {
-        // Disable call float window, because it's so strange...
-        // Wait until it has been implemented on IM side
-        break;
-      }
-
       // Fast&Ugly hack for non UTF-8 portals. Strange but they may set not UTF-8 encoding for the UTF-8 content
       var html = params.replace(/text\/html;\s?charset=[a-zA-Z0-9-]+/, 'text/html;charset=UTF-8');
       BrickApp.openTopmostWindow(html, function (newWindow) {
