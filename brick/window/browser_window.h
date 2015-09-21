@@ -82,11 +82,13 @@ class BrowserWindow : public CefBase {
   bool visible_;
   bool resizable_;
   bool closable_;
+  bool sticked_;
   bool restore_last_position_;
   int last_x_;
   int last_y_;
 #if defined(__linux__)
   bool on_kde_;
+  bool on_unity_;
 #endif
 
 IMPLEMENT_REFCOUNTING(BrowserWindow);

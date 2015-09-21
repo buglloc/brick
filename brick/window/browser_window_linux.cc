@@ -19,11 +19,14 @@ BrowserWindow::BrowserWindow()
     visible_ (true),
     resizable_ (true),
     closable_ (true),
+    sticked_ (false),
     restore_last_position_ (false),
     last_x_ (0),
     last_y_ (0) {
 
-  on_kde_ = platform_util::GetDesktopEnvironment() == platform_util::DESKTOP_ENVIRONMENT_KDE;
+  auto environment = platform_util::GetDesktopEnvironment();
+  on_kde_ = (environment == platform_util::DESKTOP_ENVIRONMENT_KDE);
+  on_unity_ = (environment == platform_util::DESKTOP_ENVIRONMENT_UNITY);
 }
 
 bool
@@ -282,11 +285,21 @@ BrowserWindow::MoveResize(Position position, int width, int height) {
       break;
   }
 
+  // Special (ugly) hack for Unity, because it doesn't properly move "sticked" window
+  // TODO(buglloc): Maybe we have better solution?
+  bool sticked = sticked_;
+  if (on_unity_ && sticked)
+    UnStick();
+
   gdk_window_move_resize(window_handler_, x, y, width, height);
+
+  if (on_unity_ && sticked)
+    Stick();
 }
 
 void
 BrowserWindow::Stick() {
+  sticked_ = true;
   gdk_window_set_keep_above(window_handler_, true);
   // Unity have strange issues with _NET_WM_STATE_STICKY, so be very careful
   gdk_window_stick(window_handler_);
@@ -294,6 +307,7 @@ BrowserWindow::Stick() {
 
 void
 BrowserWindow::UnStick() {
+  sticked_ = false;
   gdk_window_set_keep_above(window_handler_, false);
   gdk_window_unstick(window_handler_);
 }
