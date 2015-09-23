@@ -42,11 +42,11 @@ namespace {
   void
   OnAction(NotifyNotification *notify, char *action, NotificationManager *self) {
     const char* js_id = static_cast<char *>(g_object_get_data(G_OBJECT(notify), kDataJsIdName));
-    // Clear notification jsId
-    g_object_set_data(G_OBJECT(notify), kDataJsIdName, NULL);
-
     gint type = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(notify), kDataTypeName));
     self->OnClick(js_id != NULL ? js_id : "", type == kTypeMessage);
+
+    // Clear notification jsId
+    g_object_set_data(G_OBJECT(notify), kDataJsIdName, NULL);
   }
 
 }  // namespace
