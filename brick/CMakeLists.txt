@@ -216,7 +216,7 @@ set(BRICK_EMBED_FILES
 set(
   BRICK_RESOURCES
   app_icons
-  indicators
+  indicator
   web
   ui
   )

@@ -315,7 +315,7 @@ int main(int argc, char* argv[]) {
   client_handler->SetCacheManager(cache_manager);
 
   // Initialize status icon
-  CefRefPtr<BrickIndicator> brick_indicator(new BrickIndicator(app_settings.resource_dir + "/indicators/"));
+  CefRefPtr<BrickIndicator> brick_indicator(new BrickIndicator(app_settings.resource_dir + "/indicator/icons/"));
   brick_indicator->UseExtendedStatus(app_settings.extended_status);
   client_handler->SetIndicatorHandle(brick_indicator);
 
