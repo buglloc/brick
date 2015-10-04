@@ -18,6 +18,9 @@ class NotificationManager : public CefBase {
   void Close();
   void OnClose(const std::string &js_id, bool is_message);
   void OnClick(const std::string &js_id, bool is_message);
+  bool IsAppendSupported();
+  bool IsActionsSupported();
+  bool IsPersistenceSupported();
 
  protected:
   void InitializeCapabilities();
@@ -31,6 +34,7 @@ class NotificationManager : public CefBase {
   int last_id_;
   bool is_append_supported_;
   bool is_actions_supported_;
+  bool is_persistence_supported_;
 #ifdef  __linux__
   bool on_kde_;
 #endif

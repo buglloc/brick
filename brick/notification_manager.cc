@@ -9,7 +9,8 @@ NotificationManager::NotificationManager() :
     notification_(nullptr),
     last_id_(0),
     is_append_supported_(false),
-    is_actions_supported_(false) {
+    is_actions_supported_(false),
+    is_persistence_supported_(false) {
 
   InitializeCapabilities();
 }
@@ -30,4 +31,19 @@ NotificationManager::OnClick(const std::string &js_id, bool is_message) {
     NotificationEvent e(js_id, is_message, true);
     EventBus::FireEvent(e);
   }
+}
+
+bool
+NotificationManager::IsAppendSupported() {
+  return is_actions_supported_;
+}
+
+bool
+NotificationManager::IsActionsSupported() {
+  return is_actions_supported_;
+}
+
+bool
+NotificationManager::IsPersistenceSupported() {
+  return is_persistence_supported_;
 }

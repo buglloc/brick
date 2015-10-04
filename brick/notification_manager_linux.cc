@@ -16,7 +16,11 @@
 
 namespace {
   const char kAppendCapability[] = "x-canonical-append";
+  const char kPersistenceCapability[] = "persistence";
   const char kActionsCapability[] = "actions";
+  const char kAppendHint[] = "x-canonical-append";
+  const char kResidentHint[] = "resident";
+  const char kTransientHint[] = "transient";
   const char kDefaultActionName[] = "default";
   const char kDataJsIdName[] = "js-id";
   const char kDataTypeName[] = "type";
@@ -47,6 +51,11 @@ namespace {
 
     // Clear notification jsId
     g_object_set_data(G_OBJECT(notify), kDataJsIdName, NULL);
+
+    if (self->IsPersistenceSupported()) {
+      // In persistence mode notification daemon don't close notification itself
+      self->Close();
+    }
   }
 
 }  // namespace
@@ -82,7 +91,7 @@ NotificationManager::Notify(
   g_object_set_data(G_OBJECT(notification_), kDataTypeName, GINT_TO_POINTER(is_message ? kTypeMessage : kTypeRegular));
 
   if (is_append_supported_) {
-    notify_notification_set_hint_string(notification_, kAppendCapability, "1");
+    notify_notification_set_hint_string(notification_, kAppendHint, "1");
   }
 
   if (is_actions_supported_) {
@@ -94,6 +103,12 @@ NotificationManager::Notify(
       this,
       NULL
     );
+  }
+
+  if (is_persistence_supported_) {
+    // Ugly hack for Gnome Shell, see: https://github.com/buglloc/brick/issues/23
+    notify_notification_set_hint(notification_, kResidentHint, g_variant_new_boolean(true));
+    notify_notification_set_hint(notification_, kTransientHint, g_variant_new_boolean(true));
   }
 
   g_signal_connect(notification_, "closed", G_CALLBACK(OnCloseNotification), this);
@@ -214,6 +229,9 @@ NotificationManager::InitializeCapabilities() {
     } else if (strcmp(cap, kActionsCapability) == 0) {
       LOG(INFO) << "Notification server supports " << kActionsCapability;
       is_actions_supported_ = true;
+    } else if (strcmp(cap, kPersistenceCapability) == 0) {
+      LOG(INFO) << "Notification server supports " << kActionsCapability;
+      is_persistence_supported_ = true;
     }
   }
   g_list_foreach(capabilities, (GFunc)g_free, NULL);
