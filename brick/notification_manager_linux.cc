@@ -230,7 +230,7 @@ NotificationManager::InitializeCapabilities() {
       LOG(INFO) << "Notification server supports " << kActionsCapability;
       is_actions_supported_ = true;
     } else if (strcmp(cap, kPersistenceCapability) == 0) {
-      LOG(INFO) << "Notification server supports " << kActionsCapability;
+      LOG(INFO) << "Notification server supports " << kPersistenceCapability;
       is_persistence_supported_ = true;
     }
   }
