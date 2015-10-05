@@ -208,7 +208,7 @@ macro(DOWNLOAD_EXTRACT url target sha256 revision)
        timeout='timeout 300sec'")
 
     file(DOWNLOAD ${url} ${file}
-            TIMEOUT 60
+            TIMEOUT 300
             ${hash_args}
             STATUS status
             LOG log)
