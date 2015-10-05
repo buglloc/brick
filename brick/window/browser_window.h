@@ -62,6 +62,9 @@ class BrowserWindow : public CefBase {
   virtual void MoveResize(Position position, int width, int height);
   virtual void Stick();
   virtual void UnStick();
+  virtual void Fullscreen();
+  virtual void UnFullscreen();
+  virtual bool IsInFullscreen();
   CefRect GetScreenRect();
 
   // Event handlers
@@ -80,6 +83,7 @@ class BrowserWindow : public CefBase {
   bool hided_;
   bool focused_;
   bool visible_;
+  bool in_fullscreen_;
   bool resizable_;
   bool closable_;
   bool sticked_;

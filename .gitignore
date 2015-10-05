@@ -1,7 +1,12 @@
 .idea
+Release/*.so
+Release/*.bin
+Release/chrome-sandbox
+Release/revision.txt
 Debug/*.so
 Debug/*.bin
 Debug/chrome-sandbox
+Debug/revision.txt
 CMakeCache.txt
 CMakeFiles
 Makefile

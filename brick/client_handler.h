@@ -156,6 +156,8 @@ class ClientHandler : public CefClient,
   // CefDisplayHandler methods
   virtual void OnTitleChange(CefRefPtr<CefBrowser> browser,
      const CefString &title) OVERRIDE;
+  void OnFullscreenModeChange(CefRefPtr<CefBrowser> browser,
+     bool fullscreen) OVERRIDE;
 
   // CefLifeSpanHandler methods
   bool OnBeforePopup(
