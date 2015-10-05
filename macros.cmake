@@ -175,6 +175,103 @@ macro(SET_LINUX_SUID_PERMISSIONS target executable)
     )
 endmacro()
 
+macro(DOWNLOAD_EXTRACT url target sha256 revision)
+  message(STATUS "Downloading ${url}")
+  set(SKIP 0)
+  if(EXISTS "${target}/revision.txt")
+    FILE(READ "${target}/revision.txt" EXISTS_REVISION)
+    STRING(STRIP "${EXISTS_REVISION}" EXISTS_REVISION)
+    set(EXPECTED_REVISION "${revision}")
+    if(EXPECTED_REVISION STREQUAL EXISTS_REVISION)
+      message(STATUS "Using existed revision: ${EXISTS_REVISION}")
+      set(SKIP 1)
+    endif()
+  endif()
+
+  if(NOT SKIP)
+    string(REGEX MATCH "[^/\\?]*$" fname "${url}")
+    if(NOT "${fname}" MATCHES "(\\.|=)(bz2|tar|tgz|tar\\.gz|zip)$")
+      string(REGEX MATCH "([^/\\?]+(\\.|=)(bz2|tar|tgz|tar\\.gz|zip))/.*$" match_result "${URL}")
+      set(fname "${CMAKE_MATCH_1}")
+    endif()
+    if(NOT "${fname}" MATCHES "(\\.|=)(bz2|tar|tgz|tar\\.gz|zip)$")
+      message(FATAL_ERROR "Could not extract tarball filename from url:\n  ${url}")
+    endif()
+    string(REPLACE ";" "-" fname "${fname}")
+
+    set(file "/tmp/${fname}")
+    message(STATUS "file: ${file}")
+
+    message(STATUS "Prepare downloading...
+       src='${url}'
+       dst='${file}'
+       timeout='timeout 60sec'")
+
+    file(DOWNLOAD ${url} ${file}
+            TIMEOUT 60
+            ${hash_args}
+            STATUS status
+            LOG log)
+
+    list(GET status 0 status_code)
+    list(GET status 1 status_string)
+
+    if(NOT status_code EQUAL 0)
+      message(FATAL_ERROR "error: downloading '${url}' failed
+    status_code: ${status_code}
+    status_string: ${status_string}
+    log: ${log}
+  ")
+    endif()
+
+    # We could avoid computing the SHA256 entirely if a NULL_SHA256 was given,
+    # but we want to warn users of an empty file.
+    file(SHA256 ${file} ACTUAL_SHA256)
+    if(ACTUAL_SHA256 STREQUAL "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")
+      # File was empty.  It's likely due to lack of SSL support.
+      message(FATAL_ERROR
+              "Failed to download ${url}.  The file is empty and likely means CMake "
+              "was built without SSL support.  Please use a version of CMake with "
+              "proper SSL support.")
+    elseif(NOT ${sha256} STREQUAL ACTUAL_SHA256)
+      # Wasn't a NULL SHA256 and we didn't match, so we fail.
+      message(FATAL_ERROR
+              "Failed to download ${URL}.  Expected a SHA256 of "
+              "'${sha256}' but got '${ACTUAL_SHA256}' instead.")
+    endif()
+
+    message(STATUS "downloading... done")
+
+    # Slurped from a generated extract-TARGET.cmake file.
+    message(STATUS "extracting...
+       src='${file}'
+       dst='${target}'")
+
+    if(NOT EXISTS "${file}")
+      message(FATAL_ERROR "error: file to extract does not exist: '${file}'")
+    endif()
+
+    # Prepare a space for extracting:
+    #
+    file(REMOVE_RECURSE "${target}")
+    file(MAKE_DIRECTORY "${target}")
+
+    # Extract it:
+    #
+    execute_process(COMMAND ${CMAKE_COMMAND} -E tar xfz ${file}
+            WORKING_DIRECTORY ${target}
+            RESULT_VARIABLE rv)
+
+    if(NOT rv EQUAL 0)
+      message(STATUS "extracting... [error clean up]")
+      file(REMOVE_RECURSE "${target}")
+      message(FATAL_ERROR "error: extract of '${file}' failed")
+    endif()
+
+    file(REMOVE ${file})
+    message(STATUS "extracting... done")
+  endif()
+endmacro()
 endif(OS_LINUX)
 
 

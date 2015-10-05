@@ -10,34 +10,33 @@
 // for more information.
 //
 
-#ifndef CEF_LIBCEF_DLL_CTOCPP_WEB_PLUGIN_INFO_CTOCPP_H_
-#define CEF_LIBCEF_DLL_CTOCPP_WEB_PLUGIN_INFO_CTOCPP_H_
+#ifndef CEF_LIBCEF_DLL_CTOCPP_RESOURCE_BUNDLE_CTOCPP_H_
+#define CEF_LIBCEF_DLL_CTOCPP_RESOURCE_BUNDLE_CTOCPP_H_
 #pragma once
 
 #ifndef USING_CEF_SHARED
 #pragma message("Warning: "__FILE__" may be accessed wrapper-side only")
 #else  // USING_CEF_SHARED
 
-#include "include/cef_web_plugin.h"
-#include "include/capi/cef_web_plugin_capi.h"
-#include "include/cef_browser.h"
-#include "include/capi/cef_browser_capi.h"
+#include "include/cef_resource_bundle.h"
+#include "include/capi/cef_resource_bundle_capi.h"
 #include "libcef_dll/ctocpp/ctocpp.h"
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class CefWebPluginInfoCToCpp
-    : public CefCToCpp<CefWebPluginInfoCToCpp, CefWebPluginInfo,
-        cef_web_plugin_info_t> {
+class CefResourceBundleCToCpp
+    : public CefCToCpp<CefResourceBundleCToCpp, CefResourceBundle,
+        cef_resource_bundle_t> {
  public:
-  CefWebPluginInfoCToCpp();
+  CefResourceBundleCToCpp();
 
-  // CefWebPluginInfo methods.
-  CefString GetName() OVERRIDE;
-  CefString GetPath() OVERRIDE;
-  CefString GetVersion() OVERRIDE;
-  CefString GetDescription() OVERRIDE;
+  // CefResourceBundle methods.
+  CefString GetLocalizedString(int string_id) OVERRIDE;
+  bool GetDataResource(int resource_id, void*& data,
+      size_t& data_size) OVERRIDE;
+  bool GetDataResourceForScale(int resource_id, ScaleFactor scale_factor,
+      void*& data, size_t& data_size) OVERRIDE;
 };
 
 #endif  // USING_CEF_SHARED
-#endif  // CEF_LIBCEF_DLL_CTOCPP_WEB_PLUGIN_INFO_CTOCPP_H_
+#endif  // CEF_LIBCEF_DLL_CTOCPP_RESOURCE_BUNDLE_CTOCPP_H_

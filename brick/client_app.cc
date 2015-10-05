@@ -164,7 +164,7 @@ ClientApp::OnBeforeCommandLineProcessing(const CefString& process_type, CefRefPt
   command_line->AppendSwitch("disable-gpu");
   command_line->AppendSwitch("disable-gpu-compositing");
   // We don't need any plugins, such as PDF viewer
-  command_line->AppendSwitch("disable-extensions");
+  command_line->AppendSwitch("disable-pdf-extension");
 
   if (!command_line->HasSwitch("force-device-scale-factor") && device_scale_factor_ > 1.0) {
     // Chromium hack for HiDPI "supporting", https://code.google.com/p/chromium/issues/detail?id=143619

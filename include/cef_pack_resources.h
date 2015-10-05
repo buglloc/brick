@@ -331,6 +331,9 @@
 #define IDR_CEF_VERSION_HTML 27504
 #define IDR_CEF_EXTENSION_API_FEATURES 27505
 #define IDR_PDF_MANIFEST 27506
+#define IDR_BLOCKED_PLUGIN_HTML 27507
+#define IDR_PLUGIN_POSTER_HTML 27508
+#define IDR_PLUGIN_DB_JSON 27509
 
 // ---------------------------------------------------------------------------
 // From component_extension_resources.h:

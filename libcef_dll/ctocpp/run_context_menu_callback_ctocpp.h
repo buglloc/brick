@@ -10,28 +10,30 @@
 // for more information.
 //
 
-#ifndef CEF_LIBCEF_DLL_CPPTOC_WEB_PLUGIN_INFO_VISITOR_CPPTOC_H_
-#define CEF_LIBCEF_DLL_CPPTOC_WEB_PLUGIN_INFO_VISITOR_CPPTOC_H_
+#ifndef CEF_LIBCEF_DLL_CTOCPP_RUN_CONTEXT_MENU_CALLBACK_CTOCPP_H_
+#define CEF_LIBCEF_DLL_CTOCPP_RUN_CONTEXT_MENU_CALLBACK_CTOCPP_H_
 #pragma once
 
 #ifndef USING_CEF_SHARED
 #pragma message("Warning: "__FILE__" may be accessed wrapper-side only")
 #else  // USING_CEF_SHARED
 
-#include "include/cef_web_plugin.h"
-#include "include/capi/cef_web_plugin_capi.h"
-#include "include/cef_browser.h"
-#include "include/capi/cef_browser_capi.h"
-#include "libcef_dll/cpptoc/cpptoc.h"
+#include "include/cef_context_menu_handler.h"
+#include "include/capi/cef_context_menu_handler_capi.h"
+#include "libcef_dll/ctocpp/ctocpp.h"
 
-// Wrap a C++ class with a C structure.
+// Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class CefWebPluginInfoVisitorCppToC
-    : public CefCppToC<CefWebPluginInfoVisitorCppToC, CefWebPluginInfoVisitor,
-        cef_web_plugin_info_visitor_t> {
+class CefRunContextMenuCallbackCToCpp
+    : public CefCToCpp<CefRunContextMenuCallbackCToCpp,
+        CefRunContextMenuCallback, cef_run_context_menu_callback_t> {
  public:
-  CefWebPluginInfoVisitorCppToC();
+  CefRunContextMenuCallbackCToCpp();
+
+  // CefRunContextMenuCallback methods.
+  void Continue(int command_id, EventFlags event_flags) OVERRIDE;
+  void Cancel() OVERRIDE;
 };
 
 #endif  // USING_CEF_SHARED
-#endif  // CEF_LIBCEF_DLL_CPPTOC_WEB_PLUGIN_INFO_VISITOR_CPPTOC_H_
+#endif  // CEF_LIBCEF_DLL_CTOCPP_RUN_CONTEXT_MENU_CALLBACK_CTOCPP_H_

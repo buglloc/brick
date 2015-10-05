@@ -195,8 +195,12 @@ set(LIBCEF_CTOCPP_SRCS
   ctocpp/request_context_ctocpp.h
   ctocpp/request_ctocpp.cc
   ctocpp/request_ctocpp.h
+  ctocpp/resource_bundle_ctocpp.cc
+  ctocpp/resource_bundle_ctocpp.h
   ctocpp/response_ctocpp.cc
   ctocpp/response_ctocpp.h
+  ctocpp/run_context_menu_callback_ctocpp.cc
+  ctocpp/run_context_menu_callback_ctocpp.h
   ctocpp/scheme_registrar_ctocpp.cc
   ctocpp/scheme_registrar_ctocpp.h
   ctocpp/sslcert_principal_ctocpp.cc
@@ -276,6 +280,7 @@ set(LIBCEF_INCLUDE_SRCS
   ../include/cef_request_context.h
   ../include/cef_request_context_handler.h
   ../include/cef_request_handler.h
+  ../include/cef_resource_bundle.h
   ../include/cef_resource_bundle_handler.h
   ../include/cef_resource_handler.h
   ../include/cef_response.h
@@ -396,6 +401,7 @@ set(LIBCEF_INCLUDE_CAPI_SRCS
   ../include/capi/cef_request_context_capi.h
   ../include/capi/cef_request_context_handler_capi.h
   ../include/capi/cef_request_handler_capi.h
+  ../include/capi/cef_resource_bundle_capi.h
   ../include/capi/cef_resource_bundle_handler_capi.h
   ../include/capi/cef_resource_handler_capi.h
   ../include/capi/cef_response_capi.h
