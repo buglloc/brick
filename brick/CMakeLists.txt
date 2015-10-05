@@ -267,10 +267,26 @@ if (UNITY)
   FIND_LINUX_LIBRARIES("unity")
 endif()
 
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
+  if(PROJECT_ARCH STREQUAL "x86_64")
+    set(CEF_LIBRARIES_ARCHIVE_URL     "https://github.com/buglloc/cef-builds/raw/68a8676091f1caa9acaf1f66531a272b99846367/libs/cef-x86_64.tar.gz")
+    set(CEF_LIBRARIES_ARCHIVE_HASH    "707dbbcf036770cffb163d14d747e4edc4e769e8f813d3cd29c847426e2268ca")
+  elseif(PROJECT_ARCH STREQUAL "x86")
+    # TODO: x86!
+  endif()
+
+  DOWNLOAD_EXTRACT(
+    ${CEF_LIBRARIES_ARCHIVE_URL}
+    "${CMAKE_SOURCE_DIR}/Release"
+    ${CEF_LIBRARIES_ARCHIVE_HASH}
+    "3.2454.1328.gc45b7de.${PROJECT_ARCH}"
+  )
+endif()
+
 # Executable target.
 add_executable(${CEF_TARGET} ${BRICK_SRCS} ${BRICK_EMBED_FILES})
 add_dependencies(${CEF_TARGET} libcef_dll_wrapper)
-target_link_libraries(${CEF_TARGET} libcef_lib libcef_dll_wrapper ${CEF_STANDARD_LIBS} ${CMAKE_DL_LIBS})
+target_link_libraries(${CEF_TARGET} libcef_lib libcef_dll_wrapper ${CEF_STANDAR2D_LIBS} ${CMAKE_DL_LIBS})
 install(
     TARGETS
         brick

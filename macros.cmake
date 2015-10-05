@@ -205,7 +205,7 @@ macro(DOWNLOAD_EXTRACT url target sha256 revision)
     message(STATUS "Prepare downloading...
        src='${url}'
        dst='${file}'
-       timeout='timeout 60sec'")
+       timeout='timeout 300sec'")
 
     file(DOWNLOAD ${url} ${file}
             TIMEOUT 60
