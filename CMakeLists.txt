@@ -306,6 +306,7 @@ if(OS_LINUX)
   # List of CEF resource files.
   set(CEF_RESOURCE_FILES
     cef.pak
+    cef_extensions.pak
     cef_100_percent.pak
     cef_200_percent.pak
     devtools_resources.pak
