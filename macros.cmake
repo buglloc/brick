@@ -142,9 +142,13 @@ if(OS_LINUX)
 # Use pkg-config to find Linux libraries and update compiler/linker variables.
 macro(FIND_LINUX_LIBRARIES libraries)
   # Read pkg-config info into variables.
-  execute_process(COMMAND pkg-config --cflags ${libraries} OUTPUT_VARIABLE FLL_CFLAGS)
-  execute_process(COMMAND pkg-config --libs-only-L --libs-only-other ${libraries} OUTPUT_VARIABLE FLL_LDFLAGS)
-  execute_process(COMMAND pkg-config --libs-only-l ${libraries} OUTPUT_VARIABLE FLL_LIBS)
+  execute_process(COMMAND pkg-config --cflags ${libraries} OUTPUT_VARIABLE FLL_CFLAGS RESULT_VARIABLE RV_CFLAGS)
+  execute_process(COMMAND pkg-config --libs-only-L --libs-only-other ${libraries} OUTPUT_VARIABLE FLL_LDFLAGS RESULT_VARIABLE RV_LDFLAGS)
+  execute_process(COMMAND pkg-config --libs-only-l ${libraries} OUTPUT_VARIABLE FLL_LIBS RESULT_VARIABLE RV_LIBS)
+
+  if((NOT RV_CFLAGS EQUAL 0) OR (NOT RV_LDFLAGS EQUAL 0) OR (NOT RV_LIBS EQUAL 0))
+    message(FATAL_ERROR "Failed to find one of these libraries: ${libraries'")
+  endif()
 
   # Strip leading and trailing whitepspace.
   STRING(STRIP "${FLL_CFLAGS}"  FLL_CFLAGS)
