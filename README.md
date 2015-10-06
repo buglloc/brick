@@ -41,7 +41,7 @@ yaourt -S brick
 ```
 Brick for Unity isn't supported so far. May be later:)
 
-### Build manualy
+### Build manually
 Or you can build Brick from sources:
 ```bash
 # Install some dependencies and build tools
