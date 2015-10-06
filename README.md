@@ -32,6 +32,7 @@ sudo apt-get install brick-unity
 sudo apt-get install brick
 ```
 if you are using KDE4/5 your may want to install `libappindicator`
+***Ubuntu Precise is no longer supports***
 
 ### AUR for Arch Linux
 You can install Brick from AUR [https://aur.archlinux.org/packages/brick/](https://aur.archlinux.org/packages/brick/):
