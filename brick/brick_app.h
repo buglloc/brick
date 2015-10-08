@@ -7,7 +7,7 @@
 // ToDo: move defines to separate file?
 
 #define JS_API_VERSION "31"
-#define VERSION "0.2.4" "." JS_API_VERSION  // IM API version in last part!
+#define VERSION "0.2.5" "." JS_API_VERSION  // IM API version in last part!
 #define APP_VERSION "Brick/" VERSION "/beta"
 #define APP_NAME "Brick"
 #define APP_COMMON_NAME "brick"
