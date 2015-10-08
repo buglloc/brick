@@ -269,8 +269,8 @@ endif()
 
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
   if(PROJECT_ARCH STREQUAL "x86_64")
-    set(CEF_LIBRARIES_ARCHIVE_URL     "https://github.com/buglloc/cef-builds/raw/68a8676091f1caa9acaf1f66531a272b99846367/libs/cef-x86_64.tar.gz")
-    set(CEF_LIBRARIES_ARCHIVE_HASH    "707dbbcf036770cffb163d14d747e4edc4e769e8f813d3cd29c847426e2268ca")
+    set(CEF_LIBRARIES_ARCHIVE_URL     "https://github.com/buglloc/cef-builds/raw/a719238c09e3ff3b341650b5f5ca115799560edd/libs/cef-x86_64.tar.gz")
+    set(CEF_LIBRARIES_ARCHIVE_HASH    "2d826a502b576da18d5d31f7028d3a2d10d1969b6450175c4ec596cec02d38e7")
   elseif(PROJECT_ARCH STREQUAL "x86")
     set(CEF_LIBRARIES_ARCHIVE_URL     "https://github.com/buglloc/cef-builds/raw/2c8ddaf890b7b9cc9353f7bad745109c4fd2083e/libs/cef-i686.tar.gz")
     set(CEF_LIBRARIES_ARCHIVE_HASH    "fa20cb5e2dd47097861e90e7b0308bf3c4d01cc8d058ef2109b1109609181876")
@@ -280,7 +280,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "Release")
     ${CEF_LIBRARIES_ARCHIVE_URL}
     "${CMAKE_SOURCE_DIR}/Release"
     ${CEF_LIBRARIES_ARCHIVE_HASH}
-    "3.2454.1328.gc45b7de.${PROJECT_ARCH}"
+    "3.2454.1329.g29055f6.${PROJECT_ARCH}"
   )
 endif()
 
