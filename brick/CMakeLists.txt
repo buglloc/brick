@@ -272,8 +272,8 @@ if (CMAKE_BUILD_TYPE STREQUAL "Release")
     set(CEF_LIBRARIES_ARCHIVE_URL     "https://github.com/buglloc/cef-builds/raw/a719238c09e3ff3b341650b5f5ca115799560edd/libs/cef-x86_64.tar.gz")
     set(CEF_LIBRARIES_ARCHIVE_HASH    "2d826a502b576da18d5d31f7028d3a2d10d1969b6450175c4ec596cec02d38e7")
   elseif(PROJECT_ARCH STREQUAL "x86")
-    set(CEF_LIBRARIES_ARCHIVE_URL     "https://github.com/buglloc/cef-builds/raw/2c8ddaf890b7b9cc9353f7bad745109c4fd2083e/libs/cef-i686.tar.gz")
-    set(CEF_LIBRARIES_ARCHIVE_HASH    "fa20cb5e2dd47097861e90e7b0308bf3c4d01cc8d058ef2109b1109609181876")
+    set(CEF_LIBRARIES_ARCHIVE_URL     "https://github.com/buglloc/cef-builds/raw/f9bef61268792ac8b37bd1f45bbe62840b2682a1/libs/cef-i686.tar.gz")
+    set(CEF_LIBRARIES_ARCHIVE_HASH    "bc8e3338ef6ea73c961a138f325ad613abbb8632fb34d4219fe58c8708c6e2fe")
   endif()
 
   DOWNLOAD_EXTRACT(
