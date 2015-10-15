@@ -4,11 +4,11 @@
 
 #include "include/base/cef_logging.h"
 #include "include/wrapper/cef_helpers.h"
+#include "brick/platform_util.h"
 #include "brick/event/event_bus.h"
 #include "brick/event/sleep_event.h"
-#ifdef unity
 #include "brick/event/user_away_event.h"
-#endif
+
 #include "brick/external_interface/dbus_protocol.h"
 #include "brick/external_interface/app_message_delegate.h"
 #include "brick/external_interface/app_window_message_delegate.h"
@@ -20,6 +20,16 @@ namespace {
   const char kAppPath[] = "/org/brick/Brick/App";
   const char kAppWindowInterface[] = "org.brick.Brick.AppWindowInterface";
   const char kAppWindowPath[] = "/org/brick/Brick/AppWindow";
+
+  const char kSessionUnityInterface[] = "com.canonical.Unity.Session";
+  const char kSessionUnityPath[] = "/com/canonical/Unity/Session";
+  const char kScreenLockInterface[] = "org.freedesktop.ScreenSaver";
+  const char kScreenLockPath[] = "/org/freedesktop/ScreenSaver";
+  const char kScreenLockGnomeInterface[] = "org.gnome.ScreenSaver";
+  const char kScreenLockGnomePath[] = "/org/gnome/ScreenSaver";
+  const char kScreenLockCinnamonInterface[] = "org.cinnamon.ScreenSaver";
+  const char kScreenLockCinnamonPath[] = "/org/cinnamon/ScreenSaver";
+
 
   const gchar introspection_xml[] =
      R"xml(<node>
@@ -167,7 +177,8 @@ namespace {
     );
   }
 
-  void on_sleep(GDBusConnection *connection,
+  void
+  on_sleep(GDBusConnection *connection,
      const gchar *sender_name,
      const gchar *object_path,
      const gchar *interface_name,
@@ -182,8 +193,8 @@ namespace {
 
   }
 
-#ifdef unity
-  void on_locked(GDBusConnection *connection,
+  void
+  on_locked_unity(GDBusConnection *connection,
      const gchar *sender_name,
      const gchar *object_path,
      const gchar *interface_name,
@@ -195,7 +206,8 @@ namespace {
     EventBus::FireEvent(e);
   }
 
-  void on_unlocked(GDBusConnection *connection,
+  void
+  on_unlocked_unity(GDBusConnection *connection,
      const gchar *sender_name,
      const gchar *object_path,
      const gchar *interface_name,
@@ -206,7 +218,22 @@ namespace {
     UserAwayEvent e(false, true);
     EventBus::FireEvent(e);
   }
-#endif
+
+  void
+  on_session_active_changed(GDBusConnection *connection,
+      const gchar *sender_name,
+      const gchar *object_path,
+      const gchar *interface_name,
+      const gchar *signal_name,
+      GVariant *parameters,
+      gpointer user_data) {
+
+    bool is_locked;
+    g_variant_get(parameters, "(b)", &is_locked);
+    UserAwayEvent e(is_locked, true);
+    EventBus::FireEvent(e);
+  }
+
 
 }  // namespace
 
@@ -327,33 +354,71 @@ DBusProtocol::RegisterSystemListeners() {
      NULL
   );
 
-#ifdef unity
-  g_dbus_connection_signal_subscribe(
-     session_bus_,
-     NULL,
-     "com.canonical.Unity.Session",
-     "Locked",
-     "/com/canonical/Unity/Session",
-     NULL,
-     G_DBUS_SIGNAL_FLAGS_NONE,
-     on_locked,
-     NULL,
-     NULL
-  );
+  auto environment = platform_util::GetDesktopEnvironment();
+  if (environment == platform_util::DESKTOP_ENVIRONMENT_UNITY) {
+    g_dbus_connection_signal_subscribe(
+        session_bus_,
+        NULL,
+        kSessionUnityInterface,
+        "Locked",
+        kSessionUnityPath,
+        NULL,
+        G_DBUS_SIGNAL_FLAGS_NONE,
+        on_locked_unity,
+        NULL,
+        NULL
+    );
 
-  g_dbus_connection_signal_subscribe(
-     session_bus_,
-     NULL,
-     "com.canonical.Unity.Session",
-     "Unlocked",
-     "/com/canonical/Unity/Session",
-     NULL,
-     G_DBUS_SIGNAL_FLAGS_NONE,
-     on_unlocked,
-     NULL,
-     NULL
-  );
-#endif
+    g_dbus_connection_signal_subscribe(
+        session_bus_,
+        NULL,
+        kSessionUnityInterface,
+        "Unlocked",
+        kSessionUnityPath,
+        NULL,
+        G_DBUS_SIGNAL_FLAGS_NONE,
+        on_unlocked_unity,
+        NULL,
+        NULL
+    );
+  } else {
+    std::string interface;
+    std::string path;
+    switch (environment) {
+      case platform_util::DESKTOP_ENVIRONMENT_GNOME:
+        interface = kScreenLockGnomeInterface;
+        path = kScreenLockGnomePath;
+        break;
+
+      case platform_util::DESKTOP_ENVIRONMENT_KDE:
+        interface = kScreenLockInterface;
+        path = kScreenLockPath;
+        break;
+
+      case platform_util::DESKTOP_ENVIRONMENT_CINNAMON:
+        interface = kScreenLockCinnamonInterface;
+        path = kScreenLockCinnamonPath;
+        break;
+
+      default:
+        interface = kScreenLockInterface;
+        path = kScreenLockPath;
+    }
+
+    g_dbus_connection_signal_subscribe(
+        session_bus_,
+        NULL,
+        interface.c_str(),
+        "ActiveChanged",
+        path.c_str(),
+        NULL,
+        G_DBUS_SIGNAL_FLAGS_NONE,
+        on_session_active_changed,
+        NULL,
+        NULL
+    );
+  }
+
 }
 
 void
