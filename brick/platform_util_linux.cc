@@ -256,6 +256,8 @@ namespace platform_util {
         return DESKTOP_ENVIRONMENT_GNOME;
       } else if (xdg_current_desktop == "KDE") {
         return DESKTOP_ENVIRONMENT_KDE;
+      } else if (xdg_current_desktop == "X-Cinnamon") {
+        return DESKTOP_ENVIRONMENT_CINNAMON;
       }
     }
 

@@ -16,6 +16,7 @@ namespace platform_util {
     DESKTOP_ENVIRONMENT_KDE,
     DESKTOP_ENVIRONMENT_UNITY,
     DESKTOP_ENVIRONMENT_XFCE,
+    DESKTOP_ENVIRONMENT_CINNAMON,
   };
 
   void OpenExternal(const std::string &url);
