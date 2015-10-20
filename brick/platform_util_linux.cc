@@ -2,8 +2,6 @@
 
 #include "brick/platform_util.h"
 
-#include <unistd.h>
-#include <signal.h>
 #include <sys/stat.h>
 #include <glib.h>
 #include <gio/gio.h>
@@ -22,66 +20,20 @@ namespace {
   const char kFileManagerInterface[] = "org.freedesktop.FileManager1";
   const char kFileManagerMethod[] = "ShowItems";
 
-  // Set the calling thread's signal mask to new_sigmask and return
-  // the previous signal mask.
-  sigset_t
-  SetSignalMask(const sigset_t& new_sigmask) {
-    sigset_t old_sigmask;
-    pthread_sigmask(SIG_SETMASK, &new_sigmask, &old_sigmask);
-    return old_sigmask;
-  }
-
   bool
   LaunchProcess(const std::vector<std::string>& args) {
-    sigset_t full_sigset;
-    sigfillset(&full_sigset);
-    const sigset_t orig_sigmask = SetSignalMask(full_sigset);
-
-    pid_t pid;
-    pid = fork();
-
-    // Always restore the original signal mask in the parent.
-    if (pid != 0) {
-      SetSignalMask(orig_sigmask);
+    std::vector<char*> argv(args.size() + 1, NULL);
+    for (size_t i = 0; i < args.size(); ++i) {
+      argv[i] = const_cast<char*>(args[i].c_str());
     }
 
-    if (pid < 0) {
-      LOG(ERROR)
-        << "LaunchProcess: failed fork";
+    gboolean result = g_spawn_async(nullptr, &argv[0], nullptr,
+                                    static_cast<GSpawnFlags>(G_SPAWN_SEARCH_PATH | G_SPAWN_STDOUT_TO_DEV_NULL),
+                                    nullptr, nullptr, nullptr, nullptr);
+
+    if (!result) {
+      LOG(WARNING) << "Failed to launch external process: ";
       return false;
-    } else if (pid == 0) {
-      // Child process
-
-      // DANGER: fork() rule: in the child, if you don't end up doing exec*(),
-      // you call _exit() instead of exit(). This is because _exit() does not
-      // call any previously-registered (in the parent) exit handlers, which
-      // might do things like block waiting for threads that don't even exist
-      // in the child.
-
-      // ToDo: Put environment like Google chrome
-      //      options.allow_new_privs = true;
-//      // xdg-open can fall back on mailcap which eventually might plumb through
-//      // to a command that needs a terminal.  Set the environment variable telling
-//      // it that we definitely don't have a terminal available and that it should
-//      // bring up a new terminal if necessary.  See "man mailcap".
-//      options.environ["MM_NOTTTY"] = "1";
-//
-//      // We do not let GNOME's bug-buddy intercept our crashes.
-//      char* disable_gnome_bug_buddy = getenv("GNOME_DISABLE_CRASH_DIALOG");
-//      if (disable_gnome_bug_buddy &&
-//         disable_gnome_bug_buddy == std::string("SET_BY_GOOGLE_CHROME"))
-//        options.environ["GNOME_DISABLE_CRASH_DIALOG"] = std::string();
-
-      std::vector<char*> argv(args.size() + 1, NULL);
-      for (size_t i = 0; i < args.size(); ++i) {
-        argv[i] = const_cast<char*>(args[i].c_str());
-      }
-
-      execvp(argv[0], &argv[0]);
-
-      LOG(ERROR)
-         << "LaunchProcess: failed to execvp:" << argv[0];
-      _exit(127);
     }
 
     return true;
@@ -171,6 +123,7 @@ namespace platform_util {
 
   void
   OpenExternal(const std::string &url) {
+    // TODO(buglloc): Use gtk_show_uri instead?
     if (url.find("mailto:") == 0)
       XDGEmail(url);
     else
