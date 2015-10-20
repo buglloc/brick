@@ -28,11 +28,16 @@ namespace {
     }
 
     gboolean result = g_spawn_async(nullptr, &argv[0], nullptr,
-                                    static_cast<GSpawnFlags>(G_SPAWN_SEARCH_PATH | G_SPAWN_STDOUT_TO_DEV_NULL),
+                                    static_cast<GSpawnFlags>(G_SPAWN_SEARCH_PATH | G_SPAWN_STDOUT_TO_DEV_NULL | G_SPAWN_STDERR_TO_DEV_NULL),
                                     nullptr, nullptr, nullptr, nullptr);
 
     if (!result) {
-      LOG(WARNING) << "Failed to launch external process: ";
+      std::ostringstream command_line;
+      for (const auto &arg: args) {
+        command_line << arg << " ";
+      }
+
+      LOG(WARNING) << "Failed to launch external process: " << command_line.str();
       return false;
     }
 
