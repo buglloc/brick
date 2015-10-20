@@ -31,6 +31,8 @@ namespace {
   const gint kCloseReasonDismissed = 2;
   const gint kCloseReasonProgrammaticaly = 3;
   const gint kCloseReasonUndefined = 4;
+  // See kde-workspace/plasma-workspace/dataengines/notifications/notificationsengine.cpp
+  const char kKdeVendorName[] = "KDE";
 
 
   void
@@ -238,5 +240,11 @@ NotificationManager::InitializeCapabilities() {
   g_list_free(capabilities);
 
   // Detect KDE, because it have some strange behavior
-  on_kde_ = platform_util::GetDesktopEnvironment() == platform_util::DESKTOP_ENVIRONMENT_KDE;
+  char* vendor;
+  if (notify_get_server_info(NULL, &vendor, NULL, NULL)) {
+    on_kde_ = !strcmp(vendor, kKdeVendorName);
+    g_free(vendor);
+  } else {
+    LOG(WARNING) << "Failed to get notification server info";
+  }
 }
