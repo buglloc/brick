@@ -11,7 +11,7 @@ Project is currently under (rather) heavy development, so stay tuned, more featu
 Chat:
 ![Chat](/doc/chat.png?raw=true&v=2)
 
-Video call:
+Video call/Screen Sharing:
 ![Video](/doc/video.png?raw=true)
 
 System notification:
