@@ -56,11 +56,14 @@ namespace {
 
 
 bool
-CallCommand(bool to_app, const std::string &command, GVariant *parameters) {
+CallCommand(bool to_app, const std::string &command, GVariant *parameters, bool allow_autostart) {
   GDBusProxy *proxy = NULL;
-  GDBusProxyFlags flags = G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS;
   GVariant *call_result = NULL;
   GError *error = NULL;
+
+  GDBusProxyFlags flags = G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS;
+  if (!allow_autostart)
+    flags = static_cast<GDBusProxyFlags>(flags | G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START);
 
   proxy = g_dbus_proxy_new_for_bus_sync(G_BUS_TYPE_SESSION,
                                         flags,
@@ -134,7 +137,7 @@ HandleBxProtocol(const std::string &requestLine) {
   g_variant_builder_add_value(&params_builder, detail_params);
 
   GVariant *params = g_variant_builder_end(&params_builder);
-  CallCommand(true, "Action", params);
+  CallCommand(true, "Action", params, true);
 }
 
 

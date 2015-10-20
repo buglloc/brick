@@ -11,7 +11,7 @@
 
 
 void PrintUsage();
-bool CallCommand(bool to_app, const std::string &command, GVariant *parameters = nullptr);
+bool CallCommand(bool to_app, const std::string &command, GVariant *parameters = nullptr, bool allow_autostart = false);
 void HandleBxProtocol(const std::string &requestLine);
 void HandleCommand(const std::string &command);
 
