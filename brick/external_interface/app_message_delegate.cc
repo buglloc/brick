@@ -65,6 +65,10 @@ ExternalAppMessageDelegate::OnMessageReceived(
     UserAwayEvent e(true, true);
     EventBus::FireEvent(e);
 
+  } else if (message_name == kMessageUserPresentName) {
+    UserAwayEvent e(false, true);
+    EventBus::FireEvent(e);
+
   } else if (message_name == kMessageActionName) {
     // Parameters:
     // 0: int32 - callback id
