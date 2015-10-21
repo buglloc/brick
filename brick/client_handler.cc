@@ -740,7 +740,14 @@ ClientHandler::OnEvent(const UserAwayEvent &event) {
   if (!browser)
     return;
 
-  SendJSEvent(browser, "BXUserAway", is_idle_? "[true]": "[false]");
+  Json::Value params(Json::arrayValue);
+  params.append(is_idle_);
+  params.append(event.IsManual());
+
+  Json::FastWriter json_writer;
+  json_writer.omitEndingLineFeed();
+
+  SendJSEvent(browser, "BXUserAway", json_writer.write(params));
 }
 
 void
