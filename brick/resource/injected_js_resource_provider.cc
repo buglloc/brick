@@ -36,7 +36,11 @@ InjectedJsResourceProvider::OnRequest(scoped_refptr<CefResourceManager::Request>
   }
 
   CefRefPtr<CefStreamReader> stream = resource_util::GetBinaryFileReader(file_path);
-  ASSERT(stream.get());
+  if (!stream) {
+      LOG(WARNING) << "Injected JS not found: " << file_path;
+      request->Stop();
+      return false;
+  }
 
   request->Continue(new CefStreamResourceHandler(
       kMimeType,
