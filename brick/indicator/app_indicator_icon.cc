@@ -28,6 +28,11 @@ namespace {
                                                   const gchar* icon_name,
                                                   AppIndicatorCategory category);
 
+  typedef AppIndicator* (*app_indicator_new_with_path_func)(const gchar* id,
+                                                  const gchar* icon_name,
+                                                  AppIndicatorCategory category,
+                                                  const gchar* icon_theme_path);
+
   typedef void (*app_indicator_set_status_func)(AppIndicator* self,
                                                 AppIndicatorStatus status);
 
@@ -51,6 +56,7 @@ namespace {
 
   // Retrieved functions from libappindicator.
   app_indicator_new_func app_indicator_new = NULL;
+  app_indicator_new_with_path_func app_indicator_new_with_path = NULL;
   app_indicator_set_status_func app_indicator_set_status = NULL;
   app_indicator_set_menu_func app_indicator_set_menu = NULL;
   app_indicator_set_icon_func app_indicator_set_icon = NULL;
@@ -92,6 +98,9 @@ namespace {
     app_indicator_new = reinterpret_cast<app_indicator_new_func>(
         dlsym(indicator_lib, "app_indicator_new"));
 
+    app_indicator_new_with_path = reinterpret_cast<app_indicator_new_with_path_func>(
+        dlsym(indicator_lib, "app_indicator_new_with_path"));
+
     app_indicator_set_status = reinterpret_cast<app_indicator_set_status_func>(
         dlsym(indicator_lib, "app_indicator_set_status"));
 
@@ -121,12 +130,13 @@ namespace {
 AppIndicatorIcon::AppIndicatorIcon(std::string icons_dir):
     BaseIcon(icons_dir) {
 
-  icon_handler_ = app_indicator_new(
+  icon_handler_ = app_indicator_new_with_path(
       "brick",
       "indicator-messages",
-      APP_INDICATOR_CATEGORY_APPLICATION_STATUS
+      APP_INDICATOR_CATEGORY_APPLICATION_STATUS,
+      icons_folder_.c_str()
   );
-  app_indicator_set_icon_theme_path(icon_handler_, icons_folder_.c_str());
+
 }
 
 void
