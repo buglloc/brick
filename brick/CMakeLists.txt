@@ -2,31 +2,6 @@
 # reserved. Use of this source code is governed by a BSD-style license that
 # can be found in the LICENSE file.
 
-#
-# Determine the platform specific features.
-#
-
-if(OS_LINUX)
-  set(DESKTOP $ENV{XDG_CURRENT_DESKTOP})
-  if(NOT DEFINED UNITY_DESKTOP)
-    if ("${DESKTOP}" STREQUAL "Unity")
-      set(UNITY_DESKTOP 1)
-    else()
-      set(UNITY_DESKTOP 0)
-    endif()
-  endif()
-
-
-  INCLUDE(CMakeDependentOption)
-  CMAKE_DEPENDENT_OPTION(UNITY "Compile Unity version" ON
-                        "UNITY_DESKTOP" OFF)
-
-  if (UNITY)
-    message(STATUS "Turning on Unity version")
-    add_definitions(-Dunity)
-  endif()
-
-endif()
 
 #
 # Source files.
@@ -114,8 +89,6 @@ set(BRICK_STATUS_ICON_SRCS_LINUX
   indicator/gtk2_status_icon.cc
   indicator/app_indicator_icon.h
   indicator/app_indicator_icon.cc
-  )
-set(BRICK_UNITY_LAUNCHER_SRCS
   indicator/unity_launcher.h
   indicator/unity_launcher.cc
   )
@@ -176,13 +149,6 @@ set(BRICK_EVENT_SYSTEM
   event/download_complete_event.h
   event/notification_event.h
   )
-
-if (UNITY)
-  set(BRICK_STATUS_ICON_SRCS
-    ${BRICK_STATUS_ICON_SRCS}
-    ${BRICK_UNITY_LAUNCHER_SRCS}
-    )
-endif()
 
 APPEND_PLATFORM_SOURCES(BRICK_SRCS)
 APPEND_PLATFORM_SOURCES(BRICK_RESOURCE_SRCS)
@@ -263,9 +229,6 @@ endforeach(FILENAME)
 
 
 FIND_LINUX_LIBRARIES("gmodule-2.0 gtk+-2.0 gthread-2.0 libnotify xscrnsaver cairo")
-if (UNITY)
-  FIND_LINUX_LIBRARIES("unity")
-endif()
 
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
   if(PROJECT_ARCH STREQUAL "x86_64")

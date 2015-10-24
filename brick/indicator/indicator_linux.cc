@@ -61,9 +61,6 @@ namespace {
 
 void
 BrickIndicator::Init() {
-#ifdef unity
-  unity_launcher_->Init();
-#endif
   // Create popup menu
   menu = gtk_menu_new();
   GtkWidget * show_item = gtk_menu_item_new_with_label("Show/Hide");
@@ -97,6 +94,12 @@ BrickIndicator::Init() {
   SwitchToIdle();
   SetTooltip(kDefaultTooltip);
   icon_->Show();
+
+  // Deal with unity launcher
+  if (UnityLauncher::CouldOpen()) {
+    unity_launcher_ = new UnityLauncher();
+    unity_launcher_->Init();
+  }
 }
 
 void

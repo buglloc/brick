@@ -4,21 +4,12 @@
 #define BRICK_INDICATOR_INDICATOR_H_
 #pragma once
 
-#if defined(__linux__)
-
-#ifdef unity
-#include "brick/indicator/unity_launcher.h"
-#else
-#include "gtk/gtk.h"
-#endif
-
-#endif
-
 #include <string>
 #include "include/cef_base.h"
 #include "brick/brick_app.h"
 #include "brick/brick_types.h"
 #include "brick/indicator/base_icon.h"
+#include "brick/indicator/unity_launcher.h"
 #include "brick/event/account_switch_event.h"
 #include "brick/event/account_list_event.h"
 #include "brick/event/event_handler.h"
@@ -64,9 +55,7 @@ class BrickIndicator : public CefBase,
   bool idle_;
   bool extended_status_;
   CefRefPtr<BaseIcon> icon_;
-#ifdef unity
   CefRefPtr<UnityLauncher> unity_launcher_;
-#endif
 
 IMPLEMENT_REFCOUNTING(BrickIndicator);
 };

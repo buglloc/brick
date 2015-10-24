@@ -15,11 +15,9 @@ BrickIndicator::BrickIndicator(std::string icons_dir)
      icons_folder_(icons_dir),
      idle_(true),
      extended_status_(true),
-     icon_(NULL) {
+     icon_(NULL),
+     unity_launcher_ (nullptr) {
 
-#ifdef unity
-  unity_launcher_ = new UnityLauncher();
-#endif
   Init();
 }
 
@@ -36,9 +34,8 @@ BrickIndicator::SetBadge(int badge, bool is_important) {
     SwitchToIdle();
   }
 
-#ifdef unity
-  unity_launcher_->SetBadge(badge);
-#endif
+  if (unity_launcher_.get())
+    unity_launcher_->SetBadge(badge);
 
   IndicatorBadgeEvent e(badge, is_important);
   EventBus::FireEvent(e);

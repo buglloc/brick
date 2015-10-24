@@ -4,8 +4,6 @@
 #define BRICK_INDICATOR_UNITY_LAUNCHER_H_
 #pragma once
 
-#include <unity.h>
-
 #include <string>
 #include <map>
 
@@ -14,6 +12,9 @@
 #include "brick/event/download_progress_event.h"
 #include "brick/event/download_complete_event.h"
 
+
+typedef struct _LauncherEntry LauncherEntry;
+
 class UnityLauncher : public CefBase,
                       public EventHandler<DownloadProgressEvent>,
                       public EventHandler<DownloadCompleteEvent>{
@@ -21,9 +22,13 @@ class UnityLauncher : public CefBase,
  public:
   void Init();
   void SetBadge(int badge);
+
   // System events handler
   virtual void OnEvent(const DownloadProgressEvent &event) OVERRIDE;
   virtual void OnEvent(const DownloadCompleteEvent &event) OVERRIDE;
+
+  // Indicates whether libunity so could be opened.
+  static bool CouldOpen();
 
  protected:
   void RegisterEventListeners();
@@ -32,7 +37,7 @@ class UnityLauncher : public CefBase,
  private:
   int badges_;
   std::map<std::string, int> downloads_;
-  UnityLauncherEntry *handler_;
+  LauncherEntry *handler_;
 
 IMPLEMENT_REFCOUNTING(UnityLauncher);
 };
