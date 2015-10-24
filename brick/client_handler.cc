@@ -110,11 +110,6 @@ ClientHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
         window->Stick();
     }
     last_popup_features_ = NULL;
-
-    // Give focus to the popup browser. Perform asynchronously because the
-    // parent window may attempt to keep focus after launching the popup.
-    CefPostTask(TID_UI,
-       base::Bind(&CefBrowserHost::SetFocus, browser->GetHost().get(), true));
   }
   // Add to the list of existing browsers.
   browser_list_.push_back(browser);
