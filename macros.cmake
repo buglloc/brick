@@ -147,7 +147,7 @@ macro(FIND_LINUX_LIBRARIES libraries)
   execute_process(COMMAND pkg-config --libs-only-l ${libraries} OUTPUT_VARIABLE FLL_LIBS RESULT_VARIABLE RV_LIBS)
 
   if((NOT RV_CFLAGS EQUAL 0) OR (NOT RV_LDFLAGS EQUAL 0) OR (NOT RV_LIBS EQUAL 0))
-    message(FATAL_ERROR "Failed to find one of these libraries: ${libraries'")
+    message(FATAL_ERROR "Failed to find one of these libraries: ${libraries}'")
   endif()
 
   # Strip leading and trailing whitepspace.
