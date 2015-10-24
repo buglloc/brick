@@ -545,7 +545,10 @@ BXDesktopSystem.ParseNotificationHtml = function(html) {
 BXDesktopSystem.ExecuteCommand = function(command, params) {
   switch (command) {
     case 'tooltip.change':
-       BrickApp.changeTooltip(params);
+       // Tooltips intentionally disabled.
+       // Useful information is not much, but a lot of problems for various desktop environments (e.g. Plasma).
+
+       //BrickApp.changeTooltip(params);
        break;
     case 'notification.show.html':
       var parsed = this.ParseNotificationHtml(params);

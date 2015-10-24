@@ -14,6 +14,7 @@
 #include "brick/indicator/gtk2_status_icon.h"
 
 namespace {
+  const char kDefaultTooltip[] = APP_NAME;
 
   GtkWidget *menu;
   GtkWidget *accounts_menu;
@@ -94,6 +95,7 @@ BrickIndicator::Init() {
   RegisterEventListeners();
 
   SwitchToIdle();
+  SetTooltip(kDefaultTooltip);
   icon_->Show();
 }
 
