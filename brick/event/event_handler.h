@@ -42,7 +42,7 @@ class EventHandler {
    * @param e The event to dispatch
    */
   void Dispatch(const Event &e) {
-   OnEvent(dynamic_cast<const T &>(e));
+    OnEvent(dynamic_cast<const T &>(e));
   }
 };
 

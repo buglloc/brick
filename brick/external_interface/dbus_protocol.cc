@@ -80,7 +80,7 @@ namespace {
     CefRefPtr<CefProcessMessage> message =
        CefProcessMessage::Create(method_name);
     CefRefPtr<CefListValue> message_args = message->GetArgumentList();
-    // ToDo: callback needed?
+    // TODO(buglloc): callback needed?
     message_args->SetNull(0);
 
     if (!g_strcmp0(method_name, "ShowAddAccountDialog")) {

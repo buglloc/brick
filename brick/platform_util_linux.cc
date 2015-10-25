@@ -33,7 +33,7 @@ namespace {
 
     if (!result) {
       std::ostringstream command_line;
-      for (const auto &arg: args) {
+      for (const auto &arg : args) {
         command_line << arg << " ";
       }
 

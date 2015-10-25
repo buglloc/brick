@@ -407,7 +407,7 @@ AppMessageDelegate::OnProcessMessageReceived(
 
     if (error == NO_ERROR) {
       CefRefPtr<CefListValue> media_list = CefListValue::Create();
-      // ToDo: switch to dictionary (first impelemt dictionary support in V8Helper)
+      // TODO(buglloc): switch to dictionary (first impelemt dictionary support in V8Helper)
 
       if (request_args->GetBool(1)) {
         desktop_media::EnumerateScreens(media_list);
@@ -587,7 +587,7 @@ AppMessageDelegate::OnAfterLogin(
 
   if (auth_result.success) {
     SetCookies(CefCookieManager::GetGlobalManager(NULL), account->GetOrigin(), auth_result.cookies, account->IsSecure());
-    // ToDo: Replace huge argument lists to dictionary!
+    // TODO(buglloc): Replace huge argument lists to dictionary!
     response_args->SetBool(2, true);
     response_args->SetNull(3);
     response_args->SetNull(4);

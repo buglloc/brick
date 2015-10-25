@@ -159,7 +159,7 @@ Account::Set(
 
 std::string
 Account::GenBaseUrl() {
-  // ToDo: Need option here?
+  // TODO(buglloc): Need option here?
   return (GetOrigin() + kDefaultAppUrl);
 }
 

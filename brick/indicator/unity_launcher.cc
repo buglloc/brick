@@ -121,7 +121,7 @@ UnityLauncher::Update() {
     if (!downloads_.empty()) {
       launcher_entry_set_progress_visible(handler_, true);
       double progress = 0;
-      for (const auto &download: downloads_) {
+      for (const auto &download : downloads_) {
         progress += download.second;
       }
 

@@ -207,7 +207,7 @@ ClientHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser,
      })(window);
   ;)js";
 
-  // ToDo: Use CefV8Value::ExecuteFunction? Maybe something like SendJSEvent...
+  // TODO(buglloc): Use CefV8Value::ExecuteFunction? Maybe something like SendJSEvent...
   if (!app_settings_.client_scripts.empty()) {
     Json::Value client_scripts(Json::arrayValue);
     std::string url;
@@ -419,7 +419,7 @@ ClientHandler::RemoveDownload(const std::string &id) {
 
 CefRefPtr<CefListValue>
 ClientHandler::GetDownloadHistoryList() {
-  // ToDo: Implement dictionary!
+  // TODO(buglloc): Implement dictionary!
   CefRefPtr<CefListValue> result = CefListValue::Create();
   decltype(result->GetSize()) i = 0;
   for (const auto &history_item : download_history_) {
@@ -484,7 +484,7 @@ ClientHandler::OnBeforePopup(
   windowInfo.width = static_cast<unsigned int>(popupFeatures.width);
   windowInfo.height = static_cast<unsigned int>(popupFeatures.height);
 
-  // ToDo: Fix it!
+  // TODO(buglloc): Fix it!
   // For now we disable scaling popup width and height due to IM settings dialog issues
   // But we still must calculate right position for it
 
@@ -498,7 +498,7 @@ ClientHandler::OnBeforePopup(
     windowInfo.y = screen_rect.y + (screen_rect.height - height) / 2;
   }
 
-  // ToDo: R&D, too ugly hack to catch popup features in OnWindowCreated
+  // TODO(buglloc): R&D, too ugly hack to catch popup features in OnWindowCreated
   last_popup_features_ = new WindowFeatures(popupFeatures);
   return false;
 }

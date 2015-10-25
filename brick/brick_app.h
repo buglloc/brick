@@ -4,7 +4,7 @@
 #define BRICK_BRICK_APP_H_
 #pragma once
 
-// ToDo: move defines to separate file?
+// TODO(buglloc): move defines to separate file?
 
 #define JS_API_VERSION "31"
 #define VERSION "0.2.6" "." JS_API_VERSION  // IM API version in last part!

@@ -180,7 +180,7 @@ AppWindowMessageDelegate::OnProcessMessageReceived(
     ClientHandler::GetInstance()->GetMainWindowHandle()->Present();
 
   } else if (message_name == kMessageCenterName) {
-    // ToDo: implement!
+    // TODO(buglloc): implement!
 
   } else if (message_name == kMessageSetClosableName) {
     // Parameters:

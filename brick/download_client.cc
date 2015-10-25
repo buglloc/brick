@@ -29,7 +29,7 @@ namespace {
 
   bool
   IsDownloadResponse(CefRefPtr<CefResponse> response) {
-    // ToDo: checks Content-Disposition for all responses?
+    // TODO(buglloc): checks Content-Disposition for all responses?
     const std::string mime_type = response->GetMimeType().ToString();
 
     if (mime_type.find(kPageType) == 0 || mime_type.find(kJsonType) == 0)
@@ -187,7 +187,7 @@ DownloadClient::CreateRequest(
   if (!platform_util::MakeDirectory(helper::BaseDir(path)))
     return NULL;
 
-// ToDo: What we must todo in this case?
+// TODO(buglloc): What we must todo in this case?
 //  if (platform_util::IsPathExists(path + kTmpSuffix))
 //    return NULL;  // Probably we already started downloading
 

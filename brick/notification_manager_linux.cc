@@ -199,7 +199,7 @@ NotificationManager::UpdateIcon(int id, std::string icon_path, bool success) {
   g_object_set(G_OBJECT(notification_), "icon-name", icon_path.c_str(), NULL);
 
   // We must show notification again to update icon :-(
-  // ToDo: Research!
+  // TODO(buglloc): Research!
   if (!notify_notification_show (notification_, NULL)) {
     LOG(WARNING) << "Failed to resend notification";
   }

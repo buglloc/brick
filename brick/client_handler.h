@@ -223,7 +223,7 @@ class ClientHandler : public CefClient,
     return is_idle_;
   }
 
-  // ToDo: move this logic to system events handler
+  // TODO(buglloc): move this logic to system events handler
   void SetIdlePending(bool pending) {
     idle_pending_ = pending;
   }

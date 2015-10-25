@@ -168,7 +168,7 @@ ClientApp::OnBeforeCommandLineProcessing(const CefString& process_type, CefRefPt
 
   if (!command_line->HasSwitch("force-device-scale-factor") && device_scale_factor_ > 1.0) {
     // Chromium hack for HiDPI "supporting", https://code.google.com/p/chromium/issues/detail?id=143619
-    // ToDo: Recheck this ugly solution, when Brick reached Chromium 43+
+    // TODO(buglloc): Recheck this ugly solution, when Brick reached Chromium 43+
     LOG(INFO) << "Using device scale factor: " << device_scale_factor_;
     std::stringstream ss;
     ss << std::setprecision(2) << std::fixed << device_scale_factor_;

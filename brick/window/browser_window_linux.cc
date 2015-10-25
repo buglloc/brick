@@ -150,7 +150,7 @@ BrowserWindow::Popupping() {
 
 void
 BrowserWindow::OnNativeEvent(BrowserWindowNativeEvent event) {
-  // ToDo: implement native window event handlers
+  // TODO(buglloc): implement native window event handlers
   switch (event->type) {
     case GDK_DESTROY:
       // Release reference when wrapped window destroy
@@ -192,7 +192,7 @@ void
 BrowserWindow::SetActive() {
   std::time_t time = 0;
   if (on_kde_) {
-    // ToDo: Ugly hack for deals with KDE focus stealing prevention
+    // TODO(buglloc): Ugly hack for deals with KDE focus stealing prevention
     time = std::time(nullptr);
   } else {
     time = gdk_x11_display_get_user_time(gdk_window_get_display(window_handler_));

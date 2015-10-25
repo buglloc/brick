@@ -216,7 +216,7 @@ namespace desktop_media {
   EnumerateWindows(CefListValue* list) {
     int last_index = list->GetSize();
     int num_screens = XScreenCount(cef_get_xdisplay());
-    // ToDo: R&D, should i look at _NET_CLIENT_LIST?
+    // TODO(buglloc): R&D, should i look at _NET_CLIENT_LIST?
     for (int screen = 0; screen < num_screens; ++screen) {
       ::Window root_window = XRootWindow(cef_get_xdisplay(), screen);
       ::Window parent;
@@ -257,7 +257,7 @@ namespace desktop_media {
 
   bool
   EnumerateScreens(CefListValue* list) {
-    // ToDo: implement when WebRTC starts support screen enumeration
+    // TODO(buglloc): implement when WebRTC starts support screen enumeration
     CefRefPtr<CefListValue> media = CefListValue::Create();
     std::string id = kScreenTypeName;
     id.append(":");
@@ -272,7 +272,7 @@ namespace desktop_media {
 
   bool
   GetMediaPreview(std::string type, int32 id, std::vector<unsigned char>* out) {
-    // ToDo: what are hell?!
+    // TODO(buglloc): what are hell?!
     bool selfConnect = !CefCurrentlyOn(TID_UI);
     bool result = false;
     ::Display* display;

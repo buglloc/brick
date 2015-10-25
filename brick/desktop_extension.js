@@ -53,7 +53,7 @@ var BrickApp = {
     });
 
     AppExLogin(function(response, success, error_code, reason, bitrixSessid) {
-      // ToDo: change additional arguments (error_code, reason, bitrixSessid) to dictionary
+      // TODO(buglloc): change additional arguments (error_code, reason, bitrixSessid) to dictionary
       if (success) {
         onSuccess(bitrixSessid);
       } else {

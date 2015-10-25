@@ -35,7 +35,7 @@ class NotificationEvent : public Event {
   }
 
   int IsMessage() const {
-   return is_message_;
+    return is_message_;
   }
 
  private:

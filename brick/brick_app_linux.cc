@@ -196,7 +196,7 @@ BrickApp::GetCurrentLanguage(bool withTags) {
   if (result.empty() || result == "c")
     result = withTags ? "en-us" : "en";  // Use "en" by default
 
-  // TODO: R&D, maybe we may using locale as-is, without stripping?
+  // TODO(buglloc): R&D, maybe we may using locale as-is, without stripping?
   return result;
 }
 
@@ -218,7 +218,7 @@ TerminationSignalHandler(int signatl) {
 }
 
 int main(int argc, char* argv[]) {
-  // ToDo: Good refactoring candidate!
+  // TODO(buglloc): Good refactoring candidate!
 
   setlocale(LC_ALL, "");
   CefMainArgs main_args(argc, argv);
@@ -279,11 +279,11 @@ int main(int argc, char* argv[]) {
   cache_manager->Init(
      std::string(BrickApp::GetCacheHome()) + "/" + APP_COMMON_NAME + "/app/"
   );
-  // ToDo: need to be safer?
+  // TODO(buglloc): need to be safer?
   cache_manager->CleanUpCache();
 
   gtk_init(0, NULL);
-  // ToDo: Maybe better to set scale in main_args here?
+  // TODO(buglloc): Maybe better to set scale in main_args here?
   app->SetDeviceScaleFactor(window_util::GetDeviceScaleFactor());
   // Initialize CEF.
   CefInitialize(main_args, cef_settings, app.get(), NULL);

@@ -12,7 +12,7 @@ namespace {
 
   std::string
   GetOsMark() {
-    // ToDo: use app_token!
+    // TODO(buglloc): use app_token!
     char hostname[1024];
     gethostname(hostname, 1024);
 
