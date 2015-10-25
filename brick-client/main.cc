@@ -124,7 +124,7 @@ HandleBxProtocol(const std::string &requestLine) {
       g_variant_builder_add(&detail_builder, "{ss}",
                             tokens[i].c_str(),
                             tokens[i + 1].c_str());
-    };
+    }
 
     detail_params = g_variant_builder_end(&detail_builder);
   } else {
@@ -157,12 +157,12 @@ HandleCommand(const std::string &command) {
 void PrintUsage() {
   std::cout << kUsage << std::endl;
   std::cout << "Window commands:" << std::endl;
-  for (const auto &command: window_commands) {
+  for (const auto &command : window_commands) {
     std::cout << "\t" << command.first << std::endl;
   }
   std::cout << "\n" << std::endl;
   std::cout << "App commands:" << std::endl;
-  for (const auto &command: app_commands) {
+  for (const auto &command : app_commands) {
     std::cout << "\t" << command.first << std::endl;
   }
 }
