@@ -25,6 +25,7 @@ namespace {
         OnSave(GTK_WIDGET(dialog), self);
       case GTK_RESPONSE_CANCEL:
       case GTK_RESPONSE_DELETE_EVENT:
+        self->OnSaveEnded();
         gtk_widget_destroy(GTK_WIDGET(dialog));
         break;
       default:
@@ -57,6 +58,7 @@ namespace {
     gtk_box_pack_start(GTK_BOX(content_area), text_box, true, true, 0);
     g_object_set_data(G_OBJECT(dialog), kOtpPromptId, text_box);
     gtk_entry_set_activates_default(GTK_ENTRY(text_box), true);
+    gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
 
     g_signal_connect(dialog, "response", G_CALLBACK(OnOtpDialogResponse), self);
     gtk_widget_show_all(GTK_WIDGET(dialog));
@@ -262,10 +264,12 @@ EditAccountWindow::CancelAuthPending() {
   window_objects_.auth_account = NULL;
 }
 
-void EditAccountWindow::OnSaveStarted() {
+void
+EditAccountWindow::OnSaveStarted() {
   gtk_widget_set_sensitive(GTK_WIDGET(window_objects_.save_button), false);
 }
 
-void EditAccountWindow::OnSaveEnded() {
+void
+EditAccountWindow::OnSaveEnded() {
   gtk_widget_set_sensitive(GTK_WIDGET(window_objects_.save_button), true);
 }
