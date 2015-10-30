@@ -38,6 +38,7 @@ namespace {
 
 ClientHandler::ClientHandler()
     : is_idle_(false),
+      idle_pending_(true),
       main_handle_(NULL),
       indicator_handle_(NULL),
       account_manager_(NULL),
