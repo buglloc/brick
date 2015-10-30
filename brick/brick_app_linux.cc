@@ -79,12 +79,15 @@ namespace {
 
     if (!has_extension) {
       LOG(WARNING) << "XScreenSaver extension not found, 'auto away' feature is  being disabled.";
-      // Don't call this function any more
+      // Don't call this function anymore
       return false;
     }
 
     CefRefPtr<ClientHandler> handler = ClientHandler::GetInstance();
     if (!handler)
+      return true;
+
+    if (!handler->IsIdlePending())
       return true;
 
     if (mit_info == NULL)
@@ -94,11 +97,9 @@ namespace {
     if (mit_info->idle >= kIdleTimeout && !handler->IsIdle()) {
       UserAwayEvent e(true);
       EventBus::FireEvent(e);
-    } else if (mit_info->idle < kIdleTimeout && handler->IsIdle() && handler->IsIdlePending()) {
+    } else if (mit_info->idle < kIdleTimeout && handler->IsIdle()) {
       UserAwayEvent e(false);
       EventBus::FireEvent(e);
-    } else if (!handler->IsIdlePending()) {
-      handler->SetIdlePending(true);
     }
 
     return true;

@@ -729,7 +729,7 @@ void
 ClientHandler::OnEvent(const UserAwayEvent &event) {
   is_idle_ = event.IsAway();
   if (event.IsManual())
-    idle_pending_ = false;
+    idle_pending_ = !is_idle_;
 
   CefRefPtr<CefBrowser> browser = GetBrowser();
   if (!browser)
