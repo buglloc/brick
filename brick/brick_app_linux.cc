@@ -26,8 +26,8 @@
 namespace {
   const int kMainWindowWidth = 914;
   const int kMainWindowHeight = 454;
-  const int32 kIdleTimeout = 600000;
-  const unsigned long kIdleCheckInterval = 4000L;
+  const int32 kIdleTimeout = 600000L;
+  const unsigned long kIdleCheckInterval = 10000;
   std::string kAppIcons[] = {"brick16.png", "brick32.png", "brick48.png", "brick128.png", "brick256.png"};
   std::string szWorkingDir;  // The current working directory
   std::string startupLocale;
@@ -91,11 +91,10 @@ namespace {
       mit_info = XScreenSaverAllocInfo();
 
     XScreenSaverQueryInfo(GDK_DISPLAY(), GDK_ROOT_WINDOW(), mit_info);
-
-    if (mit_info->idle >= kIdleCheckInterval && !handler->IsIdle()) {
+    if (mit_info->idle >= kIdleTimeout && !handler->IsIdle()) {
       UserAwayEvent e(true);
       EventBus::FireEvent(e);
-    } else if (mit_info->idle < kIdleCheckInterval && handler->IsIdle() && handler->IsIdlePending()) {
+    } else if (mit_info->idle < kIdleTimeout && handler->IsIdle() && handler->IsIdlePending()) {
       UserAwayEvent e(false);
       EventBus::FireEvent(e);
     } else if (!handler->IsIdlePending()) {
@@ -292,7 +291,7 @@ int main(int argc, char* argv[]) {
   window_util::InitHooks();
 
   if (app_settings.auto_away) {
-    gtk_timeout_add(kIdleTimeout, CheckUserIdle, NULL);
+    gtk_timeout_add(kIdleCheckInterval, CheckUserIdle, NULL);
   }
 
   // Set default windows icon. Important to do this before any GTK window created!
