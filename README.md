@@ -38,6 +38,15 @@ You can install Brick from AUR [https://aur.archlinux.org/packages/brick/](https
 yaourt -S brick
 ```
 
+### Copr for CentOS/Fedora
+You can install Brick from Copr [buglloc/Brick](https://copr.fedoraproject.org/coprs/buglloc/Brick/).
+Fo example, Fedora:
+```bash
+sudo dnf copr enable buglloc/Brick -y
+sudo dnf install brick -y
+```
+if you are using KDE4/5 your may want to install `libappindicator`
+
 ### Build manually
 Or you can build Brick from sources:
 ```bash
