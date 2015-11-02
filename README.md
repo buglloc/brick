@@ -40,8 +40,9 @@ yaourt -S brick
 
 ### Copr for CentOS/Fedora
 You can install Brick from Copr [buglloc/Brick](https://copr.fedoraproject.org/coprs/buglloc/Brick/).
-Fo example, Fedora:
-```bash
+
+For example, Fedora:
+```plain
 sudo dnf copr enable buglloc/Brick -y
 sudo dnf install brick -y
 ```
