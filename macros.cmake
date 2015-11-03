@@ -215,6 +215,7 @@ macro(DOWNLOAD_EXTRACT url target sha256 revision)
             TIMEOUT 300
             ${hash_args}
             STATUS status
+            SHOW_PROGRESS
             LOG log)
 
     list(GET status 0 status_code)
