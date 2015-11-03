@@ -1,7 +1,17 @@
 Brick
 =====
 
-Unofficial, simple [Bitrix24](https://www.bitrix24.com/) messenger client.
+An open source [Bitrix24](https://www.bitrix24.com/) messenger client.
+
+Supported features:
+  - multiple accounts (switch tab)
+  - chat
+  - notifications (including Unity Launcher integration)
+  - voice & video calls
+  - desktop/window sharing
+  - file sharing
+  - simple integration with external systems based on D-Bus
+
 
 Project is currently under (rather) heavy development, so stay tuned, more features will come soon.
 **Currently supported version Bitrix24 of "Instant Messenger" module 15.1.5 and above**
