@@ -8,7 +8,7 @@ Supported features:
   - chat
   - notifications (including Unity Launcher integration)
   - voice & video calls
-  - desktop/window sharing
+  - desktop/window sharing (experimental)
   - file sharing
   - simple integration with external systems based on D-Bus
 
@@ -38,12 +38,12 @@ sudo add-apt-repository ppa:buglloc/brick
 sudo apt-get update
 sudo apt-get install brick
 ```
-if you are using KDE4/5 your may want to install `libappindicator`
+if you are using KDE5 your may want to install `libappindicator`
 
 ***Ubuntu Precise is no longer supports***
 
 ### AUR for Arch Linux
-You can install Brick from AUR [https://aur.archlinux.org/packages/brick/](https://aur.archlinux.org/packages/brick/):
+You can install Brick from AUR [package](https://aur.archlinux.org/packages/brick/):
 ```bash
 yaourt -S brick
 ```
@@ -76,7 +76,7 @@ sudo make install
 # And run it!
 brick
 ```
-if you are using KDE4/5 your may want to install `libappindicator`
+if you are using KDE5 your may want to install `libappindicator`
 
 ##  Contributing
 
