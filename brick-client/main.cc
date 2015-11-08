@@ -144,9 +144,9 @@ HandleBxProtocol(const std::string &requestLine) {
 void
 HandleCommand(const std::string &command) {
   if (window_commands.count(command)) {
-    CallCommand(false, window_commands[command]);
+    CallCommand(false, window_commands[command], nullptr, false);
   } else if (app_commands.count(command)) {
-    CallCommand(true, app_commands[command]);
+    CallCommand(true, app_commands[command], nullptr, false);
   } else {
     std::cerr << "Command \"" << command << "\" not found." << std::endl;
     std::exit(EXIT_FAILURE);
@@ -174,7 +174,7 @@ main(int argc, char** argv) {
   if (argc != 2) {
     std::cerr << "Too few arguments, command expected." << std::endl;
     PrintUsage();
-    std::exit(EXIT_FAILURE);
+    return EXIT_FAILURE;
   }
 
   std::string command(argv[1]);
@@ -186,5 +186,5 @@ main(int argc, char** argv) {
     HandleCommand(command);
   }
 
-  std::exit(EXIT_SUCCESS);
+  return EXIT_SUCCESS;
 }
