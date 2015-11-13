@@ -24,10 +24,9 @@ namespace request_util {
   CookiesMap
   GetCookies(const CefResponse::HeaderMap& headers) {
     CookiesMap result;
-    for (const auto &it : headers) {
-      if (it.first == "Set-Cookie") {
-        ParseCookie(it.second, result);
-      }
+    const auto range = headers.equal_range("Set-Cookie");
+    for (auto it = range.first; it != range.second; ++it) {
+      ParseCookie(it->second, result);
     }
     return result;
   }
