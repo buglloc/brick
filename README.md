@@ -56,7 +56,24 @@ For example, Fedora:
 sudo dnf copr enable buglloc/Brick -y
 sudo dnf install brick -y
 ```
-if you are using KDE4/5 your may want to install `libappindicator`
+if you are using KDE5 your may want to install `libappindicator`
+
+### OBS for openSUSE
+You can install Brick from openSUSE Software [home:buglloc/brick](https://build.opensuse.org/package/show/home:buglloc/brick).
+
+For openSUSE 13.2:
+```plain
+sudo zypper addrepo http://download.opensuse.org/repositories/home:buglloc/openSUSE_13.2/home:buglloc.repo
+sudo zypper refresh
+sudo zypper install brick
+```
+For openSUSE 13.1:
+```plain
+sudo zypper addrepo http://download.opensuse.org/repositories/home:buglloc/openSUSE_13.1/home:buglloc.repo
+sudo zypper refresh
+sudo zypper install brick
+```
+if you are using KDE5 your may want to install `libappindicator`
 
 ### Build manually
 Or you can build Brick from sources:
