@@ -8,6 +8,7 @@
 #include "brick/cache_manager.h"
 #include "brick/brick_app.h"
 #include "brick/helper.h"
+#include "brick/platform_util.h"
 
 namespace {
   time_t old_file_time;
@@ -45,7 +46,7 @@ CacheManager::Init(const std::string& path) {
 const std::string
 CacheManager::GetCacheDir(TYPE type) {
   if (cache_path_.empty()) {
-    cache_path_ = std::string(BrickApp::GetCacheHome()) + "/" + APP_COMMON_NAME + "/app/";
+    cache_path_ = platform_util::GetCacheDir() + "/" + APP_COMMON_NAME + "/app/";
   }
 
   return cache_path_ + cache_dir_[type];

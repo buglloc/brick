@@ -29,12 +29,12 @@ BrickApp::GetCefSettings(std::string work_dir, AppSettings app_settings) {
   if (!app_settings.cache_path.empty())
     CefString(&settings.cache_path) = app_settings.cache_path;
   else
-    CefString(&settings.cache_path) = std::string(GetCacheHome()) + "/" + APP_COMMON_NAME + "/cef";
+    CefString(&settings.cache_path) = platform_util::GetCacheDir() + "/" + APP_COMMON_NAME + "/cef";
 
   if (!app_settings.log_file.empty())
     CefString(&settings.log_file) = app_settings.log_file;
   else
-    CefString(&settings.log_file) = std::string(GetCacheHome()) + "/" + APP_COMMON_NAME + "/runtime.log";
+    CefString(&settings.log_file) = platform_util::GetCacheDir() + "/" + APP_COMMON_NAME + "/runtime.log";
 
   CefString(&settings.locale) = GetCurrentLanguage();
   CefString(&settings.accept_language_list) = GetAcceptLanguageList();

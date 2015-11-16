@@ -29,6 +29,8 @@ namespace platform_util {
   DesktopEnvironment GetDesktopEnvironment();
   const std::string GetDefaultDownloadDir();
   const std::string GetHomeDir();
+  const std::string GetCacheDir();
+
 }  // namespace platform_util
 
 #endif  // BRICK_PLATFORM_UTIL_H_

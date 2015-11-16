@@ -270,6 +270,11 @@ namespace platform_util {
     return g_get_home_dir();
   }
 
+  const std::string
+  GetCacheDir() {
+    return g_get_user_cache_dir();
+  }
+
   void
   ShowInFolder(const std::string &path) {
 

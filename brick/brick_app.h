@@ -32,7 +32,6 @@ class BrickApp : public CefBase {
   static std::string FindUserConfig(const char* name);
   static std::string FindSystemConfig(const char* name);
   static const char* GetConfigHome();
-  static const char* GetCacheHome();
 
   IMPLEMENT_REFCOUNTING(BrickApp);
 };

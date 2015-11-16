@@ -52,14 +52,14 @@ namespace {
   bool
   EnsureSystemDirectoryExists() {
     return (
-       platform_util::MakeDirectory(std::string(BrickApp::GetConfigHome()) + "/" + APP_COMMON_NAME)
-        && platform_util::MakeDirectory(std::string(BrickApp::GetCacheHome()) + "/" + APP_COMMON_NAME)
+       platform_util::MakeDirectory(platform_util::GetCacheDir() + "/" + APP_COMMON_NAME)
+        && platform_util::MakeDirectory(platform_util::GetCacheDir() + "/" + APP_COMMON_NAME)
     );
   }
 
   bool
   EnsureSingleInstance() {
-    std::string lock_file = std::string(BrickApp::GetCacheHome()) + "/" + APP_COMMON_NAME + "/run.lock";
+    std::string lock_file = platform_util::GetCacheDir() + "/" + APP_COMMON_NAME + "/run.lock";
     int fd = open(lock_file.c_str(), O_CREAT, 0600);
     if (fd == -1)
       return true;
@@ -168,12 +168,6 @@ BrickApp::FindSystemConfig(const char* name) {
   return result;
 }
 
-// static
-const char*
-BrickApp::GetCacheHome() {
-  return g_get_user_cache_dir();
-}
-
 const std::string
 BrickApp::GetCurrentLanguage(bool withTags) {
   if (startupLocale.empty())
@@ -272,12 +266,12 @@ int main(int argc, char* argv[]) {
 
   CefRefPtr<AccountManager> account_manager(new AccountManager);
   account_manager->Init(
-     std::string(BrickApp::GetConfigHome()) + "/" + APP_COMMON_NAME + "/accounts.json"
+    std::string(BrickApp::GetConfigHome()) + "/" + APP_COMMON_NAME + "/accounts.json"
   );
 
   CefRefPtr<CacheManager> cache_manager(new CacheManager);
   cache_manager->Init(
-     std::string(BrickApp::GetCacheHome()) + "/" + APP_COMMON_NAME + "/app/"
+    platform_util::GetCacheDir() + "/" + APP_COMMON_NAME + "/app/"
   );
   // TODO(buglloc): need to be safer?
   cache_manager->CleanUpCache();
