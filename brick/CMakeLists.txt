@@ -41,7 +41,7 @@ set(BRICK_COMMON_SRCS
   common/app_settings.cc
   common/app_settings.h
   )
-  set(BRICK_ACCOUNTS_SRCS
+set(BRICK_ACCOUNTS_SRCS
   account_manager.cc
   account_manager.h
   account.cc

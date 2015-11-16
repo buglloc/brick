@@ -94,11 +94,12 @@ ClientHandler::OnTitleChange(CefRefPtr<CefBrowser> browser,
   std::string window_title = APP_NAME;
   window_title.append(": ");
 
-  if (browser->IsPopup() || !account_manager_->GetCurrentAccount()->IsExisted()) {
-    // Fake account (not created yet) haven't any proper label
-    window_title.append(title);
-  } else {
+  if (!browser->IsPopup() && account_manager_->GetCurrentAccount()->IsExisted()) {
+    // Replace window title with account label
+    // Only for main window and saved account
     window_title.append(account_manager_->GetCurrentAccount()->GetLabel());
+  } else {
+    window_title.append(title);
   }
 
   window->SetTitle(window_title);
