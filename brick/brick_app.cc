@@ -6,6 +6,7 @@
 #include <sstream>
 
 #include "include/cef_version.h"
+#include "include/base/cef_logging.h"
 #include "brick/helper.h"
 #include "brick/platform_util.h"
 
@@ -26,15 +27,19 @@ BrickApp::GetCefSettings(std::string work_dir, AppSettings app_settings) {
 
   CefString(&settings.product_version) = product_version.str();
 
-  if (!app_settings.cache_path.empty())
+  if (!app_settings.cache_path.empty()) {
     CefString(&settings.cache_path) = app_settings.cache_path;
-  else
+  } else {
+    LOG(ERROR) << "Missed application setting while CEF initialization: cache_path. Let's try to guess.";
     CefString(&settings.cache_path) = platform_util::GetCacheDir() + "/" + APP_COMMON_NAME + "/cef";
+  }
 
-  if (!app_settings.log_file.empty())
+  if (!app_settings.log_file.empty()) {
     CefString(&settings.log_file) = app_settings.log_file;
-  else
+  } else {
+    LOG(ERROR) << "Missed application setting while CEF initialization: log_file. Let's try to guess.";
     CefString(&settings.log_file) = platform_util::GetCacheDir() + "/" + APP_COMMON_NAME + "/runtime.log";
+  }
 
   CefString(&settings.locale) = GetCurrentLanguage();
   CefString(&settings.accept_language_list) = GetAcceptLanguageList();

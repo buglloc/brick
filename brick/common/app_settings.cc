@@ -6,6 +6,7 @@
 
 #include "third-party/json/json.h"
 #include "include/base/cef_logging.h"
+#include "brick/brick_app.h"
 #include "brick/platform_util.h"
 #include "brick/helper.h"
 
@@ -32,8 +33,6 @@ namespace {
 AppSettings::AppSettings()
 : app_token (""),
   profile_path (""),
-  cache_path (""),
-  log_file (""),
   resource_dir (""),
   ignore_certificate_errors (false),
   log_severity (LOGSEVERITY_DEFAULT),
@@ -46,6 +45,8 @@ AppSettings::AppSettings()
   auto_download (false) {
 
   download_dir = platform_util::GetDefaultDownloadDir();
+  cache_path = platform_util::GetCacheDir() + "/" + APP_COMMON_NAME + "/cef";
+  log_file = platform_util::GetCacheDir() + "/" + APP_COMMON_NAME + "/runtime.log";
 }
 
 AppSettings
