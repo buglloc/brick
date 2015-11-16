@@ -74,6 +74,11 @@ var BrickApp = {
 
     AppExBrowse(null, url);
   },
+  showLogFile: function() {
+    native function AppExShowLogFile();
+
+    AppExShowLogFile();
+  },
   requestDownload: function(url, filename) {
     native function AppExRequestDownload();
 
@@ -679,7 +684,7 @@ BXDesktopSystem.GetMainWindow = function() {
 };
 
 BXDesktopSystem.OpenLogsFolder = function() {
-  BrickHelper.implementMe('BXDesktopSystem.OpenLogsFolder', arguments);
+  BrickApp.showLogFile();
 };
 
 BXDesktopWindow.AddTrayMenuItem = function(obj) {

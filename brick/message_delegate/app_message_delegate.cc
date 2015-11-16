@@ -19,6 +19,7 @@ namespace {
   const char kMessageLoginName[]            = "Login";
   const char kMessageNavigateName[]         = "Navigate";
   const char kMessageBrowseName[]           = "Browse";
+  const char kMessageShowLogFileName[]      = "ShowLogFile";
   const char kMessageChangeTooltipName[]    = "ChangeTooltip";
   const char kMessageSetIndicatorName[]     = "SetIndicator";
   const char kMessageSetIdleIndicatorName[] = "SetIdleIndicator";
@@ -166,6 +167,18 @@ AppMessageDelegate::OnProcessMessageReceived(
         LOG(WARNING) << "Trying to browse forbidden url: " << url;
         error = ERR_INVALID_URL;
       }
+    }
+
+  } else if (message_name == kMessageShowLogFileName) {
+    // Parameters:
+    //  0: int32 - callback id
+
+    if (request_args->GetSize() != 1) {
+      error = ERR_INVALID_PARAMS;
+    }
+
+    if (error == NO_ERROR) {
+      platform_util::ShowInFolder(handler->GetAppSettings().log_file);
     }
 
   } else if (message_name == kMessageChangeTooltipName) {
