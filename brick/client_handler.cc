@@ -50,7 +50,6 @@ ClientHandler::ClientHandler()
 {
   DCHECK(!g_instance);
   g_instance = this;
-  callbackId = 0;
 }
 
 ClientHandler::~ClientHandler() {
@@ -120,7 +119,7 @@ bool
 ClientHandler::OnCloseBrowser(CefRefPtr<CefBrowser> browser) {
   CEF_REQUIRE_UI_THREAD();
 
-  bool handled = false;
+  bool handled;
   if (browser->IsPopup()) {
     CefWindowHandle cef_window = browser->GetHost()->GetWindowHandle();
     BrowserWindow *window = window_util::LookupBrowserWindow(cef_window);

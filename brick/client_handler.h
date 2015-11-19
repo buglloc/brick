@@ -304,7 +304,6 @@ class ClientHandler : public CefClient,
   ProcessMessageDelegateSet process_message_delegates_;
 
   typedef std::map<int32, CefRefPtr<CommandCallback> > CommandCallbackMap;
-  int32 callbackId;
   CommandCallbackMap command_callback_map_;
 
   bool is_idle_;

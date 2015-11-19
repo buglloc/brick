@@ -95,8 +95,8 @@ namespace helper {
     CefValueType type = value->GetType(index);
     switch (type) {
       case VTYPE_LIST: {
-        CefRefPtr<CefListValue> list = value->GetList(index);
-        new_value = CefV8Value::CreateArray(list->GetSize());
+        CefRefPtr<CefListValue> new_list = value->GetList(index);
+        new_value = CefV8Value::CreateArray(new_list->GetSize());
         SetList(list, new_value);
       } break;
       case VTYPE_BOOL:
