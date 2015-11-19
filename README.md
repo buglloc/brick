@@ -90,9 +90,13 @@ if you are using KDE5 your may want to install `libappindicator`
 ### Build manually
 Or you can build Brick from sources:
 ```bash
-# Install some dependencies and build tools
+# Install build tools
 sudo apt-get install build-essential cmake
+# Install dependencies
 sudo apt-get install libgtk2.0-dev libudev1 libnss3 libgconf-2-4 libnotify-dev libxss-dev
+# Install tools to register Brick desktop entries, icons, etc in system
+# Or you may skip this installation step by adding -DSKIP_BRICK_REGISTER=1 to cmake
+sudo apt-get install desktop-file-utils xdg-utils
 
 # Let's make it
 mkdir ~/tmp && cd ~/tmp

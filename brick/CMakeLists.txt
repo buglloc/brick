@@ -304,3 +304,38 @@ install(
   PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE SETUID
   DESTINATION "${CMAKE_INSTALL_PREFIX}/${BRICK_INSTALL_DIR}/bin"
 )
+
+if(NOT DEFINED SKIP_BRICK_REGISTER)
+  # If `make install` calls user we want to install .desktop files, icons, etc
+  find_program(DESKTOP_INSTALL_PATH "desktop-file-install")
+  if(NOT DESKTOP_INSTALL_PATH)
+    message(FATAL_ERROR "Could not find 'desktop-file-install' command.
+            Please install 'desktop-file-utils' package or add '-DSKIP_BRICK_REGISTER=1'")
+  endif()
+
+  find_program(UPDATE_DESKTOP_PATH "update-desktop-database")
+  if(NOT UPDATE_DESKTOP_PATH)
+    message(FATAL_ERROR "Could not find 'update-desktop-database' command.
+            Please install 'desktop-file-utils' package or add '-DSKIP_BRICK_REGISTER=1'")
+  endif()
+
+  find_program(XDG_ICON_PATH "xdg-icon-resource")
+  if(NOT XDG_ICON_PATH)
+    message(FATAL_ERROR "Could not find 'desktop-file-install' command.
+            Please install 'xdg-utils' package or add '-DSKIP_BRICK_REGISTER=1'")
+  endif()
+
+  # Install .desktop file and update database
+  INSTALL(CODE "execute_process(COMMAND ${DESKTOP_INSTALL_PATH}
+          \"${CMAKE_INSTALL_PREFIX}/${BRICK_INSTALL_DIR}/brick.desktop\")")
+  INSTALL(CODE "execute_process(COMMAND ${UPDATE_DESKTOP_PATH} -q)")
+
+  # Install icons
+  set(INSTALL_ICONS_SIZES 16 32 48 128 256 512)
+  foreach(ICON_SIZE ${INSTALL_ICONS_SIZES})
+    INSTALL(CODE "execute_process(COMMAND
+      ${XDG_ICON_PATH} install --novendor
+        --size ${ICON_SIZE} \"${CMAKE_INSTALL_PREFIX}/${BRICK_INSTALL_DIR}/resources/app_icons/brick${ICON_SIZE}.png\" \"brick\")")
+  endforeach()
+  INSTALL(CODE "execute_process(COMMAND ${XDG_ICON_PATH} forceupdate --theme hicolor)")
+endif()
