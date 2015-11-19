@@ -2,16 +2,11 @@
 # Source files.
 #
 
-set(BRICK_SRCS
+set(BRICK_CLIENT_SRCS
   main.cc
   main.h
   )
-APPEND_PLATFORM_SOURCES(BRICK_SRCS)
-source_group(brick-client FILES ${BRICK_SRCS})
-
-set(BRICK_SRCS
-  ${BRICK_SRCS}
-  )
+source_group(brick-client FILES ${BRICK_CLIENT_SRCS})
 
 # Target executable names.
 set(CEF_TARGET "brick-client")
@@ -28,7 +23,7 @@ FIND_LINUX_LIBRARIES("gio-2.0")
 
 
 # Executable target.
-add_executable(${CEF_TARGET} ${BRICK_SRCS})
+add_executable(${CEF_TARGET} ${BRICK_CLIENT_SRCS})
 target_link_libraries(${CEF_TARGET} ${CEF_STANDARD_LIBS} ${CMAKE_DL_LIBS})
 install(
     TARGETS
@@ -37,14 +32,12 @@ install(
         "${CMAKE_INSTALL_PREFIX}/${BRICK_INSTALL_DIR}/bin"
 )
 
-# Copy binary and resource files to the target output directory.
-COPY_AND_INSTALL_FILES("${CEF_TARGET}" "${CEF_BINARY_FILES}" "${CEF_BINARY_DIR}" "bin")
-
 # Additional install rules
 install(
   FILES "${CMAKE_SOURCE_DIR}/${CEF_RESOURCE_DIR}/install/brick-client/brick-client.desktop"
   DESTINATION "${CMAKE_INSTALL_PREFIX}/${BRICK_INSTALL_DIR}"
 )
+
 # Create link to executable in /usr/bin
 install(DIRECTORY DESTINATION "${CMAKE_INSTALL_PREFIX}/usr/bin")
 INSTALL_SYMLINK("${CMAKE_INSTALL_PREFIX}/${BRICK_INSTALL_DIR}/bin/brick-client" "${CMAKE_INSTALL_PREFIX}/usr/bin")
