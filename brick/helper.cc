@@ -97,7 +97,7 @@ namespace helper {
       case VTYPE_LIST: {
         CefRefPtr<CefListValue> new_list = value->GetList(index);
         new_value = CefV8Value::CreateArray(new_list->GetSize());
-        SetList(list, new_value);
+        SetList(new_list, new_value);
       } break;
       case VTYPE_BOOL:
         new_value = CefV8Value::CreateBool(value->GetBool(index));
