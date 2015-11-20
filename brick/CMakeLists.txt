@@ -258,11 +258,11 @@ install(
         "${CMAKE_INSTALL_PREFIX}/${BRICK_INSTALL_DIR}/bin"
 )
 
-if(NOT DEFINED DISABLE_RPATH)
+set_target_properties(${CEF_TARGET} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CEF_TARGET_OUT_DIR}/bin")
+if(NOT DISABLE_RPATH)
 # Set rpath so that libraries can be placed next to the executable.
 set_target_properties(${CEF_TARGET} PROPERTIES INSTALL_RPATH "$ORIGIN")
 set_target_properties(${CEF_TARGET} PROPERTIES BUILD_WITH_INSTALL_RPATH TRUE)
-set_target_properties(${CEF_TARGET} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CEF_TARGET_OUT_DIR}/bin")
 endif()
 
 # Copy binary and resource files to the target output directory.
@@ -304,7 +304,7 @@ install(
   DESTINATION "${CMAKE_INSTALL_PREFIX}/${BRICK_INSTALL_DIR}/bin"
 )
 
-if(NOT DEFINED SKIP_BRICK_REGISTER)
+if(NOT SKIP_BRICK_REGISTER)
   # If `make install` calls user we want to install .desktop files, icons, etc
   find_program(DESKTOP_INSTALL_PATH "desktop-file-install")
   if(NOT DESKTOP_INSTALL_PATH)

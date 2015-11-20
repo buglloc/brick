@@ -42,7 +42,7 @@ install(
 install(DIRECTORY DESTINATION "${CMAKE_INSTALL_PREFIX}/usr/bin")
 INSTALL_SYMLINK("${CMAKE_INSTALL_PREFIX}/${BRICK_INSTALL_DIR}/bin/brick-client" "${CMAKE_INSTALL_PREFIX}/usr/bin")
 
-if(NOT DEFINED SKIP_BRICK_REGISTER)
+if(NOT SKIP_BRICK_REGISTER)
     # If `make install` calls user we want to install .desktop files, icons, etc
     find_program(DESKTOP_INSTALL_PATH "desktop-file-install")
     if(NOT DESKTOP_INSTALL_PATH)

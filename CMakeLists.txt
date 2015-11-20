@@ -153,6 +153,19 @@ elseif("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
   set(OS_WINDOWS 1)
 endif()
 
+if(NOT DEFINED DISABLE_RPATH)
+  set(DISABLE_RPATH FALSE)
+else()
+  set(DISABLE_RPATH TRUE)
+endif()
+
+# Determine package build
+if(NOT DEFINED SKIP_BRICK_REGISTER)
+  set(SKIP_BRICK_REGISTER FALSE)
+else()
+  set(SKIP_BRICK_REGISTER TRUE)
+endif()
+
 # Determine the project architecture.
 if(NOT DEFINED PROJECT_ARCH)
   if(CMAKE_SIZEOF_VOID_P MATCHES 8)
@@ -570,6 +583,8 @@ if(OS_WINDOWS)
   message(STATUS "CEF Windows sandbox:          ${USE_SANDBOX}")
   message(STATUS "Visual Studio ATL support:    ${USE_ATL}")
 endif()
+
+message(STATUS "Package install mode:         ${SKIP_BRICK_REGISTER}")
 
 set(LIBRARIES ${CEF_STANDARD_LIBS})
 if(OS_WINDOWS AND USE_SANDBOX)
