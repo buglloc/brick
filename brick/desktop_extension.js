@@ -1,19 +1,21 @@
 // Copyright (c) 2015 The Brick Authors.
 
+'use strict';
+
 /*---------- Fake globals ---------*/
-var TAB_CP = 1;
-var TAB_B24NET = 2;
+const TAB_CP = 1;
+const TAB_B24NET = 2;
 /*---------- Fake globals ---------*/
 
 /*------ Ugly desktop globals ---------*/
 // Window position :'(
-var STP_LEFT = 0;
-var STP_RIGHT = 1;
-var STP_CENTER = 2;
-var STP_TOP = 3;
-var STP_BOTTOM = 4;
-var STP_VCENTER = 5;
-var STP_FRONT = 6;
+const STP_LEFT = 0;
+const STP_RIGHT = 1;
+const STP_CENTER = 2;
+const STP_TOP = 3;
+const STP_BOTTOM = 4;
+const STP_VCENTER = 5;
+const STP_FRONT = 6;
 /*------ Ugly desktop globals ---------*/
 
 /*---------- App extension ---------*/
@@ -27,8 +29,8 @@ var BrickApp = {
     BrickApp.windowCallbacks[windowId] = callback;
   },
   getWindowCallback: function(windowId, callback) {
-    var result = null;
-  if (!BrickApp.windowCallbacks[windowId]) {
+    let result = null;
+    if (!BrickApp.windowCallbacks[windowId]) {
       console.error('BrickApp.getWindowCallback: undefined windowId, windowId: ' + windowId);
     } else {
       result = BrickApp.windowCallbacks[windowId];
@@ -803,20 +805,20 @@ BXDesktopSystem.ListDownload = function(callback) {
 
 /*---------- Helpers ---------*/
 var BrickHelper = {
-  buildFunctionCall: function(name, arguments) {
+  buildFunctionCall: function(name, args) {
     var preparedArgs = [].map.call(
-        arguments,
-        function prepareArguments(item) {
-          switch (typeof(item)) {
-            case 'object':
-              return JSON.stringify(item);
-            case 'null':
-            case 'undefined':
-              return 'null';
-            default:
-              return '' + item
-          }
+      args,
+      function prepareArguments(item) {
+        switch (typeof(item)) {
+          case 'object':
+            return JSON.stringify(item);
+          case 'null':
+          case 'undefined':
+            return 'null';
+          default:
+            return '' + item
         }
+      }
     );
 
     preparedArgs = preparedArgs.join(', ');
@@ -854,7 +856,7 @@ var BrickHelper = {
     if (/^https?:\/\//.test(url))
       return url;
 
-    var a = document.createElement('a');
+    let a = document.createElement('a');
     a.href = url;
     return a.href;
   },
@@ -885,96 +887,8 @@ var BrickHelper = {
 /*---------- Helpers ---------*/
 
 /*---------- Disk API ---------*/
-var BXFileStorage = undefined; // Disable disk at all
 
-//var BXFileStorage = BXFileStorage || {};
-//
-//BXFileStorage.StopBDisk = function StopBDisk() {
-//    return null;
-//};
-//
-//BXFileStorage.StartBDisk = function StartBDisk(mode) {
-//    return null;
-//};
-//
-//BXFileStorage.GetStatus = function GetStatus() {
-//    return null;
-//};
-//
-//BXFileStorage.OpenFolder = function OpenFolder() {
-//    return null;
-//};
-//
-//BXFileStorage.OpenFileFolder = function OpenFileFolder(path) {
-//    return null;
-//};
-//
-//BXFileStorage.SetTargetFolder = function SetTargetFolder(path) {
-//    return null;
-//};
-//
-//BXFileStorage.SetDefaultTargetFolder = function SetDefaultTargetFolder(callback) {
-//    return null;
-//};
-//
-//BXFileStorage.GetTargetFolder = function GetTargetFolder() {
-//    return null;
-//};
-//
-//BXFileStorage.SelectTargetFolder = function SelectTargetFolder(callback) {
-//    return null;
-//};
-//
-//BXFileStorage.Attach = function Attach(disk_token) {
-//    return null;
-//};
-//
-//BXFileStorage.Detach = function Detach() {
-//    return null;
-//};
-//
-//BXFileStorage.FileExist = function FileExist(path, funcCallback) {
-//    return null;
-//};
-//
-//BXFileStorage.FolderExist = function FolderExist(path, funcCallback) {
-//    return null;
-//};
-//
-//BXFileStorage.FileOpen = function FileOpen(path, funcCallback) {
-//    return null;
-//};
-//
-//BXFileStorage.ObjectOpen = function ObjectOpen(path, funcCallback) {
-//    return null;
-//};
-//
-//BXFileStorage.EditFile = function EditFile(downloadLink, uploadLink,filename) {
-//    return null;
-//};
-//
-//BXFileStorage.ViewFile = function ViewFile(downloadLink, filename) {
-//    return null;
-//};
-//
-//BXFileStorage.Refresh = function Refresh(funcCallback) {
-//    return null;
-//};
-//
-//BXFileStorage.GetStorageSize = function GetStorageSize(funcCallback) {
-//    return null;
-//};
-//
-//BXFileStorage.GetSyncFilesInfo = function GetSyncFilesInfo() {
-//    return null;
-//};
-//
-//BXFileStorage.GetLogLastOperations = function GetLogLastOperations() {
-//    return null;
-//};
-//
-//BXFileStorage.GetObjectDataById = function GetObjectDataById(id) {
-//    return null;
-//};
+// Disable disk at all
+var BXFileStorage = undefined;
 
 /*---------- Disk API ---------*/
