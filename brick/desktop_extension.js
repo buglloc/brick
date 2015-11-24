@@ -311,6 +311,14 @@ var BrickApp = {
     native function AppExShutdown();
 
     AppExShutdown(null);
+  },
+  switchAutostart(enable) {
+    native function AppExSwitchAutostart();
+
+    if (enable === void 0)
+      enable = true;
+
+    AppExSwitchAutostart(null, enable);
   }
 };
 /*---------- App extension ---------*/
@@ -505,7 +513,13 @@ BXDesktopSystem.ListScreenMedia = function(callback, types) {
 };
 
 BXDesktopSystem.SetProperty = function(name, value) {
-  BrickHelper.implementMe('BXDesktopSystem.SetProperty', arguments);
+  switch (name) {
+    case 'autostart':
+      BrickApp.switchAutostart(value);
+      break;
+    default:
+      BrickHelper.implementMe('BXDesktopSystem.SetProperty', arguments);
+  }
 };
 
 BXDesktopSystem.ParseNotificationHtml = function(html) {
@@ -630,6 +644,7 @@ BXDesktopSystem.GetProperty = function GetProperty(property) {
     case 'version':
       return version;
     case 'autostart':
+      // TODO(buglloc): Implement...somehow...somewhere...
       return false;
     default:
       BrickHelper.implementMe('BXDesktopSystem.GetProperty', arguments);

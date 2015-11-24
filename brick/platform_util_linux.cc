@@ -7,6 +7,7 @@
 #include <gio/gio.h>
 
 #include <string>
+#include <fstream>
 
 #include "include/wrapper/cef_helpers.h"
 #include "brick/helper.h"
@@ -120,6 +121,11 @@ namespace {
     }
 
     return true;
+  }
+
+  const std::string
+  GetAutostartEntryPath() {
+    return platform_util::GetConfigHome() + "/autostart/brick.desktop";
   }
 
 }  // namespace
@@ -275,6 +281,11 @@ namespace platform_util {
     return g_get_user_cache_dir();
   }
 
+  const std::string
+  GetConfigHome() {
+    return g_get_user_config_dir();
+  }
+
   void
   ShowInFolder(const std::string &path) {
 
@@ -285,5 +296,45 @@ namespace platform_util {
       // Fallback to open folder w/o highlighting item
       XDGOpen(helper::BaseDir(path));
     }
+  }
+
+  bool
+  IsAutostartEnabled() {
+    return IsPathExists(GetAutostartEntryPath());
+  }
+
+  void
+  EnableAutostart() {
+    /* TODO(buglloc):
+     * Maybe we just copy some .desktop file from resources?
+     * What if we want to override some in package?
+     */
+
+    const std::string path = GetAutostartEntryPath();
+    // Ensure ~/.config/autostart directory exists
+    MakeDirectory(helper::BaseDir(path));
+    std::ofstream ofs(path);
+    ofs << R"entry([Desktop Entry]
+Encoding=UTF-8
+Name=Brick
+GenericName=Internet Messenger
+Comment=Bitrix24 messenger
+Type=Application
+Categories=Network;InstantMessaging;
+Exec=brick --minimized --autostarted
+Icon=brick
+Terminal=false
+)entry";
+    ofs.close();
+    chmod(path.c_str(), S_IRUSR|S_IWUSR);
+  }
+
+  void
+  DisableAutostart() {
+    const std::string path = GetAutostartEntryPath();
+    if (!IsPathExists(path))
+      return;
+
+    unlink(path.c_str());
   }
 }  // namespace platform_util

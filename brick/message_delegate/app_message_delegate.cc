@@ -39,6 +39,7 @@ namespace {
   const char kMessageShowDownloadedName[]   = "ShowDownloaded";
   const char kMessageOpenDownloadFolder[]   = "OpenDownloadFolder";
   const char kMessageListDownloadHistory[]  = "ListDownloadHistory";
+  const char kMessageSwitchAutostart[]      = "SwitchAutostart";
 
   const char kCurrentPortalId[]             = "current_portal";
 
@@ -562,6 +563,25 @@ AppMessageDelegate::OnProcessMessageReceived(
 
     if (error == NO_ERROR) {
       platform_util::ShowInFolder(handler->GetAppSettings().download_dir);
+    }
+
+  } else if (message_name == kMessageSwitchAutostart) {
+    // Parameters:
+    // 0: int32 - callback id
+    // 1: bool - enabled or not
+
+    if (
+        request_args->GetSize() != 2
+        || request_args->GetType(1) != VTYPE_BOOL
+        ) {
+      error = ERR_INVALID_PARAMS;
+    }
+
+    if (error == NO_ERROR) {
+      if (request_args->GetBool(1))
+        platform_util::EnableAutostart();
+      else
+        platform_util::DisableAutostart();
     }
 
   } else {

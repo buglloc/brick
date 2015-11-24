@@ -131,10 +131,7 @@ namespace {
 }  // namespace
 
 // static
-const char*
-BrickApp::GetConfigHome() {
-  return g_get_user_config_dir();
-}
+
 
 // static
 std::string
@@ -266,7 +263,7 @@ int main(int argc, char* argv[]) {
 
   CefRefPtr<AccountManager> account_manager(new AccountManager);
   account_manager->Init(
-    std::string(BrickApp::GetConfigHome()) + "/" + APP_COMMON_NAME + "/accounts.json"
+    platform_util::GetConfigHome() + "/" + APP_COMMON_NAME + "/accounts.json"
   );
 
   CefRefPtr<CacheManager> cache_manager(new CacheManager);

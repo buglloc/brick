@@ -31,7 +31,6 @@ class BrickApp : public CefBase {
   // Platform specified methods
   static std::string FindUserConfig(const char* name);
   static std::string FindSystemConfig(const char* name);
-  static const char* GetConfigHome();
 
   IMPLEMENT_REFCOUNTING(BrickApp);
 };

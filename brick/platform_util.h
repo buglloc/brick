@@ -30,7 +30,10 @@ namespace platform_util {
   const std::string GetDefaultDownloadDir();
   const std::string GetHomeDir();
   const std::string GetCacheDir();
-
+  const std::string GetConfigHome();
+  bool IsAutostartEnabled();
+  void EnableAutostart();
+  void DisableAutostart();
 }  // namespace platform_util
 
 #endif  // BRICK_PLATFORM_UTIL_H_
