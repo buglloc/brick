@@ -191,10 +191,14 @@ ClientHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser,
     CefRefPtr<CefFrame> frame,
     int httpStatusCode) {
 
-  if (httpStatusCode != 200 || !frame->IsMain())
-    return;  // We need only successful loaded main frame
+  if (
+      httpStatusCode != 200 // Exclude failed load pages
+      || !frame->IsMain()   // And nested frames
+      || frame->GetURL().ToString().find("chrome-devtools://") == 0) // And Chromium Devtools
+    return;
 
-  std::string injected_js = R"js((function(window) {
+  std::ostringstream injected_js;
+  injected_js << R"js((function(window) {
        window.addEventListener('BXExitApplication', function (e) {
           if (window.BX === void 0 || window.BX.desktop === void 0)
             window.BrickApp.shutdown();
@@ -221,13 +225,13 @@ ClientHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser,
 
     Json::FastWriter json_writer;
     json_writer.omitEndingLineFeed();
-    injected_js += "if (typeof BX != 'undefined' && BrickApp.loadScripts !== void 0) BrickApp.loadScripts(";
-    injected_js += json_writer.write(client_scripts);
-    injected_js += ");";
+    injected_js << "if (typeof BX != 'undefined' && BrickApp.loadScripts !== void 0) BrickApp.loadScripts(";
+    injected_js << json_writer.write(client_scripts);
+    injected_js << ");";
   }
 
   frame->ExecuteJavaScript(
-     injected_js,
+     injected_js.str(),
      "ijected_js",
      0
   );
