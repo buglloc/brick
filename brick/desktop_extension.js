@@ -644,8 +644,8 @@ BXDesktopSystem.GetProperty = function GetProperty(property) {
     case 'version':
       return version;
     case 'autostart':
-      // TODO(buglloc): Implement...somehow...somewhere...
-      return false;
+      // TODO(buglloc): reimplement this shit! How i love synchrony Desktop API :'(
+      return BrickHelper.getSettingSync(property);
     default:
       BrickHelper.implementMe('BXDesktopSystem.GetProperty', arguments);
   }
@@ -896,6 +896,18 @@ var BrickHelper = {
       return BrickWindow.positions.SouthEast;
     }
 
+    return null;
+  },
+  getSettingSync: function(name) {
+    var request = new XMLHttpRequest();
+    request.open('GET', '/desktop_app/internals/settings/' + name + '.json', false);  // `false` makes the request synchronous
+    request.send(null);
+
+    if (request.status === 200) {
+      return JSON.parse(request.responseText);
+    }
+
+    console.warn('Setting "' + name + '" was not found.')
     return null;
   }
 };

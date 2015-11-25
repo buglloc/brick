@@ -73,6 +73,8 @@ set(BRICK_RESOURCE_SRCS
   resource/temporary_page_resource_provider.h
   resource/temporary_page_resource_provider.cc
   resource/desktop_media_resource_provider.h
+  resource/settings_resource_provider.h
+  resource/settings_resource_provider.cc
   )
 set(BRICK_RESOURCE_SRCS_LINUX
   resource/desktop_media_resource_provider_linux.cc

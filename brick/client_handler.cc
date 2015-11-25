@@ -19,6 +19,7 @@
 #include "brick/resource/injected_js_resource_provider.h"
 #include "brick/resource/temporary_page_resource_provider.h"
 #include "brick/resource/desktop_media_resource_provider.h"
+#include "brick/resource/settings_resource_provider.h"
 #include "brick/platform_util.h"
 #include "brick/window_util.h"
 #include "brick/brick_app.h"
@@ -33,6 +34,7 @@ namespace {
   const char kTemporaryPagePath[]     = "/temp-pages/";
   const char kInjectedJsPath[]        = "/injected-js/";
   const char kDesktopMediaPath[]      = "/desktop-media/";
+  const char kSettingsPath[]          = "/settings/";
 
 }  // namespace
 
@@ -928,6 +930,9 @@ ClientHandler::SetupResourceManager() {
 
   // Read resources from a directory on disk.
   resource_manager_->AddDirectoryProvider(kWebResourcePath, app_settings_.resource_dir + "/web/", 100, "");
+
+  // Ugly hack for synchronous Desktop API, hate it
+  resource_manager_->AddProvider(new SettingsResourceProvider(kSettingsPath), 97, "");
 
   // Never let the internal links walk on the external world
   resource_manager_->AddProvider(new LastResourceProvider, 1000, "");
