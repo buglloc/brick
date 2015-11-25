@@ -13,9 +13,7 @@ Supported features:
   - simple integration with external systems based on D-Bus
 
 Project is currently under (rather) heavy development, so stay tuned, more features will come soon.
-
 You may check some documentation on the [Wiki pages](https://github.com/buglloc/brick/wiki) (Russian language only).
-
 **Currently supported version Bitrix24 of "Instant Messenger" module 15.1.5 and above**
 
 ## Some screenshots
