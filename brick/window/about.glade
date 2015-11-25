@@ -6,7 +6,7 @@
     <property name="can_focus">False</property>
     <property name="type_hint">dialog</property>
     <property name="program_name">Brick</property>
-    <property name="comments" translatable="yes">Simple Bitrix messenger client</property>
+    <property name="comments" translatable="yes">An open source Bitrix24 client.</property>
     <property name="website">https://github.com/buglloc/brick</property>
     <property name="website_label" translatable="yes">https://github.com/buglloc/brick</property>
     <property name="authors">Buglloc &lt;buglloc@yandex.ru&gt;</property>
