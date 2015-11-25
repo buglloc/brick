@@ -94,6 +94,16 @@ namespace {
     self->Hide();
   }
 
+  void
+  on_accounts_view_row_activated(
+      GtkTreeView        *treeview,
+      GtkTreePath        *path,
+      GtkTreeViewColumn  *col,
+      AccountsWindow *self) {
+
+    on_edit_button(nullptr, self);
+  }
+
 }  // namespace
 
 
@@ -115,6 +125,7 @@ AccountsWindow::Init() {
   window_objects_.accounts_store = GTK_LIST_STORE(gtk_builder_get_object(builder, "accounts_store"));
 
   g_signal_connect(gtk_builder_get_object(builder, "accounts_dialog"), "delete_event", G_CALLBACK(on_delete_event), this);
+  g_signal_connect(window_objects_.accounts_view, "row-activated", G_CALLBACK(on_accounts_view_row_activated), this);
   g_signal_connect(gtk_builder_get_object(builder, "add_button"), "clicked", G_CALLBACK(on_add_button), this);
   g_signal_connect(gtk_builder_get_object(builder, "edit_button"), "clicked", G_CALLBACK(on_edit_button), this);
   g_signal_connect(gtk_builder_get_object(builder, "delete_button"), "clicked", G_CALLBACK(on_delete_button), this);
