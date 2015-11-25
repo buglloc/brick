@@ -12,7 +12,7 @@ extern char _binary_window_about_glade_start;
 extern char _binary_window_about_glade_size;
 
 namespace {
-  const char kComment[]  = "Simple Bitrix24 client\nVersion " APP_VERSION;
+  const char kComment[]  = "An open source Bitrix24 client.\nVersion " APP_VERSION;
 
   bool
   on_delete_event(GtkDialog *dialog, gpointer data, AboutWindow *self) {
