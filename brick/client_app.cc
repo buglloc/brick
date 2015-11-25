@@ -18,19 +18,23 @@ ClientApp::ClientApp()
 //  CreateRenderDelegates(render_delegates_);
 }
 
-void ClientApp::OnRegisterCustomSchemes(
+void
+ClientApp::OnRegisterCustomSchemes(
     CefRefPtr<CefSchemeRegistrar> registrar) {
+
   // Default schemes that support cookies.
   cookieable_schemes_.push_back("http");
   cookieable_schemes_.push_back("https");
 }
 
-void ClientApp::OnContextInitialized() {
+void
+ClientApp::OnContextInitialized() {
   CEF_REQUIRE_UI_THREAD();
 
 }
 
-void ClientApp::OnWebKitInitialized() {
+void
+ClientApp::OnWebKitInitialized() {
   // Define the extension contents.
   std::string extensionCode = GetExtensionJSSource();
   // Create an instance of my CefV8Handler object.
@@ -40,7 +44,8 @@ void ClientApp::OnWebKitInitialized() {
   CefRegisterExtension("app", extensionCode, handler);
 }
 
-bool ClientApp::OnProcessMessageReceived(
+bool
+ClientApp::OnProcessMessageReceived(
     CefRefPtr<CefBrowser> browser,
     CefProcessId source_process,
     CefRefPtr<CefProcessMessage> message) {
@@ -115,7 +120,8 @@ bool ClientApp::OnProcessMessageReceived(
 }
 
 
-bool ClientApp::OnBeforeNavigation(CefRefPtr<CefBrowser> browser,
+bool
+ClientApp::OnBeforeNavigation(CefRefPtr<CefBrowser> browser,
     CefRefPtr<CefFrame> frame,
     CefRefPtr<CefRequest> request,
     NavigationType navigation_type,
@@ -144,7 +150,8 @@ bool ClientApp::OnBeforeNavigation(CefRefPtr<CefBrowser> browser,
   return false;
 }
 
-std::string ClientApp::GetExtensionJSSource() {
+std::string
+ClientApp::GetExtensionJSSource() {
   //# We objcopy the desktop_extensions.js file, and link it directly into the binary.
   //# See http://www.linuxjournal.com/content/embedding-file-executable-aka-hello-world-version-5967
   //# And look at BRICK_EMBED_FILES on CMake

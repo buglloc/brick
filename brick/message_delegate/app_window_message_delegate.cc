@@ -65,7 +65,7 @@ AppWindowMessageDelegate::OnProcessMessageReceived(
   BrowserWindow *window = window_util::LookupBrowserWindow(cef_window);
 
 #ifndef NDEBUG
-  LOG(INFO) << "AppWindow message for window " << cef_window << ":" << message_name << helper::DumpList(request_args);
+  LOG(INFO) << "AppWindow message for window " << cef_window << ": " << message_name << helper::DumpList(request_args);
 #endif
 
   if (message_name == kMessageSetSizeName || message_name == kMessageSetClientSizeName) {

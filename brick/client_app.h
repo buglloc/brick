@@ -112,8 +112,6 @@ class ClientApp : public CefApp,
      CefProcessId source_process,
      CefRefPtr<CefProcessMessage> message) OVERRIDE;
 
-  std::string GetExtensionJSSource();
-
   void SetDeviceScaleFactor(const double scale);
 
   // Creates all of the RenderDelegate objects. Implemented in
@@ -121,6 +119,7 @@ class ClientApp : public CefApp,
 //  static void CreateRenderDelegates(RenderDelegateSet& delegates);
 
  private:
+  std::string GetExtensionJSSource();
 // CefRenderProccessHandler methods:
   virtual bool OnBeforeNavigation(CefRefPtr<CefBrowser> browser,
      CefRefPtr<CefFrame> frame,

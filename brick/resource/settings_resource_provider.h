@@ -9,12 +9,12 @@
 #include "brick/client_handler.h"
 
 class SettingsResourceProvider : public CefResourceManager::Provider {
-public:
+ public:
   explicit SettingsResourceProvider(const std::string& url_path);
 
   bool OnRequest(scoped_refptr<CefResourceManager::Request> request) OVERRIDE;
 
-private:
+ private:
   const std::string url_path_;
 
   DISALLOW_COPY_AND_ASSIGN(SettingsResourceProvider);

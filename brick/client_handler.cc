@@ -234,7 +234,7 @@ ClientHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser,
 
   frame->ExecuteJavaScript(
      injected_js.str(),
-     "ijected_js",
+     "injected_js",
      0
   );
 }
