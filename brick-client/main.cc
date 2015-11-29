@@ -24,16 +24,17 @@ namespace {
   static const char *kUsage =
       "Usage: brick-client command\n";
 
-  static std::map<std::string, std::string> window_commands = {
-      {"present", "Present"},
-      {"hide", "Hide"},
-      {"toggle", "ToggleVisibility"}
+  // TODO(buglloc): Use gflags instead?
+  static const std::map<std::string, Command> window_commands = {
+      {"present", Command("Present", "Present a main window.")},
+      {"hide", Command("Hide", "Hide Brick to status icon.")},
+      {"toggle", Command("ToggleVisibility", "Toggle a main window visibility (hide if showed, and shown if hidden).")}
   };
 
-  static std::map<std::string, std::string> app_commands = {
-      {"user_away", "UserAway"},
-      {"user_present", "UserPresent"},
-      {"quit", "Quit"}
+  static const std::map<std::string, Command> app_commands = {
+      {"user_away", Command("UserAway", "Inform that the user away from computer.")},
+      {"user_present", Command("UserPresent", "Inform that the user at the computer.")},
+      {"quit", Command("Quit", "Close Brick.")}
   };
 
 
@@ -144,9 +145,9 @@ HandleBxProtocol(const std::string &requestLine) {
 void
 HandleCommand(const std::string &command) {
   if (window_commands.count(command)) {
-    CallCommand(false, window_commands[command], nullptr, false);
+    CallCommand(false, window_commands.at(command).method, nullptr, false);
   } else if (app_commands.count(command)) {
-    CallCommand(true, app_commands[command], nullptr, false);
+    CallCommand(true, app_commands.at(command).method, nullptr, false);
   } else {
     std::cerr << "Command \"" << command << "\" not found." << std::endl;
     std::exit(EXIT_FAILURE);
@@ -158,12 +159,12 @@ void PrintUsage() {
   std::cout << kUsage << std::endl;
   std::cout << "Window commands:" << std::endl;
   for (const auto &command : window_commands) {
-    std::cout << "\t" << command.first << std::endl;
+    std::cout << "\t" << command.first << "\t" << command.second.description << std::endl;
   }
   std::cout << "\n" << std::endl;
   std::cout << "App commands:" << std::endl;
   for (const auto &command : app_commands) {
-    std::cout << "\t" << command.first << std::endl;
+    std::cout << "\t" << command.first << "\t" << command.second.description << std::endl;
   }
 }
 

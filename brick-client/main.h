@@ -9,6 +9,14 @@
 #include <string>
 #include <exception>
 
+struct Command
+{
+  Command(const std::string method, const std::string description)
+      : method(method), description(description) {
+  }
+  const std::string method;
+  const std::string description;
+};
 
 void PrintUsage();
 bool CallCommand(bool to_app, const std::string &command, GVariant *parameters = nullptr, bool allow_autostart = false);
