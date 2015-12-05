@@ -52,7 +52,7 @@ namespace {
   bool
   EnsureSystemDirectoryExists() {
     return (
-       platform_util::MakeDirectory(platform_util::GetCacheDir() + "/" + APP_COMMON_NAME)
+       platform_util::MakeDirectory(platform_util::GetConfigHome() + "/" + APP_COMMON_NAME)
         && platform_util::MakeDirectory(platform_util::GetCacheDir() + "/" + APP_COMMON_NAME)
     );
   }
