@@ -7,6 +7,11 @@
 
 #include "brick/v8_handler.h"
 
+namespace {
+  const char kSpellCheckWordName[] = "AppExSpellCheckWord";
+}  // namespace
+
+
 bool
 V8Handler::Execute(
     const CefString &name, CefRefPtr<CefV8Value> object,
@@ -38,6 +43,30 @@ V8Handler::Execute(
 
     return false;
   }
+
+  // TODO(buglloc): separate to another handler?
+  if (name == kSpellCheckWordName) {
+    if (arguments.size() != 2 || !arguments[0]->IsFunction()) {
+      LOG(ERROR) << "SpellChecking called without callback param";
+      return false;
+    }
+
+    std::vector<CefString> suggestions;
+    bool isCorrect = browser->SpellCheckWord(arguments[1]->GetStringValue(), suggestions);
+
+    CefRefPtr<CefV8Value> v8_suggestions = CefV8Value::CreateArray(suggestions.size());
+    for (uint i = 0; i < suggestions.size(); ++i) {
+      v8_suggestions->SetValue(i, CefV8Value::CreateString(suggestions[i]));
+    }
+
+    CefRefPtr<CefV8Value> callbackFunction = arguments[0];
+    CefV8ValueList args;
+    args.push_back(CefV8Value::CreateBool(isCorrect));
+    args.push_back(v8_suggestions);
+    callbackFunction->ExecuteFunction(NULL, args);
+    return true;
+  }
+
 
   if (arguments.size() > 0 && arguments[0]->IsFunction()) {
     // The first argument is the message id

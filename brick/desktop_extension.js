@@ -319,6 +319,11 @@ var BrickApp = {
       enable = true;
 
     AppExSwitchAutostart(null, enable);
+  },
+  spellCheckWord(word, callback) {
+    native function AppExSpellCheckWord();
+
+    AppExSpellCheckWord(callback, word);
   }
 };
 /*---------- App extension ---------*/
@@ -816,6 +821,9 @@ BXDesktopSystem.ListDownload = function(callback) {
   BrickApp.listDownloads(callback);
 };
 
+BXDesktopSystem.SpellCheckWord = function(word, callback) {
+  BrickApp.spellCheckWord(word, callback);
+};
 /*---------- Original API ---------*/
 
 /*---------- Helpers ---------*/
