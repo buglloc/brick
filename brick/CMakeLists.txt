@@ -234,18 +234,18 @@ FIND_LINUX_LIBRARIES("gmodule-2.0 gtk+-2.0 gthread-2.0 libnotify xscrnsaver cair
 
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
   if(PROJECT_ARCH STREQUAL "x86_64")
-    set(CEF_LIBRARIES_ARCHIVE_URL     "https://github.com/buglloc/cef-builds/raw/a719238c09e3ff3b341650b5f5ca115799560edd/libs/cef-x86_64.tar.gz")
-    set(CEF_LIBRARIES_ARCHIVE_HASH    "2d826a502b576da18d5d31f7028d3a2d10d1969b6450175c4ec596cec02d38e7")
+    set(CEF_LIBRARIES_ARCHIVE_URL     "https://github.com/buglloc/cef-builds/raw/0d15971961fda87682bd5e067cdcf5450e72b6b8/libs/cef-x86_64.tar.gz")
+    set(CEF_LIBRARIES_ARCHIVE_HASH    "5edf8e04ffb6acbcb88c26b3d4fcae9020d18967c9c4b9d3afa32530354e883d")
   elseif(PROJECT_ARCH STREQUAL "x86")
-    set(CEF_LIBRARIES_ARCHIVE_URL     "https://github.com/buglloc/cef-builds/raw/f9bef61268792ac8b37bd1f45bbe62840b2682a1/libs/cef-i686.tar.gz")
-    set(CEF_LIBRARIES_ARCHIVE_HASH    "bc8e3338ef6ea73c961a138f325ad613abbb8632fb34d4219fe58c8708c6e2fe")
+    set(CEF_LIBRARIES_ARCHIVE_URL     "https://github.com/buglloc/cef-builds/raw/0d15971961fda87682bd5e067cdcf5450e72b6b8/libs/cef-i686.tar.gz")
+    set(CEF_LIBRARIES_ARCHIVE_HASH    "8ed11e59556f77de7249804a6eb32fdf88f1236a7b22bc6acae0894564d4c2c5")
   endif()
 
   DOWNLOAD_EXTRACT(
     ${CEF_LIBRARIES_ARCHIVE_URL}
     "${CMAKE_SOURCE_DIR}/Release"
     ${CEF_LIBRARIES_ARCHIVE_HASH}
-    "3.2454.1329.g29055f6.${PROJECT_ARCH}"
+    "3.2454.1344.g2782fb8.${PROJECT_ARCH}"
   )
 endif()
 

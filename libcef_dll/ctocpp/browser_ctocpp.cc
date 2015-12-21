@@ -34,6 +34,41 @@ CefRefPtr<CefBrowserHost> CefBrowserCToCpp::GetHost() {
   return CefBrowserHostCToCpp::Wrap(_retval);
 }
 
+bool CefBrowserCToCpp::SpellCheckWord(const CefString& word,
+    std::vector<CefString>& suggestions) {
+  cef_browser_t* _struct = GetStruct();
+  if (CEF_MEMBER_MISSING(_struct, spell_check_word))
+    return false;
+
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Verify param: word; type: string_byref_const
+  DCHECK(!word.empty());
+  if (word.empty())
+    return false;
+
+  // Translate param: suggestions; type: string_vec_byref
+  cef_string_list_t suggestionsList = cef_string_list_alloc();
+  DCHECK(suggestionsList);
+  if (suggestionsList)
+    transfer_string_list_contents(suggestions, suggestionsList);
+
+  // Execute
+  int _retval = _struct->spell_check_word(_struct,
+      word.GetStruct(),
+      suggestionsList);
+
+  // Restore param:suggestions; type: string_vec_byref
+  if (suggestionsList) {
+    suggestions.clear();
+    transfer_string_list_contents(suggestionsList, suggestions);
+    cef_string_list_free(suggestionsList);
+  }
+
+  // Return type: bool
+  return _retval?true:false;
+}
+
 bool CefBrowserCToCpp::CanGoBack() {
   cef_browser_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, can_go_back))

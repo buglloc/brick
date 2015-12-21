@@ -71,6 +71,17 @@ typedef struct _cef_browser_t {
   struct _cef_browser_host_t* (CEF_CALLBACK *get_host)(
       struct _cef_browser_t* self);
 
+  //
+  // SpellCheck a word. Can be accessed only from browser thread from render
+  // process. Returns true (1) if spelled correctly, false (0) otherwise. In
+  // addition, finds the suggested words for a given word and puts them into
+  // |*suggestions|. If the word is spelled correctly, the vector is NULL. If
+  // optional_suggestions is NULL, suggested words will not be looked up. Note
+  // that Doing suggest lookups can be slow.
+  ///
+  int (CEF_CALLBACK *spell_check_word)(struct _cef_browser_t* self,
+      const cef_string_t* word, cef_string_list_t suggestions);
+
   ///
   // Returns true (1) if the browser can navigate backwards.
   ///

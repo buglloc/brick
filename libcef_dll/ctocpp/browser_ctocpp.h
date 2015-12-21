@@ -34,6 +34,8 @@ class CefBrowserCToCpp
 
   // CefBrowser methods.
   CefRefPtr<CefBrowserHost> GetHost() OVERRIDE;
+  bool SpellCheckWord(const CefString& word,
+      std::vector<CefString>& suggestions) OVERRIDE;
   bool CanGoBack() OVERRIDE;
   void GoBack() OVERRIDE;
   bool CanGoForward() OVERRIDE;

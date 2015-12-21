@@ -66,6 +66,19 @@ class CefBrowser : public virtual CefBase {
   /*--cef()--*/
   virtual CefRefPtr<CefBrowserHost> GetHost() =0;
 
+  //
+  // SpellCheck a word.
+  // Can be accessed only from browser thread from render process.
+  // Returns true if spelled correctly, false otherwise.
+  // In addition, finds the suggested words for a given word
+  // and puts them into |*suggestions|.
+  // If the word is spelled correctly, the vector is empty.
+  // If optional_suggestions is NULL, suggested words will not be looked up.
+  // Note that Doing suggest lookups can be slow.
+  ///
+  /*--cef()--*/
+  virtual bool SpellCheckWord(const CefString& word, std::vector<CefString>& suggestions) =0;
+
   ///
   // Returns true if the browser can navigate backwards.
   ///
