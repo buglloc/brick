@@ -32,22 +32,22 @@ Account::~Account() {
 }
 
 bool
-Account::IsExisted() {
+Account::IsExisted() const {
   return id_ != kFakeId;
 }
 
 bool
-Account::IsSecure() {
+Account::IsSecure() const {
   return secure_;
 }
 
 bool
-Account::IsAppPasswordUsed() {
+Account::IsAppPasswordUsed() const {
   return use_app_password_;
 }
 
 int
-Account::GetId() {
+Account::GetId() const {
   return id_;
 }
 
@@ -57,17 +57,17 @@ Account::SetId(int id) {
 }
 
 std::string
-Account::GetLogin() {
+Account::GetLogin() const {
   return login_;
 }
 
 std::string
-Account::GetDomain() {
+Account::GetDomain() const {
   return domain_;
 }
 
 std::string
-Account::GetPassword() {
+Account::GetPassword() const {
   /**
   * ToDo: Нужно передалать работу с паролем на корню:
   *  1. Хранить в памяти пароль как можно меньше времени
@@ -80,22 +80,22 @@ Account::GetPassword() {
 }
 
 std::string
-Account::GetOrigin() {
+Account::GetOrigin() const {
   return (secure_ ? "https://" : "http://" ) + domain_;
 }
 
 std::string
-Account::GetBaseUrl() {
+Account::GetBaseUrl() const {
   return base_url_;
 }
 
 std::string
-Account::GetAuthUrl() {
+Account::GetAuthUrl() const {
   return base_url_ + "login/";
 }
 
 std::string
-Account::GetLabel() {
+Account::GetLabel() const {
   return label_;
 }
 

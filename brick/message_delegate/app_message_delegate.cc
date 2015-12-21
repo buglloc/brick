@@ -129,8 +129,9 @@ AppMessageDelegate::OnProcessMessageReceived(
       if (url == kCurrentPortalId) {
         url = ClientHandler::GetInstance()->GetAccountManager()->GetCurrentAccount()->GetBaseUrl();
         // BXD_API_VERSION is mandatory for stable IM work
-        url += "?BXD_API_VERSION=" JS_API_VERSION;
-        url += "&user_lang=" + BrickApp::GetCurrentLanguage();
+        url
+          .append("?BXD_API_VERSION=" JS_API_VERSION)
+          .append("&user_lang=").append(BrickApp::GetCurrentLanguage());
       }
 
       if (

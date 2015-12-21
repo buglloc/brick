@@ -39,17 +39,17 @@ class Account : public CefBase {
   Account();
   ~Account();
 
-  int GetId();
-  std::string GetLogin();
-  std::string GetPassword();
-  std::string GetDomain();
-  std::string GetLabel();
-  std::string GetOrigin();
-  std::string GetBaseUrl();
-  std::string GetAuthUrl();
-  bool IsExisted();
-  bool IsSecure();
-  bool IsAppPasswordUsed();
+  int GetId() const;
+  std::string GetLogin() const;
+  std::string GetPassword() const;
+  std::string GetDomain() const;
+  std::string GetLabel() const;
+  std::string GetOrigin() const;
+  std::string GetBaseUrl() const;
+  std::string GetAuthUrl() const;
+  bool IsExisted() const;
+  bool IsSecure() const;
+  bool IsAppPasswordUsed() const;
   bool CheckBaseUrl(const std::string& url);
 
   void Set(bool secure, std::string domain, std::string login, std::string password, bool use_app_password);
