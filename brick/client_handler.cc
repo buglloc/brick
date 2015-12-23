@@ -194,9 +194,9 @@ ClientHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser,
     int httpStatusCode) {
 
   if (
-      httpStatusCode != 200 // Exclude failed load pages
-      || !frame->IsMain()   // And nested frames
-      || frame->GetURL().ToString().find("chrome-devtools://") == 0) // And Chromium Devtools
+      httpStatusCode != 200  // Exclude failed load pages
+      || !frame->IsMain()    // And nested frames
+      || frame->GetURL().ToString().find("chrome-devtools://") == 0)  // And Chromium Devtools
     return;
 
   std::ostringstream injected_js;
