@@ -36,7 +36,7 @@ class NotificationManager : public CefBase {
   bool is_actions_supported_;
   bool is_persistence_supported_;
 #ifdef  __linux__
-  bool on_kde_;
+  bool skip_onclose_;
 #endif
 
 IMPLEMENT_REFCOUNTING(NotificationManager);

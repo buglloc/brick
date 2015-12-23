@@ -31,9 +31,6 @@ namespace {
   const gint kCloseReasonDismissed = 2;
   const gint kCloseReasonProgrammaticaly = 3;
   const gint kCloseReasonUndefined = 4;
-  // See kde-workspace/plasma-workspace/dataengines/notifications/notificationsengine.cpp
-  const char kKdeVendorName[] = "KDE";
-
 
   void
   OnCloseNotification(NotifyNotification *notify, NotificationManager *self) {
@@ -58,6 +55,52 @@ namespace {
       // In persistence mode notification daemon don't close notification itself
       self->Close();
     }
+  }
+
+  bool
+  CheckKdePlasma() {
+    GError* error = NULL;
+    GDBusConnection* session_bus = g_bus_get_sync(G_BUS_TYPE_SESSION, NULL, &error);
+    if (!session_bus) {
+      LOG(ERROR) << "Can't get D-Bus session: " << error->message;
+      g_error_free(error);
+      return false;
+    }
+
+    GVariant* result = g_dbus_connection_call_sync(session_bus,
+      "org.freedesktop.Notifications",
+      "/MainApplication",
+      "org.freedesktop.DBus.Properties",
+      "Get",
+      g_variant_new("(ss)",
+        "org.qtproject.Qt.QCoreApplication",
+        "applicationVersion"),
+      G_VARIANT_TYPE("(v)"),
+      G_DBUS_CALL_FLAGS_NONE,
+      -1, NULL, &error);
+
+    if (!result) {
+      LOG(ERROR) << "Can't determine Plasma notification daemon version: " << error->message;
+      g_error_free(error);
+      return false;
+    }
+
+    GVariant* version_holder;
+    g_variant_get(result, "(v)", &version_holder);
+    g_variant_unref(result);
+    if (!g_variant_is_of_type(version_holder, G_VARIANT_TYPE("s"))) {
+      LOG(ERROR) << "Invalid version holder type";
+      g_variant_unref(version_holder);
+      return false;
+    }
+
+    const gchar* version = g_variant_get_type_string(version_holder);
+    g_variant_get(version_holder, "s", &version);
+
+    bool is_new_version = strverscmp(version, "5.5.0") >= 0;
+    LOG_IF(INFO, !is_new_version) << "Used old Plasma notification daemon: " << version;
+    g_variant_unref(version_holder);
+    return is_new_version;
   }
 
 }  // namespace
@@ -143,8 +186,7 @@ void
 NotificationManager::OnClose(const std::string &js_id, bool is_message) {
   notification_ = nullptr;
 
-  // On KDE notification has timed out and has been dismissed by the user closes with the same reason (2)
-  if (!on_kde_ && !js_id.empty()) {
+  if (!skip_onclose_ && !js_id.empty()) {
     NotificationEvent e(js_id, is_message, false);
     EventBus::FireEvent(e);
   }
@@ -193,7 +235,7 @@ NotificationManager::UpdateIcon(int id, std::string icon_path, bool success) {
 
   // Notification update was broken on KDE
   // TODO(buglloc): Can fix this?
-  if (on_kde_)
+  if (skip_onclose_)
     return;
 
   g_object_set(G_OBJECT(notification_), "icon-name", icon_path.c_str(), NULL);
@@ -222,9 +264,9 @@ NotificationManager::AsyncDownloadIcon(int id, const std::string& url, const std
 void
 NotificationManager::InitializeCapabilities() {
   // Fetch capabilities
-  GList *capabilities = notify_get_server_caps ();
+  GList* capabilities = notify_get_server_caps();
   for (auto c = capabilities; c != NULL; c = g_list_next(c)) {
-    char * cap = static_cast<char*>(c->data);
+    char* cap = static_cast<char*>(c->data);
     if (strcmp(cap, kAppendCapability) == 0) {
       LOG(INFO) << "Notification server supports " << kAppendCapability;
       is_append_supported_ = true;
@@ -239,11 +281,18 @@ NotificationManager::InitializeCapabilities() {
   g_list_foreach(capabilities, (GFunc)g_free, NULL);
   g_list_free(capabilities);
 
-  // Detect KDE, because it have some strange behavior
+  // Detect KDE prior Plasma 5.5.0, detailed bug: https://bugs.kde.org/show_bug.cgi?id=354293
+  // Notification has timed out and has been dismissed by the user closes with the same reason (2)
   char* vendor;
-  if (notify_get_server_info(NULL, &vendor, NULL, NULL)) {
-    on_kde_ = !strcmp(vendor, kKdeVendorName);
+  char* version;
+  if (notify_get_server_info(NULL, &vendor, &version, NULL)) {
+    // See plasma-workspace/dataengines/notifications/notificationsengine.cpp
+    if (!strcmp(vendor, "KDE") && !strcmp(version, "2.0")) {
+      skip_onclose_ = !CheckKdePlasma();
+    }
+
     g_free(vendor);
+    g_free(version);
   } else {
     LOG(WARNING) << "Failed to get notification server info";
   }
