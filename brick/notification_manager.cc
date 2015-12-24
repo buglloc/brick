@@ -10,7 +10,12 @@ NotificationManager::NotificationManager() :
     last_id_(0),
     is_append_supported_(false),
     is_actions_supported_(false),
-    is_persistence_supported_(false) {
+    is_persistence_supported_(false),
+#ifdef  __linux__
+    on_kde_(false),
+    skip_onclose_(false)
+#endif
+    {
 
   InitializeCapabilities();
 }

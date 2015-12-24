@@ -235,7 +235,7 @@ NotificationManager::UpdateIcon(int id, std::string icon_path, bool success) {
 
   // Notification update was broken on KDE
   // TODO(buglloc): Can fix this?
-  if (skip_onclose_)
+  if (on_kde_)
     return;
 
   g_object_set(G_OBJECT(notification_), "icon-name", icon_path.c_str(), NULL);
@@ -288,6 +288,7 @@ NotificationManager::InitializeCapabilities() {
   if (notify_get_server_info(NULL, &vendor, &version, NULL)) {
     // See plasma-workspace/dataengines/notifications/notificationsengine.cpp
     if (!strcmp(vendor, "KDE") && !strcmp(version, "2.0")) {
+      on_kde_ = true;
       skip_onclose_ = !CheckKdePlasma();
     }
 
