@@ -143,7 +143,6 @@ namespace {
   void
   OnCancel(GtkWidget *widget, EditAccountWindow *self) {
     self->Close();
-    self->CancelAuthPending();
   }
 
   bool
