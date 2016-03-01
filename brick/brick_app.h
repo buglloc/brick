@@ -7,7 +7,7 @@
 // TODO(buglloc): move defines to separate file?
 
 #define JS_API_VERSION "34"
-#define VERSION "0.2.9" "." JS_API_VERSION  // IM API version in last part!
+#define VERSION "0.2.10" "." JS_API_VERSION  // IM API version in last part!
 #define APP_VERSION "Brick/" VERSION "/beta"
 #define APP_NAME "Brick"
 #define APP_COMMON_NAME "brick"
