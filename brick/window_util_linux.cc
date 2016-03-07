@@ -6,6 +6,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xatom.h>
+#include <cmath>
 
 #include "include/internal/cef_linux.h"
 #include "include/base/cef_logging.h"
