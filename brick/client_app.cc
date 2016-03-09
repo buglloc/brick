@@ -11,7 +11,7 @@
 #include "brick/platform_util.h"
 
 extern char _binary_desktop_extension_js_start;
-extern char _binary_desktop_extension_js_size;
+extern char _binary_desktop_extension_js_end;
 
 ClientApp::ClientApp()
   : device_scale_factor_(1.0) {
@@ -155,10 +155,8 @@ ClientApp::GetExtensionJSSource() {
   //# We objcopy the desktop_extensions.js file, and link it directly into the binary.
   //# See http://www.linuxjournal.com/content/embedding-file-executable-aka-hello-world-version-5967
   //# And look at BRICK_EMBED_FILES on CMake
-  const char* p = &_binary_desktop_extension_js_start;
-  unsigned long size = (unsigned long)&_binary_desktop_extension_js_size;
 
-  std::string content(p, size);
+  std::string content(&_binary_desktop_extension_js_start, &_binary_desktop_extension_js_end);
   return helper::stringReplace(
      content, "#VERSION#", VERSION
   );

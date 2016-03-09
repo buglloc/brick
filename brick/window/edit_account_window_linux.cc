@@ -6,7 +6,7 @@
 #include "brick/window/edit_account_window.h"
 
 extern char _binary_window_edit_account_glade_start;
-extern char _binary_window_edit_account_glade_size;
+extern char _binary_window_edit_account_glade_end;
 
 namespace {
 
@@ -160,8 +160,9 @@ void
 EditAccountWindow::Init(CefRefPtr<Account> account, bool switch_on_save) {
   GtkBuilder *builder = gtk_builder_new ();
   GError* error = NULL;
+  std::string window_description(&_binary_window_edit_account_glade_start, &_binary_window_edit_account_glade_end);
 
-  if (!gtk_builder_add_from_string(builder, &_binary_window_edit_account_glade_start, (gsize)&_binary_window_edit_account_glade_size, &error)) {
+  if (!gtk_builder_add_from_string(builder, window_description.c_str(), window_description.length(), &error)) {
     LOG(WARNING) << "Failed to build account edditting window: " << error->message;
     g_error_free (error);
   }

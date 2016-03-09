@@ -9,7 +9,7 @@
 #include "brick/brick_app.h"
 
 extern char _binary_window_about_glade_start;
-extern char _binary_window_about_glade_size;
+extern char _binary_window_about_glade_end;
 
 namespace {
   const char kComment[]  = "An open source Bitrix24 client.\nVersion " APP_VERSION;
@@ -31,8 +31,9 @@ void
 AboutWindow::Init() {
   GtkBuilder *builder = gtk_builder_new ();
   GError* error = NULL;
+  std::string window_description(&_binary_window_about_glade_start, &_binary_window_about_glade_end);
 
-  if (!gtk_builder_add_from_string(builder, &_binary_window_about_glade_start, (gsize)&_binary_window_about_glade_size, &error)) {
+  if (!gtk_builder_add_from_string(builder, window_description.c_str(), window_description.length(), &error)) {
     LOG(WARNING) << "Failed to build aboud window: " << error->message;
     g_error_free (error);
   }
