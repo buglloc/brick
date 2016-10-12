@@ -2,6 +2,7 @@ Brick
 =====
 
 An open source [Bitrix24](https://www.bitrix24.com/) messenger client.
+
 **Unfortunately, project are not maintained any more. Please see [#54](https://github.com/buglloc/brick/issues/54) if you have some ideas.**
 
 Supported features:
