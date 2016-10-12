@@ -2,6 +2,7 @@ Brick
 =====
 
 An open source [Bitrix24](https://www.bitrix24.com/) messenger client.
+**Unfortunately, project are not maintained any more. Please see [#54](https://github.com/buglloc/brick/issues/54) if you have some ideas.**
 
 Supported features:
   - multiple accounts (switch tab)
@@ -12,10 +13,7 @@ Supported features:
   - file sharing
   - simple integration with external systems based on D-Bus
 
-Project is currently under (rather) heavy development, so stay tuned, more features will come soon.
 You may check some documentation on the [Wiki pages](https://github.com/buglloc/brick/wiki) (Russian language only).
-
-**Currently supported version Bitrix24 of "Instant Messenger" module 15.1.5 and above**
 
 ## Some screenshots
 
