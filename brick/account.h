@@ -60,6 +60,11 @@ class Account : public CefBase {
   void SetUseAppPassword(bool use);
   void SetId(int id);
 
+  static void trim(std::string &s);
+  static void rTrim(std::string &s);
+  static void lTrim(std::string &s);
+  static bool needTrim(int ch);
+
   std::string GenLabel();
   std::string GenBaseUrl();
 

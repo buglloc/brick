@@ -124,6 +124,7 @@ Account::SetPassword(std::string password) {
 
 void
 Account::SetDomain(std::string domain) {
+  Account::trim(domain);
   domain_ = domain;
   label_ = GenLabel();
   base_url_ = GenBaseUrl();
@@ -140,6 +141,29 @@ Account::SetUseAppPassword(bool use) {
   use_app_password_ = use;
 }
 
+bool
+Account::needTrim(int ch) {
+   return !std::isspace(ch) && !std::ispunct(ch);
+}
+
+void
+Account::lTrim(std::string &s) {
+   s.erase(s.begin(), std::find_if(s.begin(), s.end(), Account::needTrim));
+}
+
+// trim from end (in place)
+void
+Account::rTrim(std::string &s) {
+     s.erase(std::find_if(s.rbegin(), s.rend(),Account::needTrim).base(), s.end());
+}
+
+// trim from both ends (in place)
+void
+Account::trim(std::string &s) {
+    Account::lTrim(s);
+    Account::rTrim(s);
+}
+
 void
 Account::Set(
     bool secure,
@@ -149,6 +173,7 @@ Account::Set(
     bool use_app_password) {
 
   secure_ = secure;
+  Account::trim(domain);
   domain_ = domain;
   login_ = login;
   password_ = password;
@@ -162,6 +187,7 @@ Account::GenBaseUrl() {
   // TODO(buglloc): Need option here?
   return (GetOrigin() + kDefaultAppUrl);
 }
+
 
 void
 Account::Auth(bool renew_password, const AuthCallback& callback, const std::string& otp) {
