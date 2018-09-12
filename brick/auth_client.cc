@@ -10,6 +10,15 @@ namespace {
 
   const char kValidResponseType[] = "application/json";
 
+  bool StartsWithBom(const std::string &s) {
+    if (s.length() < 3)
+      return false;
+
+    return s[0] == char(239)
+      && s[1] == char(187)
+      && s[2] == char(191);
+  }
+
   std::string
   GetOsMark() {
     // TODO(buglloc): use app_token!
@@ -218,6 +227,8 @@ AuthClient::OnDownloadData(CefRefPtr<CefURLRequest> request,
 
   CEF_REQUIRE_UI_THREAD();
   body_ += std::string(static_cast<const char*>(data), data_length);
+  if (StartsWithBom(body_))
+    body_ = body_.substr(3);
 }
 
 // static methods
