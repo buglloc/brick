@@ -27,10 +27,12 @@ namespace {
   const gint kTypeRegular = 0;
   const gint kTypeMessage = 1;
   // See https://developer.gnome.org/notification-spec/#signal-notification-closed
-  const gint kCloseReasonExpire = 1;
-  const gint kCloseReasonDismissed = 2;
-  const gint kCloseReasonProgrammaticaly = 3;
-  const gint kCloseReasonUndefined = 4;
+  enum CloseReason {
+    kCloseReasonExpire = 1,
+    kCloseReasonDismissed = 2,
+    kCloseReasonProgrammaticaly = 3,
+    kCloseReasonUndefined = 4,
+  };
 
   void
   OnCloseNotification(NotifyNotification *notify, NotificationManager *self) {

@@ -15,9 +15,9 @@ class AppIndicatorIcon : public BaseIcon {
  public:
   explicit AppIndicatorIcon(std::string icons_dir);
 
-  virtual void SetIcon(IndicatorStatusIcon icon);
-  virtual void SetTooltip(const char* text);
-  virtual void Show();
+  virtual void SetIcon(IndicatorStatusIcon icon) override;
+  virtual void SetTooltip(const char* text) override;
+  virtual void Show() override;
 
   void SetMenu(GtkWidget *menu, GtkWidget *activate_item);
 

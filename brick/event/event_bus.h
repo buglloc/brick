@@ -53,7 +53,6 @@ class EventBus : public EventObject {
     EventBus* instance = GetInstance();
 
     // Fetch the list of event pairs unique to this event type
-    const char * a = typeid(T).name();
     Registrations* registrations = instance->handlers[typeid(T)];
 
     // Create a new collection instance for this type if it hasn't been created yet

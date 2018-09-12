@@ -150,6 +150,8 @@ macro(FIND_LINUX_LIBRARIES libraries)
     message(FATAL_ERROR "Failed to find one of these libraries: ${libraries}")
   endif()
 
+  STRING(REGEX REPLACE "(^| )-I" " -isystem " FLL_CFLAGS "${FLL_CFLAGS}")
+
   # Strip leading and trailing whitepspace.
   STRING(STRIP "${FLL_CFLAGS}"  FLL_CFLAGS)
   STRING(STRIP "${FLL_LDFLAGS}" FLL_LDFLAGS)

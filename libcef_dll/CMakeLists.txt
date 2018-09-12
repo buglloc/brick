@@ -493,3 +493,7 @@ add_library(libcef_dll_wrapper
 
 # Remove the default "lib" prefix from the resulting library.
 set_target_properties(libcef_dll_wrapper PROPERTIES PREFIX "")
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    target_compile_options(libcef_dll_wrapper PRIVATE -Wno-undefined-var-template)
+endif()

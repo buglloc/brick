@@ -25,7 +25,11 @@ namespace {
 #if defined(OS_POSIX)
 // From base/safe_strerror_posix.cc.
 
-#define USE_HISTORICAL_STRERRO_R (defined(__GLIBC__) || defined(OS_NACL))
+#if defined(__GLIBC__) || defined(OS_NACL)
+#define USE_HISTORICAL_STRERRO_R 1
+#else
+#define USE_HISTORICAL_STRERRO_R 0
+#endif
 
 #if USE_HISTORICAL_STRERRO_R && defined(__GNUC__)
 // GCC will complain about the unused second wrap function unless we tell it
